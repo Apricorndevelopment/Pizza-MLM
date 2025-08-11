@@ -50,7 +50,7 @@
                     <p class="mb-0">{{ $packageTransaction->transaction_date }}</p>
                 </div>
                 <div class="col-12 col-md-8">
-                    <p class="mb-2"><strong>Status:</strong> 
+                    <p class="mb-2"><strong>Gift Packet Status:</strong> 
                         <span class="status-badge status-active">
                             {{ $packageTransaction->status ? $packageTransaction->status : 'pending' }}
                         </span>

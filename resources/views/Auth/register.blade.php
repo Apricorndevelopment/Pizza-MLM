@@ -373,7 +373,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-auth">
+                <button type="submit" onclick="return confirm('Are you sure you want to register')" class="btn btn-auth">
                     <i class="fas fa-user-plus me-2"></i> Register
                 </button>
 

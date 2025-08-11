@@ -82,8 +82,8 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); */
+            /* background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); */
 
         }
 
@@ -112,13 +112,20 @@
         .auth-header h1 {
             text-align: center;
             margin-bottom: 0.5rem;
-            background: var(--gradient);
             border-radius: 30px;
-            font-weight: 600;
+            font-weight: 900;
             font-size: 1.8rem;
             padding: 10px 0;
-            color: white;
+   
+            background: linear-gradient(45deg, #006400, #008080, #4682B4, #000080);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            -webkit-text-stroke: 1px #000;
+        
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid black;
         }
 
         .text-muted {
@@ -204,7 +211,7 @@
         }
 
         @media (max-width: 576px) {
-             body {
+            body {
                 padding: 10px;
             }
 
@@ -227,7 +234,7 @@
                 font-size: 1.8rem;
             }
 
-             .text-muted {
+            .text-muted {
                 font-size: 12px;
                 line-height: 1.3;
             }
@@ -276,17 +283,19 @@
                 <div class="mb-3">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="text" name="email" class="form-control" placeholder="Email Address" value="{{ old('email') }}" required>
+                        <input type="text" name="email" class="form-control" placeholder="Email Address"
+                            value="{{ old('email') }}" required>
                     </div>
                     @error('email')
                         <span class="text-danger">{{ $message }}</span>
-                    @enderror 
+                    @enderror
                 </div>
 
                 <div class="mb-3 position-relative">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                        <input type="password" name="password" id="password" class="form-control"
+                            placeholder="Password" required>
                     </div>
                     <i class="fas fa-eye toggle-password" toggle="#password"></i>
                     @error('password')
@@ -302,7 +311,7 @@
                     <a href="{{ route('password.request') }}">Forgot password?</a>
                 </div>
 
-                <button type="submit" class="btn btn-auth">
+                <button type="submit" onclick="return confirm('Are you sure you want to Login')" class="btn btn-auth">
                     <i class="fas fa-sign-in-alt me-2"></i> Login
                 </button>
 

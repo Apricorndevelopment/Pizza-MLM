@@ -59,9 +59,9 @@ class User extends Authenticatable
     }
 
     public function packageInventories()
-{
-    return $this->hasMany(UserPackageInventory::class, 'user_ulid', 'ulid');
-}
+    {
+        return $this->hasMany(UserPackageInventory::class, 'user_ulid', 'ulid');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

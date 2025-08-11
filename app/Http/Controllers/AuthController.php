@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\UserRegisteredMail;
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\Package2Purchase;
 use App\Models\PasswordOtp;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -226,69 +227,96 @@ class AuthController extends Controller
         });
     }
 
-    private function renderTreeHtml($user, $children, $isRoot = true)
-    {
-        $html = $isRoot ? '<ul class="tree" style="padding-left:10px; margin:0; font-family:Arial, sans-serif;">' : '<ul class="nested" style="padding-left:10px; margin:6px 0 0 5px; border-left:1px solid #e0e0e0;">';
-        // $html = '<ul class="' . ($isRoot ? 'tree' : 'nested') . '">';
+   private function renderTreeHtml($user, $children, $isRoot = true)
+{
+    $html = $isRoot ? '<ul class="tree" style="padding-left:10px; margin:0; font-family:Arial, sans-serif;">' : '<ul class="nested" style="padding-left:0px; margin:6px 0 0 8px; border-left:1px solid black;">';
 
-        $hasChildren = $children->isNotEmpty();
-        $icon = $hasChildren ? '➖' : '📁';
+    $hasChildren = $children->isNotEmpty();
+    $icon = $hasChildren ? '➖' : '―📁';
 
-        $html .= '<li class="my-1 list-unstyled">';
+    $html .= '<li class="my-1 list-unstyled">';
 
-        $html .= '<span class="tree-node small lh-sm d-flex flex-wrap align-items-center" onclick="toggleNode(this); loadUserDetails(\'' . $user->ulid . '\')">';
+    // Add data-user-ulid attribute for easier selection
+    $html .= '<span class="tree-node small lh-sm d-flex flex-wrap align-items-center" data-user-ulid="'.$user->ulid.'" onclick="toggleNode(this); loadUserDetails(\'' . $user->ulid . '\')">';
 
-        $html .= '<span class="toggle-icon me-1">' . $icon . '</span>';
+    $html .= '<span class="toggle-icon me-1">' . $icon . '</span>';
 
-        $html .= '<span class="node-label fw-medium text-dark">';
-        $html .= $user->name . ' ';
-        $html .= '<span class="text-muted">(' . $user->ulid . ')</span>';
-        $html .= ' | <span class="d-none d-md-inline">Total </span> Team:' . $user->total_team ;
-        $html .= '</span>';
+    $html .= '<span class="node-label fw-medium text-dark">';
+    $html .= $user->name . ' ';
+    $html .= '<span class="text-muted">(' . $user->ulid . ')</span>';
+    $html .= ' | <span class="d-none d-md-inline">Total </span> Team:' . $user->total_team;
+    $html .= '</span>';
 
-        $html .= '</span>';
+    $html .= '</span>';
 
-
-        if ($hasChildren) {
-            // foreach ($children as $child) {
-            //     $html .= $this->renderTreeHtml($child, $child->children, false);
-            // }
-            $html .= '<ul class="nested">'; // Always create nested UL (collapsed)
-            foreach ($children as $child) {
-                $html .= $this->renderTreeHtml($child, $child->children, false);
-            }
-            $html .= '</ul>';
+    if ($hasChildren) {
+        $html .= '<ul class="nested">';
+        foreach ($children as $child) {
+            $html .= $this->renderTreeHtml($child, $child->children, false);
         }
-
-        $html .= '</li>';
         $html .= '</ul>';
-
-        return $html;
     }
+
+    $html .= '</li>';
+    $html .= '</ul>';
+
+    return $html;
+}
 
     public function getUserDetails($ulid)
     {
+        $authUser = Auth::user();
+
         $user = User::where('ulid', $ulid)->first();
 
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
 
+        // Purchase Amount
+        $purchaseAmount = Package2Purchase::where('user_id', $user->id)->sum('final_price');
+
+        // Level Calculation (ULID-based)
+        $level = $this->calculateLevel($authUser->ulid, $user->ulid);
+
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
             'ulid' => $user->ulid,
             'email' => $user->email,
-            'user_doa' => $user->user_doa,
+            'registered_date' => $user->created_at->format('d-m-Y, H:i A'),
+            'activation_date' => $user->user_doa,
             'rank' => $user->current_rank,
             'status' => $user->status,
             'points_balance' => $user->points_balance,
             'loyalty_balance' => $user->loyalty_balance,
             'left_business' => $user->left_business,
             'right_business' => $user->right_business,
+            'level' => $level,
+            'purchase_amount' => $purchaseAmount,
         ]);
     }
 
+    /**
+     * Calculate the level of a target user in relation to the starting user (Auth user)
+     */
+    private function calculateLevel($startUlid, $targetUlid, $level = 0)
+    {
+        // Base case: same user
+        if ($startUlid === $targetUlid) {
+            return $level;
+        }
+
+        // Find the target user
+        $targetUser = User::where('ulid', $targetUlid)->first();
+
+        if (!$targetUser || !$targetUser->sponsor_id) {
+            return null; // Not in tree or no sponsor
+        }
+
+        // Move up one level using sponsor's ULID
+        return $this->calculateLevel($startUlid, $targetUser->sponsor_id, $level + 1);
+    }
 
     // for Admin Tree
     public function showUserTreeFromAdmin($adminId)
@@ -340,9 +368,9 @@ class AuthController extends Controller
 
             $html .= '<span class="node-label" onclick="loadUserDetails(\'' . $user->ulid . '\')">';
             $html .= '<span class="fw-medium text-dark">';
-            $html .= $user->name ;
+            $html .= $user->name;
             $html .= '<span class="text-muted">(' . $user->ulid . ')</span>';
-            $html .= '|<span class="d-none d-md-inline">Total </span>Team:' . $user->total_team ;
+            $html .= '|<span class="d-none d-md-inline">Total </span>Team:' . $user->total_team;
             $html .= '</span>';
             $html .= '</span>';
 

@@ -19,6 +19,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
     <link rel="shortcut icon" href="{{ asset('assets2/images/favicon.png') }}" />
+
+     <style>
+        .sub-menu,
+        .sub-menu li,
+        .sub-menu li::before,
+        .sub-menu li::after {
+            list-style: none !important;
+            content: none !important;
+            margin: 0 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -183,7 +194,7 @@
                         <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
                     <div class="collapse" id="tables3">
-                        <ul class="nav flex-column sub-menu ps-4"
+                        <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center" href="{{ route('user.viewwallet') }}">
@@ -210,7 +221,7 @@
                         <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
                     <div class="collapse" id="tables4">
-                        <ul class="nav flex-column sub-menu ps-4"
+                        <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center" href="{{ route('user.stock.form') }}">
@@ -242,7 +253,7 @@
                         <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
                     <div class="collapse" id="tables1">
-                        <ul class="nav flex-column sub-menu ps-4"
+                        <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
                             <li class="nav-item"><a class="nav-link d-flex align-items-center"
                                     href="{{ route('user.commissions.level1') }}">
@@ -286,7 +297,7 @@
                         <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
                     <div class="collapse" id="tables2">
-                        <ul class="nav flex-column sub-menu ps-4"
+                        <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center" href="/English-Geokranti.com.pdf"

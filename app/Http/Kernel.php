@@ -49,14 +49,5 @@ class Kernel extends HttpKernel
         'no.cache' => \App\Http\Middleware\NoCache::class,
         'password.age' => \App\Http\Middleware\PasswordAgeCheck::class,
     ];
-
-    protected $commands = [
-        CheckRewardsForAllUsers::class,
-        DistributePackageProfits::class,
-    ];
-
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('profits:distribute-monthly')->monthlyOn(1, '00:00'); // Run on 1st of every month
-    }
+    
 }

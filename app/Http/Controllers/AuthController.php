@@ -213,7 +213,7 @@ class AuthController extends Controller
 
         $treeHtml = $this->renderTreeHtml($user, $tree);
 
-        return view('user.viewuser', compact('user', 'treeHtml'));
+        return view('user.network.viewuser', compact('user', 'treeHtml'));
     }
 
     private function buildTree($ulid)

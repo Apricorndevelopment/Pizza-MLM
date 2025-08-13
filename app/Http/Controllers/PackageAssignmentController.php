@@ -73,17 +73,23 @@ class PackageAssignmentController extends Controller
      public function viewUserPackage()
     {
         $userId = Auth::id();
-        $packageTransaction = PackageTransaction::where('user_id', $userId)
-            ->latest()
-            ->first();
-            // dd($packageTransaction);
-        
+       
         // Get all package transactions for this user with package details
         $packages = Package2Purchase::with(['package2','rateDetail'])
             ->where('user_id', $userId)
             ->latest()
             ->get();
             
-        return view('user.packages', compact('packages', 'packageTransaction'));
+        return view('user.packages', compact('packages'));
+    }
+
+    public function viewActivationPackage()
+    {
+        $userId = Auth::id();
+        $package = PackageTransaction::where('user_id', $userId)
+            ->latest()
+            ->first();
+            // dd($packageTransaction);
+            return view('user.activation-package', compact('package'));
     }
 }

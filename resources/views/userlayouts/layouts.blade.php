@@ -155,10 +155,37 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('user.view') }}">
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables5"
+                        aria-expanded="false" aria-controls="tables5">
                         <i class="fa fa-sitemap menu-icon me-3"></i>
-                        <span class="menu-title">Network Explorer</span>
+                        <span class="menu-title flex-grow-1">Network</span>
+                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
+                    <div class="collapse" id="tables5">
+                        <ul class="nav flex-column sub-menu ps-3"
+                            style="border-left: 2px solid #4b49ac; list-style: none;">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('user.view.userTree') }}">
+                                    <i class="fa fa-sitemap me-2" style="font-size: 0.8rem;"></i>
+                                    <span>Network Explorer</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('user.network.summary') }}">
+                                    <i class="fa fa-network-wired me-2" style="font-size: 0.8rem;"></i>
+                                    <span>Network Summary</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('user.direct.team') }}">
+                                    <i class="fas fa-users me-2" style="font-size: 0.8rem;"></i>
+                                    <span>Direct Team</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li class="nav-item">
@@ -183,6 +210,13 @@
                     <a class="nav-link d-flex align-items-center" href="{{ route('user.packages') }}">
                         <i class="fas fa-box-open menu-icon me-3"></i>
                         <span class="menu-title">My Packages</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('user.activation.package') }}">
+                        <i class="fas fa-box-open menu-icon me-3"></i>
+                        <span class="menu-title">Activation Package</span>
                     </a>
                 </li>
 

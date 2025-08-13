@@ -64,7 +64,6 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['auth', 'password.age'])->group(function () {
-        // User dashboard routes
 
         // Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
         Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
@@ -78,8 +77,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/update', [UserController::class, 'update'])->name('user.profile.update');
 
     Route::post('/purchase-package', [UserController::class, 'purchasePackage'])->name('user.purchase-package');
-    Route::get('/my-packages', [PackageAssignmentController::class, 'viewUserPackage'])->name('user.packages');
-    Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view');
+    Route::get('/user/my-packages', [PackageAssignmentController::class, 'viewUserPackage'])->name('user.packages');
+    Route::get('/user/activation-package', [PackageAssignmentController::class, 'viewActivationPackage'])->name('user.activation.package');
+    Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view.userTree');
+    Route::get('/user/network-summary', [ContactController::class, 'networkSummary'])->name('user.network.summary');
+    Route::get('/user/direct-team',[ContactController::class, 'directTeam'])->name('user.direct.team');
 
     Route::get('/user/commissions/level1', [UserController::class, 'level1Commissions'])->name('user.commissions.level1');
     Route::get('/user/commissions/level2', [UserController::class, 'level2Commissions'])->name('user.commissions.level2');

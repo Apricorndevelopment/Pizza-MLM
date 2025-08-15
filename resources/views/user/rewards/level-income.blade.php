@@ -45,7 +45,7 @@
                                             @endif
                                         </span>
                                     </td>
-                                    <td class="p-2 p-md-3">{{ $income->from_user_name }}</td>
+                                    <td class="p-2 p-md-3">{{ $income->from_user_name }}({{ $income->from_user_ulid }})</td>
                                     <td class="p-2 p-md-3">{{ $income->package_name ?? 'N/A' }}</td>
                                     <td class="p-2 p-md-3">₹{{ number_format($income->purchase_amount, 2) }}</td>
                                     <td class="p-2 p-md-3">{{ $income->rate ? $income->rate . '%' : 'N/A' }} </td>

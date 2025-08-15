@@ -177,12 +177,7 @@
                                             <span class="fw-medium">Package Quantity:</span>
                                             <span class="fw-bold">{{ $firstPackage->package_quantity }}</span>
                                         </div>
-                                        @if ($firstPackage->discount_per)
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <span class="fw-medium">Discount Coupon:</span>
-                                                <span class="fw-bold">{{ $firstPackage->discount_per }}%</span>
-                                            </div>
-                                        @endif
+                                      
                                         <hr>
                                         <p class="small text-muted">To activate your account, you need to purchase this
                                             starter package.</p>

@@ -81,12 +81,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/activation-package', [PackageAssignmentController::class, 'viewActivationPackage'])->name('user.activation.package');
     Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view.userTree');
     Route::get('/user/network-summary', [ContactController::class, 'networkSummary'])->name('user.network.summary');
-    Route::get('/user/direct-team',[ContactController::class, 'directTeam'])->name('user.direct.team');
+    Route::get('/user/direct-team', [ContactController::class, 'directTeam'])->name('user.direct.team');
 
     Route::get('/user/commissions/level1', [UserController::class, 'level1Commissions'])->name('user.commissions.level1');
     Route::get('/user/commissions/level2', [UserController::class, 'level2Commissions'])->name('user.commissions.level2');
     Route::get('/user/reports/level-income', [UserController::class, 'levelIncomeReport'])->name('user.reports.level-income');
+
     Route::get('/user/user-rewards/{ulid}', [UserController::class, 'showUserRankRewards'])->name('user.rewards.rankRewards');
+    Route::post('/user/reward/claim/{id}', [UserController::class, 'claimReward'])->name('user.rank.claimReward');
+    Route::post('/user/reward/reject/{id}', [UserController::class, 'rejectReward'])->name('user.rank.rejectReward');
+
     Route::get('/user/my-yearly-profits', [UserController::class, 'showUserYearlyProfits'])->name('user.yearly.profits');
     Route::get('/user/my-monthly-profits', [UserController::class, 'showUserMonthlyProfits'])->name('user.monthly.profits');
 

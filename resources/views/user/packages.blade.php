@@ -93,8 +93,8 @@
                                     <th>Price</th>
                                     <th>Rate</th>
                                     <th>Time</th>
-                                    <th>Capital</th>
-                                    <th>Profit Share</th>
+                                    {{-- <th>Capital</th>
+                                    <th>Profit Share</th> --}}
                                     <th>Purchase Date</th>
                                 </tr>
                             </thead>
@@ -109,8 +109,6 @@
                                         <td>₹{{ number_format($transaction->final_price, 2) }}</td>
                                         <td>{{ $transaction->rate }}%</td>
                                         <td>{{ $transaction->time ?? '0' }} years</td>
-                                        <td>{{ $transaction->capital ?? '0' }}%</td>
-                                        <td>{{ $transaction->profit_share == 1 ? 'Yes' : 'No' }}</td>
                                         <td>{{ $transaction->purchased_at }}</td>
                                     </tr>
                                     <?php
@@ -125,3 +123,5 @@
     </div>
 
 @endsection
+
+

@@ -47,13 +47,16 @@
                 </div>
 
                 <!-- Rewards Table -->
+                <!-- Rewards Table -->
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th width="35%">Rank</th>
-                                <th width="30%">Reward Amount</th>
-                                <th width="35%">Date Awarded</th>
+                                <th width="25%">Rank</th>
+                                <th width="20%">Reward Amount</th>
+                                <th width="20%">Date Awarded</th>
+                                <th width="15%">Status</th>
+                                <th width="20%">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,18 +65,50 @@
                                     <td>{{ $reward['rank'] }}</td>
                                     <td class="fw-bold">₹{{ number_format($reward['amount'], 2) }}</td>
                                     <td>{{ $reward['date'] }}</td>
+                                    <td>
+                                        @if ($reward['status'] == 1)
+                                            <span class="badge bg-success">Claimed</span>
+                                        @elseif($reward['status'] == 2)
+                                            <span class="badge bg-danger">Rejected</span>
+                                        @else
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($reward['status'] == 0)
+                                            <form action="{{ route('user.rank.claimReward', $reward['id']) }}" method="POST"
+                                                style="display:inline-block;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check"></i> Claim
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('user.rank.rejectReward', $reward['id']) }}" method="POST"
+                                                style="display:inline-block;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-times"></i> Reject
+                                                </button>
+                                            </form>
+                                        @elseif($reward['status'] == 1)
+                                            <span class="text-success fw-bold">Claimed</span>
+                                        @elseif($reward['status'] == 2)
+                                            <span class="text-danger fw-bold">Rejected</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center py-4">
+                                    <td colspan="5" class="text-center py-4">
                                         <i class="fas fa-gift fa-2x text-muted mb-2"></i>
-                                        <p class="h5 text-muted">No rewards received yet</p>
+                                        <p class="h5 text-muted">No rewards yet</p>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
     </div>

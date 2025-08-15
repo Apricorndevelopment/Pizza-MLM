@@ -16,7 +16,9 @@ use App\Models\Package2Purchase;
 use App\Models\PackageMonthlyDistribution;
 use App\Models\PackageTransaction;
 use App\Models\PointsTransaction;
+use App\Models\RoyaltyRewardsIncome;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -182,7 +184,7 @@ class UserController extends Controller
             return back()->with('error', 'Insufficient balance to purchase this package');
         }
 
-        $couponCode = 'GEO' . $user->id . 'PQ' . $package->package_quantity ;
+        $couponCode = 'GEO' . $user->id . 'PQ' . $package->package_quantity;
         // dd($user->id);
         PackageTransaction::create([
             'user_id' => $user->id,
@@ -218,9 +220,9 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('user.dashboard')->with([
-        'success' => 'Package purchased successfully!',
-        'coupon_code' => $couponCode // Pass coupon code to show in success message
-    ]);
+            'success' => 'Package purchased successfully!',
+            'coupon_code' => $couponCode // Pass coupon code to show in success message
+        ]);
     }
 
 
@@ -309,25 +311,28 @@ class UserController extends Controller
         if ($user->parent_id) {
             $parent = User::where('ulid', $user->parent_id)->first();
             if ($parent && $parent->status == 'active') {
-                $hasParent = true;
-                $commission = $amount * 0.03;
-                $parent->increment('points_balance', $commission);
+                // Check if parent is eligible (has purchases and within 3 months)
+                if ($this->isUserEligibleForCommission($parent)) {
+                    $hasParent = true;
+                    $commission = $amount * 0.03;
+                    $parent->increment('points_balance', $commission);
 
-                Commission::create([
-                    'user_id' => $parent->id,
-                    'from_ulid' => $user->ulid,
-                    'from_name' => $user->name,
-                    'purchase_amount' => $amount,
-                    'commission' => $commission,
-                    'level' => 1
-                ]);
+                    Commission::create([
+                        'user_id' => $parent->id,
+                        'from_ulid' => $user->ulid,
+                        'from_name' => $user->name,
+                        'purchase_amount' => $amount,
+                        'commission' => $commission,
+                        'level' => 1
+                    ]);
+                }
             }
         }
 
         // Process sponsor levels only if no active parent exists
         if (!$hasParent && $user->sponsor_id) {
             $sponsorL1 = User::where('ulid', $user->sponsor_id)->first();
-            if ($sponsorL1 && $sponsorL1->status == 'active') {
+            if ($sponsorL1 && $sponsorL1->status == 'active' && $this->isUserEligibleForCommission($sponsorL1)) {
                 $commissionL1 = $amount * 0.03;
                 $sponsorL1->increment('points_balance', $commissionL1);
                 Commission::create([
@@ -341,14 +346,17 @@ class UserController extends Controller
             }
         }
 
-        // Process L2 commission regardless of parent/L1 status
+        // Process L2 commission with additional conditions
         if ($user->sponsor_id) {
             $sponsorL1 = User::where('ulid', $user->sponsor_id)->first();
             if ($sponsorL1 && $sponsorL1->sponsor_id) {
                 $sponsorL2 = User::where('ulid', $sponsorL1->sponsor_id)->first();
-                if ($sponsorL2) {
-                    $downlineCount = User::where('sponsor_id', $sponsorL2->ulid)->where('status','active')->count();
-                    if ($downlineCount >= 2 && $sponsorL2->status == 'active') {
+                if ($sponsorL2 && $this->hasPurchasedPackage($sponsorL2)) {
+                    $downlineCount = User::where('sponsor_id', $sponsorL2->ulid)
+                        ->where('status', 'active')
+                        ->count();
+
+                    if ($downlineCount >= 2 && $sponsorL2->status == 'active' && $this->isUserEligibleForCommission($sponsorL2)) {
                         $commissionL2 = $amount * 0.01;
                         $sponsorL2->increment('points_balance', $commissionL2);
                         Commission::create([
@@ -361,12 +369,15 @@ class UserController extends Controller
                         ]);
                     }
 
-                    // Process L3 commission
+                    // Process L3 commission with additional conditions
                     if ($sponsorL2->sponsor_id) {
                         $sponsorL3 = User::where('ulid', $sponsorL2->sponsor_id)->first();
-                        if ($sponsorL3) {
-                            $downlineCountL2 = User::where('sponsor_id', $sponsorL3->ulid)->where('status','active')->count();
-                            if ($downlineCountL2 >= 3 && $sponsorL3->status == 'active') {
+                        if ($sponsorL3 && $this->hasPurchasedPackage($sponsorL3)) {
+                            $downlineCountL2 = User::where('sponsor_id', $sponsorL3->ulid)
+                                ->where('status', 'active')
+                                ->count();
+
+                            if ($downlineCountL2 >= 3 && $sponsorL3->status == 'active' && $this->isUserEligibleForCommission($sponsorL3)) {
                                 $commissionL3 = $amount * 0.01;
                                 $sponsorL3->increment('points_balance', $commissionL3);
                                 Commission::create([
@@ -385,113 +396,51 @@ class UserController extends Controller
         }
     }
 
-    // protected function processLevelIncome($user, $amount, $package)
-    // {
-    //     $currentLevel = 1;
-    //     $currentUser = $user;
+    // Helper function to check if user has made any package purchase
+    protected function hasPurchasedPackage($user)
+    {
+        return DB::table('package2_purchases')
+            ->where('user_id', $user->id)
+            ->exists();
+    }
 
-    //     while ($currentUser->sponsor_id && $currentLevel <= 50) {
-    //         $sponsor = User::where('ulid', $currentUser->sponsor_id)->first();
-    //         if (!$sponsor) break;
+    // Helper function to check commission eligibility
+    protected function isUserEligibleForCommission($user)
+    {
+        // Check if user is within first 3 months
+        if (empty($user->user_doa)) {
+            return false;
+        }
 
-    //         // Determine percentage and rank requirement based on level
-    //         $percentage = 0;
-    //         $eligible = true; // Default to eligible
+        // Check if 3 months have passed since activation
+        $threeMonthsLater = Carbon::parse($user->user_doa)->addMonths(3);
+        if (now()->gt($threeMonthsLater)) {
+            return false;
+        }
 
-    //         if ($currentLevel == 1) {
-    //             $percentage = 10.00;
-    //             // No rank requirement for level 1
-    //         }
-    //         elseif ($currentLevel >= 2 && $currentLevel <= 10) {
-    //             $percentage = 5.00;
-    //             $eligible = ($sponsor->current_rank == 'Farmer');
-    //         }
-    //         elseif ($currentLevel >= 11 && $currentLevel <= 15) {
-    //             $percentage = 3.00;
-    //             $eligible = ($sponsor->current_rank == 'Silver Farmer');
-    //         }
-    //         elseif ($currentLevel >= 16 && $currentLevel <= 20) {
-    //             $percentage = 1.00;
-    //             $eligible = ($sponsor->current_rank == 'Gold Farmer');
-    //         }
-    //         elseif ($currentLevel >= 21 && $currentLevel <= 25) {
-    //             $percentage = 0.50;
-    //             $eligible = ($sponsor->current_rank == 'Platinum Farmer');
-    //         }
-    //         elseif ($currentLevel >= 26 && $currentLevel <= 30) {
-    //             $percentage = 0.25;
-    //             $eligible = ($sponsor->current_rank == 'Ruby Farmer');
-    //         }
-    //         elseif ($currentLevel >= 31 && $currentLevel <= 35) {
-    //             $percentage = 0.25;
-    //             $eligible = ($sponsor->current_rank == 'Sapphire Farmer');
-    //         }
-    //         elseif ($currentLevel >= 36 && $currentLevel <= 40) {
-    //             $percentage = 0.25;
-    //             $eligible = ($sponsor->current_rank == 'Diamond Farmer');
-    //         }
-    //         elseif ($currentLevel >= 41 && $currentLevel <= 45) {
-    //             $percentage = 0.25;
-    //             $eligible = ($sponsor->current_rank == 'Blue Diamond Farmer');
-    //         }
-    //         elseif ($currentLevel >= 46 && $currentLevel <= 50) {
-    //             $percentage = 0.25;
-    //             $eligible = ($sponsor->current_rank == 'Black Diamond Farmer');
-    //         }
+        // Check if user has received less than 10,000 in total commissions
+        $totalCommissions = Commission::where('user_id', $user->id)
+            ->sum('commission');
 
-    //         if ($percentage > 0 && $eligible) {
-    //             $incomeAmount = $amount * ($percentage / 100);
-
-    //             // Add to user's balance
-    //             $sponsor->increment('points_balance', $incomeAmount);
-
-    //             // Record in level income table
-    //             LevelIncome::create([
-    //                 'user_id' => $sponsor->id,
-    //                 'user_ulid' => $sponsor->ulid,
-    //                 'from_user_id' => $user->id,
-    //                 'from_user_ulid' => $user->ulid,
-    //                 'from_user_name' => $user->name,
-    //                 'purchase_amount' => $amount,
-    //                 'level' => $currentLevel,
-    //                 'percentage' => $percentage,
-    //                 'amount' => $incomeAmount,
-    //                 'package_id' => $package->id ?? null,
-    //                 'package_name' => $package->package_name ?? null,
-    //             ]);
-    //         }
-
-    //         $currentUser = $sponsor;
-    //         $currentLevel++;
-    //     }
-    // }
+        return $totalCommissions < 10000;
+    }
 
 
     //Calculating the rank of the user based on the total business volume
     public function checkAndRewardUser($userUlid)
     {
-        // dd($userUlid);
-        // Get direct sponsored users (legs)
         $directLegs = User::where('sponsor_id', $userUlid)->get();
 
         $legsBusiness = [];
-
         foreach ($directLegs as $leg) {
             $legsBusiness[$leg->ulid] = $this->getTotalBusiness($leg->ulid);
         }
 
-        if (empty($legsBusiness)) {
-            return; // No legs, nothing to do
-        }
-        // Find Strong Leg
+        if (empty($legsBusiness)) return;
+
         $strongLegUlid = array_search(max($legsBusiness), $legsBusiness);
         $strongLegBusiness = $legsBusiness[$strongLegUlid];
-        // dd($legsBusiness, $strongLegUlid, $strongLegBusiness);
-
-        // Sum of Weaker Legs
         $weakerLegsBusiness = array_sum($legsBusiness) - $strongLegBusiness;
-
-        // Matching Business (Weaker leg business used for matching)
         $matchingBusiness = $weakerLegsBusiness;
 
         $leftBusiness = 0;
@@ -501,66 +450,69 @@ class UserController extends Controller
             $leftBusiness = $strongLegBusiness;
             $rightBusiness = $weakerLegsBusiness;
         } elseif ($directLegs->count() == 1) {
-            // Agar sirf ek leg hai to aap default left ya right maan sakte ho
             $leftBusiness = $legsBusiness[$directLegs[0]->ulid] ?? 0;
         }
 
         $user = User::where('ulid', $userUlid)->first();
-
-
         $user->update([
             'left_business' => $leftBusiness,
             'right_business' => $rightBusiness,
         ]);
 
-        // Define Rewards
-        // $rewards = [
-        //     250000 => ['rank' => 'Farmer', 'reward' => 5000],
-        //     750000 => ['rank' => 'Silver Farmer', 'reward' => 10000],
-        //     1750000 => ['rank' => 'Gold Farmer', 'reward' => 20000],
-        // ];
-        // dd($directLegs->count(), $matchingBusiness, $weakerLegsBusiness, $strongLegBusiness, $userUlid);
         $rewards = DB::table('royalty_level_rewards')
             ->orderBy('sr_no')
             ->get();
 
-        $user = User::where('ulid', $userUlid)->first();
+        $givenRewards = RoyaltyRewardsIncome::where('user_id', $user->id)
+            ->orderBy('id')
+            ->get();
 
-        $givenRewards = PointsTransaction::where('user_id', $user->id)
-            ->where('notes', 'like', 'Rank Reward:%')
-            ->pluck('notes')
-            ->map(function ($note) {
-                return trim(str_replace('Rank Reward:', '', $note));
-            })
-            ->toArray();
+        $totalRequiredBusiness = 0;
+        $highestAchievedRank = $user->current_rank;
+        $lastClaimedBusiness = 0;
 
         foreach ($rewards as $reward) {
             $requiredBusiness = $this->convertMatchingToNumber($reward->matching);
-            // Check if user qualifies and hasn't received this reward yet
-            if (
-                $matchingBusiness >= $requiredBusiness &&
-                $strongLegBusiness >= $requiredBusiness &&
-                !in_array($reward->level, $givenRewards)
-            ) {
 
-                // Award this rank
-                $user->update(['current_rank' => $reward->level]);
+            // Check if we have any record of this reward (regardless of status)
+            $existingReward = $givenRewards->where('rank', $reward->level)->first();
 
-                PointsTransaction::create([
-                    'user_id' => $user->id,
+            if ($existingReward) {
+                if ($existingReward->status == 1) {
+                    // If claimed, add to our cumulative total
+                    $lastClaimedBusiness = $requiredBusiness;
+                    $totalRequiredBusiness = $lastClaimedBusiness;
+                }
+                continue;
+            }
+
+            // Calculate required business based on last CLAIMED reward
+            $totalRequiredBusiness = $lastClaimedBusiness + $requiredBusiness;
+
+            // Check qualification
+            if ($matchingBusiness >= $totalRequiredBusiness && $strongLegBusiness >= $totalRequiredBusiness) {
+                RoyaltyRewardsIncome::create([
+                    'user_id'   => $user->id,
                     'user_ulid' => $user->ulid,
-                    'points' => $this->convertMatchingToNumber($reward->reward),
-                    'notes' => 'Rank Reward: ' . $reward->level,
-                    'admin_id' => null
+                    'points'    => $this->convertMatchingToNumber($reward->reward),
+                    'rank'      => $reward->level,
+                    'status'    => 0 // Pending claim
                 ]);
 
-                $user->increment('points_balance', $this->convertMatchingToNumber($reward->reward));
-
-                // Add to given rewards to prevent duplicate awards
-                $givenRewards[] = $reward->level;
+                $highestAchievedRank = $reward->level;
+                $givenRewards->push((object)[
+                    'rank' => $reward->level,
+                    'status' => 0
+                ]);
             }
         }
+
+        // Update user's rank
+        if ($user->current_rank != $highestAchievedRank) {
+            $user->update(['current_rank' => $highestAchievedRank]);
+        }
     }
+
 
     public function convertMatchingToNumber($value)
     {
@@ -664,16 +616,17 @@ class UserController extends Controller
     {
         $user = User::where('ulid', $ulid)->firstOrFail();
 
-        // Get all rank rewards received by user
-        $rewards = PointsTransaction::where('user_id', $user->id)
-            ->where('notes', 'like', 'Rank Reward:%')
+        // Fetch rewards from RoyaltyRewardsIncome table
+        $rewards = RoyaltyRewardsIncome::where('user_id', $user->id)
             ->orderBy('created_at', 'asc')
             ->get()
-            ->map(function ($transaction) {
+            ->map(function ($reward) {
                 return [
-                    'rank' => str_replace('Rank Reward: ', '', $transaction->notes),
-                    'amount' => $transaction->points,
-                    'date' => $transaction->created_at->format('d M Y'),
+                    'id'     => $reward->id,
+                    'rank'   => $reward->rank,
+                    'amount' => $reward->points,
+                    'status' => $reward->status,
+                    'date'   => $reward->created_at->format('d M Y'),
                 ];
             });
 
@@ -687,6 +640,31 @@ class UserController extends Controller
 
         return view('user.rewards.rankRewards', compact('user', 'rewards', 'currentRank', 'allRanks'));
     }
+
+    // Claim reward
+    public function claimReward($id)
+    {
+        $reward = RoyaltyRewardsIncome::findOrFail($id);
+        $reward->status = 1;
+        $reward->save();
+
+        // Optional: Add points to user balance
+        $user = User::find($reward->user_id);
+        $user->increment('points_balance', $reward->points);
+
+        return redirect()->back()->with('success', 'Reward claimed successfully.');
+    }
+
+    // Reject reward
+    public function rejectReward($id)
+    {
+        $reward = RoyaltyRewardsIncome::findOrFail($id);
+        $reward->status = 2; // Rejected
+        $reward->save();
+
+        return redirect()->back()->with('success', 'Reward rejected.');
+    }
+
 
     public function showUserYearlyProfits()
     {

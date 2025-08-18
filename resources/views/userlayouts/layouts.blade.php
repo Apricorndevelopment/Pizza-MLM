@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Geo Kranti Admin</title>
+    <title>Geo Kranti User</title>
     <link rel="stylesheet" href="{{ asset('assets2/vendors/feather/feather.css') }}">
     <link rel="stylesheet" href="{{ asset('assets2/vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets2/vendors/css/vendor.bundle.base.css') }}">
@@ -20,7 +20,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
     <link rel="shortcut icon" href="{{ asset('assets2/images/favicon.png') }}" />
 
-     <style>
+    <style>
         .sub-menu,
         .sub-menu li,
         .sub-menu li::before,
@@ -29,6 +29,38 @@
             content: none !important;
             margin: 0 !important;
         }
+
+        .breadcrumb-wrapper {
+            padding: 0;
+        }
+
+        .breadcrumb {
+            padding: 0.1rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+            padding: 0 0.3rem;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #2a288a;
+            text-decoration: underline;
+        }
+
+        .breadcrumb-item.active {
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .content-wrapper {
+            padding: 1.5rem 1.7rem;
+            width: 100%;
+            flex-grow: 1;
+        }
     </style>
 </head>
 
@@ -36,7 +68,8 @@
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
 
-        <div class="text-center navbar-brand-wrapper ps-0 ps-sm-1 ps-xl-2 d-flex align-items-center justify-content-start">
+        <div
+            class="text-center navbar-brand-wrapper ps-0 ps-sm-1 ps-xl-2 d-flex align-items-center justify-content-start">
             <a class="navbar-brand brand-logo me-5 d-flex align-items-center" href="">
                 <img src="{{ asset('geokrantilogo.jpg') }}" alt="logo"
                     style="width: 55px; height: 55px; object-fit: cover;" class="me-2" />
@@ -165,7 +198,8 @@
                         <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.view.userTree') }}">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('user.view.userTree') }}">
                                     <i class="fa fa-sitemap me-2" style="font-size: 0.8rem;"></i>
                                     <span>Network Explorer</span>
                                 </a>
@@ -178,8 +212,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.direct.team') }}">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('user.direct.team') }}">
                                     <i class="fas fa-users me-2" style="font-size: 0.8rem;"></i>
                                     <span>Direct Team</span>
                                 </a>
@@ -216,7 +249,7 @@
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="{{ route('user.activation.package') }}">
                         <i class="fas fa-box-open menu-icon me-3"></i>
-                        <span class="menu-title">Activation Package</span>
+                        <span class="menu-title">Shopping Card</span>
                     </a>
                 </li>
 
@@ -240,7 +273,7 @@
                                 <a class="nav-link d-flex align-items-center"
                                     href="{{ route('user.transferPointsForm') }}">
                                     <i class="fa fa-exchange-alt me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Transfer Points</span>
+                                    <span>Transfer Wallet</span>
                                 </a>
                             </li>
                         </ul>
@@ -264,7 +297,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.stock.coupon-transfer') }}">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('user.stock.coupon-transfer') }}">
                                     <i class="fas fa-truck-moving me-2" style="font-size: 0.8rem;"></i>
                                     <span>Coupon Stock Transfer</span>
                                 </a>
@@ -353,14 +387,35 @@
             </ul>
         </nav>
 
-        {{-- <section class="main-content"> --}}
-        {{-- <div class="section__content"> --}}
+        <!-- Breadcrumb -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="row mb-0">
+                    <div class="col-12">
+                        <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ route('user.dashboard') }}"><i
+                                            class="fas fa-home"></i> Home</a></li>
+                                @isset($breadcrumbs)
+                                    @foreach ($breadcrumbs as $breadcrumb)
+                                        @if ($loop->last)
+                                            <li class="breadcrumb-item active" aria-current="page">
+                                                {{ $breadcrumb['title'] }}</li>
+                                        @else
+                                            <li class="breadcrumb-item"><a
+                                                    href="{{ route($breadcrumb['url'] ?? '#') }}">{{ $breadcrumb['title'] }}</a>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                @endisset
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
 
-        @section('container') @show
-
-        {{-- </div>
-        </section> --}}
-    </div>
+                @section('container') @show
+            </div>
+        </div>
 
     </div>
     <script src="{{ asset('assets2/vendors/js/vendor.bundle.base.js') }}"></script>
@@ -384,6 +439,43 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
     @stack('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector(
+            '.navbar-toggler[data-toggle="offcanvas"]'); // Adjust if you use a different selector
+
+            function closeSidebar() {
+                sidebar.classList.remove('active'); // Replace 'active' if your show class is different
+                // Also hide via Bootstrap if using collapse
+                if (sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            }
+
+            // Toggle on menu button
+            menuBtn.addEventListener("click", function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('show');
+            });
+
+            // Detect click outside
+            document.addEventListener("click", function(event) {
+                if (
+                    sidebar.classList.contains('show') && // Only if sidebar is open
+                    !sidebar.contains(event.target) && // Click is not inside sidebar
+                    event.target !== menuBtn // Click is not menu button itself
+                ) {
+                    closeSidebar();
+                }
+            });
+
+            // Optional: Prevent sidebar click from propagating to document
+            sidebar.addEventListener("click", function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
 
 </body>
 

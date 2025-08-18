@@ -19,7 +19,7 @@
 
                     <div class="row mb-4">
                         <div class="col-md-8">
-                            <label for="couponCode" class="form-label">Enter Coupon Code</label>
+                            <label for="couponCode" class="form-label">Geokranti Shopping Card Number</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="couponCode" name="coupon_code"
                                     placeholder="Example: GEO1PQ5KG" required>

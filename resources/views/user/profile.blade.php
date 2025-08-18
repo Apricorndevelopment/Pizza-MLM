@@ -1,7 +1,7 @@
 @extends('userlayouts.layouts')
 @section('title', 'Dashboard')
 @section('container')
-    <div class="container py-5">
+    <div class="container py-3">
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="card shadow-lg">

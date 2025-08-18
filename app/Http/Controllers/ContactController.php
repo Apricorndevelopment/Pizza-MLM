@@ -31,6 +31,12 @@ class ContactController extends Controller
 
     public function networkSummary()
     {
+
+        $breadcrumbs = [
+            ['title' => 'Network', 'url' => '#'],
+            ['title' => 'Network Summary', 'url' => route('user.network.summary')]
+        ];
+
         $authUser = Auth::user();
 
         // Get all downline users (flat array)
@@ -41,7 +47,7 @@ class ContactController extends Controller
             $user->level = $this->calculateLevel($authUser->ulid, $user->ulid);
         }
 
-        return view('user.network.summary', compact('downlineUsers'));
+        return view('user.network.summary', compact('downlineUsers','breadcrumbs'));
     }
 
     // Recursively get all users below a given ULID.
@@ -81,6 +87,11 @@ class ContactController extends Controller
         // Direct team = users whose sponsor_id is current user's ULID
         $directTeam = User::where('sponsor_id', $authUser->ulid)->get();
 
-        return view('user.network.direct-team', compact('directTeam'));
+         $breadcrumbs = [
+            ['title' => 'Network', 'url' => '#'],
+            ['title' => 'Direct Team', 'url' => route('user.direct.team')]
+        ];
+
+        return view('user.network.direct-team', compact('directTeam','breadcrumbs'));
     }
 }

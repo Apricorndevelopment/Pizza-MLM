@@ -79,9 +79,8 @@ class AuthController extends Controller
                 'confirmed',
                 'regex:/[!@#$%^&*(),.?":{}|<>]/',
             ],
-            'sponsor_id' => 'required|string|max:50',
-            'parent_id' => 'nullable|string|max:50',
-
+            'sponsor_id' => 'required|string|max:50|exists:users,ulid',
+            'parent_id' => 'nullable|string|max:50|exists:users,ulid',
         ], [
             'password.regex' => 'Please use a strong password with at least one special character.',
         ]);
@@ -213,7 +212,12 @@ class AuthController extends Controller
 
         $treeHtml = $this->renderTreeHtml($user, $tree);
 
-        return view('user.network.viewuser', compact('user', 'treeHtml'));
+         $breadcrumbs = [
+            ['title' => 'Network', 'url' => '#'],
+            ['title' => 'Network Explorer', 'url' => route('user.view.userTree')]
+        ];
+
+        return view('user.network.viewuser', compact('user', 'treeHtml','breadcrumbs'));
     }
 
     private function buildTree($ulid)

@@ -13,6 +13,7 @@ use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -47,7 +48,7 @@ class AdminController extends Controller
         $userCount = User::count();
         $businessCount = Package2Purchase::sum('final_price');
 
-        return view('admin.dashboard', compact('package1Count', 'package2Count', 'userCount','businessCount'));
+        return view('admin.dashboard', compact('package1Count', 'package2Count', 'userCount', 'businessCount'));
     }
 
     public function logout(Request $request)
@@ -78,6 +79,44 @@ class AdminController extends Controller
         return view('admin.profiles.edit-profile', ['user' => $user]);
     }
 
+    // public function update(Request $request)
+    // {
+    //     $authUser = Auth::user();
+    //     $user = Admin::find($authUser->id);
+
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+    //         'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //         // Password validation rules
+    //         'current_password' => 'nullable|required_with:password|string|min:8',
+    //         'password' => 'nullable|string|min:8|confirmed|different:current_password',
+    //     ]);
+
+    //     $user->name = $validated['name'];
+    //     $user->email = $validated['email'];
+
+    //     if ($request->hasFile('profile_picture')) {
+    //         if ($user->profile_picture) {
+    //             Storage::delete('public/' . $user->profile_picture);
+    //         }
+    //         $path = $request->file('profile_picture')->store('profile-pictures', 'public');
+    //         $user->profile_picture = $path;
+    //     }
+
+    //     if ($request->filled('current_password')) {
+    //         if (!Hash::check($request->current_password, $user->password)) {
+    //             return back()->withErrors(['current_password' => 'The current password is incorrect']);
+    //         }
+
+    //         $user->password = Hash::make($validated['password']);
+    //     }
+
+    //     $user->save();
+
+    //     return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
+    // }
+
     public function update(Request $request)
     {
         $authUser = Auth::user();
@@ -87,7 +126,6 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            // Password validation rules
             'current_password' => 'nullable|required_with:password|string|min:8',
             'password' => 'nullable|string|min:8|confirmed|different:current_password',
         ]);
@@ -95,12 +133,42 @@ class AdminController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
+        // if ($request->hasFile('profile_picture')) {
+        //     if ($user->profile_picture) {
+        //         Storage::delete('public/' . $user->profile_picture);
+        //     }
+        //     $path = $request->file('profile_picture')->store('profile-pictures', 'public');
+        //     $user->profile_picture = $path;
+        // }
+
+
+
         if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if exists
             if ($user->profile_picture) {
                 Storage::delete('public/' . $user->profile_picture);
             }
-            $path = $request->file('profile_picture')->store('profile-pictures', 'public');
-            $user->profile_picture = $path;
+
+            // Define the directory path
+            $directory = 'storage/profile-pictures';
+
+            // Create the directory if it doesn't exist
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Get the file and extension
+            $file = $request->file('profile_picture');
+            $extension = $file->getClientOriginalExtension();
+
+            // Create a unique filename
+            $filename = uniqid() . '.' . $extension;
+
+            // Move the file to the directory
+            $file->move($directory, $filename);
+
+            // Save the relative path to the database
+            $user->profile_picture = 'profile-pictures/' . $filename;
         }
 
         if ($request->filled('current_password')) {
@@ -115,7 +183,6 @@ class AdminController extends Controller
 
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
     }
-
 
     public function viewmemeber()
     {
@@ -141,7 +208,7 @@ class AdminController extends Controller
         ]);
 
         $member->update($request->all());
-        return redirect()->route('admin.members.viewmember')->with('success', 'Member updated successfully');
+        return redirect()->route('admin.viewmember')->with('success', 'Member updated successfully');
     }
 
     public function viewMemberDetails($id)
@@ -152,10 +219,32 @@ class AdminController extends Controller
 
     public function deleteMember($id)
     {
-        $member = User::findOrFail($id);
+        DB::beginTransaction();
+        try {
+            $member = User::findOrFail($id);
+            // Delete from all related tables
+            DB::table('level_incomes')->where('user_id', $member->id)->delete();
+            DB::table('loyalty_transactions')->where('user_id', $member->id)->delete();
+            DB::table('package2_purchases')->where('user_id', $member->id)->delete();
+            DB::table('package_monthly_distributions')->where('user_id', $member->id)->delete();
+            DB::table('package_transactions')->where('user_id', $member->id)->delete();
+            DB::table('points_transactions')->where('user_id', $member->id)->delete();
 
-        $member->delete();
-        return redirect()->route('admin.viewmember')->with('success', 'Member deleted successfully');
+            // Update any reference fields
+            User::where('sponsor_id', $member->ulid)->update(['sponsor_id' => null]);
+            User::where('parent_id', $member->ulid)->update(['parent_id' => null]);
+
+            // Finally delete the user
+            $member->forceDelete();
+
+            DB::commit();
+
+            return redirect()->route('admin.viewmember')->with('success', 'Member deleted successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Delete failed: ' . $e->getMessage());
+        }
     }
 
     public function showFormForProfitDistribution()

@@ -18,11 +18,13 @@
                                 <div class="col-md-4 text-center">
                                     <!-- Simplified Profile Picture Upload -->
                                     <div class="mb-3">
-                                        @if($user->profile_picture)
-                                            <img src="{{ asset('storage/' . $user->profile_picture) }}"
+
+                                        @if ($user->profile_picture)
+                                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
                                                 class="profile-pic rounded-circle mb-2" id="profile-pic-preview">
                                         @else
-                                            <div class="profile-pic-placeholder rounded-circle mb-2" id="profile-pic-preview">
+                                            <div class="profile-pic-placeholder rounded-circle mb-2"
+                                                id="profile-pic-preview">
                                                 <i class="fa fa-user-circle fa-5x text-secondary"></i>
                                             </div>
                                         @endif
@@ -78,7 +80,8 @@
 
                                     <div class="mb-3">
                                         <label class="form-label">New Password</label>
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror p-2"
+                                        <input type="password"
+                                            class="form-control @error('password') is-invalid @enderror p-2"
                                             name="password">
                                         @error('password')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -134,25 +137,27 @@
             position: absolute;
             opacity: 0;
         }
+
         .card-header.bg-light {
-    background-color: #f8f9fa !important;
-    border-bottom: 1px solid #dee2e6;
-}
+            background-color: #f8f9fa !important;
+            border-bottom: 1px solid #dee2e6;
+        }
     </style>
 
     <script>
         // Simple image preview for profile picture
-        document.getElementById('profile_picture').addEventListener('change', function (e) {
+        document.getElementById('profile_picture').addEventListener('change', function(e) {
             const preview = document.getElementById('profile-pic-preview');
             const file = e.target.files[0];
 
             if (file) {
                 const reader = new FileReader();
 
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     if (preview.classList.contains('profile-pic-placeholder')) {
                         // Replace placeholder with image
-                        preview.outerHTML = `<img src="${e.target.result}" class="profile-pic rounded-circle mb-2" id="profile-pic-preview">`;
+                        preview.outerHTML =
+                            `<img src="${e.target.result}" class="profile-pic rounded-circle mb-2" id="profile-pic-preview">`;
                     } else {
                         // Update existing image
                         preview.src = e.target.result;

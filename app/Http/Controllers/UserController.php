@@ -26,8 +26,11 @@ class UserController extends Controller
 {
     public function dashboard()
     {
+        $breadcrumbs = [
+            ['title' => 'Dashboard', 'url' => route('user.dashboard')]
+        ];
         $packages = Package1::all();
-        return view('user.dashboard', compact('packages'));
+        return view('user.dashboard', compact('packages','breadcrumbs'));
     }
 
     public function profile()
@@ -46,13 +49,22 @@ class UserController extends Controller
             }
         }
 
-        return view('user.profile', compact('user', 'showPasswordReminder'));
+         $breadcrumbs = [
+            ['title' => 'Profile', 'url' => 'user.profile']
+        ];
+
+        return view('user.profile', compact('user', 'showPasswordReminder','breadcrumbs'));
     }
 
     public function edit()
     {
         $user = Auth::user();
-        return view('user.edit-profile', ['user' => $user]);
+         $breadcrumbs = [
+              ['title' => 'Profile', 'url' => 'user.profile'],
+            ['title' => 'Edit Profile', 'url' => route('user.profile.edit')]
+        ];
+
+        return view('user.edit-profile', ['user' => $user,'breadcrumbs' => $breadcrumbs]);
     }
 
 
@@ -459,6 +471,15 @@ class UserController extends Controller
             'right_business' => $rightBusiness,
         ]);
 
+        // Process rewards for current user
+        $this->processUserRewards($user, $matchingBusiness, $strongLegBusiness);
+
+        // Update business and ranks for all upline parents
+        $this->updateUplineBusinessAndRanks($user);
+    }
+
+    protected function processUserRewards($user, $matchingBusiness, $strongLegBusiness)
+    {
         $rewards = DB::table('royalty_level_rewards')
             ->orderBy('sr_no')
             ->get();
@@ -474,29 +495,25 @@ class UserController extends Controller
         foreach ($rewards as $reward) {
             $requiredBusiness = $this->convertMatchingToNumber($reward->matching);
 
-            // Check if we have any record of this reward (regardless of status)
             $existingReward = $givenRewards->where('rank', $reward->level)->first();
 
             if ($existingReward) {
                 if ($existingReward->status == 1) {
-                    // If claimed, add to our cumulative total
                     $lastClaimedBusiness = $requiredBusiness;
                     $totalRequiredBusiness = $lastClaimedBusiness;
                 }
                 continue;
             }
 
-            // Calculate required business based on last CLAIMED reward
             $totalRequiredBusiness = $lastClaimedBusiness + $requiredBusiness;
 
-            // Check qualification
             if ($matchingBusiness >= $totalRequiredBusiness && $strongLegBusiness >= $totalRequiredBusiness) {
                 RoyaltyRewardsIncome::create([
                     'user_id'   => $user->id,
                     'user_ulid' => $user->ulid,
                     'points'    => $this->convertMatchingToNumber($reward->reward),
                     'rank'      => $reward->level,
-                    'status'    => 0 // Pending claim
+                    'status'    => 0
                 ]);
 
                 $highestAchievedRank = $reward->level;
@@ -507,9 +524,56 @@ class UserController extends Controller
             }
         }
 
-        // Update user's rank
         if ($user->current_rank != $highestAchievedRank) {
             $user->update(['current_rank' => $highestAchievedRank]);
+        }
+    }
+
+    protected function updateUplineBusinessAndRanks(User $user)
+    {
+        $currentUser = $user;
+        $processedUsers = [];
+
+        // Traverse up the sponsorship tree
+        while ($currentUser->sponsor_id && !in_array($currentUser->sponsor_id, $processedUsers)) {
+            $sponsor = User::where('ulid', $currentUser->sponsor_id)->first();
+            if (!$sponsor) break;
+
+            // Get all direct legs of the sponsor
+            $directLegs = User::where('sponsor_id', $sponsor->ulid)->get();
+
+            $legsBusiness = [];
+            foreach ($directLegs as $leg) {
+                $legsBusiness[$leg->ulid] = $this->getTotalBusiness($leg->ulid);
+            }
+
+            if (!empty($legsBusiness)) {
+                $strongLegUlid = array_search(max($legsBusiness), $legsBusiness);
+                $strongLegBusiness = $legsBusiness[$strongLegUlid];
+                $weakerLegsBusiness = array_sum($legsBusiness) - $strongLegBusiness;
+                $matchingBusiness = $weakerLegsBusiness;
+
+                $leftBusiness = 0;
+                $rightBusiness = 0;
+
+                if ($directLegs->count() >= 2) {
+                    $leftBusiness = $strongLegBusiness;
+                    $rightBusiness = $weakerLegsBusiness;
+                } elseif ($directLegs->count() == 1) {
+                    $leftBusiness = $legsBusiness[$directLegs[0]->ulid] ?? 0;
+                }
+
+                $sponsor->update([
+                    'left_business' => $leftBusiness,
+                    'right_business' => $rightBusiness,
+                ]);
+
+                // Process rewards for each upline sponsor
+                $this->processUserRewards($sponsor, $matchingBusiness, $strongLegBusiness);
+            }
+
+            $processedUsers[] = $sponsor->ulid;
+            $currentUser = $sponsor;
         }
     }
 

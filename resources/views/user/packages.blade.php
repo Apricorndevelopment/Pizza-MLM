@@ -93,8 +93,6 @@
                                     <th>Price</th>
                                     <th>Rate</th>
                                     <th>Time</th>
-                                    {{-- <th>Capital</th>
-                                    <th>Profit Share</th> --}}
                                     <th>Purchase Date</th>
                                 </tr>
                             </thead>
@@ -109,7 +107,7 @@
                                         <td>₹{{ number_format($transaction->final_price, 2) }}</td>
                                         <td>{{ $transaction->rate }}%</td>
                                         <td>{{ $transaction->time ?? '0' }} years</td>
-                                        <td>{{ $transaction->purchased_at }}</td>
+                                        <td>{{ $transaction->created_at->format('d M Y, h:i A') }}</td>
                                     </tr>
                                     <?php
                                     $index++; ?>

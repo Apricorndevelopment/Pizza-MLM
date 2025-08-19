@@ -79,44 +79,6 @@ class AdminController extends Controller
         return view('admin.profiles.edit-profile', ['user' => $user]);
     }
 
-    // public function update(Request $request)
-    // {
-    //     $authUser = Auth::user();
-    //     $user = Admin::find($authUser->id);
-
-    //     $validated = $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-    //         'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    //         // Password validation rules
-    //         'current_password' => 'nullable|required_with:password|string|min:8',
-    //         'password' => 'nullable|string|min:8|confirmed|different:current_password',
-    //     ]);
-
-    //     $user->name = $validated['name'];
-    //     $user->email = $validated['email'];
-
-    //     if ($request->hasFile('profile_picture')) {
-    //         if ($user->profile_picture) {
-    //             Storage::delete('public/' . $user->profile_picture);
-    //         }
-    //         $path = $request->file('profile_picture')->store('profile-pictures', 'public');
-    //         $user->profile_picture = $path;
-    //     }
-
-    //     if ($request->filled('current_password')) {
-    //         if (!Hash::check($request->current_password, $user->password)) {
-    //             return back()->withErrors(['current_password' => 'The current password is incorrect']);
-    //         }
-
-    //         $user->password = Hash::make($validated['password']);
-    //     }
-
-    //     $user->save();
-
-    //     return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
-    // }
-
     public function update(Request $request)
     {
         $authUser = Auth::user();
@@ -126,23 +88,30 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'current_password' => 'nullable|required_with:password|string|min:8',
-            'password' => 'nullable|string|min:8|confirmed|different:current_password',
+            'current_password' => [
+                'nullable',
+                'required_with:password,password_confirmation',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (!Hash::check($value, $user->password)) {
+                        $fail('The current password is incorrect.');
+                    }
+                }
+            ],
+            'password' => [
+                'nullable',
+                'required_with:current_password',
+                'confirmed',
+                'min:8',
+                'different:current_password',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/'
+            ],
+            'password_confirmation' => 'required_with:password'
         ]);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
-        // if ($request->hasFile('profile_picture')) {
-        //     if ($user->profile_picture) {
-        //         Storage::delete('public/' . $user->profile_picture);
-        //     }
-        //     $path = $request->file('profile_picture')->store('profile-pictures', 'public');
-        //     $user->profile_picture = $path;
-        // }
-
-
-
+    
         if ($request->hasFile('profile_picture')) {
             // Delete old profile picture if exists
             if ($user->profile_picture) {
@@ -172,10 +141,7 @@ class AdminController extends Controller
         }
 
         if ($request->filled('current_password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
-                return back()->withErrors(['current_password' => 'The current password is incorrect']);
-            }
-
+           
             $user->password = Hash::make($validated['password']);
         }
 

@@ -26,11 +26,23 @@ class UserController extends Controller
 {
     public function dashboard()
     {
+        $referralCommission = Commission::where('user_id', Auth::id())
+            ->where('level', 1)
+            ->sum('commission');
+
+        $networkCommission = Commission::where('user_id', Auth::id())
+            ->whereIn('level', [2, 3])
+            ->sum('commission');
+
+        $monthlyIncome = PackageMonthlyDistribution::with(['user', 'packagePurchase'])
+            ->where('user_id', Auth::id())
+            ->sum('distributed_amount');
+
         $breadcrumbs = [
             ['title' => 'Dashboard', 'url' => route('user.dashboard')]
         ];
         $packages = Package1::all();
-        return view('user.dashboard', compact('packages','breadcrumbs'));
+        return view('user.dashboard', compact('packages', 'breadcrumbs', 'referralCommission', 'networkCommission', 'monthlyIncome'));
     }
 
     public function profile()
@@ -49,22 +61,22 @@ class UserController extends Controller
             }
         }
 
-         $breadcrumbs = [
-            ['title' => 'Profile', 'url' => 'user.profile']
+        $breadcrumbs = [
+            ['title' => 'Profile', 'url' => route('user.profile')]
         ];
 
-        return view('user.profile', compact('user', 'showPasswordReminder','breadcrumbs'));
+        return view('user.profile', compact('user', 'showPasswordReminder', 'breadcrumbs'));
     }
 
     public function edit()
     {
         $user = Auth::user();
-         $breadcrumbs = [
-              ['title' => 'Profile', 'url' => 'user.profile'],
+        $breadcrumbs = [
+            ['title' => 'Profile', 'url' => route('user.profile')],
             ['title' => 'Edit Profile', 'url' => route('user.profile.edit')]
         ];
 
-        return view('user.edit-profile', ['user' => $user,'breadcrumbs' => $breadcrumbs]);
+        return view('user.edit-profile', ['user' => $user, 'breadcrumbs' => $breadcrumbs]);
     }
 
 
@@ -74,6 +86,7 @@ class UserController extends Controller
         $user = User::find($authUser->id);
 
         $validated = $request->validate([
+            // Basic Information
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
@@ -81,34 +94,90 @@ class UserController extends Controller
             'state' => 'nullable|string|max:100',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 
-            'adhar_no' => 'nullable|string|min:12|max:12',
-            'pan_no' => 'nullable|string|min:10|max:10',
+            // KYC Documents
+            'adhar_no' => [
+                'nullable',
+                'string',
+                'min:12',
+                'max:12',
+                function ($attribute, $value, $fail) {
+                    if ($value && !preg_match('/^\d{12}$/', $value)) {
+                        $fail('Aadhaar number must be exactly 12 digits.');
+                    }
+                }
+            ],
+            'pan_no' => [
+                'nullable',
+                'string',
+                'min:10',
+                'max:10',
+                function ($attribute, $value, $fail) {
+                    if ($value && !preg_match('/^[A-Z]{5}\d{4}[A-Z]$/', $value)) {
+                        $fail('PAN number must be in valid format (e.g., ABCDE1234F).');
+                    }
+                }
+            ],
             'adhar_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'pan_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
 
+            // Nominee Information
             'nom_name' => 'nullable|string|max:255',
             'nom_relation' => 'nullable|string|max:100',
 
+            // Bank Information
             'bank_name' => 'nullable|string|max:100',
             'account_no' => 'nullable|string|min:6|max:100',
-            'ifsc_code' => 'nullable|string|min:4|max:100',
+            'ifsc_code' => [
+                'nullable',
+                'string',
+                'min:4',
+                'max:100',
+                function ($attribute, $value, $fail) {
+                    if ($value && !preg_match('/^[A-Z]{4}0[A-Z0-9]{6}$/', $value)) {
+                        $fail('IFSC code must be in valid format (e.g., ABCD0123456).');
+                    }
+                }
+            ],
             'upi_id' => 'nullable|string|max:100',
             'passbook_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'current_password' => 'nullable|required_with:password|string|min:8',
+
+            // Password Change
+            'current_password' => [
+                'nullable',
+                'required_with:password',
+                'string',
+                'min:8',
+                function ($attribute, $value, $fail) use ($user) {
+                    if ($value && !Hash::check($value, $user->password)) {
+                        $fail('The current password is incorrect.');
+                    }
+                }
+            ],
             'password' => [
                 'nullable',
+                'required_with:current_password',
                 'string',
                 'min:8',
                 'confirmed',
                 'different:current_password',
-                'regex:/[!@#$%^&*(),.?":{}|<>]/',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).+$/'
             ],
         ], [
-            'password.regex' => 'Password must contain at least one special character.',
-            'adhar_no.min' => 'Aadhaar number must be 12 digits',
-            'pan_no.min' => 'PAN number must be 10 characters',
+            // Custom Error Messages
+            'name.required' => 'Full name is required',
+            'email.required' => 'Email address is required',
+            'email.unique' => 'This email is already taken',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.confirmed' => 'Password confirmation does not match',
+            'password.different' => 'New password must be different from current password',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character',
+            'adhar_no.min' => 'Aadhaar number must be exactly 12 digits',
+            'pan_no.min' => 'PAN number must be exactly 10 characters',
+            'profile_picture.max' => 'Profile picture must be less than 2MB',
+            'adhar_photo.max' => 'Aadhaar photo must be less than 2MB',
+            'pan_photo.max' => 'PAN photo must be less than 2MB',
+            'passbook_photo.max' => 'Passbook photo must be less than 2MB',
         ]);
-
         // Update basic fields
         $user->fill([
             'name' => $validated['name'],
@@ -244,7 +313,11 @@ class UserController extends Controller
     public function showPurchaseForm()
     {
         $packages = Package2::with('details')->get();
-        return view('user.package2-purchase', compact('packages'));
+        $breadcrumbs = [
+            ['title' => 'Package', 'url' => route('package2.purchase')],
+            ['title' => 'Buy Package', 'url' => route('package2.purchase')]
+        ];
+        return view('user.package2-purchase', compact('packages', 'breadcrumbs'));
     }
 
     public function processPurchase(Request $request)
@@ -268,6 +341,9 @@ class UserController extends Controller
 
         DB::beginTransaction();
         try {
+            $invoiceNumber = $this->getNextInvoiceNumber();
+            $bedNumber = $this->getNextBedNumber();
+            // dd($invoiceNumber);
             // Create package purchase record
             $purchase = Package2Purchase::create([
                 'user_id' => $user->id,
@@ -281,6 +357,8 @@ class UserController extends Controller
                 'time' => $rateDetail->time,
                 'profit_share' => $rateDetail->profit_share,
                 'final_price' => $finalPrice,
+                'invoice_no' => $invoiceNumber,
+                'bed_no' => $bedNumber,
                 'purchased_at' => now(),
             ]);
 
@@ -314,6 +392,40 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Failed to process your request: ' . $e->getMessage());
         }
     }
+
+    private function getNextInvoiceNumber()
+    {
+        $datePart = now()->format('Ymd');
+        $prefix = "INV-{$datePart}-";
+        $last = Package2Purchase::where('invoice_no', 'like', "{$prefix}%")
+            ->orderBy('invoice_no', 'desc')
+            ->first();
+
+        if (!$last) {
+            $nextNumber = 1;
+        } else {
+            $lastNumber = intval(substr($last->invoice_no, -5));
+            $nextNumber = $lastNumber + 1;
+        }
+        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
+    private function getNextBedNumber()
+    {
+        $datePart = now()->format('Ymd');
+        $prefix = "GEOBED-{$datePart}-";
+        $last = Package2Purchase::where('bed_no', 'like', "{$prefix}%")
+            ->orderBy('bed_no', 'desc')
+            ->first();
+
+        if (!$last) {
+            $nextNumber = 1;
+        } else {
+            $lastNumber = intval(substr($last->bed_no, -5));
+            $nextNumber = $lastNumber + 1;
+        }
+        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
+
 
     protected function processSponsorCommissions($user, $amount, $package)
     {
@@ -637,7 +749,12 @@ class UserController extends Controller
             ->take(10)
             ->get();
 
-        return view('user.viewwallet', compact('points', 'loyalty', 'pointsTransactions', 'loyaltyTransactions', 'withdrawals'));
+        $breadcrumbs = [
+            ['title' => 'Wallet', 'url' => route('user.viewwallet')],
+            ['title' => 'Manage Wallet', 'url' => route('user.viewwallet')]
+        ];
+
+        return view('user.viewwallet', compact('points', 'loyalty', 'pointsTransactions', 'loyaltyTransactions', 'withdrawals', 'breadcrumbs'));
     }
 
     public function level1Commissions()
@@ -648,7 +765,12 @@ class UserController extends Controller
             ->take(10)
             ->get();
 
-        return view('user.rewards.directcommission', compact('commissions'));
+        $breadcrumbs = [
+            ['title' => 'Incentives', 'url' => route('user.commissions.level1')],
+            ['title' => 'Direct Commissions', 'url' => route('user.commissions.level1')]
+        ];
+
+        return view('user.rewards.directcommission', compact('commissions', 'breadcrumbs'));
     }
 
     public function level2Commissions()
@@ -659,7 +781,12 @@ class UserController extends Controller
             ->take(10)
             ->get();
 
-        return view('user.rewards.networkcommission', compact('commissions'));
+        $breadcrumbs = [
+            ['title' => 'Incentives', 'url' => route('user.commissions.level2')],
+            ['title' => 'Network Bonus', 'url' => route('user.commissions.level2')]
+        ];
+
+        return view('user.rewards.networkcommission', compact('commissions', 'breadcrumbs'));
     }
 
     public function levelIncomeReport()
@@ -673,7 +800,12 @@ class UserController extends Controller
 
         $totalRecords = LevelIncome::where('user_id', Auth::id())->count();
 
-        return view('user.rewards.level-income', compact('incomes', 'totalIncome', 'totalRecords'));
+        $breadcrumbs = [
+            ['title' => 'Incentives', 'url' => route('user.reports.level-income')],
+            ['title' => 'Passive Income', 'url' => route('user.reports.level-income')]
+        ];
+
+        return view('user.rewards.level-income', compact('incomes', 'totalIncome', 'totalRecords', 'breadcrumbs'));
     }
 
     public function showUserRankRewards($ulid)
@@ -702,7 +834,12 @@ class UserController extends Controller
             ->pluck('level')
             ->toArray();
 
-        return view('user.rewards.rankRewards', compact('user', 'rewards', 'currentRank', 'allRanks'));
+        $breadcrumbs = [
+            ['title' => 'Incentives', 'url' => route('user.rewards.rankRewards', $user->ulid)],
+            ['title' => 'Reward Income', 'url' => route('user.rewards.rankRewards', $user->ulid)]
+        ];
+
+        return view('user.rewards.rankRewards', compact('user', 'rewards', 'currentRank', 'allRanks', 'breadcrumbs'));
     }
 
     // Claim reward
@@ -761,7 +898,11 @@ class UserController extends Controller
             ->where('profit_share', 1)
             ->get();
 
-        return view('user.rewards.yearlyProfits', compact('user', 'allProfits', 'eligiblePackages'));
+        $breadcrumbs = [
+            ['title' => 'Incentives', 'url' => route('user.yearly.profits')],
+            ['title' => 'Royalty Income', 'url' => route('user.yearly.profits')]
+        ];
+        return view('user.rewards.yearlyProfits', compact('user', 'allProfits', 'eligiblePackages', 'breadcrumbs'));
     }
 
     public function showUserMonthlyProfits()
@@ -772,7 +913,10 @@ class UserController extends Controller
             ->orderBy('distribution_date', 'desc')
             ->paginate(10);
 
-
-        return view('user.rewards.view-monthlyProfits', compact('distributions'));
+        $breadcrumbs = [
+            ['title' => 'Package', 'url' => route('user.monthly.profits')],
+            ['title' => 'Monthly Income', 'url' => route('user.monthly.profits')]
+        ];
+        return view('user.rewards.view-monthlyProfits', compact('distributions', 'breadcrumbs'));
     }
 }

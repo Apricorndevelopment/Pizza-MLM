@@ -167,5 +167,23 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', function(e) {
+                const currentPass = form.querySelector('[name="current_password"]').value;
+                const newPass = form.querySelector('[name="password"]').value;
+                const confirmPass = form.querySelector('[name="password_confirmation"]').value;
+
+                if (currentPass && (!newPass || !confirmPass)) {
+                    e.preventDefault();
+                    alert('Please fill both new password and confirmation fields');
+                } else if (newPass !== confirmPass) {
+                    e.preventDefault();
+                    alert('New password and confirmation do not match');
+                }
+            });
+        });
     </script>
 @endsection

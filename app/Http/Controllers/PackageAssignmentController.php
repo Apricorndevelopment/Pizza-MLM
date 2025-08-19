@@ -79,8 +79,13 @@ class PackageAssignmentController extends Controller
             ->where('user_id', $userId)
             ->latest()
             ->get();
+
+             $breadcrumbs = [
+            ['title' => 'Package', 'url' => route('user.packages')],
+            ['title' => 'Invoices', 'url' => route('user.packages')]
+        ];
             
-        return view('user.packages', compact('packages'));
+        return view('user.packages', compact('packages','breadcrumbs'));
     }
 
     public function viewActivationPackage()
@@ -89,7 +94,10 @@ class PackageAssignmentController extends Controller
         $package = PackageTransaction::where('user_id', $userId)
             ->latest()
             ->first();
-            // dd($packageTransaction);
-            return view('user.activation-package', compact('package'));
+            
+             $breadcrumbs = [
+            ['title' => 'Shopping Card', 'url' => route('user.activation.package')],
+        ];
+        return view('user.activation-package', compact('package','breadcrumbs'));
     }
 }

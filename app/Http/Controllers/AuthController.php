@@ -213,7 +213,7 @@ class AuthController extends Controller
         $treeHtml = $this->renderTreeHtml($user, $tree);
 
          $breadcrumbs = [
-            ['title' => 'Network', 'url' => '#'],
+            ['title' => 'Network', 'url' => route('user.view.userTree')],
             ['title' => 'Network Explorer', 'url' => route('user.view.userTree')]
         ];
 

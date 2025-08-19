@@ -19,7 +19,9 @@ class Package2Purchase extends Model
         'time',
         'profit_share',
         'final_price',
-        'purchased_at'
+        'purchased_at',
+        'invoice_no',
+        'bed_no',
     ];
 
     protected $casts = [

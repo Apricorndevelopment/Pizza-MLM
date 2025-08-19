@@ -33,7 +33,7 @@ class ContactController extends Controller
     {
 
         $breadcrumbs = [
-            ['title' => 'Network', 'url' => '#'],
+            ['title' => 'Network', 'url' => route('user.network.summary')],
             ['title' => 'Network Summary', 'url' => route('user.network.summary')]
         ];
 
@@ -88,7 +88,7 @@ class ContactController extends Controller
         $directTeam = User::where('sponsor_id', $authUser->ulid)->get();
 
          $breadcrumbs = [
-            ['title' => 'Network', 'url' => '#'],
+            ['title' => 'Network', 'url' => route('user.view.userTree')],
             ['title' => 'Direct Team', 'url' => route('user.direct.team')]
         ];
 

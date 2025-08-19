@@ -2,6 +2,14 @@
 @section('title', 'Dashboard')
 @section('container')
     <style>
+        :root {
+            --power-leg-gradient: linear-gradient(135deg, #00c9ff, #92fe9d);
+            --weaker-leg-gradient: linear-gradient(135deg, #f093fb, #f5576c);
+            --referral-gradient: linear-gradient(135deg, #4facfe, #00f2fe);
+            --network-gradient: linear-gradient(135deg, #fa709a, #fee140);
+            --monthly-gradient: linear-gradient(135deg, #a8edea, #fed6e3);
+        }
+
         .card-tale {
             background: linear-gradient(135deg, #a29bfe, #6c5ce7);
             color: white;
@@ -92,6 +100,129 @@
         .custom-card .small {
             opacity: 0.8;
         }
+
+        .dashboard-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            color: #fff;
+            position: relative;
+            height: 100%;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transition: height 0.5s ease;
+            z-index: 1;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .dashboard-card:hover::before {
+            height: 100%;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            padding: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card-divider {
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            margin: 12px 0;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover .card-divider {
+            opacity: 1;
+            transform: scaleX(1.05);
+        }
+
+        .card-description {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-bottom: 0;
+        }
+
+        .power-leg-card {
+            background: var(--power-leg-gradient);
+        }
+
+        .weaker-leg-card {
+            background: var(--weaker-leg-gradient);
+        }
+
+        .referral-card {
+            background: var(--referral-gradient);
+        }
+
+        .network-card {
+            background: var(--network-gradient);
+        }
+
+        .monthly-card {
+            background: var(--monthly-gradient);
+            color: #333;
+        }
+
+        .monthly-card .card-divider {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .monthly-card .card-description {
+            color: #444;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-subtitle {
+            color: #6c757d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
     </style>
 
     <div class="container-fluid py-4">
@@ -177,7 +308,7 @@
                                             <span class="fw-medium">Package Quantity:</span>
                                             <span class="fw-bold">{{ $firstPackage->package_quantity }}</span>
                                         </div>
-                                      
+
                                         <hr>
                                         <p class="small text-muted">To activate your account, you need to purchase this
                                             starter package.</p>
@@ -253,48 +384,104 @@
             }
         @endphp
 
-        <div class="row">
-            <!-- Power Leg Points Card -->
-            <div class="col-md-6 mb-4">
-                <div class="card border-0 shadow-sm"
-                    style="background: linear-gradient(135deg, #00c9ff, #92fe9d); color: #fff; border-radius: 16px;">
-                    <div class="card-body">
-                        <p class="mb-1 fs-6 text-uppercase fw-semibold">Power Leg Points</p>
-                        <h2 class="fw-bold mb-1">{{ formatInLakhsCrores(Auth::user()->left_business) }}</h2>
-                        <hr class="opacity-100 my-2" style="border-color: rgba(255,255,255,0.4      );">
-                        <p class="mb-0 small opacity-75">Your stronger leg’s accumulated business volume</p>
-                    </div>
-                </div>
+        <div class="container">
+            <div class="dashboard-header">
+                <p class="dashboard-subtitle">Track your earnings, network growth, and business performance metrics</p>
             </div>
 
-            <!-- Weaker Leg Points Card -->
-            <div class="col-md-6 mb-4">
-                <div class="card border-0 shadow-sm"
-                    style="background: linear-gradient(135deg, #f093fb, #f5576c); color: #fff; border-radius: 16px;">
-                    <div class="card-body">
-                        <p class="mb-1 fs-6 text-uppercase fw-semibold">Weaker Leg Points</p>
-                        <h2 class="fw-bold mb-1">{{ formatInLakhsCrores(Auth::user()->right_business) }}</h2>
-                        <hr class="opacity-50 my-2" style="border-color: rgba(255,255,255,0.4);">
-                        <p class="mb-0 small opacity-75">Your weaker leg's total business volume</p>
+            <div class="row">
+                <!-- Power Leg Points Card -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card power-leg-card shadow-sm">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <p class="card-title">Power Leg Points</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->left_business) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Your stronger leg's accumulated business volume</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        {{-- <div class="row">
-            <div class="col-sm-6 col-xl-4 mx-auto">
-                <div class="card border-0 shadow-sm overflow-hidden">
-                    <div class="card-body p-0">
-                        <img src="images/geokranti.jpg" class="img-fluid w-100"
-                            style="max-height: 450px; object-fit: cover;" alt="GeoKranti">
-                        <div class="p-3 bg-light text-center">
-                            <h5 class="fw-bold mb-0">GeoKranti - Empowering Your Journey</h5>
+                <!-- Weaker Leg Points Card -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card weaker-leg-card shadow-sm">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <p class="card-title">Weaker Leg Points</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->right_business) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Your weaker leg's total business volume</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referral Bonus Card -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card referral-card shadow-sm">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <p class="card-title">Referral Bonus</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores($referralCommission) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Commissions from your referral users</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Bonus Card -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card network-card shadow-sm">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <p class="card-title">Network Bonus</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores($networkCommission) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Commissions from your network users</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Income Card -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card monthly-card shadow-sm">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <p class="card-title">Monthly Income</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores($monthlyIncome) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Monthly based income from purchased packages</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Card for Balance -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card shadow-sm" style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <p class="card-title">Total Balance</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->points_balance) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Your total available balance</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> --}}
-    </div>
+
+        </div>
 
     </div>
 

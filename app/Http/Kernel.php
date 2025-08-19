@@ -28,6 +28,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\PreventBackHistory::class,
             \App\Http\Middleware\PasswordAgeCheck::class,
+            
         ],
 
         'api' => [
@@ -48,6 +49,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'no.cache' => \App\Http\Middleware\NoCache::class,
         'password.age' => \App\Http\Middleware\PasswordAgeCheck::class,
+        'diamond' => \App\Http\Middleware\Diamond::class,
     ];
-    
 }

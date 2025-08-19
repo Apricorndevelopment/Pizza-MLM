@@ -111,7 +111,12 @@ class StockController extends Controller
             ->pluck('product')
             ->filter();
 
-        return view('user.stock.stockTransfer', compact('products'));
+             $breadcrumbs = [
+            ['title' => 'Manage Stock', 'url' => route('user.stock.form')],
+            ['title' => 'Transfer Stock', 'url' => route('user.stock.form')]
+        ];
+
+        return view('user.stock.stockTransfer', compact('products','breadcrumbs'));
     }
 
     public function searchUserInUserSide(Request $request)
@@ -210,7 +215,12 @@ class StockController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('user.stock.stockHistory', compact('transfers'));
+            $breadcrumbs = [
+            ['title' => 'Manage Stock', 'url' => route('user.viewStock')],
+            ['title' => 'View Stock History', 'url' => route('user.viewStock')]
+        ];
+
+        return view('user.stock.stockHistory', compact('transfers','breadcrumbs'));
     }
 
     public function showCouponTransferForm()
@@ -223,7 +233,11 @@ class StockController extends Controller
             ->pluck('product')
             ->filter();
 
-        return view('user.stock.couponStock', compact('products'));
+            $breadcrumbs = [
+            ['title' => 'Manage Stock', 'url' => route('user.stock.coupon-transfer')],
+            ['title' => 'Coupon Stock Transfer', 'url' => route('user.stock.coupon-transfer')]
+        ];
+        return view('user.stock.couponStock', compact('products','breadcrumbs'));
     }
 
     public function validateCoupon(Request $request)
@@ -370,13 +384,18 @@ class StockController extends Controller
         return back()->with('success', 'Stock transferred successfully using coupon');
     }
 
+
+
     public function viewUserStocks()
     {
         $stocks = UserPackageInventory::with('product', 'user')
-            ->where('user_ulid', Auth::user()->ulid)
             ->where('quantity', '>', 0)
             ->get();
 
+             $breadcrumbs = [
+            ['title' => 'Manage Stock', 'url' => route('user.allStocks')],
+            ['title' => 'Coupon Stock Transfer', 'url' => route('user.allStocks')]
+        ];
         return view('user.stock.viewAllStock', compact('stocks'));
     }
 }

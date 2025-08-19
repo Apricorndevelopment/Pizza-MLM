@@ -126,6 +126,7 @@ class WalletController extends Controller
         return redirect()->back()->with('success', 'Loyalty transaction completed successfully.');
     }
 
+    
     // WithdrawalController.php
     public function withdrawPoints(Request $request)
     {
@@ -163,7 +164,7 @@ class WalletController extends Controller
 
     public function viewUserWithdrawals()
     {
-
+        
         return view('user.viewwallet', compact('withdrawals'));
     }
 
@@ -219,7 +220,12 @@ class WalletController extends Controller
         // Get direct downline (level 1)
         $downlineUsers = User::where('sponsor_id', $user->ulid)->get();
 
-        return view('user.transferPoints', compact('user', 'downlineUsers'));
+         $breadcrumbs = [
+            ['title' => 'Wallet', 'url' => route('user.transferPointsForm')],
+            ['title' => 'Transfer Wallet', 'url' => route('user.transferPointsForm')]
+        ];
+
+        return view('user.transferPoints', compact('user', 'downlineUsers','breadcrumbs'));
     }
 
     public function searchDownlineUser(Request $request)

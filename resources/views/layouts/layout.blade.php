@@ -114,7 +114,7 @@
                         $user = Auth::user();
                         ?>
                         @if ($user->profile_picture)
-                            <img src="{{ asset('storage/profile-pictures/' . $user->profile_picture) }}" alt="Profile Picture">
+                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}" alt="Profile Picture">
                         @else
                             <img src="{{ asset('assets2/images/faces/face28.jpg') }}" alt="profile" />
                         @endif

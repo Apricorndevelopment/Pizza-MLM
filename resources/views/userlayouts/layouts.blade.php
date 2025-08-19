@@ -222,28 +222,49 @@
                 </li>
 
                 <li class="nav-item">
-                    @php
-                        $user = Auth::user();
-                    @endphp
-                    @if ($user->status === 'inactive')
-                        <a class="nav-link d-flex align-items-center"
-                            onclick="alert('Please activate your account first to purchase any package.')">
-                            <i class="fas fa-shopping-cart menu-icon me-3"></i>
-                            <span class="menu-title">Purchase Package</span>
-                        </a>
-                    @else
-                        <a class="nav-link d-flex align-items-center" href="{{ route('package2.purchase') }}">
-                            <i class="fas fa-shopping-cart menu-icon me-3"></i>
-                            <span class="menu-title">Purchase Package</span>
-                        </a>
-                    @endif
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('user.packages') }}">
-                        <i class="fas fa-box-open menu-icon me-3"></i>
-                        <span class="menu-title">My Packages</span>
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables6"
+                        aria-expanded="false" aria-controls="tables6">
+                        <i class="fas fa-box menu-icon me-3"></i>
+                        <span class="menu-title flex-grow-1">Package</span>
+                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
+                    <div class="collapse" id="tables6">
+                        <ul class="nav flex-column sub-menu ps-3"
+                            style="border-left: 2px solid #4b49ac; list-style: none;">
+                            <li class="nav-item">
+                                @php
+                                    $user = Auth::user();
+                                @endphp
+                                @if ($user->status === 'inactive')
+                                    <a class="nav-link d-flex align-items-center"
+                                        onclick="alert('Please activate your account first to purchase any package.')">
+                                        <i class="fas fa-shopping-cart menu-icon me-2" style="font-size: 0.8rem;"></i>
+                                        <span class="menu-title">Purchase Package</span>
+                                    </a>
+                                @else
+                                    <a class="nav-link d-flex align-items-center"
+                                        href="{{ route('package2.purchase') }}">
+                                        <i class="fas fa-shopping-cart me-2" style="font-size: 0.8rem;"></i>
+                                        <span class="menu-title">Purchase Package</span>
+                                    </a>
+                                @endif
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('user.packages') }}">
+                                    <i class="fas fa-box-open me-2" style="font-size: 0.8rem;"></i>
+                                    <span class="menu-title">Invoices</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('user.monthly.profits') }}">
+                                    <i class="fas fa-calendar-alt me-2"
+                                        style="font-size: 0.8rem; margin-left:1.5px;"></i>
+                                    <span>Monthly Income</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li class="nav-item">
@@ -290,23 +311,51 @@
                     <div class="collapse" id="tables4">
                         <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
+                            @php
+                                $user = Auth::user();
+                                $eligibleRanks = DB::table('royalty_level_rewards')
+                                    ->whereBetween('sr_no', [7, 13])
+                                    ->pluck('level')
+                                    ->toArray();
+                                $hasAccess = in_array($user->current_rank, $eligibleRanks);
+                            @endphp
+
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.stock.form') }}">
-                                    <i class="fas fa-truck-moving me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Transfer Stock</span>
+                                @if ($hasAccess)
+                                    <a class="nav-link d-flex align-items-center"
+                                        href="{{ route('user.stock.form') }}">
+                                    @else
+                                        <a class="nav-link d-flex align-items-center text-muted" href="#"
+                                            onclick="event.preventDefault(); alert('You must be Diamond Farmer rank or above to access this feature')">
+                                @endif
+                                <i class="fas fa-truck-moving me-2" style="font-size: 0.8rem;"></i>
+                                <span>Transfer Stock</span>
                                 </a>
                             </li>
+
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.stock.coupon-transfer') }}">
-                                    <i class="fas fa-truck-moving me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Coupon Stock Transfer</span>
+                                @if ($hasAccess)
+                                    <a class="nav-link d-flex align-items-center"
+                                        href="{{ route('user.stock.coupon-transfer') }}">
+                                    @else
+                                        <a class="nav-link d-flex align-items-center text-muted" href="#"
+                                            onclick="event.preventDefault(); alert('You must be Diamond Farmer rank or above to access this feature')">
+                                @endif
+                                <i class="fas fa-truck-moving me-2" style="font-size: 0.8rem;"></i>
+                                <span>Coupon Stock Transfer</span>
                                 </a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center" href="{{ route('user.viewStock') }}">
                                     <i class="fas fa-history me-2" style="font-size: 0.8rem;"></i>
                                     <span>View Stock History</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('user.allStocks') }}">
+                                    <i class="fas fa-history me-2" style="font-size: 0.8rem;"></i>
+                                    <span>View Stocks Location</span>
                                 </a>
                             </li>
                         </ul>
@@ -347,11 +396,6 @@
                                     href="{{ route('user.yearly.profits') }}">
                                     <i class="fas fa-crown me-2" style="font-size: 0.8rem;"></i>
                                     <span>Royalty Income</span>
-                                </a></li>
-                            <li class="nav-item"><a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.monthly.profits') }}">
-                                    <i class="fas fa-calendar-alt me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Monthly Income</span>
                                 </a></li>
                         </ul>
                     </div>
@@ -402,8 +446,8 @@
                                             <li class="breadcrumb-item active" aria-current="page">
                                                 {{ $breadcrumb['title'] }}</li>
                                         @else
-                                            <li class="breadcrumb-item"><a
-                                                    href="{{ route($breadcrumb['url'] ?? '#') }}">{{ $breadcrumb['title'] }}</a>
+                                            <li class="breadcrumb-item">
+                                                <a href="{{ $breadcrumb['url'] ?? '#' }}">{{ $breadcrumb['title'] }}</a>
                                             </li>
                                         @endif
                                     @endforeach
@@ -443,7 +487,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             const sidebar = document.getElementById('sidebar');
             const menuBtn = document.querySelector(
-            '.navbar-toggler[data-toggle="offcanvas"]'); // Adjust if you use a different selector
+                '.navbar-toggler[data-toggle="offcanvas"]'); // Adjust if you use a different selector
 
             function closeSidebar() {
                 sidebar.classList.remove('active'); // Replace 'active' if your show class is different

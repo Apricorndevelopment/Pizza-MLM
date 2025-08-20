@@ -14,8 +14,10 @@ class StockTransfer extends Model
         'quantity',
         'from_location',
         'to_location',
+        'sender_balance',
+        'receiver_balance',
         'notes',
-        'status'
+        'status',
     ];
 
     public function sender()

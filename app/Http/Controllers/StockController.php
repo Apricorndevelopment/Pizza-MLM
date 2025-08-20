@@ -58,19 +58,32 @@ class StockController extends Controller
             'location' => 'nullable|string'
         ]);
 
-        // Admin can transfer without checks
+        // Get the receiver's current balance for this product and location
+        $currentInventory = UserPackageInventory::where([
+            'user_ulid' => $request->receiver_ulid,
+            'product_id' => $request->product_id,
+            'location' => $request->location
+        ])->first();
+
+        $currentBalance = $currentInventory ? $currentInventory->quantity : 0;
+        $receiverBalance = $currentBalance + $request->quantity;
+
+        // Create stock transfer record with receiver balance
         StockTransfer::create([
             'sender_type' => 'admin',
             'sender_id' => auth('admin')->id(),
             'receiver_ulid' => $request->receiver_ulid,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
+            'sender_balance' => 0,
+            'receiver_balance' => $receiverBalance, 
             'notes' => $request->notes,
             'from_location' => $request->location,
             'to_location' => $request->location,
             'status' => 'completed'
         ]);
 
+        // Update or create user inventory
         UserPackageInventory::updateOrCreate(
             [
                 'user_ulid' => $request->receiver_ulid,
@@ -81,7 +94,6 @@ class StockController extends Controller
                 'quantity' => DB::raw("quantity + {$request->quantity}")
             ]
         );
-
 
         return back()->with('success', 'Stock transferred successfully');
     }
@@ -111,12 +123,12 @@ class StockController extends Controller
             ->pluck('product')
             ->filter();
 
-             $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Manage Stock', 'url' => route('user.stock.form')],
             ['title' => 'Transfer Stock', 'url' => route('user.stock.form')]
         ];
 
-        return view('user.stock.stockTransfer', compact('products','breadcrumbs'));
+        return view('user.stock.stockTransfer', compact('products', 'breadcrumbs'));
     }
 
     public function searchUserInUserSide(Request $request)
@@ -215,12 +227,12 @@ class StockController extends Controller
             ->latest()
             ->paginate(10);
 
-            $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Manage Stock', 'url' => route('user.viewStock')],
             ['title' => 'View Stock History', 'url' => route('user.viewStock')]
         ];
 
-        return view('user.stock.stockHistory', compact('transfers','breadcrumbs'));
+        return view('user.stock.stockHistory', compact('transfers', 'breadcrumbs'));
     }
 
     public function showCouponTransferForm()
@@ -233,11 +245,11 @@ class StockController extends Controller
             ->pluck('product')
             ->filter();
 
-            $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Manage Stock', 'url' => route('user.stock.coupon-transfer')],
             ['title' => 'Coupon Stock Transfer', 'url' => route('user.stock.coupon-transfer')]
         ];
-        return view('user.stock.couponStock', compact('products','breadcrumbs'));
+        return view('user.stock.couponStock', compact('products', 'breadcrumbs'));
     }
 
     public function validateCoupon(Request $request)
@@ -392,7 +404,7 @@ class StockController extends Controller
             ->where('quantity', '>', 0)
             ->get();
 
-             $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Manage Stock', 'url' => route('user.allStocks')],
             ['title' => 'Coupon Stock Transfer', 'url' => route('user.allStocks')]
         ];

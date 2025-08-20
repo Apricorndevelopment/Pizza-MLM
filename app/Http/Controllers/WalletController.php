@@ -14,20 +14,38 @@ use Illuminate\Support\Facades\DB;
 class WalletController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        // Recent transactions for both tabs
-        // $pointsTransactions = PointsTransaction::with(['user', 'admin'])
-        //                     ->latest()
-        //                     ->take(10)
-        //                     ->get();
+        // Points Transactions with filters
+        $pointsQuery = PointsTransaction::with(['user', 'admin'])
+            ->where('admin_id', 1);
 
-        $pointsTransactions = PointsTransaction::with(['user', 'admin'])
-            ->where('admin_id', 1)
-            ->latest()
-            ->take(10)
-            ->get();
+        // Apply filters if requested
+        if ($request->has('points_ulid') && !empty($request->points_ulid)) {
+            $pointsQuery->whereHas('user', function ($q) use ($request) {
+                $q->where('ulid', 'like', '%' . $request->points_ulid . '%');
+            });
+        }
 
+        if ($request->has('points_type') && !empty($request->points_type)) {
+            if ($request->points_type === 'credit') {
+                $pointsQuery->where('points', '>=', 0);
+            } elseif ($request->points_type === 'debit') {
+                $pointsQuery->where('points', '<', 0);
+            }
+        }
+
+        if ($request->has('points_start_date') && !empty($request->points_start_date)) {
+            $pointsQuery->whereDate('created_at', '>=', $request->points_start_date);
+        }
+
+        if ($request->has('points_end_date') && !empty($request->points_end_date)) {
+            $pointsQuery->whereDate('created_at', '<=', $request->points_end_date);
+        }
+
+        $pointsTransactions = $pointsQuery->latest()->paginate(10, ['*'], 'points_page');
+
+        // Loyalty Transactions (keep your existing logic)
         $loyaltyTransactions = LoyaltyTransaction::with(['user', 'admin'])
             ->latest()
             ->take(10)
@@ -35,7 +53,7 @@ class WalletController extends Controller
 
         return view('admin.wallet.viewwallet', compact('pointsTransactions', 'loyaltyTransactions'));
     }
-
+    
     public function viewAllTransactions(Request $request)
     {
         $query = PointsTransaction::with(['user', 'admin'])
@@ -126,7 +144,7 @@ class WalletController extends Controller
         return redirect()->back()->with('success', 'Loyalty transaction completed successfully.');
     }
 
-    
+
     // WithdrawalController.php
     public function withdrawPoints(Request $request)
     {
@@ -164,7 +182,7 @@ class WalletController extends Controller
 
     public function viewUserWithdrawals()
     {
-        
+
         return view('user.viewwallet', compact('withdrawals'));
     }
 
@@ -178,9 +196,9 @@ class WalletController extends Controller
         $allWithdrawls = MoneyWithdrawl::with('user')
             ->where('status', '!=', 'pending')
             ->latest()
-            ->paginate(10);     
+            ->paginate(10);
 
-        return view('admin.wallet.withdrawl', compact('withdrawals','allWithdrawls'));
+        return view('admin.wallet.withdrawl', compact('withdrawals', 'allWithdrawls'));
     }
 
     public function approveWithdrawlRequest($id)
@@ -220,12 +238,12 @@ class WalletController extends Controller
         // Get direct downline (level 1)
         $downlineUsers = User::where('sponsor_id', $user->ulid)->get();
 
-         $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Wallet', 'url' => route('user.transferPointsForm')],
             ['title' => 'Transfer Wallet', 'url' => route('user.transferPointsForm')]
         ];
 
-        return view('user.transferPoints', compact('user', 'downlineUsers','breadcrumbs'));
+        return view('user.transferPoints', compact('user', 'downlineUsers', 'breadcrumbs'));
     }
 
     public function searchDownlineUser(Request $request)

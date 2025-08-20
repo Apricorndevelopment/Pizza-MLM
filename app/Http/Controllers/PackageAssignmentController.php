@@ -29,7 +29,7 @@ class PackageAssignmentController extends Controller
 
         $packages = Package1::all();
 
-        return view('admin.packagesassign',compact('user' , 'packages') );
+        return view('admin.packagesassign', compact('user', 'packages'));
     }
 
     public function assignPackage(Request $request)
@@ -69,23 +69,35 @@ class PackageAssignmentController extends Controller
 
 
     // For the User's Dashboard
-    
-     public function viewUserPackage()
+
+    public function viewUserPackage()
     {
         $userId = Auth::id();
-       
+
         // Get all package transactions for this user with package details
-        $packages = Package2Purchase::with(['package2','rateDetail'])
+        $packages = Package2Purchase::with(['package2', 'rateDetail'])
             ->where('user_id', $userId)
             ->latest()
             ->get();
 
-             $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Package', 'url' => route('user.packages')],
             ['title' => 'Invoices', 'url' => route('user.packages')]
         ];
-            
-        return view('user.packages', compact('packages','breadcrumbs'));
+
+        return view('user.packages', compact('packages', 'breadcrumbs'));
+    }
+
+    public function showInvoice($id)
+    {
+        $transaction = Package2Purchase::findOrFail($id);
+          $breadcrumbs = [
+            ['title' => 'Package', 'url' => route('user.packages')],
+            ['title' => 'Invoices', 'url' => route('user.packages')],
+            ['title' => 'View Invoice', 'url' => '#' ],
+        ];
+
+        return view('user.viewInvoice', compact('transaction','breadcrumbs'));
     }
 
     public function viewActivationPackage()
@@ -94,10 +106,10 @@ class PackageAssignmentController extends Controller
         $package = PackageTransaction::where('user_id', $userId)
             ->latest()
             ->first();
-            
-             $breadcrumbs = [
+
+        $breadcrumbs = [
             ['title' => 'Shopping Card', 'url' => route('user.activation.package')],
         ];
-        return view('user.activation-package', compact('package','breadcrumbs'));
+        return view('user.activation-package', compact('package', 'breadcrumbs'));
     }
 }

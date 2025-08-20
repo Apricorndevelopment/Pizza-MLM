@@ -212,12 +212,12 @@ class AuthController extends Controller
 
         $treeHtml = $this->renderTreeHtml($user, $tree);
 
-         $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Network', 'url' => route('user.view.userTree')],
             ['title' => 'Network Explorer', 'url' => route('user.view.userTree')]
         ];
 
-        return view('user.network.viewuser', compact('user', 'treeHtml','breadcrumbs'));
+        return view('user.network.viewuser', compact('user', 'treeHtml', 'breadcrumbs'));
     }
 
     private function buildTree($ulid)
@@ -231,41 +231,41 @@ class AuthController extends Controller
         });
     }
 
-   private function renderTreeHtml($user, $children, $isRoot = true)
-{
-    $html = $isRoot ? '<ul class="tree" style="padding-left:10px; margin:0; font-family:Arial, sans-serif;">' : '<ul class="nested" style="padding-left:0px; margin:6px 0 0 8px; border-left:1px solid black;">';
+    private function renderTreeHtml($user, $children, $isRoot = true)
+    {
+        $html = $isRoot ? '<ul class="tree" style="padding-left:10px; margin:0; font-family:Arial, sans-serif;">' : '<ul class="nested" style="padding-left:0px; margin:6px 0 0 8px; border-left:1px dotted black;">';
 
-    $hasChildren = $children->isNotEmpty();
-    $icon = $hasChildren ? '➖' : '―📁';
+        $hasChildren = $children->isNotEmpty();
+        $icon = $hasChildren ? '<span style="border:1.3px solid black;padding:1px;font-size:10px">➖</span> <i class="fa-solid fa-folder-open text-primary"></i>' : '―<i class="fa-solid fa-folder text-primary"></i>';
 
-    $html .= '<li class="my-1 list-unstyled">';
+        $html .= '<li class="my-1 list-unstyled">';
 
-    // Add data-user-ulid attribute for easier selection
-    $html .= '<span class="tree-node small lh-sm d-flex flex-wrap align-items-center" data-user-ulid="'.$user->ulid.'" onclick="toggleNode(this); loadUserDetails(\'' . $user->ulid . '\')">';
+        // Add data-user-ulid attribute for easier selection
+        $html .= '<span class="tree-node small lh-sm d-flex flex-wrap align-items-center" data-user-ulid="' . $user->ulid . '" onclick="toggleNode(this); loadUserDetails(\'' . $user->ulid . '\')">';
 
-    $html .= '<span class="toggle-icon me-1">' . $icon . '</span>';
+        $html .= '<span class="toggle-icon me-1">' . $icon . '</span>';
 
-    $html .= '<span class="node-label fw-medium text-dark">';
-    $html .= $user->name . ' ';
-    $html .= '<span class="text-muted">(' . $user->ulid . ')</span>';
-    $html .= ' | <span class="d-none d-md-inline">Total </span> Team:' . $user->total_team;
-    $html .= '</span>';
+        $html .= '<span class="node-label fw-medium text-dark">';
+        $html .= $user->name . ' ';
+        $html .= '<span class="text-muted">(' . $user->ulid . ')</span>';
+        $html .= ' | <span class="d-none d-md-inline">Total </span> Team:' . $user->total_team;
+        $html .= '</span>';
 
-    $html .= '</span>';
+        $html .= '</span>';
 
-    if ($hasChildren) {
-        $html .= '<ul class="nested">';
-        foreach ($children as $child) {
-            $html .= $this->renderTreeHtml($child, $child->children, false);
+        if ($hasChildren) {
+            $html .= '<ul class="nested">';
+            foreach ($children as $child) {
+                $html .= $this->renderTreeHtml($child, $child->children, false);
+            }
+            $html .= '</ul>';
         }
+
+        $html .= '</li>';
         $html .= '</ul>';
+
+        return $html;
     }
-
-    $html .= '</li>';
-    $html .= '</ul>';
-
-    return $html;
-}
 
     public function getUserDetails($ulid)
     {

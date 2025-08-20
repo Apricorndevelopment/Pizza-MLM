@@ -18,10 +18,9 @@
                             {!! $treeHtml !!}
                         </div>
                         <!-- Right: User Details -->
-                        <div class="col-md-6 mt-3 mt-md-0">
+                        <div class="col-md-6 mt-3 mt-md-0" id="detail_section" style="display:none;">
                             <div class="card shadow-sm h-100">
-                                <div
-                                    class="card-header bg-success text-white py-2 d-flex justify-content-between align-items-center">
+                                <div class="card-header text-white py-2 d-flex justify-content-between align-items-center" style="background-color:#49b3ff ">
                                     <h6 class="mb-0">User Details</h6>
                                     <div class="user-header-info">
                                         <span id="header_name" class="badge bg-light text-dark me-1">No selection</span>
@@ -159,10 +158,10 @@
                 // Update the icon with border
                 if (nested.style.display === "block") {
                     icon.innerHTML =
-                        '<span style="border:1.4px solid black; display:inline-block; padding:1px; border-radius:2px;">➖</span>';
+                        '<span style="border:1.3px solid black; display:inline-block; padding:1px;font-size:10px;">➖</span> <i class="fa-solid fa-folder-open text-primary"></i>';
                 } else {
                     icon.innerHTML =
-                        '<span style="border:1.4px solid black; display:inline-block; padding:1px; border-radius:2px;">➕</span>';
+                        '<span style="border:1.3px solid black; display:inline-block; padding:1px;font-size:10px;">➕</span> <i class="fa-solid fa-folder text-primary"></i>';
                 }
             }
         }
@@ -193,6 +192,7 @@
                     }
 
                     // Update header info
+                    document.getElementById('detail_section').style.display = "block";
                     document.getElementById('header_name').textContent = data.name || 'N/A';
                     document.getElementById('header_ulid').textContent = 'ULID: ' + (data.ulid || '-');
 

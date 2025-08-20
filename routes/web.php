@@ -72,15 +72,16 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
-    Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.profile.edit');
-    Route::put('/profile/update', [UserController::class, 'update'])->name('user.profile.update');
+    Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::get('/user/profile/edit', [UserController::class, 'edit'])->name('user.profile.edit');
+    Route::put('/user/profile/update', [UserController::class, 'update'])->name('user.profile.update');
 
     Route::post('/purchase-package', [UserController::class, 'purchasePackage'])->name('user.purchase-package');
 
     Route::get('/package2-purchase', [UserController::class, 'showPurchaseForm'])->name('package2.purchase');
     Route::post('/package2-purchase', [UserController::class, 'processPurchase'])->name('package2.process-purchase');
     Route::get('/user/my-packages', [PackageAssignmentController::class, 'viewUserPackage'])->name('user.packages');
+    Route::get('/user/packages/invoice/{id}', [PackageAssignmentController::class, 'showInvoice'])->name('user.packages.invoice');
     Route::get('/user/activation-package', [PackageAssignmentController::class, 'viewActivationPackage'])->name('user.activation.package');
     Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view.userTree');
     Route::get('/user/network-summary', [ContactController::class, 'networkSummary'])->name('user.network.summary');
@@ -114,14 +115,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/user/search-downline', [WalletController::class, 'searchDownlineUser'])->name('user.search.downline');
     Route::post('/user/transfer-points', [WalletController::class, 'transferPoints'])->name('user.transfer.points');
 
-    Route::middleware(['diamond'])->group(function() {
-        Route::get('/user/stock-transfer', [StockController::class, 'showUserTransferForm'])->name('user.stock.form');
-        Route::post('/user/stock-transfer/search-user', [StockController::class, 'searchUserInUserSide'])->name('user.stock.search-user');
-        Route::post('/user/stock-transfer', [StockController::class, 'transferStockUserPanel'])->name('user.stock.transfer');
-        Route::get('/user/stock/transfer-by-coupon', [StockController::class, 'showCouponTransferForm'])->name('user.stock.coupon-transfer');
-        Route::post('/user/stock/validate-coupon', [StockController::class, 'validateCoupon'])->name('user.stock.validate-coupon');
-        Route::post('/user/stock/transfer-by-coupon', [StockController::class, 'transferStockByCoupon'])->name('user.stock.transfer-by-coupon');
-    });
+    Route::get('/user/stock-transfer', [StockController::class, 'showUserTransferForm'])->name('user.stock.form');
+    Route::post('/user/stock-transfer/search-user', [StockController::class, 'searchUserInUserSide'])->name('user.stock.search-user');
+    Route::post('/user/stock-transfer', [StockController::class, 'transferStockUserPanel'])->name('user.stock.transfer');
+    Route::get('/user/stock/transfer-by-coupon', [StockController::class, 'showCouponTransferForm'])->name('user.stock.coupon-transfer');
+    Route::post('/user/stock/validate-coupon', [StockController::class, 'validateCoupon'])->name('user.stock.validate-coupon');
+    Route::post('/user/stock/transfer-by-coupon', [StockController::class, 'transferStockByCoupon'])->name('user.stock.transfer-by-coupon');
+
     Route::get('/user/viewStock', [StockController::class, 'stockTransferHistory'])->name('user.viewStock');
     Route::get('/user/allStocks', [StockController::class, 'viewUserStocks'])->name('user.allStocks');
 });

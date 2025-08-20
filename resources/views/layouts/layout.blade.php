@@ -178,31 +178,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables3"
-                        aria-expanded="false" aria-controls="tables3">
-                        <i class="fa fa-cubes menu-icon me-3"></i>
-                        <span class="menu-title flex-grow-1">Manage Stock</span>
-                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
-                    </a>
-                    <div class="collapse" id="tables3">
-                        <ul class="nav flex-column sub-menu ps-3"
-                            style="border-left: 2px solid #4b49ac; list-style:none;">
-                            <li class="nav-item" style="list-style: none;">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.stock.form') }}">
-                                    <i class="fa fa-truck me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Transfer Stock</span>
-                                </a>
-                            </li>
-                            <li class="nav-item" style="list-style: none;">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.viewStock') }}">
-                                    <i class="fa fa-credit-card me-2" style="font-size: 0.8rem;"></i>
-                                    <span>View User's Stock</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+               
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables2"
                         aria-expanded="false" aria-controls="tables2">
@@ -231,6 +207,31 @@
                                     href="{{ route('admin.wallet-transactions') }}">
                                     <i class="fa fa-exchange-alt me-2" style="font-size: 0.8rem;"></i>
                                     <span>All Transactions</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables3"
+                        aria-expanded="false" aria-controls="tables3">
+                        <i class="fa fa-cubes menu-icon me-3"></i>
+                        <span class="menu-title flex-grow-1">Manage Stock</span>
+                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
+                    </a>
+                    <div class="collapse" id="tables3">
+                        <ul class="nav flex-column sub-menu ps-3"
+                            style="border-left: 2px solid #4b49ac; list-style:none;">
+                            <li class="nav-item" style="list-style: none;">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.stock.form') }}">
+                                    <i class="fa fa-truck me-2" style="font-size: 0.8rem;"></i>
+                                    <span>Transfer Stock</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" style="list-style: none;">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.viewStock') }}">
+                                    <i class="fa fa-credit-card me-2" style="font-size: 0.8rem;"></i>
+                                    <span>View User's Stock</span>
                                 </a>
                             </li>
                         </ul>

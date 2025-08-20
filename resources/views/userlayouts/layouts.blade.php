@@ -61,6 +61,17 @@
             width: 100%;
             flex-grow: 1;
         }
+
+        @media(max-width:768px){
+            .content-wrapper{
+                padding: 1.2rem 1rem;
+            }
+        }
+        @media(max-width:450px){
+            .content-wrapper{
+                padding: 0.8rem 0.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -427,6 +438,25 @@
                             </li>
                         </ul>
                     </div>
+                    
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('user.profile') }}">
+                        <i class="ti-settings menu-icon me-3"></i>
+                        <span class="menu-title">Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="https://wa.me/9416373249" target="_blank">
+                        <i class="fa fa-support menu-icon me-3"></i>
+                        <span class="menu-title">Support</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('logout') }}">
+                        <i class="fa fa-power-off menu-icon me-3"></i>
+                        <span class="menu-title">Logout</span>
+                    </a>
                 </li>
             </ul>
         </nav>

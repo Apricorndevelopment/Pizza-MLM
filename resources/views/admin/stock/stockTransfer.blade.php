@@ -74,7 +74,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to transfer stock ?')">
                             <i class="fa fa-paper-plane me-1"></i> Transfer Stock
                         </button>
                     </div>
@@ -96,6 +96,7 @@
                                 <th>product</th>
                                 <th>Quantity</th>
                                 <th>Location</th>
+                                <th>Balance</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
@@ -109,6 +110,7 @@
                                     <td>{{ $transfer->product->product_name ?? 'N/A' }}</td>
                                     <td>{{ $transfer->quantity }}</td>
                                     <td>{{ $transfer->to_location }} </td>
+                                    <td>{{ $transfer->receiver_balance }} </td>
                                     <td>{{ $transfer->created_at->format('Y-m-d H:i a') }}</td>
                                 </tr>
                             @empty

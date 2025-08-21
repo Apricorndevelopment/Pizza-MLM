@@ -2,18 +2,17 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Geo Kranti User</title>
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ asset('assets2/vendors/feather/feather.css') }}">
     <link rel="stylesheet" href="{{ asset('assets2/vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets2/vendors/css/vendor.bundle.base.css') }}">
     <link rel="stylesheet" href="{{ asset('assets2/vendors/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets2/vendors/mdi/css/materialdesignicons.min.css') }}">
-    <!-- <link rel="stylesheet" href="{{ asset('assets2/vendors/datatables.net-bs5/dataTables.bootstrap5.css') }}"> -->
-    <link rel="stylesheet" href="{{ asset('assets2/vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets2/js/select.dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets2/css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -62,13 +61,104 @@
             flex-grow: 1;
         }
 
-        @media(max-width:768px){
-            .content-wrapper{
+        /* Quick Actions Button */
+        .quick-actions-btn {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4b49ac, #2a288a);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-actions-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-actions-btn i {
+            font-size: 1.5rem;
+        }
+
+        .quick-actions-menu {
+            position: fixed;
+            right: 30px;
+            bottom: 100px;
+            z-index: 999;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 15px 0;
+            width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .quick-actions-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .quick-action-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            color: #495057;
+            text-decoration: none;
+        }
+
+        .quick-action-item:hover {
+            background-color: #f8f9fa;
+            color: #4b49ac;
+        }
+
+        .quick-action-item i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 8px 0;
+        }
+
+        @media(max-width:768px) {
+            .content-wrapper {
                 padding: 1.2rem 1rem;
             }
+
+            .quick-actions-btn {
+                right: 20px;
+                bottom: 20px;
+                width: 50px;
+                height: 50px;
+            }
+
+            .quick-actions-menu {
+                right: 20px;
+                bottom: 80px;
+                width: 220px;
+            }
         }
-        @media(max-width:450px){
-            .content-wrapper{
+
+        @media(max-width:450px) {
+            .content-wrapper {
                 padding: 0.8rem 0.5rem;
             }
         }
@@ -78,7 +168,6 @@
 <body>
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-
         <div
             class="text-center navbar-brand-wrapper ps-0 ps-sm-1 ps-xl-2 d-flex align-items-center justify-content-start">
             <a class="navbar-brand brand-logo me-5 d-flex align-items-center" href="">
@@ -155,14 +244,13 @@
                 <li class="nav-item nav-profile dropdown">
                     <a class="nav-link dropdown-toggle" href="" data-bs-toggle="dropdown" id="profileDropdown">
                         <?php
-                        
                         use Illuminate\Support\Facades\Auth;
                         $user = Auth::user();
                         ?>
                         @if ($user->profile_picture)
-                            <img src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture">
+                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}" alt="Profile Picture">
                         @else
-                            <img src="{{ asset('assets2/images/faces/face28.jpg') }}" alt="profile" />
+                            <img src="{{ asset('geokrantilogo.jpg') }}" alt="profile" />
                         @endif
                     </a>
                     <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
@@ -177,7 +265,6 @@
                         </a>
                     </div>
                 </li>
-
             </ul>
             <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
                 data-toggle="offcanvas">
@@ -191,6 +278,7 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav" style="list-style: none; padding-left: 0;">
+                <!-- Dashboard -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="{{ route('user.dashboard') }}">
                         <i class="icon-grid menu-icon me-3"></i>
@@ -198,6 +286,7 @@
                     </a>
                 </li>
 
+                <!-- Network Section -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables5"
                         aria-expanded="false" aria-controls="tables5">
@@ -232,6 +321,7 @@
                     </div>
                 </li>
 
+                <!-- Package Section -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables6"
                         aria-expanded="false" aria-controls="tables6">
@@ -278,6 +368,7 @@
                     </div>
                 </li>
 
+                <!-- Shopping Card -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="{{ route('user.activation.package') }}">
                         <i class="fas fa-box-open menu-icon me-3"></i>
@@ -285,6 +376,7 @@
                     </a>
                 </li>
 
+                <!-- Wallet Section -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables3"
                         aria-expanded="false" aria-controls="tables3">
@@ -312,6 +404,7 @@
                     </div>
                 </li>
 
+                <!-- Manage Stock Section -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables4"
                         aria-expanded="false" aria-controls="tables4">
@@ -373,6 +466,7 @@
                     </div>
                 </li>
 
+                <!-- Incentives Section -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables1"
                         aria-expanded="false" aria-controls="tables1">
@@ -412,6 +506,7 @@
                     </div>
                 </li>
 
+                <!-- Download PDF Section -->
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables2"
                         aria-expanded="false" aria-controls="tables2">
@@ -438,9 +533,10 @@
                             </li>
                         </ul>
                     </div>
-                    
                 </li>
-                 <li class="nav-item">
+
+                <!-- Support & Account Section -->
+                <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="{{ route('user.profile') }}">
                         <i class="ti-settings menu-icon me-3"></i>
                         <span class="menu-title">Profile</span>
@@ -492,6 +588,53 @@
         </div>
 
     </div>
+
+    <!-- Quick Actions Button -->
+    <div class="quick-actions-btn" id="quickActionsBtn">
+        <i class="fas fa-bolt"></i>
+    </div>
+
+    <div class="quick-actions-menu" id="quickActionsMenu">
+        <a href="{{ route('user.dashboard') }}" class="quick-action-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ route('user.viewwallet') }}" class="quick-action-item">
+            <i class="fas fa-wallet"></i>
+            <span>My Wallet</span>
+        </a>
+
+        <a href="{{ route('package2.purchase') }}" class="quick-action-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Purchase Package</span>
+        </a>
+        <a href="{{ route('user.direct.team') }}" class="quick-action-item">
+            <i class="fas fa-users"></i>
+            <span>Direct Team</span>
+        </a>
+
+        <a href="{{ route('user.commissions.level1') }}" class="quick-action-item">
+            <i class="fas fa-hand-holding-usd"></i>
+            <span>Commissions</span>
+        </a>
+
+        <div class="divider"></div>
+
+        <a href="{{ route('user.profile') }}" class="quick-action-item">
+            <i class="fas fa-user-cog"></i>
+            <span>Profile Settings</span>
+        </a>
+
+        <a href="https://wa.me/9416373249" target="_blank" class="quick-action-item">
+            <i class="fas fa-headset"></i>
+            <span>Support</span>
+        </a>
+        <a class="quick-action-item" href="{{ route('logout') }}">
+            <i class="fa fa-power-off "></i>
+            <span>Logout</span>
+        </a>
+    </div>
     <script src="{{ asset('assets2/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('assets2/vendors/chart.js/chart.umd.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -500,8 +643,6 @@
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 
     <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-    <!-- <script src="{{ asset('assets2/vendors/datatables.net/jquery.dataTables.js') }}"></script> -->
-    <!-- <script src="{{ asset('assets2/vendors/datatables.net-bs5/dataTables.bootstrap5.js') }}"></script> -->
     <script src="{{ asset('assets2/js/dataTables.select.min.js') }}"></script>
     <script src="{{ asset('assets2/js/off-canvas.js') }}"></script>
     <script src="{{ asset('assets2/js/template.js') }}"></script>
@@ -547,6 +688,21 @@
             // Optional: Prevent sidebar click from propagating to document
             sidebar.addEventListener("click", function(e) {
                 e.stopPropagation();
+            });
+
+            document.getElementById('quickActionsBtn').addEventListener('click', function() {
+                const menu = document.getElementById('quickActionsMenu');
+                menu.classList.toggle('show');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const btn = document.getElementById('quickActionsBtn');
+                const menu = document.getElementById('quickActionsMenu');
+
+                if (!btn.contains(event.target) && !menu.contains(event.target)) {
+                    menu.classList.remove('show');
+                }
             });
         });
     </script>

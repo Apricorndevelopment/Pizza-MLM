@@ -128,7 +128,7 @@
                             </div>
                             <div class="modal-footer border-0">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary" id="submitWithdraw" 
+                                <button type="submit" onclick="return confirm('Are you sure you want to withdraw points')" class="btn btn-primary" id="submitWithdraw" 
                                     @if (!$user->account_no && !$user->upi_id) disabled @endif>
                                     <i class="fas fa-paper-plane me-2"></i> Submit Request
                                 </button>

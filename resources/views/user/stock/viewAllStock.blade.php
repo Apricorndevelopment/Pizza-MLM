@@ -15,7 +15,7 @@
                             <th>Location</th>
                             <th>Contact</th>
                             <th>Product</th>
-                            <th class="text-end">Quantity</th>
+                            <th>Quantity</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,7 +28,7 @@
                             <td>{{ $stock->location }}</td>
                             <td>{{ $stock->user->phone }}</td>
                             <td>{{ $stock->product->product_name }}</td>
-                            <td class="text-end">
+                            <td>
                                 <span class="badge bg-success rounded-pill">{{ $stock->quantity }}</span>
                             </td>
                         </tr>

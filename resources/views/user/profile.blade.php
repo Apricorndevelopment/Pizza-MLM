@@ -68,7 +68,7 @@
                                         <!-- Profile picture display -->
                                         @if ($user->profile_picture)
                                             <div class="mb-3">
-                                                <img src="{{ asset('storage/' . $user->profile_picture) }}"
+                                                <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
                                                     class="profile-pic img-thumbnail rounded-circle" alt="Profile Picture">
                                             </div>
                                         @else
@@ -131,7 +131,7 @@
                                                 </p>
                                                 @if ($user->adhar_photo)
                                                     <div class="mt-3">
-                                                        <img src="{{ asset('storage/' . $user->adhar_photo) }}"
+                                                        <img src="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_photo)) }}"
                                                             class="img-thumbnail" style="max-width: 100%; height: 200px;"
                                                             alt="Aadhaar Card">
                                                     </div>
@@ -151,7 +151,7 @@
                                                 <p><strong>PAN Number:</strong> {{ $user->pan_no ?? 'Not provided' }}</p>
                                                 @if ($user->pan_photo)
                                                     <div class="mt-3">
-                                                        <img src="{{ asset('storage/' . $user->pan_photo) }}"
+                                                        <img src="{{ asset('storage/pan-documents/' . basename($user->pan_photo)) }}"
                                                             class="img-thumbnail" style="max-width: 100%; height: 200px;"
                                                             alt="PAN Card">
                                                     </div>
@@ -191,7 +191,7 @@
                                     <div class="col-md-6">
                                         <h5 class="text-muted">Bank Proof</h5>
                                         @if ($user->passbook_photo)
-                                            <img src="{{ asset('storage/' . $user->passbook_photo) }}"
+                                            <img src="{{ asset('storage/passbook-photos/' . basename($user->passbook_photo)) }}"
                                                 class="img-thumbnail" style="max-width: 100%; max-height: 150px;"
                                                 alt="Passbook Proof">
                                         @else

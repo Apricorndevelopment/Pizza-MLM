@@ -79,7 +79,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Are You sure you want to transfer stock ?')">
                             <i class="fas fa-paper-plane me-1"></i> Transfer Stock
                         </button>
                     </div>

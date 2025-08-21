@@ -19,6 +19,7 @@ use App\Models\PointsTransaction;
 use App\Models\RoyaltyRewardsIncome;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -120,11 +121,9 @@ class UserController extends Controller
             'adhar_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'pan_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
 
-            // Nominee Information
             'nom_name' => 'nullable|string|max:255',
             'nom_relation' => 'nullable|string|max:100',
 
-            // Bank Information
             'bank_name' => 'nullable|string|max:100',
             'account_no' => 'nullable|string|min:6|max:100',
             'ifsc_code' => [
@@ -178,6 +177,7 @@ class UserController extends Controller
             'pan_photo.max' => 'PAN photo must be less than 2MB',
             'passbook_photo.max' => 'Passbook photo must be less than 2MB',
         ]);
+
         // Update basic fields
         $user->fill([
             'name' => $validated['name'],
@@ -198,54 +198,130 @@ class UserController extends Controller
 
         // Handle profile picture upload
         if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if exists
             if ($user->profile_picture) {
                 Storage::delete('public/' . $user->profile_picture);
             }
-            $path = $request->file('profile_picture')->store('profile-pictures', 'public');
-            $user->profile_picture = $path;
-        }
 
-        // Handle passbook photo upload (in passbook-photos folder)
-        if ($request->hasFile('passbook_photo')) {
-            if ($user->passbook_photo) {
-                Storage::delete('public/' . $user->passbook_photo);
+            // Define the directory path
+            $directory = 'storage/profile-pictures';
+
+            // Create the directory if it doesn't exist
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
             }
-            $path = $request->file('passbook_photo')->store('passbook-photos', 'public');
-            $user->passbook_photo = $path;
+
+            // Get the file and extension
+            $file = $request->file('profile_picture');
+            $extension = $file->getClientOriginalExtension();
+
+            // Create a unique filename
+            $filename = uniqid() . '.' . $extension;
+
+            // Move the file to the directory
+            $file->move($directory, $filename);
+
+            // Save the relative path to the database
+            $user->profile_picture = 'profile-pictures/' . $filename;
         }
 
-        // Handle Aadhaar photo upload (in aadhaar-documents folder)
+        // Handle Aadhaar photo upload
         if ($request->hasFile('adhar_photo')) {
+            // Delete old aadhaar photo if exists
             if ($user->adhar_photo) {
                 Storage::delete('public/' . $user->adhar_photo);
             }
-            $path = $request->file('adhar_photo')->store('aadhaar-documents', 'public');
-            $user->adhar_photo = $path;
+
+            // Define the directory path
+            $directory = 'storage/aadhaar-documents';
+
+            // Create the directory if it doesn't exist
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Get the file and extension
+            $file = $request->file('adhar_photo');
+            $extension = $file->getClientOriginalExtension();
+
+            // Create a unique filename
+            $filename = uniqid() . '.' . $extension;
+
+            // Move the file to the directory
+            $file->move($directory, $filename);
+
+            // Save the relative path to the database
+            $user->adhar_photo = 'aadhaar-documents/' . $filename;
         }
 
-        // Handle PAN photo upload (in pan-documents folder)
+        // Handle PAN photo upload
         if ($request->hasFile('pan_photo')) {
+            // Delete old pan photo if exists
             if ($user->pan_photo) {
                 Storage::delete('public/' . $user->pan_photo);
             }
-            $path = $request->file('pan_photo')->store('pan-documents', 'public');
-            $user->pan_photo = $path;
+
+            // Define the directory path
+            $directory = 'storage/pan-documents';
+
+            // Create the directory if it doesn't exist
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Get the file and extension
+            $file = $request->file('pan_photo');
+            $extension = $file->getClientOriginalExtension();
+
+            // Create a unique filename
+            $filename = uniqid() . '.' . $extension;
+
+            // Move the file to the directory
+            $file->move($directory, $filename);
+
+            // Save the relative path to the database
+            $user->pan_photo = 'pan-documents/' . $filename;
+        }
+
+        // Handle passbook photo upload
+        if ($request->hasFile('passbook_photo')) {
+            // Delete old passbook photo if exists
+            if ($user->passbook_photo) {
+                Storage::delete('public/' . $user->passbook_photo);
+            }
+
+            // Define the directory path
+            $directory = 'storage/passbook-photos';
+
+            // Create the directory if it doesn't exist
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Get the file and extension
+            $file = $request->file('passbook_photo');
+            $extension = $file->getClientOriginalExtension();
+
+            // Create a unique filename
+            $filename = uniqid() . '.' . $extension;
+
+            // Move the file to the directory
+            $file->move($directory, $filename);
+
+            // Save the relative path to the database
+            $user->passbook_photo = 'passbook-photos/' . $filename;
         }
 
         // Handle password change
         if ($request->filled('current_password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
-                return back()->withErrors(['current_password' => 'The current password is incorrect']);
-            }
-
             $user->password = Hash::make($validated['password']);
         }
-
 
         $user->save();
 
         return redirect()->route('user.profile')->with('success', 'Profile updated successfully!');
     }
+
 
 
     //Package purchasing for the Activation

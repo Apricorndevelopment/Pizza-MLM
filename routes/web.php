@@ -173,6 +173,8 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('/stock-transfer/search-user', [StockController::class, 'searchUser'])->name('admin.stock.search-user');
         Route::post('/stock-transfer', [StockController::class, 'transferStock'])->name('admin.stock.transfer');
         Route::get('/view-stock', [StockController::class, 'viewAdminStock'])->name('admin.viewStock');
+        Route::get('/sales-stock', [StockController::class, 'salesStock'])->name('admin.sales.stock');
+        Route::post('/sales-stock/save', [StockController::class, 'saveSalesStock'])->name('admin.sales.stock.save');
 
         Route::get('/withdrawals', [WalletController::class, 'viewWithdrawlRequest'])->name('admin.withdrawls.index');
         Route::post('/withdrawals/{id}/approve', [WalletController::class, 'approveWithdrawlRequest'])->name('admin.withdrawls.approve');

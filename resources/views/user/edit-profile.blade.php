@@ -46,7 +46,7 @@
                                         <div class="col-md-4 text-center mb-4">
                                             <div class="mb-3">
                                                 @if ($user->profile_picture)
-                                                    <img src="{{ asset('storage/' . $user->profile_picture) }}"
+                                                    <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
                                                         class="profile-pic rounded-circle mb-2" id="profile-pic-preview">
                                                 @else
                                                     <div class="profile-pic-placeholder rounded-circle mb-2"
@@ -153,7 +153,7 @@
                                                 name="adhar_photo" accept="image/*">
                                             @if ($user->adhar_photo)
                                                 <small class="text-muted">Current: <a
-                                                        href="{{ asset('storage/' . $user->adhar_photo) }}"
+                                                        href="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_photo)) }}"
                                                         target="_blank">View</a></small>
                                             @endif
                                             @error('adhar_photo')
@@ -168,7 +168,7 @@
                                                 name="pan_photo" accept="image/*">
                                             @if ($user->pan_photo)
                                                 <small class="text-muted">Current: <a
-                                                        href="{{ asset('storage/' . $user->pan_photo) }}"
+                                                        href="{{ asset('storage/pan-documents/' . basename($user->pan_photo)) }}"
                                                         target="_blank">View</a></small>
                                             @endif
                                             @error('pan_photo')
@@ -254,7 +254,7 @@
                                                 name="passbook_photo" accept="image/*">
                                             @if ($user->passbook_photo)
                                                 <small class="text-muted">Current: <a
-                                                        href="{{ asset('storage/' . $user->passbook_photo) }}"
+                                                        href="{{ asset('storage/passbook-photos/' . basename($user->passbook_photo)) }}"
                                                         target="_blank">View</a></small>
                                             @endif
                                             @error('passbook_photo')

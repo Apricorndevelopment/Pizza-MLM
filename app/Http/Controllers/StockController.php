@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\PackageTransaction;
 use App\Models\Product;
+use App\Models\SalesStock;
 use App\Models\User;
 use App\Models\StockTransfer;
 use App\Models\UserPackageInventory;
@@ -20,6 +21,7 @@ class StockController extends Controller
         $stockTransfers = StockTransfer::with(['receiver', 'product'])
             ->where('sender_type', 'admin')
             ->orWhere('receiver_ulid', Auth::user()->ulid)
+            ->latest()
             ->get();
 
         return view('admin.stock.stockTransfer', compact('products', 'stockTransfers'));
@@ -62,7 +64,6 @@ class StockController extends Controller
         $currentInventory = UserPackageInventory::where([
             'user_ulid' => $request->receiver_ulid,
             'product_id' => $request->product_id,
-            'location' => $request->location
         ])->first();
 
         $currentBalance = $currentInventory ? $currentInventory->quantity : 0;
@@ -76,7 +77,7 @@ class StockController extends Controller
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'sender_balance' => 0,
-            'receiver_balance' => $receiverBalance, 
+            'receiver_balance' => $receiverBalance,
             'notes' => $request->notes,
             'from_location' => $request->location,
             'to_location' => $request->location,
@@ -88,9 +89,9 @@ class StockController extends Controller
             [
                 'user_ulid' => $request->receiver_ulid,
                 'product_id' => $request->product_id,
-                'location' => $request->location
             ],
             [
+                'location' => $request->location,
                 'quantity' => DB::raw("quantity + {$request->quantity}")
             ]
         );
@@ -107,6 +108,59 @@ class StockController extends Controller
         return view('admin.stock.viewStock', compact('stocks'));
     }
 
+    public function salesStock()
+    {
+        $inventories = UserPackageInventory::with('product', 'user')
+            ->where('quantity', '>', 0)
+            ->get();
+
+        $sales = SalesStock::with('product', 'user')
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.stock.saleStock', compact('inventories', 'sales'));
+    }
+
+    public function saveSalesStock(Request $request)
+    {
+        $request->validate([
+            'location' => 'required|string|exists:user_package_inventories,location',
+            'user_ulid' => 'required|string|exists:user_package_inventories,user_ulid',
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        // Check if inventory exists and has sufficient quantity
+        $inventory = UserPackageInventory::where('location', $request->location)
+            ->where('user_ulid', $request->user_ulid)
+            ->where('product_id', $request->product_id)
+            ->first();
+
+        if (!$inventory) {
+            return back()->with('error', 'Inventory not found for the specified location, user, and product.');
+        }
+
+        if ($inventory->quantity < $request->quantity) {
+            return back()->with('error', 'Insufficient stock. Available quantity: ' . $inventory->quantity);
+        }
+
+        DB::transaction(function () use ($inventory, $request) {
+            // Deduct from inventory
+            $inventory->decrement('quantity', $request->quantity);
+
+            // Record the sale
+            SalesStock::create([
+                'location' => $request->location,
+                'user_ulid' => $request->user_ulid,
+                'user_id' => $inventory->user->id ?? null,
+                'product_id' => $request->product_id,
+                'product_name' => $inventory->product->product_name,
+                'quantity' => $request->quantity,
+            ]);
+        });
+
+        return back()->with('success', 'Sale recorded successfully. Remaining quantity: ' . $inventory->quantity);
+    }
 
 
 
@@ -179,8 +233,17 @@ class StockController extends Controller
         }
 
         $from_location = $inventory->location;
+        $senderBalance = $inventory->quantity - $request->quantity;
 
-        DB::transaction(function () use ($user, $request, $from_location) {
+        DB::transaction(function () use ($user, $request, $from_location, $senderBalance) {
+            // Get receiver's current balance
+            $receiverInventory = UserPackageInventory::where([
+                'user_ulid' => $request->receiver_ulid,
+                'product_id' => $request->product_id
+            ])->first();
+
+            $receiverBalance = $receiverInventory ? ($receiverInventory->quantity + $request->quantity) : $request->quantity;
+
             // Deduct from sender
             UserPackageInventory::where([
                 'user_ulid' => $user->ulid,
@@ -199,13 +262,15 @@ class StockController extends Controller
                 ]
             );
 
-            // Record transfer
+            // Record transfer with both balances
             StockTransfer::create([
                 'sender_type' => 'user',
                 'sender_id' => $user->ulid,
                 'receiver_ulid' => $request->receiver_ulid,
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity,
+                'sender_balance' => $senderBalance,
+                'receiver_balance' => $receiverBalance,
                 'notes' => $request->notes,
                 'from_location' => $from_location,
                 'to_location' => $request->to_location,
@@ -402,12 +467,13 @@ class StockController extends Controller
     {
         $stocks = UserPackageInventory::with('product', 'user')
             ->where('quantity', '>', 0)
+            ->where('user_ulid', '!=', Auth::user()->ulid) // Add this line
             ->get();
 
         $breadcrumbs = [
             ['title' => 'Manage Stock', 'url' => route('user.allStocks')],
-            ['title' => 'Coupon Stock Transfer', 'url' => route('user.allStocks')]
+            ['title' => 'View Stocks Location', 'url' => route('user.allStocks')]
         ];
-        return view('user.stock.viewAllStock', compact('stocks'));
+        return view('user.stock.viewAllStock', compact('stocks', 'breadcrumbs'));
     }
 }

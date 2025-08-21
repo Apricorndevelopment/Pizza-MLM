@@ -228,12 +228,19 @@
                                     <span>Transfer Stock</span>
                                 </a>
                             </li>
+                             <li class="nav-item" style="list-style: none;">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.sales.stock') }}">
+                                    <i class="fa fa-credit-card me-2" style="font-size: 0.8rem;"></i>
+                                    <span>Record Stock Sales</span>
+                                </a>
+                            </li>
                             <li class="nav-item" style="list-style: none;">
                                 <a class="nav-link d-flex align-items-center" href="{{ route('admin.viewStock') }}">
                                     <i class="fa fa-credit-card me-2" style="font-size: 0.8rem;"></i>
                                     <span>View User's Stock</span>
                                 </a>
                             </li>
+                           
                         </ul>
                     </div>
                 </li>

@@ -80,7 +80,6 @@ class UserController extends Controller
         return view('user.edit-profile', ['user' => $user, 'breadcrumbs' => $breadcrumbs]);
     }
 
-
     public function update(Request $request)
     {
         $authUser = Auth::user();
@@ -323,7 +322,6 @@ class UserController extends Controller
     }
 
 
-
     //Package purchasing for the Activation
     public function purchasePackage(Request $request)
     {
@@ -419,7 +417,7 @@ class UserController extends Controller
         try {
             $invoiceNumber = $this->getNextInvoiceNumber();
             $bedNumber = $this->getNextBedNumber();
-            // dd($invoiceNumber);
+
             // Create package purchase record
             $purchase = Package2Purchase::create([
                 'user_id' => $user->id,
@@ -427,12 +425,14 @@ class UserController extends Controller
                 'package2_id' => $package->id,
                 'package2_detail_id' => $rateDetail->id,
                 'package_name' => $package->package_name,
-                'quantity' => $request->quantity,
+                'quantity' => $request->quantity, 
                 'rate' => $rateDetail->rate,
                 'capital' => $rateDetail->capital,
                 'time' => $rateDetail->time,
                 'profit_share' => $rateDetail->profit_share,
                 'final_price' => $finalPrice,
+                'maturity' => $package->maturity, // Store maturity from package
+                'endorsed' => 0,
                 'invoice_no' => $invoiceNumber,
                 'bed_no' => $bedNumber,
                 'purchased_at' => now(),
@@ -448,21 +448,19 @@ class UserController extends Controller
                 'user_id' => $user->id,
                 'user_ulid' => $user->ulid,
                 'points' => -$finalPrice,
-                'notes' => 'Purchased package: ' . $package->package_name,
+                'notes' => 'Purchased package: ' . $package->package_name . ' (Quantity: ' . $request->quantity . ' units)',
                 'admin_id' => null
             ]);
 
             // Process sponsor commissions
             $this->processSponsorCommissions($user, $finalPrice, $package);
 
-            // $this->processLevelIncome($user, $finalPrice, $package);
-
             // For calculating the rank of the user based on the total business volume
             $this->checkAndRewardUser($user->sponsor_id);
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Package purchased successfully!');
+            return redirect()->back()->with('success', 'Package purchased successfully! Total Quantity: ' . $request->quantity . ' units');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Failed to process your request: ' . $e->getMessage());

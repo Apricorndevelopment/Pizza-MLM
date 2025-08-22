@@ -190,6 +190,8 @@
                                 <h6 class="text-muted">Package Details</h6>
                                 <p class="mb-1"><strong>Package:</strong> ${document.querySelector('#package2_id option:checked').text}</p>
                                 <p class="mb-1"><strong>Rate Plan:</strong> ${rateDetails.rate}% for ${rateDetails.time} years</p>
+                                <p class="mb-1"><strong>Quantity in One Unit:</strong> ${packageData.quantity_in_one_unit} </p>
+                                <p class="mb-1"><strong>Description:</strong> ${packageData.description} </p>
                                 <p class="mb-1"><strong>Quantity:</strong> ${quantity}</p>
                             </div>
                         </div>

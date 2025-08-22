@@ -82,6 +82,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/package2-purchase', [UserController::class, 'processPurchase'])->name('package2.process-purchase');
     Route::get('/user/my-packages', [PackageAssignmentController::class, 'viewUserPackage'])->name('user.packages');
     Route::get('/user/packages/invoice/{id}', [PackageAssignmentController::class, 'showInvoice'])->name('user.packages.invoice');
+    Route::get('/packages/endorse/{id}', [PackageAssignmentController::class, 'showEndorseForm'])->name('user.packages.endorse');
+    Route::post('/packages/process-endorsement', [PackageAssignmentController::class, 'processEndorsement'])->name('user.packages.process-endorsement');
+
     Route::get('/user/activation-package', [PackageAssignmentController::class, 'viewActivationPackage'])->name('user.activation.package');
     Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view.userTree');
     Route::get('/user/network-summary', [ContactController::class, 'networkSummary'])->name('user.network.summary');
@@ -106,6 +109,8 @@ Route::middleware(['auth'])->group(function () {
         $package = Package2::findOrFail($packageId);
         return response()->json([
             'price' => $package->price,
+            'quantity_in_one_unit' => $package->package_quantity,
+            'description' => $package->description,
             'user_balance' => Auth::check() ? Auth::user()->points_balance : 0
         ]);
     });

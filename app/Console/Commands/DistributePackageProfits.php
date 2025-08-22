@@ -114,12 +114,12 @@ class DistributePackageProfits extends Command
         $currentMonth = Carbon::now()->format('Y-m');
 
         // Get active package purchases (where time hasn't expired)
-        $purchases = Package2Purchase::where('profit_share', 0)
+        $purchases = Package2Purchase::where('maturity', 0)
+            ->where('profit_share', 0)
             ->where('purchased_at', '<=', $currentDate)
             ->where('rate', '>', 0)
             ->with('user')
             ->get();
-
 
         foreach ($purchases as $purchase) {
 
@@ -140,7 +140,7 @@ class DistributePackageProfits extends Command
             // Update user's balance
             $purchase->user->increment('points_balance', $monthlyProfit);
 
-            // // Record distribution
+            // Record distribution
             PackageMonthlyDistribution::create([
                 'user_id' => $purchase->user_id,
                 'user_ulid' => $purchase->user->ulid,

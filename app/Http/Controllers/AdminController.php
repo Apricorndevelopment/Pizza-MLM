@@ -111,7 +111,7 @@ class AdminController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
-    
+
         if ($request->hasFile('profile_picture')) {
             // Delete old profile picture if exists
             if ($user->profile_picture) {
@@ -141,7 +141,7 @@ class AdminController extends Controller
         }
 
         if ($request->filled('current_password')) {
-           
+
             $user->password = Hash::make($validated['password']);
         }
 
@@ -171,9 +171,22 @@ class AdminController extends Controller
             'email' => 'required|email|max:255|unique:users,email,' . $id,
             'phone' => 'required|string|max:15',
             'status' => 'required|in:active,inactive',
+            'password' => 'nullable|string|min:8|confirmed'
         ]);
 
-        $member->update($request->all());
+        $member->name = $request->name;
+        $member->email = $request->email;
+        $member->phone = $request->phone;
+        $member->status = $request->status;
+        $member->address = $request->address;
+        $member->state = $request->state;
+
+        if ($request->filled('password')) {
+            $member->password = Hash::make($request->password);
+        }
+
+        $member->save(); 
+
         return redirect()->route('admin.viewmember')->with('success', 'Member updated successfully');
     }
 

@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Package1;
+use App\Models\Package2;
+use App\Models\Package2Details;
 use App\Models\Package2Purchase;
 use App\Models\User;
 use App\Models\PackageTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PackageAssignmentController extends Controller
 {
@@ -91,14 +94,117 @@ class PackageAssignmentController extends Controller
     public function showInvoice($id)
     {
         $transaction = Package2Purchase::findOrFail($id);
-          $breadcrumbs = [
+        $breadcrumbs = [
             ['title' => 'Package', 'url' => route('user.packages')],
             ['title' => 'Invoices', 'url' => route('user.packages')],
-            ['title' => 'View Invoice', 'url' => '#' ],
+            ['title' => 'View Invoice', 'url' => '#'],
         ];
 
-        return view('user.viewInvoice', compact('transaction','breadcrumbs'));
+        return view('user.viewInvoice', compact('transaction', 'breadcrumbs'));
     }
+
+    public function showEndorseForm($id)
+    {
+        $maturityPackage = Package2Purchase::with('package2')->findOrFail($id);
+
+        // Check if the package belongs to the authenticated user and is a maturity package
+        if ($maturityPackage->user_id !== Auth::id() || $maturityPackage->maturity != 1) {
+            return redirect()->route('user.packages')->with('error', 'Invalid package for endorsement');
+        }
+
+        // Get regular packages (maturity = 0)
+        $regularPackages = Package2::where('maturity', 0)->get();
+
+        $breadcrumbs = [
+            ['title' => 'Packages', 'url' => route('user.packages')],
+            ['title' => 'Invoices', 'url' => route('user.packages')],
+            ['title' => 'Endorse Package', 'url' => route('user.packages.endorse', $id)]
+        ];
+
+        return view('user.endorse-package', compact('maturityPackage', 'regularPackages', 'breadcrumbs'));
+    }
+
+    public function processEndorsement(Request $request)
+    {
+        $request->validate([
+            'maturity_package_id' => 'required|exists:package2_purchases,id',
+            'regular_package_id' => 'required|exists:package2,id',
+            'package_detail_id' => 'required|exists:package2_details,id',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $maturityPackage = Package2Purchase::findOrFail($request->maturity_package_id);
+            $maturityPackageDetails = Package2::findOrFail($maturityPackage->package2_id);
+            $regularPackage = Package2::findOrFail($request->regular_package_id);
+            $rateDetail = Package2Details::findOrFail($request->package_detail_id);
+
+            // Check authorization
+            if ($maturityPackage->user_id !== Auth::id() || $maturityPackage->maturity != 1) {
+                return redirect()->back()->with('error', 'Unauthorized action');
+            }
+
+            $newQuantity = floor($maturityPackage->quantity * $maturityPackageDetails->package_quantity);
+
+            $maturityPackage->update([
+                'package2_id' => $regularPackage->id,
+                'package2_detail_id' => $rateDetail->id,
+                'package_name' => $regularPackage->package_name,
+                'quantity' => $newQuantity,
+                'rate' => $rateDetail->rate,
+                'capital' => $rateDetail->capital,
+                'time' => $rateDetail->time,
+                'profit_share' => $rateDetail->profit_share,
+                'maturity' => 0, // Set as regular package
+                'endorsed' => 1, // Mark as endorsed
+                // Generate new invoice and bed numbers
+                'invoice_no' => $this->getNextInvoiceNumber(),
+                'bed_no' => $this->getNextBedNumber(),
+                'purchased_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('user.packages')->with('success', 'Package endorsed successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to process endorsement: ' . $e->getMessage());
+        }
+    }
+
+     private function getNextInvoiceNumber()
+    {
+        $datePart = now()->format('Ymd');
+        $prefix = "INV-{$datePart}-";
+        $last = Package2Purchase::where('invoice_no', 'like', "{$prefix}%")
+            ->orderBy('invoice_no', 'desc')
+            ->first();
+
+        if (!$last) {
+            $nextNumber = 1;
+        } else {
+            $lastNumber = intval(substr($last->invoice_no, -5));
+            $nextNumber = $lastNumber + 1;
+        }
+        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
+    private function getNextBedNumber()
+    {
+        $datePart = now()->format('Ymd');
+        $prefix = "GEOBED-{$datePart}-";
+        $last = Package2Purchase::where('bed_no', 'like', "{$prefix}%")
+            ->orderBy('bed_no', 'desc')
+            ->first();
+
+        if (!$last) {
+            $nextNumber = 1;
+        } else {
+            $lastNumber = intval(substr($last->bed_no, -5));
+            $nextNumber = $lastNumber + 1;
+        }
+        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
+
 
     public function viewActivationPackage()
     {

@@ -60,6 +60,7 @@ class PackageController extends Controller
             'package_quantity' => 'required|string',
             'price' => 'required|string',
             'description' => 'nullable|string',
+            'maturity' => 'required|string',
             'rates' => 'required|array',
             'rates.*' => 'required|numeric',
             'times' => 'array',
@@ -75,6 +76,7 @@ class PackageController extends Controller
             'package_quantity' => $request->package_quantity,
             'price' => $request->price,
             'description' => $request->description,
+            'maturity' => $request->maturity,
         ]);
 
         foreach ($request->rates as $key => $rate) {
@@ -148,6 +150,7 @@ class PackageController extends Controller
             'package_quantity' => 'required|string',
             'price' => 'required|string',
             'description' => 'nullable|string',
+            'maturity' => 'required|string',
             'rates' => 'required|array|min:1',
             'rates.*' => 'required|numeric',
             'times' => 'required|array',
@@ -161,6 +164,7 @@ class PackageController extends Controller
             'package_quantity' => $request->package_quantity,
             'price' => $request->price,
             'description' => $request->description,
+            'maturity' => $request->maturity,
         ]);
 
         // Delete existing rate details

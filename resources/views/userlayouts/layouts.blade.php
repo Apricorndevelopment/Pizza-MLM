@@ -357,6 +357,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ route('user.maturity.packages') }}">
+                                    <i class="fas fa-box-open me-2" style="font-size: 0.8rem;"></i>
+                                    <span class="menu-title">Maturity Package</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center"
                                     href="{{ route('user.monthly.profits') }}">
                                     <i class="fas fa-calendar-alt me-2"
@@ -543,8 +549,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('user.login-activity') }}">
+                        <i class="fa fa-history menu-icon me-3"></i>
+                        <span class="menu-title">Login Activity</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="https://wa.me/9416373249" target="_blank">
-                        <i class="fa fa-support menu-icon me-3"></i>
+                        <i class="fa fa-headset menu-icon me-3"></i>
                         <span class="menu-title">Support</span>
                     </a>
                 </li>
@@ -633,7 +645,7 @@
         <a class="quick-action-item" href="{{ route('logout') }}">
             <i class="fa fa-power-off "></i>
             <span>Logout</span>
-        </a>
+
     </div>
     <script src="{{ asset('assets2/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('assets2/vendors/chart.js/chart.umd.js') }}"></script>

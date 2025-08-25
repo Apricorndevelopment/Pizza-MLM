@@ -21,7 +21,7 @@
                     </h4>
                     
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
+                        <table class="table table-striped table-hover">
                             <thead class="table-light">
                                 <tr>
                                     <th>Type</th>

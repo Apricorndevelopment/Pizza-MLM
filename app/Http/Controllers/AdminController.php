@@ -10,6 +10,7 @@ use App\Models\PackageMonthlyDistribution;
 use App\Models\PointsTransaction;
 use App\Models\User;
 use App\Models\Wallet;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -185,7 +186,7 @@ class AdminController extends Controller
             $member->password = Hash::make($request->password);
         }
 
-        $member->save(); 
+        $member->save();
 
         return redirect()->route('admin.viewmember')->with('success', 'Member updated successfully');
     }
@@ -225,6 +226,142 @@ class AdminController extends Controller
                 ->with('error', 'Delete failed: ' . $e->getMessage());
         }
     }
+
+
+    public function networkSummary(Request $request)
+    {
+        $breadcrumbs = [
+            ['title' => 'Network', 'url' => route('admin.network.summary')],
+            ['title' => 'Network Summary', 'url' => route('admin.network.summary')]
+        ];
+
+        $admin = Auth::guard('admin')->user();
+
+        // Get all downline users from admin's direct children
+        $downlineUsers = $this->getAdminDownlineUsers($admin->auid);
+
+        // Add level and purchase status to each user
+        foreach ($downlineUsers as $user) {
+            $user->level = $this->calculateLevelFromAdmin($admin->auid, $user->ulid);
+
+            // Check if user has purchases (paid/unpaid status)
+            $hasPurchases = Package2Purchase::where('user_id', $user->id)
+                ->exists();
+            $user->purchase_status = $hasPurchases ? 'paid' : 'unpaid';
+
+            // Calculate total purchases if user has any
+            if ($hasPurchases) {
+                $user->total_purchases = Package2Purchase::where('user_id', $user->id)
+                    ->sum('final_price');
+            } else {
+                $user->total_purchases = 0;
+            }
+        }
+
+        // Get available designations for filter
+        $designations = DB::table('royalty_level_rewards')
+            ->pluck('level')
+            ->toArray();
+
+        // Apply filters if requested
+        if ($request->hasAny(['designation', 'status', 'purchase_status', 'start_date', 'end_date'])) {
+            $downlineUsers = $this->applyFilters($downlineUsers, $request);
+        }
+
+        // Paginate results (15 per page)
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 15;
+        $currentItems = array_slice($downlineUsers, ($currentPage - 1) * $perPage, $perPage);
+        $paginatedUsers = new LengthAwarePaginator($currentItems, count($downlineUsers), $perPage, $currentPage, [
+            'path' => LengthAwarePaginator::resolveCurrentPath(),
+            'pageName' => 'page'
+        ]);
+
+        return view('admin.network-summary', compact('paginatedUsers', 'designations', 'breadcrumbs', 'admin'));
+    }
+
+    // Get all users in admin's downline (starting from direct children)
+    private function getAdminDownlineUsers($adminAuid, &$results = [])
+    {
+        // Get direct children of admin
+        $users = User::where('sponsor_id', $adminAuid)->get();
+
+        foreach ($users as $user) {
+            $results[] = $user; // Add current user
+            $this->getDownlineUsers($user->ulid, $results); // Add children recursively
+        }
+
+        return $results;
+    }
+
+    // Get all users below a given ULID (recursive)
+    private function getDownlineUsers($ulid, &$results = [])
+    {
+        $users = User::where('sponsor_id', $ulid)->get();
+
+        foreach ($users as $user) {
+            $results[] = $user; // Add current user
+            $this->getDownlineUsers($user->ulid, $results); // Add children
+        }
+
+        return $results;
+    }
+
+    // Calculate the level of a target user relative to admin's AUID
+    private function calculateLevelFromAdmin($adminAuid, $targetUlid, $level = 1)
+    {
+        if ($adminAuid === $targetUlid) {
+            return 0; // This shouldn't happen as admin's AUID shouldn't match user ULID
+        }
+
+        $targetUser = User::where('ulid', $targetUlid)->first();
+
+        if (!$targetUser || !$targetUser->sponsor_id) {
+            return null;
+        }
+
+        if ($targetUser->sponsor_id === $adminAuid) {
+            return $level;
+        }
+
+        return $this->calculateLevelFromAdmin($adminAuid, $targetUser->sponsor_id, $level + 1);
+    }
+
+    // Apply filters to user collection (same as user panel)
+    private function applyFilters($users, $request)
+    {
+        // Filter by designation
+        if ($request->filled('designation')) {
+            $users = array_filter($users, function ($user) use ($request) {
+                return $user->current_rank == $request->designation;
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $users = array_filter($users, function ($user) use ($request) {
+                return $user->status == $request->status;
+            });
+        }
+
+        // Filter by purchase status
+        if ($request->filled('purchase_status')) {
+            $users = array_filter($users, function ($user) use ($request) {
+                return $user->purchase_status == $request->purchase_status;
+            });
+        }
+
+        // Filter by date range
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $users = array_filter($users, function ($user) use ($request) {
+                $userDate = $user->user_doa ?? $user->created_at;
+                return $userDate >= $request->start_date && $userDate <= $request->end_date;
+            });
+        }
+
+        return array_values($users); // Reset array keys
+    }
+
 
     public function showFormForProfitDistribution()
     {

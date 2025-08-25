@@ -374,7 +374,6 @@
         }
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Profile picture preview
         document.getElementById('profile_picture').addEventListener('change', function(e) {

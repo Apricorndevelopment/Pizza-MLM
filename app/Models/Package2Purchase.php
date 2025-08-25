@@ -47,4 +47,9 @@ class Package2Purchase extends Model
     {
         return $this->belongsTo(Package2Details::class, 'package2_detail_id');
     }
+
+    public function maturityMonthlyDeductions()
+    {
+        return $this->hasMany(MaturityMonthlyDeduction::class);
+    }
 }

@@ -68,33 +68,33 @@
                         <form id="userDetailsForm" class="row g-2">
                             <!-- Row 1 -->
                             <div class="col-6 mb-1">
-                                <label class="text-muted mb-0 small">ID</label>
-                                <input type="text" id="detail_id" class="form-control bg-light p-1"
+                                <label class="text-muted mb-0 small">Name</label>
+                                <input type="text" id="detail_name" class="form-control bg-light p-1"
                                     style="font-size: 0.72rem; height: 30px;" readonly>
                             </div>
                             <div class="col-6 mb-1">
-                                <label class="text-muted mb-0 small">Name</label>
-                                <input type="text" id="detail_name" class="form-control bg-light p-1"
+                                <label class="text-muted mb-0 small">Ulid</label>
+                                <input type="text" id="detail_ulid" class="form-control bg-light p-1"
                                     style="font-size: 0.72rem; height: 30px;" readonly>
                             </div>
 
                             <!-- Row 2 -->
                             <div class="col-6 mb-1">
-                                <label class="text-muted mb-0 small">ULID</label>
-                                <input type="text" id="detail_ulid" class="form-control bg-light p-1"
+                                <label class="text-muted mb-0 small">Registered Date</label>
+                                <input type="text" id="detail_reg" class="form-control bg-light p-1"
                                     style="font-size: 0.72rem; height: 30px;" readonly>
                             </div>
                             <div class="col-6 mb-1">
-                                <label class="text-muted mb-0 small">Email</label>
-                                <input type="text" id="detail_email" class="form-control bg-light p-1"
+                                <label class="text-muted mb-0 small">Activation Date</label>
+                                <input type="text" id="detail_active" class="form-control bg-light p-1"
                                     style="font-size: 0.72rem; height: 30px;" readonly>
                             </div>
 
                             <!-- Row 3 -->
                             <div class="col-6 mb-1">
-                                <label class="text-muted mb-0 small">Points</label>
+                                <label class="text-muted mb-0 small">Purchase Amount</label>
                                 <div class="input-group" style="height: 30px;">
-                                    <input type="text" id="detail_points" class="form-control bg-light p-1"
+                                    <input type="text" id="detail_purchase" class="form-control bg-light p-1"
                                         style="font-size: 0.72rem;" readonly>
                                     <span class="input-group-text bg-success text-white px-2 py-0"
                                         style="font-size: 0.7rem;">
@@ -103,9 +103,9 @@
                                 </div>
                             </div>
                             <div class="col-6 mb-1">
-                                <label class="text-muted mb-0 small">Loyalty</label>
+                                <label class="text-muted mb-0 small">Rank</label>
                                 <div class="input-group" style="height: 30px;">
-                                    <input type="text" id="detail_loyalty" class="form-control bg-light p-1"
+                                    <input type="text" id="detail_rank" class="form-control bg-light p-1"
                                         style="font-size: 0.72rem;" readonly>
                                     <span class="input-group-text bg-warning text-dark px-2 py-0"
                                         style="font-size: 0.7rem;">
@@ -186,13 +186,13 @@
                     let total_business = parseFloat(data.left_business) + parseFloat(data.right_business);
                     total_business = (total_business).toFixed(2);
 
-                    document.getElementById('detail_id').value = data.id;
                     document.getElementById('detail_name').value = data.name;
                     document.getElementById('detail_ulid').value = data.ulid;
-                    document.getElementById('detail_email').value = data.email;
+                    document.getElementById('detail_reg').value = data.registered_date;
+                    document.getElementById('detail_active').value = data.activation_date  || 'Not Active';
+                    document.getElementById('detail_purchase').value = data.purchase_amount;
+                    document.getElementById('detail_rank').value = data.rank || 'N/A';
                     document.getElementById('detail_status').value = data.status;
-                    document.getElementById('detail_points').value = data.points_balance;
-                    document.getElementById('detail_loyalty').value = data.loyalty_balance;
                     document.getElementById('detail_business').value = total_business;
                 });
         }

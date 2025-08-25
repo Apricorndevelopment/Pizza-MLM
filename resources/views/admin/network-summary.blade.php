@@ -1,10 +1,23 @@
-@extends('userlayouts.layouts')
+@extends('layouts.layout')
 
-@section('title', 'Network Summary')
+@section('title', 'Network Summary - Admin')
 
 @section('container')
-    <div class="container mt-2">
-        <h4 class="mb-3 text-primary">Network Summary</h4>
+    <div class="container pb-4 pt-3">
+        <h4 class="mb-3 text-primary">Network Summary - Admin</h4>
+        
+        <!-- Admin Info Card -->
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body bg-light py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0 fw-bold">{{ $admin->name }}</h6>
+                        <small class="text-muted">AUID: {{ $admin->auid }}</small>
+                    </div>
+                    <span class="badge bg-info">{{ $paginatedUsers->total() }} Users in Network</span>
+                </div>
+            </div>
+        </div>
 
         <!-- Filters Section -->
         <div class="card shadow-sm border-0 mb-3">
@@ -16,9 +29,9 @@
             </div>
             <div class="collapse show" id="filterCollapse">
                 <div class="card-body p-3">
-                    <form method="GET" action="{{ route('user.network.summary') }}">
+                    <form method="GET" action="{{ route('admin.network.summary') }}">
                         <div class="row g-2">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="designation" class="form-label small fw-bold">Designation</label>
                                 <select class="form-select form-select-sm" id="designation" name="designation">
                                     <option value="">All Designations</option>
@@ -30,7 +43,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="status" class="form-label small fw-bold">Status</label>
                                 <select class="form-select form-select-sm" id="status" name="status">
                                     <option value="">All Status</option>
@@ -40,7 +53,7 @@
                                         Inactive</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="purchase_status" class="form-label small fw-bold">Purchase Status</label>
                                 <select class="form-select form-select-sm" id="purchase_status" name="purchase_status">
                                     <option value="">All Status</option>
@@ -50,18 +63,18 @@
                                         Unpaid</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="start_date" class="form-label small fw-bold">Start Date</label>
                                 <input type="date" class="form-control form-control-sm" id="start_date" name="start_date"
                                     value="{{ request('start_date') }}">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="end_date" class="form-label small fw-bold">End Date</label>
                                 <input type="date" class="form-control form-control-sm" id="end_date" name="end_date"
                                     value="{{ request('end_date') }}">
                             </div>
                             <div class="col-md-12 text-end mt-2">
-                                <a href="{{ route('user.network.summary') }}"
+                                <a href="{{ route('admin.network.summary') }}"
                                     class="btn btn-sm btn-outline-secondary me-2">Reset</a>
                                 <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
                             </div>
@@ -79,7 +92,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-sm table-hover table-striped mb-0">
+                    <table class="table table-sm table-hover mb-0">
                         <thead class="table-dark">
                             <tr>
                                 <th>Sr. No</th>

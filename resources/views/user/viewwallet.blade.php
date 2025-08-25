@@ -2,9 +2,9 @@
 @section('title', 'Network Explorer')
 @section('container')
 
-<div class="container py-4">
+<div class="container pt-2 pb-4">
     <!-- Welcome Card -->
-    <div class="card mb-4 border-0 shadow-sm">
+    <div class="card mb-3 border-0 shadow-sm">
         <div class="card-body p-4 bg-gradient-primary text-white rounded-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -26,7 +26,7 @@
     @endif
 
     <!-- Tab Navigation -->
-    <ul class="nav nav-tabs nav-fill mb-4" id="walletTab" role="tablist">
+    <ul class="nav nav-tabs nav-fill mb-3" id="walletTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active d-flex align-items-center justify-content-center" id="points-tab" data-bs-toggle="tab" data-bs-target="#points" type="button" role="tab">
                 <i class="fas fa-coins me-2"></i> Points Wallet
@@ -121,8 +121,9 @@
                                 <div class="alert alert-warning mt-4">
                                     <h6 class="fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Important Note</h6>
                                     <ul class="mb-0 ps-3">
-                                        <li>Withdrawal requests are processed within 3-5 business days</li>
-                                        <li>Tax deduction of 5% will be applied</li>
+                                        <li>Withdrawal requests are processed within 7 business days</li>
+                                        <li>Tax deduction of 5% Admin Charge will be applied</li>
+                                        <li>Tax deduction of 5% TDS Charge will be applied</li>
                                     </ul>
                                 </div>
                             </div>
@@ -141,10 +142,13 @@
             <!-- Withdrawal History -->
             @if ($withdrawals->count() > 0)
                 <div class="card mb-4 border-0 shadow-sm">
-                    <div class="card-header bg-white border-0 py-3">
+                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 fw-bold">
                             <i class="fas fa-history me-2 text-primary"></i> Withdrawal History
                         </h5>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-light text-dark me-2">{{ $withdrawals->total() }} records</span>
+                        </div>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -215,16 +219,64 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- Withdrawals Pagination -->
+                        <div class="d-flex justify-content-between align-items-center p-3">
+                            <div class="text-muted">
+                                Showing {{ $withdrawals->firstItem() }} to {{ $withdrawals->lastItem() }} of {{ $withdrawals->total() }} entries
+                            </div>
+                            <nav aria-label="Withdrawals pagination">
+                                <ul class="pagination mb-0">
+                                    {{ $withdrawals->withQueryString()->onEachSide(1)->links('pagination::bootstrap-4') }}
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             @endif
 
-            <!-- Transactions -->
+            <!-- Points Transactions -->
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="fas fa-exchange-alt me-2 text-primary"></i> Recent Transactions
-                    </h5>
+                <div class="card-header bg-white border-0 py-2">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-exchange-alt me-2 text-primary"></i> Points Transactions
+                        </h5>
+
+                    </div>
+                    
+                    <!-- Filters Form -->
+                    <div class="mt-3">
+                        <form method="GET" action="{{ route('user.viewwallet') }}">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="points_type" class="form-label small fw-bold">Transaction Type</label>
+                                    <select class="form-select form-select-sm" name="points_type" id="points_type">
+                                        <option value="">All Transactions</option>
+                                        <option value="credit" {{ request('points_type') == 'credit' ? 'selected' : '' }}>Credits</option>
+                                        <option value="debit" {{ request('points_type') == 'debit' ? 'selected' : '' }}>Debits</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="points_start_date" class="form-label small fw-bold">Start Date</label>
+                                    <input type="date" class="form-control form-control-sm" name="points_start_date" 
+                                           id="points_start_date" value="{{ request('points_start_date') }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="points_end_date" class="form-label small fw-bold">End Date</label>
+                                    <input type="date" class="form-control form-control-sm" name="points_end_date" 
+                                           id="points_end_date" value="{{ request('points_end_date') }}">
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary btn-sm me-2">
+                                        <i class="fas fa-search me-1"></i> Apply
+                                    </button>
+                                    <a href="{{ route('user.viewwallet') }}" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-times me-1"></i> Clear
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     @if ($pointsTransactions->count() > 0)
@@ -252,13 +304,24 @@
                                 </tbody>
                             </table>
                         </div>
+                        <!-- Points Transactions Pagination -->
+                        <div class="d-flex justify-content-between align-items-center p-3">
+                            <div class="text-muted">
+                                Showing {{ $pointsTransactions->firstItem() }} to {{ $pointsTransactions->lastItem() }} of {{ $pointsTransactions->total() }} entries
+                            </div>
+                            <nav aria-label="Points transactions pagination">
+                                <ul class="pagination mb-0">
+                                    {{ $pointsTransactions->withQueryString()->onEachSide(1)->links('pagination::bootstrap-4') }}
+                                </ul>
+                            </nav>
+                        </div>
                     @else
                         <div class="text-center py-5">
                             <div class="mb-3">
                                 <i class="fas fa-exchange-alt fa-3x text-muted"></i>
                             </div>
-                            <h5 class="fw-bold text-muted">No transactions yet</h5>
-                            <p class="text-muted">Your point transactions will appear here</p>
+                            <h5 class="fw-bold text-muted">No transactions found</h5>
+                            <p class="text-muted">Try adjusting your filters</p>
                         </div>
                     @endif
                 </div>

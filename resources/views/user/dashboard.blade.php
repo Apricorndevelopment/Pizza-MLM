@@ -178,10 +178,6 @@
             margin-bottom: 0;
         }
 
-        .power-leg-card {
-            background: var(--power-leg-gradient);
-        }
-
         .weaker-leg-card {
             background: var(--weaker-leg-gradient);
         }
@@ -392,7 +388,7 @@
             <div class="row">
                 <!-- Power Leg Points Card -->
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card power-leg-card shadow-sm">
+                    <div class="dashboard-card power-leg-card shadow-sm" style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
                         <div class="card-content">
                             <div class="card-icon">
                                 <i class="fas fa-chart-line"></i>
@@ -465,17 +461,47 @@
                     </div>
                 </div>
 
-                <!-- Additional Card for Balance -->
+                <!-- Level Income Card -->
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card shadow-sm" style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                    <div class="dashboard-card network-card shadow-sm" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <p class="card-title">Level Income</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores($levelIncome) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Monthly Incomes from the downline user's packages</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rewards Income Card -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card monthly-card shadow-sm" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <p class="card-title">Rewards Income</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores($rewardIncome) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Total Income for attaining the ranks</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Income -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card shadow-sm" style="background: linear-gradient(135deg, #6b6b83, #3b8d99);">
                         <div class="card-content">
                             <div class="card-icon">
                                 <i class="fas fa-rupee-sign"></i>
                             </div>
-                            <p class="card-title">Total Balance</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->points_balance) }}</h2>
+                            <p class="card-title">Total Income</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores($totalIncome) }}</h2>
                             <hr class="card-divider">
-                            <p class="card-description">Your total available balance</p>
+                            <p class="card-description">Total incomes from all incomes</p>
                         </div>
                     </div>
                 </div>

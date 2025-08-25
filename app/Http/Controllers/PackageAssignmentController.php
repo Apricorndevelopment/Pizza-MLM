@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\MaturityMonthlyDeduction;
 use App\Models\Package1;
 use App\Models\Package2;
 use App\Models\Package2Details;
 use App\Models\Package2Purchase;
 use App\Models\User;
 use App\Models\PackageTransaction;
+use App\Models\PointsTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -78,8 +80,9 @@ class PackageAssignmentController extends Controller
         $userId = Auth::id();
 
         // Get all package transactions for this user with package details
-        $packages = Package2Purchase::with(['package2', 'rateDetail'])
+        $regularPackages = Package2Purchase::with(['package2', 'rateDetail'])
             ->where('user_id', $userId)
+            ->where('maturity', 0)
             ->latest()
             ->get();
 
@@ -88,8 +91,62 @@ class PackageAssignmentController extends Controller
             ['title' => 'Invoices', 'url' => route('user.packages')]
         ];
 
-        return view('user.packages', compact('packages', 'breadcrumbs'));
+        return view('user.packages', compact('regularPackages', 'breadcrumbs'));
     }
+
+    public function viewUserMaturityPackage()
+    {
+        $userId = Auth::id();
+
+        $maturityPackages = Package2Purchase::with(['package2', 'rateDetail','maturityMonthlyDeductions'])
+            ->where('user_id', $userId)
+            ->where('maturity', 1)
+            ->where('payout_processed', 0)
+            ->latest()
+            ->get();
+
+        $breadcrumbs = [
+            ['title' => 'Package', 'url' => route('user.maturity.packages')],
+            ['title' => 'Maturity Package', 'url' => route('user.maturity.packages')]
+        ];
+
+        return view('user.maturity-package', compact('maturityPackages', 'breadcrumbs'));
+    }
+
+    public function payDeduction($id)
+    {
+        $deduction = MaturityMonthlyDeduction::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->findOrFail($id);
+
+       $totalDue = $deduction->total_deduction;
+
+        if (Auth::user()->points_balance < $totalDue) {
+            return redirect()->back()->with('error', 'Insufficient balance to make this payment.');
+        }
+
+        $user = User::find(Auth::id());
+
+        DB::transaction(function () use ($deduction, $totalDue,$user) {
+            // Deduct from user balance
+            $user->decrement('points_balance', $totalDue);
+
+            // Record points transaction
+            PointsTransaction::create([
+                'user_id' => Auth::id(),
+                'user_ulid' => Auth::user()->ulid,
+                'points' => -$totalDue,
+                'notes' => 'Payment for maturity package monthly deduction - ' . $deduction->deduction_month,
+                'admin_id' => null,
+            ]);
+
+            // Mark deduction as paid
+            $deduction->update(['status' => 'paid']);
+        });
+
+        return redirect()->back()->with('success', 'Payment completed successfully!');
+    }
+
 
     public function showInvoice($id)
     {

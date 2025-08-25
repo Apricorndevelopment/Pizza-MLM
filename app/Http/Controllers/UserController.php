@@ -39,11 +39,18 @@ class UserController extends Controller
             ->where('user_id', Auth::id())
             ->sum('distributed_amount');
 
+        $levelIncome = LevelIncome::where('user_id', Auth::id())->sum('amount');
+
+        $rewardIncome = RoyaltyRewardsIncome::where('user_id', Auth::id())->sum('points');
+
+        $totalIncome = $referralCommission + $networkCommission + $monthlyIncome + $levelIncome + $rewardIncome;
+
         $breadcrumbs = [
             ['title' => 'Dashboard', 'url' => route('user.dashboard')]
         ];
+
         $packages = Package1::all();
-        return view('user.dashboard', compact('packages', 'breadcrumbs', 'referralCommission', 'networkCommission', 'monthlyIncome'));
+        return view('user.dashboard', compact('packages', 'breadcrumbs', 'referralCommission', 'networkCommission', 'monthlyIncome','levelIncome','rewardIncome','totalIncome'));
     }
 
     public function profile()
@@ -425,7 +432,7 @@ class UserController extends Controller
                 'package2_id' => $package->id,
                 'package2_detail_id' => $rateDetail->id,
                 'package_name' => $package->package_name,
-                'quantity' => $request->quantity, 
+                'quantity' => $request->quantity,
                 'rate' => $rateDetail->rate,
                 'capital' => $rateDetail->capital,
                 'time' => $rateDetail->time,
@@ -802,23 +809,40 @@ class UserController extends Controller
 
 
 
-    public function viewWallet()
+    public function viewWallet(Request $request)
     {
         $points = Auth::user()->points_balance;
         $loyalty = Auth::user()->loyalty_balance;
         $user = Auth::user();
 
-        $withdrawals = MoneyWithdrawl::where('user_id', $user->id)
-            ->latest()
-            ->take(5)
-            ->get();
+        // Withdrawals with pagination
+        $withdrawalsQuery = MoneyWithdrawl::where('user_id', $user->id);
+        $withdrawals = $withdrawalsQuery->latest()->paginate(5, ['*'], 'withdrawals_page');
 
-        $pointsTransactions = PointsTransaction::where('user_id', $user->id)
-            ->latest()
-            ->take(10)
-            ->get();
+        // Points Transactions with filters and pagination
+        $pointsQuery = PointsTransaction::where('user_id', $user->id);
 
-        $loyaltyTransactions = LoyaltyTransaction::where('user_id',  $user->id)
+        // Apply filters if requested
+        if ($request->has('points_type') && !empty($request->points_type)) {
+            if ($request->points_type === 'credit') {
+                $pointsQuery->where('points', '>=', 0);
+            } elseif ($request->points_type === 'debit') {
+                $pointsQuery->where('points', '<', 0);
+            }
+        }
+
+        if ($request->has('points_start_date') && !empty($request->points_start_date)) {
+            $pointsQuery->whereDate('created_at', '>=', $request->points_start_date);
+        }
+
+        if ($request->has('points_end_date') && !empty($request->points_end_date)) {
+            $pointsQuery->whereDate('created_at', '<=', $request->points_end_date);
+        }
+
+        $pointsTransactions = $pointsQuery->latest()->paginate(10, ['*'], 'points_page');
+
+        // Loyalty Transactions (keep your existing logic)
+        $loyaltyTransactions = LoyaltyTransaction::where('user_id', $user->id)
             ->latest()
             ->take(10)
             ->get();

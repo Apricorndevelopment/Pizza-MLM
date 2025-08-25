@@ -64,7 +64,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" id="transferBtn" disabled>
+                    <button type="submit" class="btn btn-primary" id="transferBtn" onclick="Are you sure you want to transfer points ?" disabled>
                         <i class="fas fa-paper-plane me-1"></i> Transfer Points
                     </button>
                 </form>

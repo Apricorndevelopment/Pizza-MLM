@@ -301,6 +301,34 @@ class AuthController extends Controller
         ]);
     }
 
+    public function getUserDetailsAdmin($ulid)
+    {
+        $user = User::where('ulid', $ulid)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Purchase Amount
+        $purchaseAmount = Package2Purchase::where('user_id', $user->id)->sum('final_price');
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'ulid' => $user->ulid,
+            'email' => $user->email,
+            'registered_date' => $user->created_at->format('d-m-Y, H:i A'),
+            'activation_date' => $user->user_doa,
+            'rank' => $user->current_rank,
+            'status' => $user->status,
+            'points_balance' => $user->points_balance,
+            'loyalty_balance' => $user->loyalty_balance,
+            'left_business' => $user->left_business,
+            'right_business' => $user->right_business,
+            'purchase_amount' => $purchaseAmount,
+        ]);
+    }
+
     /**
      * Calculate the level of a target user in relation to the starting user (Auth user)
      */

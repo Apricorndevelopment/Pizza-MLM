@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\LoginActivityController;
 use App\Http\Controllers\PackageAssignmentController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProductController;
@@ -81,6 +82,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/package2-purchase', [UserController::class, 'showPurchaseForm'])->name('package2.purchase');
     Route::post('/package2-purchase', [UserController::class, 'processPurchase'])->name('package2.process-purchase');
     Route::get('/user/my-packages', [PackageAssignmentController::class, 'viewUserPackage'])->name('user.packages');
+    Route::get('/user/maturity-packages', [PackageAssignmentController::class, 'viewUserMaturityPackage'])->name('user.maturity.packages');
+    Route::post('/maturity-packages/pay-deduction/{id}', [PackageAssignmentController::class, 'payDeduction'])->name('user.maturity.pay-deduction');
     Route::get('/user/packages/invoice/{id}', [PackageAssignmentController::class, 'showInvoice'])->name('user.packages.invoice');
     Route::get('/packages/endorse/{id}', [PackageAssignmentController::class, 'showEndorseForm'])->name('user.packages.endorse');
     Route::post('/packages/process-endorsement', [PackageAssignmentController::class, 'processEndorsement'])->name('user.packages.process-endorsement');
@@ -100,6 +103,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/user/my-yearly-profits', [UserController::class, 'showUserYearlyProfits'])->name('user.yearly.profits');
     Route::get('/user/my-monthly-profits', [UserController::class, 'showUserMonthlyProfits'])->name('user.monthly.profits');
+
+    Route::prefix('user')->group(function () {
+        // Other routes...
+        Route::get('/login-activity', [LoginActivityController::class, 'index'])->name('user.login-activity');
+        Route::delete('/login-activity/{id}', [LoginActivityController::class, 'destroy'])->name('user.login-activity.destroy');
+        Route::post('/login-activity/logout-all', [LoginActivityController::class, 'logoutAllDevices'])->name('user.login-activity.logout-all');
+    });
 
     Route::get('/get-package-rates/{packageId}', function ($packageId) {
         $rates = Package2Details::where('package2_id', $packageId)->get();
@@ -133,7 +143,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 Route::get('/get-user-details/{ulid}', [AuthController::class, 'getUserDetails']);
-Route::get('/admin/get-user-details/{ulid}', [AuthController::class, 'getUserDetails']);
+Route::get('/admin/get-user-details/{ulid}', [AuthController::class, 'getUserDetailsAdmin']);
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/user/fetch-sub-users', [AuthController::class, 'fetchSubUsers'])->name('user.subusers');
@@ -161,6 +171,7 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/editmember/{id}', [AdminController::class, 'editMember'])->name('admin.editmember');
     Route::put('/admin/update-member/{id}', [AdminController::class, 'updateMember'])->name('admin.updatemember');
     Route::delete('/admin/delete-member/{id}', [AdminController::class, 'deleteMember'])->name('admin.deletemember');
+    Route::get('/admin/network/summary', [AdminController::class, 'networkSummary'])->name('admin.network.summary');
     Route::get('/admin/user-tree/{adminId}', [AuthController::class, 'showUserTreeFromAdmin'])->name('admin.user.tree');
 
     Route::prefix('admin')->name('admin.')->group(function () {

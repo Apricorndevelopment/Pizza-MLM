@@ -19,7 +19,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-sm table-hover align-middle mb-0">
+                <table class="table table-sm table-hover table-striped align-middle mb-0">
                     <thead class="table-light">
                         <tr class="small">
                             <th class="ps-3">Member</th>

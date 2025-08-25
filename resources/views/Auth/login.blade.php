@@ -116,16 +116,6 @@
             font-weight: 900;
             font-size: 1.8rem;
             padding: 10px 0;
-   
-            background: linear-gradient(45deg, #006400, #008080, #4682B4, #000080);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-            -webkit-text-stroke: 1px #000;
-        
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border: 2px solid black;
         }
 
         .text-muted {

@@ -47,9 +47,8 @@
                 </div>
 
                 <!-- Rewards Table -->
-                <!-- Rewards Table -->
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th width="25%">Rank</th>

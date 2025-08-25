@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->hasMany(UserPackageInventory::class, 'user_ulid', 'ulid');
     }
 
+    public function maturityMonthlyDeductions()
+    {
+        return $this->hasMany(MaturityMonthlyDeduction::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

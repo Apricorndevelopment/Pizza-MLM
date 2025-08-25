@@ -114,7 +114,8 @@
                         $user = Auth::user();
                         ?>
                         @if ($user->profile_picture)
-                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}" alt="Profile Picture">
+                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
+                                alt="Profile Picture">
                         @else
                             <img src="{{ asset('assets2/images/faces/face28.jpg') }}" alt="profile" />
                         @endif
@@ -158,10 +159,31 @@
                 @endphp
 
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.user.tree', $adminId) }}">
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables3"
+                        aria-expanded="false" aria-controls="tables3">
                         <i class="fa fa-sitemap menu-icon me-3"></i>
-                        <span class="menu-title">Admin User Tree</span>
+                        <span class="menu-title flex-grow-1">Admin Network</span>
+                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
+                    <div class="collapse" id="tables3">
+                        <ul class="nav flex-column sub-menu ps-3"
+                            style="border-left: 2px solid #4b49ac; list-style: none;">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('admin.user.tree', $adminId) }}">
+                                    <i class="fa fa-sitemap me-2"></i>
+                                    <span class="menu-title">User Tree</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('admin.network.summary')}}">
+                                    <i class="fa fa-network-wired me-2"></i>
+                                    <span class="menu-title">Network Summary</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li class="nav-item">
@@ -178,7 +200,7 @@
                     </a>
                 </li>
 
-               
+
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables2"
                         aria-expanded="false" aria-controls="tables2">
@@ -212,14 +234,14 @@
                         </ul>
                     </div>
                 </li>
-                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables3"
-                        aria-expanded="false" aria-controls="tables3">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables4"
+                        aria-expanded="false" aria-controls="tables4">
                         <i class="fa fa-cubes menu-icon me-3"></i>
                         <span class="menu-title flex-grow-1">Manage Stock</span>
                         <i class="menu-arrow fa fa-angle-down transition-all"></i>
                     </a>
-                    <div class="collapse" id="tables3">
+                    <div class="collapse" id="tables4">
                         <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style:none;">
                             <li class="nav-item" style="list-style: none;">
@@ -228,8 +250,9 @@
                                     <span>Transfer Stock</span>
                                 </a>
                             </li>
-                             <li class="nav-item" style="list-style: none;">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('admin.sales.stock') }}">
+                            <li class="nav-item" style="list-style: none;">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('admin.sales.stock') }}">
                                     <i class="fa fa-credit-card me-2" style="font-size: 0.8rem;"></i>
                                     <span>Record Stock Sales</span>
                                 </a>
@@ -240,7 +263,7 @@
                                     <span>View User's Stock</span>
                                 </a>
                             </li>
-                           
+
                         </ul>
                     </div>
                 </li>

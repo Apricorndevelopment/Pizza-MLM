@@ -29,12 +29,16 @@ class Kernel extends ConsoleKernel
         $schedule->command('maturity:process-payout')
             ->dailyAt('02:00') // 2 AM daily
             ->appendOutputTo(storage_path('logs/maturity_payout.log'));
+
+        $schedule->command('maturity:process-monthly-deductions')
+            ->monthlyOn(1, '01:00') // 1 AM on 1st of every month
+            ->appendOutputTo(storage_path('logs/maturity_deductions.log'));
     }
 
     protected function commands()
     {
         $this->load(__DIR__ . '/Commands');
-        
+
         require base_path('routes/console.php');
     }
 }

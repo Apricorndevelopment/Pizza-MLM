@@ -82,8 +82,6 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
         }
 
         .logo img {

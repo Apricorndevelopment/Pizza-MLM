@@ -175,11 +175,13 @@
                     style="width: 55px; height: 55px; object-fit: cover;" class="me-2" />
                 <h3 class="mb-0">Geokranti</h3>
             </a>
-            <a class="navbar-brand brand-logo-mini" href=""><img src="{{ asset('geokrantilogo.jpg') }}"
-                    alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="">
+                <img src="{{ asset('geokrantilogo.jpg') }}" alt="logo" />
+            </a>
         </div>
 
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+            <h3 class="mb-0 d-block d-lg-none" style="position: absolute;left:58px;">Geokranti</h3>
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="icon-menu"></span>
             </button>
@@ -524,14 +526,14 @@
                         <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="/English-Geokranti.com.pdf"
+                                <a class="nav-link d-flex align-items-center" href="/English-Geokranti.pdf"
                                     download>
                                     <i class="fas fa-language me-2" style="font-size: 0.8rem;"></i>
                                     <span>In English</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="/Hindi-Geokranti.com.pdf"
+                                <a class="nav-link d-flex align-items-center" href="/Hindi-Geokranti.pdf"
                                     download>
                                     <i class="fas fa-language me-2" style="font-size: 0.8rem;"></i>
                                     <span>In Hindi</span>

@@ -15,9 +15,19 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endsession
+        
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white py-2">
+            <div class="card-header bg-primary text-white py-2 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fs-4 fw-normal">All Registered Members</h4>
+                
+                <!-- Status Filter Form -->
+                <form method="GET" action="{{ route('admin.viewmember') }}" class="d-flex">
+                    <select name="status" class="form-select form-select-md me-2 pe-4" onchange="this.form.submit()" style="width: auto;">
+                        <option value="all" {{ $status == 'all' ? 'selected' : '' }}>All Status</option>
+                        <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                </form>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -36,7 +46,7 @@
                         <tbody>
                             @foreach ($member as $index => $user)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ ($member->currentPage() - 1) * $member->perPage() + $index + 1 }}</td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->ulid }}</td>
                                     <td>{{ $user->sponsor_id }}</td>
@@ -75,7 +85,7 @@
                     </table>
                 </div>
                 <div class="px-2 py-2">
-                    {{ $member->links('vendor.pagination.custom-bootstrap') }}
+                    {{ $member->appends(['status' => $status])->links('vendor.pagination.custom-bootstrap') }}
                 </div>
             </div>
         </div>
@@ -122,6 +132,15 @@
 
             .card-header h4 {
                 font-size: 15px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .card-header form {
+                align-self: flex-end;
             }
         }
     </style>

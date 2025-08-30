@@ -57,7 +57,7 @@ class PackageController extends Controller
     {
         $request->validate([
             'package_name' => 'required|string|max:255',
-            'package_quantity' => 'required|string',
+            'package_quantity' => 'required|numeric',
             'price' => 'required|string',
             'description' => 'nullable|string',
             'maturity' => 'required|string',
@@ -141,13 +141,13 @@ class PackageController extends Controller
         $package = Package2::with('details')->findOrFail($id);
         return view('admin.package2-edit', compact('package'));
     }
-
+    
 
     public function updatePackage2(Request $request, $id)
     {
         $request->validate([
             'package_name' => 'required|string|max:255',
-            'package_quantity' => 'required|string',
+            'package_quantity' => 'required|numeric',
             'price' => 'required|string',
             'description' => 'nullable|string',
             'maturity' => 'required|string',

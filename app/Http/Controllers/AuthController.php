@@ -329,9 +329,8 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Calculate the level of a target user in relation to the starting user (Auth user)
-     */
+    // Calculate the level of a target user in relation to the starting user (Auth user)
+     
     private function calculateLevel($startUlid, $targetUlid, $level = 0)
     {
         // Base case: same user

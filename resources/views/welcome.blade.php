@@ -142,7 +142,7 @@
                         <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}" alt="img" width="79px;"
                             height="79spx;">
                     </a>
-                    <h1 class="m-0 h5 d-none d-md-block">Geo Kranti</h1>
+                    <h1 class="m-0 h5">Geo Kranti</h1>
                 </div>
 
                 <!-- Right Side: Login/Register -->

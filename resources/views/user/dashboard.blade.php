@@ -387,7 +387,7 @@
 
             <div class="row">
                 <!-- Power Leg Points Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
+                <div class="col-md-6 mb-4">
                     <div class="dashboard-card power-leg-card shadow-sm" style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
                         <div class="card-content">
                             <div class="card-icon">
@@ -402,7 +402,7 @@
                 </div>
 
                 <!-- Weaker Leg Points Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
+                <div class="col-md-6 mb-4">
                     <div class="dashboard-card weaker-leg-card shadow-sm">
                         <div class="card-content">
                             <div class="card-icon">
@@ -491,8 +491,23 @@
                     </div>
                 </div>
 
-                <!-- Total Income -->
+                <!-- Royalty Rewards Card -->
                 <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="dashboard-card monthly-card shadow-sm" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <p class="card-title">Royalty Income</p>
+                            <h2 class="card-value">{{ formatInLakhsCrores($royaltyRewards) }}</h2>
+                            <hr class="card-divider">
+                            <p class="card-description">Income from yearly distribution of rewards</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Income -->
+                <div class="col-md-6 col-lg-4 mb-4 mx-auto">
                     <div class="dashboard-card shadow-sm" style="background: linear-gradient(135deg, #6b6b83, #3b8d99);">
                         <div class="card-content">
                             <div class="card-icon">

@@ -17,7 +17,7 @@
     <p><strong>Your Login Details:</strong></p>
 
     <ul>
-        <li>Email: {{ $user->email }}</li>
+        <li>Username: {{ $user->ulid }}</li>
         <li>Password: {{ $plainPassword }}</li>
     </ul>
 

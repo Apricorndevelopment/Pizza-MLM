@@ -43,14 +43,21 @@ class UserController extends Controller
 
         $rewardIncome = RoyaltyRewardsIncome::where('user_id', Auth::id())->sum('points');
 
-        $totalIncome = $referralCommission + $networkCommission + $monthlyIncome + $levelIncome + $rewardIncome;
+        $royaltyRewards = PointsTransaction::where('user_id', Auth::id())
+            ->where(function ($query) {
+                $query->where('notes', 'like', '%yearly package profit share%')
+                    ->orWhere('notes', 'like', '%yearly profit as%');
+            })
+            ->sum('points');
+
+        $totalIncome = $referralCommission + $networkCommission + $monthlyIncome + $levelIncome + $rewardIncome + $royaltyRewards;
 
         $breadcrumbs = [
             ['title' => 'Dashboard', 'url' => route('user.dashboard')]
         ];
 
         $packages = Package1::all();
-        return view('user.dashboard', compact('packages', 'breadcrumbs', 'referralCommission', 'networkCommission', 'monthlyIncome','levelIncome','rewardIncome','totalIncome'));
+        return view('user.dashboard', compact('packages', 'breadcrumbs', 'referralCommission', 'networkCommission', 'monthlyIncome', 'levelIncome', 'rewardIncome', 'royaltyRewards', 'totalIncome'));
     }
 
     public function profile()
@@ -388,7 +395,6 @@ class UserController extends Controller
     }
 
 
-
     //User side package purchasing after Activation
 
     public function showPurchaseForm()
@@ -601,7 +607,6 @@ class UserController extends Controller
         }
     }
 
-    // Helper function to check if user has made any package purchase
     protected function hasPurchasedPackage($user)
     {
         return DB::table('package2_purchases')
@@ -609,7 +614,6 @@ class UserController extends Controller
             ->exists();
     }
 
-    // Helper function to check commission eligibility
     protected function isUserEligibleForCommission($user)
     {
         // Check if user is within first 3 months
@@ -855,55 +859,85 @@ class UserController extends Controller
         return view('user.viewwallet', compact('points', 'loyalty', 'pointsTransactions', 'loyaltyTransactions', 'withdrawals', 'breadcrumbs'));
     }
 
-    public function level1Commissions()
+    public function level1Commissions(Request $request)
     {
+        // Get filter parameters from request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
         $commissions = Commission::where('user_id', Auth::id())
             ->where('level', 1)
+            ->when($startDate, function ($query) use ($startDate) {
+                return $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query) use ($endDate) {
+                return $query->whereDate('created_at', '<=', $endDate);
+            })
             ->latest()
-            ->take(10)
-            ->get();
-
+            ->paginate(10); // 
         $breadcrumbs = [
             ['title' => 'Incentives', 'url' => route('user.commissions.level1')],
             ['title' => 'Direct Commissions', 'url' => route('user.commissions.level1')]
         ];
 
-        return view('user.rewards.directcommission', compact('commissions', 'breadcrumbs'));
+        return view('user.rewards.directcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
     }
 
-    public function level2Commissions()
+    public function level2Commissions(Request $request)
     {
+        // Get filter parameters from request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
         $commissions = Commission::where('user_id', Auth::id())
             ->whereIn('level', [2, 3])
+            ->when($startDate, function ($query) use ($startDate) {
+                return $query->whereDate('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query) use ($endDate) {
+                return $query->whereDate('created_at', '<=', $endDate);
+            })
             ->latest()
-            ->take(10)
-            ->get();
+            ->paginate(10); // Changed from take(10) to paginate(10)
 
         $breadcrumbs = [
             ['title' => 'Incentives', 'url' => route('user.commissions.level2')],
             ['title' => 'Network Bonus', 'url' => route('user.commissions.level2')]
         ];
 
-        return view('user.rewards.networkcommission', compact('commissions', 'breadcrumbs'));
+        return view('user.rewards.networkcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
     }
 
-    public function levelIncomeReport()
+    public function levelIncomeReport(Request $request)
     {
-        $incomes = LevelIncome::where('user_id', Auth::id())
-            ->with(['fromUser', 'package'])
-            ->latest()
-            ->paginate(10);
+        // Get filter parameters from request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $totalIncome = LevelIncome::where('user_id', Auth::id())->sum('amount');
+        $incomesQuery = LevelIncome::where('user_id', Auth::id())
+            ->with(['fromUser', 'package']);
 
-        $totalRecords = LevelIncome::where('user_id', Auth::id())->count();
+        // Apply date filters
+        $incomesQuery->when($startDate, function ($query) use ($startDate) {
+            return $query->whereDate('created_at', '>=', $startDate);
+        });
+
+        $incomesQuery->when($endDate, function ($query) use ($endDate) {
+            return $query->whereDate('created_at', '<=', $endDate);
+        });
+
+        $incomes = $incomesQuery->latest()->paginate(10);
+
+        // Calculate totals based on filtered results
+        $totalIncome = $incomesQuery->sum('amount');
+        $totalRecords = $incomesQuery->count();
 
         $breadcrumbs = [
             ['title' => 'Incentives', 'url' => route('user.reports.level-income')],
             ['title' => 'Passive Income', 'url' => route('user.reports.level-income')]
         ];
 
-        return view('user.rewards.level-income', compact('incomes', 'totalIncome', 'totalRecords', 'breadcrumbs'));
+        return view('user.rewards.level-income', compact('incomes', 'totalIncome', 'totalRecords', 'breadcrumbs', 'startDate', 'endDate'));
     }
 
     public function showUserRankRewards($ulid)
@@ -1003,18 +1037,37 @@ class UserController extends Controller
         return view('user.rewards.yearlyProfits', compact('user', 'allProfits', 'eligiblePackages', 'breadcrumbs'));
     }
 
-    public function showUserMonthlyProfits()
+    public function showUserMonthlyProfits(Request $request)
     {
         $user = Auth::user();
-        $distributions = PackageMonthlyDistribution::with(['user', 'packagePurchase'])
-            ->where('user_id', $user->id)
-            ->orderBy('distribution_date', 'desc')
+
+        // Get filter parameters from request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $distributionsQuery = PackageMonthlyDistribution::with(['user', 'packagePurchase'])
+            ->where('user_id', $user->id);
+
+        // Apply date filters
+        $distributionsQuery->when($startDate, function ($query) use ($startDate) {
+            return $query->whereDate('distribution_date', '>=', $startDate);
+        });
+
+        $distributionsQuery->when($endDate, function ($query) use ($endDate) {
+            return $query->whereDate('distribution_date', '<=', $endDate);
+        });
+
+        $distributions = $distributionsQuery->orderBy('distribution_date', 'desc')
             ->paginate(10);
+
+        // Calculate total based on filtered results
+        $totalAmount = $distributionsQuery->sum('distributed_amount');
 
         $breadcrumbs = [
             ['title' => 'Package', 'url' => route('user.monthly.profits')],
             ['title' => 'Monthly Income', 'url' => route('user.monthly.profits')]
         ];
-        return view('user.rewards.view-monthlyProfits', compact('distributions', 'breadcrumbs'));
+
+        return view('user.rewards.view-monthlyProfits', compact('distributions', 'breadcrumbs', 'totalAmount', 'startDate', 'endDate'));
     }
 }

@@ -45,6 +45,7 @@
                     alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+            <h3 class="mb-0 d-block d-lg-none" style="position: absolute;left:58px;">Geokranti</h3>
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <span class="icon-menu"></span>
             </button>
@@ -177,7 +178,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('admin.network.summary')}}">
+                                    href="{{ route('admin.network.summary') }}">
                                     <i class="fa fa-network-wired me-2"></i>
                                     <span class="menu-title">Network Summary</span>
                                 </a>
@@ -328,6 +329,12 @@
                         </ul>
 
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.pdf.edit') }}">
+                        <i class="fas fa-file-pdf menu-icon me-3" style="font-size: 1.5rem"></i>
+                        <span class="menu-title">Manage PDFs</span>
+                    </a>
                 </li>
             </ul>
         </nav>

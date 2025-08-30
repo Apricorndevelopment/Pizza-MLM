@@ -151,10 +151,46 @@ class AdminController extends Controller
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
     }
 
-    public function viewmemeber()
+     public function editPdf()
     {
-        $member = User::Paginate(10);
-        return view('admin.members.viewmember', compact('member'));
+        $breadcrumbs = [
+            ['title' => 'Manage PDFs', 'url' => route('admin.pdf.edit')]
+        ];
+
+        return view('admin.edit-pdf', compact('breadcrumbs'));
+    }
+
+    public function updatePdf(Request $request)
+    {
+        $request->validate([
+            'english_pdf' => 'nullable|file|mimes:pdf|max:102400',
+            'hindi_pdf' => 'nullable|file|mimes:pdf|max:102400'
+        ]);
+
+        if ($request->hasFile('english_pdf')) {
+            $englishPdf = $request->file('english_pdf');
+            $englishPdf->move(public_path(), 'English-Geokranti.pdf');
+        }
+
+        if ($request->hasFile('hindi_pdf')) {
+            $hindiPdf = $request->file('hindi_pdf');
+            $hindiPdf->move(public_path(), 'Hindi-Geokranti.pdf');
+        }
+
+        return redirect()->route('admin.pdf.edit')
+            ->with('success', 'PDF files updated successfully!');
+    }
+
+    public function viewmemeber(Request $request)
+    {
+        $status = $request->input('status', 'all');
+
+        $member = User::when($status !== 'all', function ($query) use ($status) {
+            return $query->where('status', $status);
+        })
+            ->paginate(10);
+
+        return view('admin.members.viewmember', compact('member', 'status'));
     }
 
     public function editMember($id)
@@ -431,7 +467,7 @@ class AdminController extends Controller
                         'user_id' => $user->id,
                         'user_ulid' => $user->ulid,
                         'points' => $perUserAmount,
-                        'notes' => "₹$perUserAmount received for $year yearly profit as $levels->level ($levels->profit%)",
+                        'notes' => "₹$perUserAmount received for $year yearly profit as $levels->level" ,
                         'admin_id' => Auth::id()
                     ]);
                 }
@@ -481,7 +517,7 @@ class AdminController extends Controller
                         'user_id' => $user->id,
                         'user_ulid' => $user->ulid,
                         'points' => $userAmount,
-                        'notes' => "₹$userAmount received for $year yearly package profit share ($profitSharePercentage%) based on package value ₹{$buyer['purchase']->final_price} and duration factor {$buyer['weight']}/$totalWeight",
+                        'notes' => "₹$userAmount received for $year yearly package profit share",
                         'admin_id' => Auth::id()
                     ]);
                 }

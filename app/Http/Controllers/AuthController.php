@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\UserRegisteredMail;
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\Gallery;
 use App\Models\Package2Purchase;
 use App\Models\PasswordOtp;
 use Illuminate\Support\Str;
@@ -22,49 +23,81 @@ class AuthController extends Controller
         return view('Auth.register');
     }
 
-    // public function register(Request $request)
+    //    public function loadMore(Request $request)
     // {
-    //     $request->validate([
-    //         'full_name' => 'required|string|max:255',
-    //         'email' => 'required|email|unique:users,email',
-    //         // 'address' => 'nullable|string|max:255',
-    //         // 'state' => 'nullable|string|max:100',
-    //         'phone' => 'required|string|max:15',
-    //         'password' => 'required|string|min:8|confirmed',
-    //         'sponsor_id' => 'required|string|max:50',
-    //         'parent_id' => 'nullable|string|max:50',
-    //         'email_otp' => 'required',
-    //     ]);
+    //     $page = $request->get('page', 1);
+    //     $perPage = 6;
+    //     $initialDisplayCount = 3;
 
-    //     if ($request->email !== Session::get('email_to_verify') || $request->email_otp != Session::get('email_otp')) {
-    //         return back()->withErrors(['email_otp' => 'Invalid OTP or email mismatch.']);
+    //     // Calculate how many photos we've already shown
+    //     $alreadyShown = $initialDisplayCount + (($page - 1) * $perPage);
+
+    //     // Get remaining photos
+    //     $photos = Gallery::offset($alreadyShown)->limit($perPage)->get();
+    //     $totalPhotos = Gallery::count();
+
+    //     // Check if there are more photos to load
+    //     $hasMore = $totalPhotos > $alreadyShown + $photos->count();
+
+    //     if ($request->ajax()) {
+    //         $html = '';
+    //         foreach ($photos as $photo) {
+    //             $html .= '<div class="col">';
+    //             $html .= '<div class="card h-100 shadow-sm">';
+    //             $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . $photo->title . '" class="card-img-top img-fluid" style="height: 250px; object-fit: cover;">';
+    //             $html .= '<div class="card-body">';
+    //             $html .= '<h5 class="card-title">' . $photo->title . '</h5>';
+    //             $html .= '</div></div></div>';
+    //         }
+
+    //         return response()->json([
+    //             'html' => $html,
+    //             'hasMore' => $hasMore,
+    //             'alreadyShown' => $alreadyShown,
+    //             'loaded' => $photos->count(),
+    //             'total' => $totalPhotos
+    //         ]);
     //     }
 
-    //     $customUlid = 'AH' . rand(100000, 999999);
-
-
-    //     while (User::where('ulid', $customUlid)->exists()) {
-    //         $customUlid = 'AH' . rand(100000, 999999);
-    //     }
-
-    //     User::create([
-    //         'name' => $request->full_name,
-    //         'email' => $request->email,
-    //         'phone' => $request->phone,
-    //         'sponsor_id' => $request->sponsor_id,
-    //         'parent_id' => $request->parent_id,
-    //         // 'address' => $request->address,
-    //         // 'state' => $request->state,
-    //         'ulid' => $customUlid,  
-    //         'password' => Hash::make($request->password),
-    //         'role' => 'user',
-    //         'status' => 'inactive',
-    //     ]);
-
-    //     Session::forget(['email_otp', 'email_to_verify']);
-
-    //     return redirect()->route('auth.login')->with('success', 'Registration successful. Please login.');
+    //     return abort(404);
     // }
+
+    public function loadMore(Request $request)
+    {
+        $page = (int) $request->get('page', 1); // First page = after first 3
+        $perPage = 6;
+        $initialDisplayCount = 3;
+
+        // Skip initial 3, then apply pagination
+        $skip = $initialDisplayCount + (($page - 1) * $perPage);
+
+        $photos = Gallery::skip($skip)->take($perPage)->get();
+        $totalPhotos = Gallery::count();
+
+        $hasMore = $totalPhotos > $skip + $photos->count();
+
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($photos as $photo) {
+                $html .= '<div class="col">';
+                $html .= '<div class="card h-100 shadow-sm">';
+                $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . e($photo->title) . '" class="card-img-top img-fluid" style="height: 250px; object-fit: cover;">';
+                $html .= '<div class="card-body">';
+                $html .= '<h5 class="card-title">' . e($photo->title) . '</h5>';
+                $html .= '</div></div></div>';
+            }
+
+            return response()->json([
+                'html' => $html,
+                'hasMore' => $hasMore,
+                'loaded' => $photos->count(),
+                'total' => $totalPhotos,
+            ]);
+        }
+
+        return abort(404);
+    }
+
 
     public function register(Request $request)
     {
@@ -330,7 +363,7 @@ class AuthController extends Controller
     }
 
     // Calculate the level of a target user in relation to the starting user (Auth user)
-     
+
     private function calculateLevel($startUlid, $targetUlid, $level = 0)
     {
         // Base case: same user

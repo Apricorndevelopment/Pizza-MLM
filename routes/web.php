@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\LoginActivityController;
 use App\Http\Controllers\PackageAssignmentController;
 use App\Http\Controllers\PackageController;
@@ -13,13 +14,17 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
+use App\Models\Gallery;
 use App\Models\Package2;
 use App\Models\Package2Details;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return view('welcome');
+    $photos = Gallery::all();
+    return view('welcome' , compact('photos'));
 });
+
+Route::get('/gallery/load-more', [AuthController::class, 'loadMore'])->name('gallery.load-more');
 
 Route::get('/test-mail', function () {
     \Illuminate\Support\Facades\Mail::raw('This is a test email.', function ($message) {
@@ -37,35 +42,12 @@ Route::post('/login', [AuthController::class, 'logindetails'])->name('auth.login
 // User dashboard
 Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard')->middleware('auth');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-// Route::middleware(['auth'])->group(function () {
 
-//     Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
-//     Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.profile.edit');
-//     Route::put('/profile/update', [UserController::class, 'update'])->name('user.profile.update');
-
-//     Route::post('/purchase-package', [UserController::class, 'purchasePackage'])->name('user.purchase-package');
-//     Route::get('/my-packages', [PackageAssignmentController::class, 'viewUserPackage'])->name('user.packages');
-//     Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view');
-
-//     Route::get('/get-package-rates/{packageId}', function ($packageId) {
-//         $rates = Package2Details::where('package2_id', $packageId)->get();
-//         return response()->json($rates);
-//     });
-//     Route::get('/get-package-price/{packageId}', function ($packageId) {
-//         $package = Package2::findOrFail($packageId);
-//         return response()->json([
-//             'price' => $package->price,
-//             'user_balance' => Auth::check() ? Auth::user()->points_balance : 0
-//         ]);
-//     });
-//     Route::get('/package2-purchase', [UserController::class, 'showPurchaseForm'])->name('package2.purchase');
-//     Route::post('/package2-purchase', [UserController::class, 'processPurchase'])->name('package2.process-purchase');
-// });
+Route::get('/dashboard/sales-data', [UserController::class, 'getSalesChartData'])->name('dashboard.sales.data');
 
 Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['auth', 'password.age'])->group(function () {
-
         // Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
         Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
         Route::get('/profile/edit', [UserController::class, 'edit'])->name('user.profile.edit');
@@ -163,6 +145,10 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/pdf/edit', [AdminController::class, 'editPdf'])->name('admin.pdf.edit');
     Route::post('/admin/pdf/update', [AdminController::class, 'updatePdf'])->name('admin.pdf.update');
 
+    Route::get('/admin/gallery', [AdminController::class, 'managePhoto'])->name('admin.photo.manage');
+    Route::post('/admin/gallery', [AdminController::class, 'addPhoto'])->name('admin.gallery.store');
+    Route::delete('/admin/gallery/{id}', [AdminController::class, 'deletePhoto'])->name('admin.gallery.delete');
+
     Route::get('/profit-distribution', [AdminController::class, 'showFormForProfitDistribution'])->name('admin.profit.distribution');
     Route::post('/profit-distribution', [AdminController::class, 'distributeYearlyProfit'])->name('admin.profit.distribute');
     Route::get('/admin/view-yearly-distribution', [AdminController::class, 'viewYearlyDistribution'])->name('admin.view.distribution');
@@ -178,6 +164,10 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('products', ProductController::class);
+    });
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('faq', FaqController::class);
     });
 
     Route::prefix('admin')->group(function () {

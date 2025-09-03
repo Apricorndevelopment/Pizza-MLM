@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Gallery;
 use App\Models\MaturityMonthlyDeduction;
 use App\Models\Package1;
 use App\Models\Package2;

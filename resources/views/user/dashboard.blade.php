@@ -220,8 +220,91 @@
             margin: 0 auto;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('sales-chart').getContext('2d');
+            const filterSelect = document.getElementById('filter-select');
 
-    <div class="container-fluid py-4">
+             function formatInLakhsCrores(number) {
+            if (number >= 1000000000000) {
+                return '₹' + (number / 1000000000000).toFixed(3) + 'T';
+            } else if (number >= 1000000000) {
+                return '₹' + (number / 1000000000).toFixed(2) + 'B';
+            } else if (number >= 10000000) {
+                return '₹' + (number / 10000000).toFixed(2) + 'Cr';
+            } else if (number >= 100000) {
+                return '₹' + (number / 100000).toFixed(2) + 'L';
+            } else {
+                return '₹' + number.toLocaleString();
+            }
+        }
+
+            let salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Business',
+                        data: [],
+                        borderColor: '#4e73df',
+                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#4e73df',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                   return formatInLakhsCrores(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+
+            // Fetch chart data
+            function loadChartData(filter = 'monthly') {
+                fetch(`{{ route('dashboard.sales.data') }}?filter=${filter}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        salesChart.data.labels = data.labels;
+                        salesChart.data.datasets[0].data = data.data;
+                        salesChart.update();
+                    })
+                    .catch(error => console.error('Error fetching chart data:', error));
+            }
+
+            // Initial load
+            loadChartData('monthly');
+
+            // On filter change
+            filterSelect.addEventListener('change', function() {
+                loadChartData(this.value);
+            });
+        });
+    </script>
+
+
+    <div class="container-fluid py-3">
         <!-- Header Section -->
         <div class="row mb-2">
             <div class="col-12">
@@ -363,6 +446,49 @@
             </div>
         @endif
 
+        <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="card-title mb-0 text-primary">Sales Performance Report</h5>
+                                <p class="text-muted mb-0">Track your business growth over time</p>
+                            </div>
+                            <div>
+                                <select id="filter-select" class="form-select form-select-sm border-primary">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly" selected>Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-primary rounded p-2 me-2">
+                                <i class="bi bi-graph-up text-white"></i>
+                            </div>
+                            <p class="text-muted mb-0 flex-grow-1">
+                                Analyze your total business performance with interactive charts
+                            </p>
+                        </div>
+
+                        <div style="overflow-x: auto; position: relative; height: 300px;">
+                            <canvas id="sales-chart"></canvas>
+                        </div>
+
+                        <div class="mt-3 d-flex justify-content-end">
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-2">
+                                <i class="bi bi-circle-fill text-primary me-1"></i> Business Revenue
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         @php
             function formatInLakhsCrores($number)
             {
@@ -388,7 +514,8 @@
             <div class="row">
                 <!-- Power Leg Points Card -->
                 <div class="col-md-6 mb-4">
-                    <div class="dashboard-card power-leg-card shadow-sm" style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                    <div class="dashboard-card power-leg-card shadow-sm"
+                        style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
                         <div class="card-content">
                             <div class="card-icon">
                                 <i class="fas fa-chart-line"></i>
@@ -463,7 +590,8 @@
 
                 <!-- Level Income Card -->
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card network-card shadow-sm" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                    <div class="dashboard-card network-card shadow-sm"
+                        style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
                         <div class="card-content">
                             <div class="card-icon">
                                 <i class="fas fa-users"></i>
@@ -478,7 +606,8 @@
 
                 <!-- Rewards Income Card -->
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card monthly-card shadow-sm" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
+                    <div class="dashboard-card monthly-card shadow-sm"
+                        style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
                         <div class="card-content">
                             <div class="card-icon">
                                 <i class="fas fa-wallet"></i>
@@ -493,7 +622,8 @@
 
                 <!-- Royalty Rewards Card -->
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card monthly-card shadow-sm" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                    <div class="dashboard-card monthly-card shadow-sm"
+                        style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
                         <div class="card-content">
                             <div class="card-icon">
                                 <i class="fas fa-wallet"></i>

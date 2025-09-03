@@ -60,6 +60,113 @@ class UserController extends Controller
         return view('user.dashboard', compact('packages', 'breadcrumbs', 'referralCommission', 'networkCommission', 'monthlyIncome', 'levelIncome', 'rewardIncome', 'royaltyRewards', 'totalIncome'));
     }
 
+    private function getAllDownlineUlids($ulid)
+    {
+        $ulids = collect([$ulid]);
+
+        $directDownlines = User::where('sponsor_id', $ulid)->pluck('ulid');
+
+        foreach ($directDownlines as $downlineUlid) {
+            $ulids = $ulids->merge($this->getAllDownlineUlids($downlineUlid));
+        }
+
+        return $ulids;
+    }
+
+    /**
+     * Calculate total business for given ULIDs and optional date filter
+     */
+    private function getBusinessForUlids($ulids, $startDate = null, $endDate = null)
+    {
+        $query = Package2Purchase::whereIn('ulid', $ulids);
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        return $query->sum('final_price');
+    }
+
+    /**
+     * API endpoint to fetch sales chart data
+     */
+    public function getSalesChartData(Request $request)
+    {
+        $user = Auth::user();
+        $filter = $request->get('filter', 'monthly'); // default filter = monthly
+
+        $labels = [];
+        $data = [];
+
+        // Get all downline ULIDs including current user
+        $allUlids = $this->getAllDownlineUlids($user->ulid);
+
+        switch ($filter) {
+            case 'daily': // Last 15 days
+                $startDate = Carbon::now()->subDays(14)->startOfDay();
+                $endDate = Carbon::now()->endOfDay();
+
+                for ($date = $startDate->copy(); $date <= $endDate; $date->addDay()) {
+                    $dayStart = $date->copy()->startOfDay();
+                    $dayEnd = $date->copy()->endOfDay();
+
+                    $totalBusiness = $this->getBusinessForUlids($allUlids, $dayStart, $dayEnd);
+
+                    $labels[] = $date->format('d M'); 
+                    $data[] = $totalBusiness;
+                }
+                break;
+
+            case 'weekly': // Last 8 weeks
+                $startDate = Carbon::now()->subWeeks(7)->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+
+                for ($weekStart = $startDate->copy(); $weekStart <= $endDate; $weekStart->addWeek()) {
+                    $weekEnd = $weekStart->copy()->endOfWeek();
+
+                    $totalBusiness = $this->getBusinessForUlids($allUlids, $weekStart, $weekEnd);
+
+                    $labels[] = $weekStart->format('d M') . ' - ' . $weekEnd->format('d M'); // e.g., 01-07 Sep
+                    $data[] = $totalBusiness;
+                }
+                break;
+
+            case 'monthly': // Last 12 months
+                $startDate = Carbon::now()->subMonths(11)->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+
+                for ($month = $startDate->copy(); $month <= $endDate; $month->addMonth()) {
+                    $monthStart = $month->copy()->startOfMonth();
+                    $monthEnd = $month->copy()->endOfMonth();
+
+                    $totalBusiness = $this->getBusinessForUlids($allUlids, $monthStart, $monthEnd);
+
+                    $labels[] = $month->format('M Y'); // e.g., Sep 2024
+                    $data[] = $totalBusiness;
+                }
+                break;
+
+            case 'yearly': // Last 10 years
+                $currentYear = Carbon::now()->year;
+
+                for ($year = $currentYear - 9; $year <= $currentYear; $year++) {
+                    $yearStart = Carbon::create($year, 1, 1)->startOfYear();
+                    $yearEnd = Carbon::create($year, 12, 31)->endOfYear();
+
+                    $totalBusiness = $this->getBusinessForUlids($allUlids, $yearStart, $yearEnd);
+
+                    $labels[] = (string)$year; // e.g., 2024
+                    $data[] = $totalBusiness;
+                }
+                break;
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+        ]);
+    }
+
     public function profile()
     {
         // $user = Auth::user();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Gallery;
 use App\Models\Package1;
 use App\Models\Package2;
 use App\Models\Package2Purchase;
@@ -179,6 +180,59 @@ class AdminController extends Controller
 
         return redirect()->route('admin.pdf.edit')
             ->with('success', 'PDF files updated successfully!');
+    }
+
+    public function managePhoto()
+    {
+        $photos = Gallery::orderBy('created_at', 'desc')->paginate(10);
+
+        return view('admin.addPhoto',compact('photos'));
+    }
+
+    public function addPhoto(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'photo' => 'required|mimes:jpeg,png,jpg,webp|max:5120'
+        ]);
+
+        if($request->hasFile('photo')){
+            $file = $request->file('photo');
+            $extension = $file->getClientOriginalExtension();
+            $filename = uniqid() . '.' . $extension;
+            $directory = 'storage/photos';
+
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            $file->move($directory, $filename);
+
+            Gallery::create([
+                'title' => $request->input('title'),
+                'photo' =>  $filename
+            ]);
+
+            return redirect()->route('admin.photo.manage')->with('success', 'Photo uploaded successfully!');
+        } else {
+            return redirect()->back()->withErrors(['photo' => 'Photo upload failed. Please try again.']);
+        }
+    }
+
+    public function deletePhoto($id)
+    {
+        $photo = Gallery::findOrFail($id);
+
+        // Delete the photo file from storage
+        $filePath = 'storage/photos/' . $photo->photo;
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+        }
+
+        // Delete the database record
+        $photo->delete();
+
+        return redirect()->route('admin.photo.manage')->with('success', 'Photo deleted successfully!');
     }
 
     public function viewmemeber(Request $request)

@@ -22,6 +22,7 @@
     <link href="{{ asset('cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
     <link rel='stylesheet' href="cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
         var base_url = "index.html";
         var bscScan_url = "https://bscscan.com/";
@@ -96,8 +97,9 @@
     <div id="showLoaderAjax" class="loader-overlay" style="display: none;">
         <div class="loader-content loader-center text-center">
 
-            <div id="loaderCall"> <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}" class="img-fluid"
-                    alt="loader-logo" width="145" height="145"></div>
+            <div id="loaderCall"> <img
+                    src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
+                    class="img-fluid" alt="loader-logo" width="145" height="145"></div>
             <div class="loader-center loader-text">Do not close or reload the page</div>
         </div>
     </div>
@@ -105,8 +107,8 @@
     <div id="loader-wrapper" class="page-loading">
         <div id="preloader">
             <div id="loader">
-                <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}" class="img-fluid" alt="loader-logo" width="165"
-                    height="165">
+                <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
+                    class="img-fluid" alt="loader-logo" width="165" height="165">
             </div>
         </div>
         <div class="loader-section section-left"></div>
@@ -114,6 +116,26 @@
     </div>
 
     <style>
+        .text-purple {
+            color: #6f42c1;
+        }
+
+        .card {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        #load-more {
+            transition: all 0.3s ease;
+        }
+
+        #load-more:hover {
+            transform: scale(1.05);
+        }
+
         .logo-container {
             display: flex;
             align-items: center;
@@ -139,8 +161,8 @@
 
                 <div class="logo-container">
                     <a href="{{ '/' }}" class="p-0 m-0">
-                        <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}" alt="img" width="79px;"
-                            height="79spx;">
+                        <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
+                            alt="img" width="79px;" height="79spx;">
                     </a>
                     <h1 class="m-0 h5">Geo Kranti</h1>
                 </div>
@@ -153,7 +175,7 @@
                             class="img-fluid" width="24" height="24">
                         <span class="d-none d-md-block">Login</span>
                     </a>
-                    <a href="{{ route('auth.register') }}" class="btn btn_primary d-none d-sm-block">Create
+                    <a href="{{ route('auth.register') }}" class="btn btn_primary d-none d-sm-block text-white">Create
                         Account</a>
                 </div>
             </div>
@@ -197,7 +219,7 @@
                         Our dynamic platform bridges digital solutions with real-world impact, making land data more
                         accessible, transparent, and community-focused for everyone.
                     </p>
-                    <a class="btn btn_primary arrow_btn" href="{{ route('auth.register') }}">Get Started</a>
+                    <a class="btn btn-primary arrow_btn" href="{{ route('auth.register') }}">Get Started</a>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-12 text-center">
                     <div class="banner_right_vector position-absolute">
@@ -289,174 +311,7 @@
             </div>
         </div>
     </section>
-    <!-- =========== banner sub section end =========== -->
 
-    <!-- =========== the concept section =========== -->
-    {{-- <section class="common_section" id="about">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <h3 class="color_purple">Redefining Land Empowerment</h3>
-                    <h4 class="color_theme_dark fs-2">
-                        Explore the limitless potential of geospatial technology<br> to transform land use, access, and
-                        governance.
-                    </h4>
-
-                    <ul class="nav nav-pills concept_section_tabs gap-4 mt-5" id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation" data-aos="fade-right" data-aos-duration="200">
-                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-home" type="button" role="tab"
-                                aria-controls="pills-home" aria-selected="true">
-                                Virtual lands
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation" data-aos="fade-right" data-aos-duration="300">
-                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-profile" type="button" role="tab"
-                                aria-controls="pills-profile" aria-selected="false">
-                                Transforming Ownership
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation" data-aos="fade-right" data-aos-duration="400">
-                            <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-contact" type="button" role="tab"
-                                aria-controls="pills-contact" aria-selected="false">
-                                Selling and purchasing
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation" data-aos="fade-right" data-aos-duration="500">
-                            <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-disabled" type="button" role="tab"
-                                aria-controls="pills-disabled" aria-selected="false">
-                                Inclusive Accessibility
-                            </button>
-                        </li>
-                    </ul>
-                    <div class="tab-content concept_section_tabs_content mt-4 pt-2" id="pills-tabContent"
-                        data-aos="fade-up" data-aos-duration="400">
-                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
-                            aria-labelledby="pills-home-tab" tabindex="0">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-lg-6 col-12 slider_img_col slide_1">
-                                    </div>
-                                    <div class="col-lg-6 col-12 p-sm-5 p-4">
-                                        <h4 class="color_theme_dark">Explore transformative opportunities in land and
-                                            environmental innovation.</h4>
-
-                                        <p class="paragraph_purple_color fw-normal pt-2">
-                                            Land is the foundation of sustainable development — from agriculture to
-                                            resource management. Geo Kranti empowers communities with modern tools and
-                                            data to make informed land-related decisions.
-                                        </p>
-
-                                        <p class="paragraph_purple_color fw-normal">
-                                            As digital mapping and geospatial technologies evolve, so do the
-                                            opportunities for smarter planning, transparency, and rural growth. Be part
-                                            of a mission that puts land, people, and progress at the center of
-                                            innovation.
-                                        </p>
-
-                                        <a class="btn btn_primary arrow_btn mt-3"
-                                            href="{{ route('auth.login') }}">Get Started</a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="pills-profile" role="tabpanel"
-                            aria-labelledby="pills-profile-tab" tabindex="0">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-lg-6 col-12 slider_img_col slide_2">
-                                    </div>
-                                    <div class="col-lg-6 col-12 p-sm-5 p-4">
-                                        <h4 class="color_theme_dark">A secure and innovative approach to land
-                                            empowerment.</h4>
-
-                                        <p class="paragraph_purple_color fw-normal pt-2">
-                                            Geo Kranti brings transparency and trust to land-related processes through
-                                            digital innovation. With secure record-keeping and modern mapping tools,
-                                            land data becomes more accessible, verifiable, and conflict-free.
-                                        </p>
-
-                                        <p class="paragraph_purple_color fw-normal">
-                                            Our platform breaks down traditional barriers by making land insights
-                                            available to all — empowering individuals, communities, and policymakers
-                                            with real-time access and clarity.
-                                        </p>
-
-                                        <a class="btn btn_primary arrow_btn mt-3"
-                                            href="{{ route('auth.login') }}">Get Started</a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="pills-contact" role="tabpanel"
-                            aria-labelledby="pills-contact-tab" tabindex="0">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-lg-6 col-12 slider_img_col slide_3">
-                                    </div>
-                                    <div class="col-lg-6 col-12 p-sm-5 p-4">
-                                        <h4 class="color_theme_dark">Seamless and secure access to land-related
-                                            information.</h4>
-
-                                        <p class="paragraph_purple_color fw-normal pt-2">
-                                            Geo Kranti simplifies how individuals, communities, and institutions
-                                            interact with land data — enabling smooth, efficient, and transparent access
-                                            to ownership records and geospatial insights.
-                                        </p>
-
-                                        <p class="paragraph_purple_color fw-normal">
-                                            Our system ensures data integrity and security, building trust without the
-                                            need for intermediaries. Whether accessing records or verifying ownership,
-                                            Geo Kranti brings confidence and clarity to every transaction.
-                                        </p>
-
-                                        <a class="btn btn_primary arrow_btn mt-3"
-                                            href="{{ route('auth.login') }}">Get Started</a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="pills-disabled" role="tabpanel"
-                            aria-labelledby="pills-disabled-tab" tabindex="0">
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-lg-6 col-12 slider_img_col slide_4">
-                                    </div>
-                                    <div class="col-lg-6 col-12 p-sm-5 p-4">
-                                        <h4 class="color_theme_dark">Breaking barriers to land access for everyone.
-                                        </h4>
-
-                                        <p class="paragraph_purple_color fw-normal pt-2">
-                                            Traditional land systems often favor the privileged, but Geo Kranti is built
-                                            for inclusivity. With digital tools and transparent processes, we empower
-                                            individuals from all backgrounds to understand and engage with land
-                                            ownership.
-                                        </p>
-
-                                        <p class="paragraph_purple_color fw-normal">
-                                            Our platform makes land information accessible, easy to navigate, and
-                                            affordable. Whether you're a farmer, student, entrepreneur, or policymaker —
-                                            Geo Kranti opens the door to informed, equitable land participation.
-                                        </p>
-
-                                        <a class="btn btn_primary arrow_btn mt-3"
-                                            href="{{ route('auth.login') }}">Get Started</a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
     <section class="common_section" id="about">
         <div class="container">
             <div class="row">
@@ -799,7 +654,42 @@
         </div>
     </section>
     <!-- =========== the future section end =========== -->
+    <section class="container py-5">
+        <div class="row">
+            <div class="col text-center">
+                <h3 class="text-purple">Gallery</h3>
+                <h2 class="text-dark">
+                    Explore Our Gallery
+                </h2>
+            </div>
+        </div>
 
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-2" id="gallery-container">
+            @foreach ($photos->take(3) as $photo)
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ asset('storage/photos/' . basename($photo->photo)) }}"
+                            alt="{{ $photo->title }}" class="card-img-top img-fluid"
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $photo->title }}</h5>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        @if ($photos->count() > 3)
+            <div class="row mt-5">
+                <div class="col text-center">
+                    {{-- Start with page=1 (first load after 3 photos) --}}
+                    <button id="load-more" class="btn btn-primary px-4 py-2" data-page="1">
+                        Show More <span class="ms-2">+</span>
+                    </button>
+                </div>
+            </div>
+        @endif
+    </section>
 
     <!-- =========== get in touch section =========== -->
     <section class="common_section get_in_touch_section" id="contact">
@@ -878,48 +768,6 @@
             </div>
         </div>
     </section>
-    <!-- =========== get in touch section end =========== -->
-
-    <!-- =========== footer card section =========== -->
-    {{-- <section class="footer_card_section pb-4 pt-0">
-        <div class="container">
-            <div class="row row-cols-1">
-                <div class="col">
-                    <div class="card footer_card">
-                        <div class="row align-items-center">
-                            <div class="col-md-6 col-sm-8 col-12">
-                                <h2>Download our app</h2>
-                                <p class="pt-sm-3 fw-normal fs-14">
-                                    Experience the best of The Soilverse at your fingertips. Download our app today
-                                    <br class="d-none d-xl-block">
-                                    to explore, manage, and grow your virtual land seamlessly.
-                                </p>
-                                <div class="d-flex align-items-center gap-2 pt-md-4">
-                                    <a href="https://play.google.com/store/apps/details?id=app.thesoilverse.wallet"
-                                        class="app_link">
-                                        <img src="{{ asset('assetsfront/front_web/images/google_play.png') }}"
-                                            alt="img" class="img-fluid" width="200" height="59">
-                                    </a>
-                                    <a href="https://apps.apple.com/in/app/the-soilverse-app/id6458190350"
-                                        class="app_link">
-                                        <img src="{{ asset('assetsfront/front_web/images/app_store.png') }}"
-                                            alt="img" class="img-fluid" width="200" height="59">
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-4 col-12 text-center" data-aos="zoom-in"
-                                data-aos-duration="400">
-                                <img src="{{ asset('assetsfront/front_web/images/footer_phone_img.gif') }}"
-                                    alt="img" class="img-fluid footer_phone_img" width="450" height="463"
-                                    loading="lazy">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
-    <!-- =========== footer card section end =========== -->
 
     <script>
         window.onload = () => {
@@ -940,8 +788,8 @@
             <div class="row pb-4 gy-4 gy-lg-0 fs-14 border-bottom position-relative z-1">
                 <div class="col-lg-4 col-12">
                     <a href="{{ '/' }}">
-                        <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}" alt="img" class="iimg-fluid"
-                            style="width: 40%;
+                        <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
+                            alt="img" class="iimg-fluid" style="width: 40%;
     height: 159px;">
                     </a>
                     <p class="pt-3 fw-light footer_main_para">
@@ -982,11 +830,64 @@
             </div>
         </div>
     </footer>
+
+    <!-- jQuery (required for Bootstrap JavaScript components) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadMoreButton = document.getElementById('load-more');
+
+            if (loadMoreButton) {
+                loadMoreButton.addEventListener('click', function() {
+                    const page = parseInt(this.getAttribute('data-page'));
+                    const nextPage = page + 1;
+
+                    // Show loading spinner
+                    this.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+
+                    // Build request URL
+                    const url = new URL('{{ route('gallery.load-more') }}');
+                    url.searchParams.append('page', page);
+
+                    fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.html) {
+                                const galleryContainer = document.getElementById('gallery-container');
+                                galleryContainer.insertAdjacentHTML('beforeend', data.html);
+
+                                // Update button page
+                                loadMoreButton.setAttribute('data-page', nextPage);
+
+                                if (!data.hasMore) {
+                                    loadMoreButton.style.display = 'none';
+                                }
+                            }
+
+                            this.innerHTML = 'Show More <span class="ms-2">+</span>';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error loading more photos');
+                            this.innerHTML = 'Show More <span class="ms-2">+</span>';
+                        });
+                });
+            }
+        });
+    </script>
     <!-- =========== footer section end =========== -->
     <!-- <script src="https://thesoilverse.com/assets/front_web/js/jquery.js" defer></script>  -->
     {{-- <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script> --}}
-    <script src="{{ asset('assetsfront/code.jquery.com/jquery-3.6.0.min.js') }}"></script>
-    <script src="{{ asset('assetsfront/front_web/js/bootstrap.bundle.min.js') }}" defer></script>
     <script src="{{ asset('assetsfront/front_web/js/aos.js') }}" defer></script>
     <script src="{{ asset('assetsfront/front_web/js/script.js') }}" defer></script>
     <script src="{{ asset('assetsfront/front_web/js/loader.js') }}"></script>

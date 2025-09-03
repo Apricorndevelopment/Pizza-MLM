@@ -194,6 +194,7 @@
                     </a>
                 </li>
 
+                
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="{{ route('admin.products.index') }}">
                         <i class="fa fa-tags menu-icon me-3"></i>
@@ -201,6 +202,19 @@
                     </a>
                 </li>
 
+                {{-- <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.faq.index') }}">
+                        <i class="fa fa-tags menu-icon me-3"></i>
+                        <span class="menu-title">Manage FAQs</span>
+                    </a>
+                </li> --}}
+
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.photo.manage') }}">
+                        <i class="fa fa-tags menu-icon me-3"></i>
+                        <span class="menu-title">Manage Gallery</span>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables2"

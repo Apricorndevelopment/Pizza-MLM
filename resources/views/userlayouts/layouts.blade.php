@@ -19,6 +19,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
     <link rel="shortcut icon" href="{{ asset('assets2/images/favicon.png') }}" />
 
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+
     <style>
         .sub-menu,
         .sub-menu li,
@@ -162,6 +164,46 @@
                 padding: 0.8rem 0.5rem;
             }
         }
+
+        /* Fix sidebar completely */
+        .sidebar-offcanvas {
+            position: fixed !important;
+            top: 60px !important;
+            left: 0;
+            height: calc(100vh - 60px) !important;
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+        .sidebar-offcanvas::-webkit-scrollbar {
+            display: none;      
+        }
+
+        /* Adjust main content */
+        .main-panel {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 991px) {
+            .sidebar-offcanvas {
+                transform: translateX(100%);
+                right: 0;
+                left: auto;
+                transition: transform 0.3s ease;
+                width: 280px !important;
+            }
+
+            .sidebar-offcanvas.show {
+                transform: translateX(0);
+            }
+
+            .main-panel {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -250,7 +292,8 @@
                         $user = Auth::user();
                         ?>
                         @if ($user->profile_picture)
-                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}" alt="Profile Picture">
+                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
+                                alt="Profile Picture">
                         @else
                             <img src="{{ asset('geokrantilogo.jpg') }}" alt="profile" />
                         @endif
@@ -359,7 +402,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.maturity.packages') }}">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('user.maturity.packages') }}">
                                     <i class="fas fa-box-open me-2" style="font-size: 0.8rem;"></i>
                                     <span class="menu-title">Maturity Package</span>
                                 </a>
@@ -526,15 +570,13 @@
                         <ul class="nav flex-column sub-menu ps-3"
                             style="border-left: 2px solid #4b49ac; list-style: none;">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="/English-Geokranti.pdf"
-                                    download>
+                                <a class="nav-link d-flex align-items-center" href="/English-Geokranti.pdf" download>
                                     <i class="fas fa-language me-2" style="font-size: 0.8rem;"></i>
                                     <span>In English</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="/Hindi-Geokranti.pdf"
-                                    download>
+                                <a class="nav-link d-flex align-items-center" href="/Hindi-Geokranti.pdf" download>
                                     <i class="fas fa-language me-2" style="font-size: 0.8rem;"></i>
                                     <span>In Hindi</span>
                                 </a>

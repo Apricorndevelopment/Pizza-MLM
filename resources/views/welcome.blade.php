@@ -157,25 +157,29 @@
         <nav class="navbar p-0">
             <div class="container d-flex align-items-center justify-content-between">
 
-                <!-- Logo + Heading wrapper -->
-
                 <div class="logo-container">
                     <a href="{{ '/' }}" class="p-0 m-0">
                         <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                            alt="img" width="79px;" height="79spx;">
+                            alt="img" width="79px;" height="79px;">
                     </a>
-                    <h1 class="m-0 h5">Geo Kranti</h1>
+                    <a href="{{ '/' }}" class="m-0 h5 gradient_text">Geo Kranti</a>
                 </div>
 
                 <!-- Right Side: Login/Register -->
                 <div class="d-flex align-items-center gap-sm-3 gap-2">
+                    <a href="{{ route('aboutus') }}"
+                        class="d-sm-flex d-none align-items-center gap-2 download_app_btn">
+                        <img src="{{ asset('assetsfront/front_web/images/character.png') }}" alt="img"
+                            class="img-fluid" width="20" height="20">
+                        <span class="d-none d-md-block">About Us</span>
+                    </a>
                     <a href="{{ route('auth.login') }}"
                         class="d-sm-flex d-none align-items-center gap-2 download_app_btn">
                         <img src="{{ asset('assetsfront/front_web/images/download_app.png') }}" alt="img"
                             class="img-fluid" width="24" height="24">
                         <span class="d-none d-md-block">Login</span>
                     </a>
-                    <a href="{{ route('auth.register') }}" class="btn btn_primary d-none d-sm-block text-white">Create
+                    <a href="{{ route('auth.register') }}" class="btn btn_primary text-white">Create
                         Account</a>
                 </div>
             </div>
@@ -769,6 +773,197 @@
         </div>
     </section>
 
+    {{-- FAQ Section --}}
+    <section class="py-5" style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center mb-5">
+                    <span class="badge bg-primary rounded-pill px-4 py-2 mb-3">SUPPORT</span>
+                    <h2 class="display-5 fw-bold text-dark mb-3">Frequently Asked Questions</h2>
+                    <p class="lead text-muted">Get answers to common questions about GeoKranti website</p>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="accordion custom-accordion" id="faqAccordion">
+                        <!-- Account & Registration -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    <i class="fas fa-user-plus me-3 text-primary"></i>
+                                    How do I register as a new distributor?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    You need to be referred by an existing GeoKranti distributor. Contact your referrer
+                                    who will
+                                    provide you with a registration link. You'll need to complete your profile and
+                                    purchase an
+                                    activation package to start your business.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Package Purchase -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    <i class="fas fa-shopping-cart me-3 text-primary"></i>
+                                    How do I purchase packages and what payment methods are accepted?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    Packages can be purchased through your dashboard wallet section. We accept UPI, bank
+                                    transfers,
+                                    and wallet payments. Minimum package purchase amount is ₹1,000. All payments are
+                                    securely processed
+                                    and reflected in your wallet within 24 hours.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Commission Structure -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    <i class="fas fa-hand-holding-usd me-3 text-primary"></i>
+                                    How does the commission and bonus system work?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    Our compensation plan includes multiple income streams: Direct referral commissions
+                                    (15%),
+                                    Network bonus (10% on team sales), Passive income from packages, Rank rewards, and
+                                    Royalty income.
+                                    Commissions are calculated daily and credited to your wallet every 24 hours.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wallet Management -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    <i class="fas fa-wallet me-3 text-primary"></i>
+                                    How can I transfer points or withdraw from my wallet?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    Wallet transfers can be done to other distributors using their ID. For withdrawals,
+                                    you need
+                                    to have a minimum balance of ₹500. Withdrawal requests are processed every Tuesday
+                                    and Friday.
+                                    Funds are transferred directly to your registered bank account within 3-5 business
+                                    days.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rank Advancement -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    <i class="fas fa-trophy me-3 text-primary"></i>
+                                    What are the requirements for rank advancement?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    Rank advancement is based on your personal sales and team performance. Requirements
+                                    include:
+                                    achieving specific PV (Point Value), maintaining a certain number of active
+                                    distributors in your
+                                    team, and meeting monthly sales targets. Higher ranks unlock additional bonuses and
+                                    rewards.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stock Management -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq6">
+                                    <i class="fas fa-cubes me-3 text-primary"></i>
+                                    How does the stock transfer system work?
+                                </button>
+                            </h2>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    Stock transfer is available for Diamond Farmer rank and above. You can transfer
+                                    stock to other
+                                    distributors using their ID. Each transfer is recorded in your stock history. Coupon
+                                    stock transfers
+                                    require special coupons that can be purchased or earned through achievements.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Support -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq7">
+                                    <i class="fas fa-headset me-3 text-primary"></i>
+                                    How do I contact customer support for technical issues?
+                                </button>
+                            </h2>
+                            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    Our support team is available via WhatsApp at +91 9416373249, Monday to Saturday
+                                    from 10 AM to 6 PM.
+                                    For urgent issues, you can also email support@geokranti.com. Include your
+                                    distributor ID and
+                                    detailed description of the issue for faster resolution.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .custom-accordion .accordion-button:not(.collapsed) {
+            background: linear-gradient(135deg, #4b49ac 0%, #2a288a 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 73, 172, 0.3);
+        }
+
+        .custom-accordion .accordion-button:focus {
+            border-color: #4b49ac;
+            box-shadow: 0 0 0 0.25rem rgba(74, 73, 172, 0.25);
+        }
+
+        .custom-accordion .accordion-button::after {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234b49ac'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+        }
+
+        .custom-accordion .accordion-button:not(.collapsed)::after {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+        }
+
+        .accordion-body {
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+    </style>
+
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <script>
         window.onload = () => {
 
@@ -782,6 +977,7 @@
 
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- =========== footer section =========== -->
     <footer>
         <div class="container">
@@ -800,8 +996,7 @@
                 </div>
 
                 <div class="col-md-4 col-12 mt-4">
-                    <div class="ruf" style="    width: 50%;
-    height: 169px;"></div>
+                    <div class="ruf" style=" width: 50%; height: 169px;"></div>
                     <div class="w-max-content mx-auto">
 
                         <h4 class="text-white pb-sm-4 pb-2 fs-5">Contact Us</h4>

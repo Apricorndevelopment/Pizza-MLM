@@ -24,6 +24,8 @@ Route::get('/', function () {
     return view('welcome' , compact('photos'));
 });
 
+Route::view('/about-us','aboutus')->name('aboutus');
+
 Route::get('/gallery/load-more', [AuthController::class, 'loadMore'])->name('gallery.load-more');
 
 Route::get('/test-mail', function () {

@@ -219,6 +219,21 @@
             max-width: 600px;
             margin: 0 auto;
         }
+
+        #welcomeModal .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        #welcomeModal img {
+            border: 3px solid #007bff;
+            padding: 5px;
+            background: #fff;
+        }
+
+        #welcomeModal .modal-header {
+            border-bottom: none;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -226,19 +241,19 @@
             const ctx = document.getElementById('sales-chart').getContext('2d');
             const filterSelect = document.getElementById('filter-select');
 
-             function formatInLakhsCrores(number) {
-            if (number >= 1000000000000) {
-                return '₹' + (number / 1000000000000).toFixed(3) + 'T';
-            } else if (number >= 1000000000) {
-                return '₹' + (number / 1000000000).toFixed(2) + 'B';
-            } else if (number >= 10000000) {
-                return '₹' + (number / 10000000).toFixed(2) + 'Cr';
-            } else if (number >= 100000) {
-                return '₹' + (number / 100000).toFixed(2) + 'L';
-            } else {
-                return '₹' + number.toLocaleString();
+            function formatInLakhsCrores(number) {
+                if (number >= 1000000000000) {
+                    return '₹' + (number / 1000000000000).toFixed(3) + 'T';
+                } else if (number >= 1000000000) {
+                    return '₹' + (number / 1000000000).toFixed(2) + 'B';
+                } else if (number >= 10000000) {
+                    return '₹' + (number / 10000000).toFixed(2) + 'Cr';
+                } else if (number >= 100000) {
+                    return '₹' + (number / 100000).toFixed(2) + 'L';
+                } else {
+                    return '₹' + number.toLocaleString();
+                }
             }
-        }
 
             let salesChart = new Chart(ctx, {
                 type: 'line',
@@ -267,7 +282,7 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                   return formatInLakhsCrores(value);
+                                    return formatInLakhsCrores(value);
                                 }
                             }
                         }
@@ -303,8 +318,34 @@
         });
     </script>
 
-
     <div class="container-fluid py-3">
+
+        @if (session('welcome_popup'))
+            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="welcomeModalLabel">🎉 Welcome Back!</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="/images/telegram.jpg" alt="Welcome" class="img-fluid mb-3" style="max-width: 200px;">
+                            <h4>Hello, <strong>{{ session('welcome_name') }}</strong> 👋</h4>
+                            <p class="mt-2">जियो क्रांति में आपका हार्दिक स्वागत है हम आपकी निरंतर सफलता की मंगल कामना करते हैं धन्यवाद।
+                            </p>
+                            <div>Join us on telegram for more updates </div>
+                            <div><a href="https://t.me/+6U8XYmLhNGthYjg1" target="_blank">https://t.me/+6U8XYmLhNGthYjg1</a></div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                                Let's Go 🚀
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
         <!-- Header Section -->
         <div class="row mb-2">
             <div class="col-12">
@@ -655,6 +696,15 @@
         </div>
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('welcome_popup'))
+                var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+                welcomeModal.show();
+            @endif
+        });
+    </script>
 
     <script>
         document.getElementById('activationForm')?.addEventListener('submit', function(e) {

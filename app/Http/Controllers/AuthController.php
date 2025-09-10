@@ -23,45 +23,6 @@ class AuthController extends Controller
         return view('Auth.register');
     }
 
-    //    public function loadMore(Request $request)
-    // {
-    //     $page = $request->get('page', 1);
-    //     $perPage = 6;
-    //     $initialDisplayCount = 3;
-
-    //     // Calculate how many photos we've already shown
-    //     $alreadyShown = $initialDisplayCount + (($page - 1) * $perPage);
-
-    //     // Get remaining photos
-    //     $photos = Gallery::offset($alreadyShown)->limit($perPage)->get();
-    //     $totalPhotos = Gallery::count();
-
-    //     // Check if there are more photos to load
-    //     $hasMore = $totalPhotos > $alreadyShown + $photos->count();
-
-    //     if ($request->ajax()) {
-    //         $html = '';
-    //         foreach ($photos as $photo) {
-    //             $html .= '<div class="col">';
-    //             $html .= '<div class="card h-100 shadow-sm">';
-    //             $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . $photo->title . '" class="card-img-top img-fluid" style="height: 250px; object-fit: cover;">';
-    //             $html .= '<div class="card-body">';
-    //             $html .= '<h5 class="card-title">' . $photo->title . '</h5>';
-    //             $html .= '</div></div></div>';
-    //         }
-
-    //         return response()->json([
-    //             'html' => $html,
-    //             'hasMore' => $hasMore,
-    //             'alreadyShown' => $alreadyShown,
-    //             'loaded' => $photos->count(),
-    //             'total' => $totalPhotos
-    //         ]);
-    //     }
-
-    //     return abort(404);
-    // }
-
     public function loadMore(Request $request)
     {
         $page = (int) $request->get('page', 1); // First page = after first 3
@@ -211,7 +172,11 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             if (Auth::user()->role === 'user') {
-                return redirect()->route('user.dashboard');
+                if (Auth::user()->role === 'user') {
+                    return redirect()->route('user.dashboard')
+                        ->with('welcome_popup', true)
+                        ->with('welcome_name', Auth::user()->name);
+                }
             } else {
                 Auth::logout();
                 return back()->with('error', 'Login details are wrong.');

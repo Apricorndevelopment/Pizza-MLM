@@ -20,47 +20,44 @@
                         <!-- Right: User Details -->
                         <div class="col-md-6 mt-3 mt-md-0" id="detail_section" style="display:none;">
                             <div class="card shadow-sm h-100">
-                                <div class="card-header text-white py-2 d-flex justify-content-between align-items-center" style="background-color:#49b3ff ">
-                                    <h6 class="mb-0">User Details</h6>
-                                    <div class="user-header-info">
-                                        <span id="header_name" class="badge bg-light text-dark me-1">No selection</span>
-                                        <span id="header_ulid" class="badge bg-secondary">ULID: -</span>
-                                    </div>
+                                <div class="card-header text-white py-2 d-flex justify-content-between align-items-center"
+                                    id="detail_header">
+                                    <span id="header_name" class="text-white me-1"></span>
+                                    <span id="header_ulid" class="badge bg-secondary">ULID: -</span>
                                 </div>
-                                <div class="card-body p-2 p-md-3">
-                                    <div class="user-details-grid">
-                                        <!-- Row 1: Registered + Activation -->
-                                        <div class="detail-item">
-                                            <small class="detail-label">Registered Date</small>
-                                            <div class="detail-value" id="detail_registered">-</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <small class="detail-label">Activation Date</small>
-                                            <div class="detail-value" id="detail_doa">-</div>
-                                        </div>
-
-                                        <!-- Row 2: Level + Rank -->
-                                        <div class="detail-item">
-                                            <small class="detail-label">Level</small>
-                                            <div class="detail-value" id="detail_level">-</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <small class="detail-label">Purchase Amount</small>
-                                            <div class="detail-value" id="detail_purchase">-</div>
-                                        </div>
-                                        <!-- Row 3: Purchase + Business -->
-                                        <div class="detail-item">
-                                            <small class="detail-label">Designation</small>
-                                            <div class="detail-value" id="detail_rank">-</div>
-                                        </div>
-                                        <div class="detail-item">
-                                            <small class="detail-label">Total Team Business</small>
-                                            <div class="detail-value" id="detail_business">-</div>
-                                        </div>
-                                    </div>
+                                <div class="card-body p-0">
+                                    <table class="custom-striped-table mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <td>Registered Date</td>
+                                                <td id="detail_registered">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Activation Date</td>
+                                                <td id="detail_doa">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Level</td>
+                                                <td id="detail_level">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Purchase Amount</td>
+                                                <td id="detail_purchase">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Designation</td>
+                                                <td id="detail_rank">-</td>
+                                            </tr>
+                                            <tr style="flex-direction: column; align-items: center;justify-content: center;">
+                                                <td class="pb-0">Total Team Business</td>
+                                                <td class="pt-1" id="detail_business">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -68,34 +65,7 @@
     </div>
 
     <style>
-        .user-details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .detail-item {
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            padding: 8px;
-            min-height: 50px;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #6c757d;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .detail-value {
-            font-weight: 500;
-            color: #212529;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
+         
         .user-header-info {
             display: flex;
             align-items: center;
@@ -120,6 +90,37 @@
             border-radius: 8px 8px 0 0 !important;
         }
 
+        /* Table Styling */
+        .custom-striped-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .custom-striped-table tbody tr {
+            display: flex;
+            justify-content: space-between;
+        }
+     
+        .custom-striped-table tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        .custom-striped-table tbody tr:nth-child(even) {
+            background-color: #e8f4ff;
+            /* Light Blue for striped effect */
+        }
+
+        .custom-striped-table td {
+            padding: 10px 12px;
+            vertical-align: middle;
+         
+        }
+
+        .custom-striped-table td:first-child {
+            font-weight: 600;
+        }
+
         .active-user {
             background-color: #30baffd2 !important;
             color: white !important;
@@ -141,7 +142,6 @@
         .tree-node:hover {
             background-color: #f0f0f0;
         }
-        
     </style>
 @endsection
 
@@ -204,6 +204,12 @@
                     document.getElementById('detail_purchase').textContent = data.purchase_amount;
                     document.getElementById('detail_business').textContent = (parseFloat(data.left_business) +
                         parseFloat(data.right_business)).toFixed(2);
+                    if (data.activation_date) {
+                        document.getElementById('detail_header').style.backgroundColor = '#28a745';
+                    } else {
+                        document.getElementById('detail_header').style.backgroundColor = '#49b3ff';
+                    }
+
                 })
                 .catch(err => {
                     console.error('Error:', err);

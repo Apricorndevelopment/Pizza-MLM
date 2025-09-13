@@ -22,8 +22,8 @@
                         </div>
                     @endif
                     @if(session('error'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i> {{ session('error') }}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-times-circle me-2"></i> {{ session('error') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
@@ -46,7 +46,7 @@
                                         <label class="form-label">Current File:</label>
                                         <div class="d-flex align-items-center justify-content-between p-2 border rounded">
                                             <span>English-Geokranti.pdf</span>
-                                            <a href="/English-Geokranti.pdf" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="{{ asset('English-Geokranti.pdf') }}?v={{ filemtime(public_path('English-Geokranti.pdf')) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye me-1"></i> View
                                             </a>
                                         </div>
@@ -84,7 +84,7 @@
                                         <label class="form-label">Current File:</label>
                                         <div class="d-flex align-items-center justify-content-between p-2 border rounded">
                                             <span>Hindi-Geokranti.pdf</span>
-                                            <a href="/Hindi-Geokranti.pdf" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="{{ asset('Hindi-Geokranti.pdf') }}?v={{ filemtime(public_path('Hindi-Geokranti.pdf')) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye me-1"></i> View
                                             </a>
                                         </div>

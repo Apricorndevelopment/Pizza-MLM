@@ -194,7 +194,7 @@
                     </a>
                 </li>
 
-                
+
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="{{ route('admin.products.index') }}">
                         <i class="fa fa-tags menu-icon me-3"></i>
@@ -362,6 +362,44 @@
         </section> --}}
     </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector(
+                '.navbar-toggler[data-toggle="offcanvas"]'); // Adjust if you use a different selector
+
+            function closeSidebar() {
+                sidebar.classList.remove('active'); // Replace 'active' if your show class is different
+                // Also hide via Bootstrap if using collapse
+                if (sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            }
+
+            // Toggle on menu button
+            menuBtn.addEventListener("click", function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('show');
+            });
+
+            // Detect click outside
+            document.addEventListener("click", function(event) {
+                if (
+                    sidebar.classList.contains('show') && // Only if sidebar is open
+                    !sidebar.contains(event.target) && // Click is not inside sidebar
+                    event.target !== menuBtn // Click is not menu button itself
+                ) {
+                    closeSidebar();
+                }
+            });
+
+            // Optional: Prevent sidebar click from propagating to document
+            sidebar.addEventListener("click", function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+
     <script src="{{ asset('assets2/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('assets2/vendors/chart.js/chart.umd.js') }}"></script>
     {{-- <!-- <script src="{{ asset('assets2/vendors/datatables.net/jquery.dataTables.js') }}"></script> -->

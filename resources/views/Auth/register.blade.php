@@ -185,9 +185,10 @@
         }
 
         a {
-            color: var(--primary-green);
+            color: #005204;
             text-decoration: none;
             transition: all 0.3s ease;
+            font-weight: 700;
         }
 
         a:hover {
@@ -292,8 +293,8 @@
                 <div class="mb-3 position-relative">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
-                        <input type="text" name="sponsor_id" value="{{ old('sponsor_id', request('sponsor_id')) }}" id="sponsor_id"
-                            class="form-control" placeholder="Sponsor ID" required>
+                        <input type="text" name="sponsor_id" value="{{ old('sponsor_id', request('sponsor_id')) }}"
+                            id="sponsor_id" class="form-control" placeholder="Sponsor ID" required>
                     </div>
                     @error('sponsor_id')
                         <span class="text-danger">{{ $message }}</span>
@@ -371,7 +372,8 @@
                     </div>
                 </div>
 
-                <button type="submit" onclick="return confirm('Are you sure you want to register')" class="btn btn-auth">
+                <button type="submit" onclick="return confirm('Are you sure you want to register')"
+                    class="btn btn-auth">
                     <i class="fas fa-user-plus me-2"></i> Register
                 </button>
 

@@ -774,166 +774,164 @@
     </section>
 
     {{-- FAQ Section --}}
-    <section class="py-5" style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 text-center mb-5">
-                    <span class="badge bg-primary rounded-pill px-4 py-2 mb-3">SUPPORT</span>
-                    <h2 class="display-5 fw-bold text-dark mb-3">Frequently Asked Questions</h2>
-                    <p class="lead text-muted">Get answers to common questions about GeoKranti website</p>
-                </div>
+   <section class="py-5" style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center mb-5">
+                <span class="badge bg-primary rounded-pill px-4 py-2 mb-3">SUPPORT</span>
+                <h2 class="display-5 fw-bold text-dark mb-3">Frequently Asked Questions</h2>
+                <p class="lead text-muted">Get answers to common questions about GeoKranti website</p>
             </div>
+        </div>
 
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="accordion custom-accordion" id="faqAccordion">
-                        <!-- Account & Registration -->
-                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#faq1">
-                                    <i class="fas fa-user-plus me-3 text-primary"></i>
-                                    How do I register as a new distributor?
-                                </button>
-                            </h2>
-                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body bg-light">
-                                    You need to be referred by an existing GeoKranti distributor. Contact your referrer
-                                    who will
-                                    provide you with a registration link. You'll need to complete your profile and
-                                    purchase an
-                                    activation package to start your business.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Package Purchase -->
-                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#faq2">
-                                    <i class="fas fa-shopping-cart me-3 text-primary"></i>
-                                    How do I purchase packages and what payment methods are accepted?
-                                </button>
-                            </h2>
-                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body bg-light">
-                                    Packages can be purchased through your dashboard wallet section. We accept UPI, bank
-                                    transfers,
-                                    and wallet payments. Minimum package purchase amount is ₹1,000. All payments are
-                                    securely processed
-                                    and reflected in your wallet within 24 hours.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Commission Structure -->
-                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#faq3">
-                                    <i class="fas fa-hand-holding-usd me-3 text-primary"></i>
-                                    How does the commission and bonus system work?
-                                </button>
-                            </h2>
-                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body bg-light">
-                                    Our compensation plan includes multiple income streams: Direct referral commissions
-                                    (15%),
-                                    Network bonus (10% on team sales), Passive income from packages, Rank rewards, and
-                                    Royalty income.
-                                    Commissions are calculated daily and credited to your wallet every 24 hours.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Wallet Management -->
-                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#faq4">
-                                    <i class="fas fa-wallet me-3 text-primary"></i>
-                                    How can I transfer points or withdraw from my wallet?
-                                </button>
-                            </h2>
-                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body bg-light">
-                                    Wallet transfers can be done to other distributors using their ID. For withdrawals,
-                                    you need
-                                    to have a minimum balance of ₹500. Withdrawal requests are processed every Tuesday
-                                    and Friday.
-                                    Funds are transferred directly to your registered bank account within 3-5 business
-                                    days.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Rank Advancement -->
-                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#faq5">
-                                    <i class="fas fa-trophy me-3 text-primary"></i>
-                                    What are the requirements for rank advancement?
-                                </button>
-                            </h2>
-                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body bg-light">
-                                    Rank advancement is based on your personal sales and team performance. Requirements
-                                    include:
-                                    achieving specific PV (Point Value), maintaining a certain number of active
-                                    distributors in your
-                                    team, and meeting monthly sales targets. Higher ranks unlock additional bonuses and
-                                    rewards.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Stock Management -->
-                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#faq6">
-                                    <i class="fas fa-cubes me-3 text-primary"></i>
-                                    How does the stock transfer system work?
-                                </button>
-                            </h2>
-                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body bg-light">
-                                    Stock transfer is available for Diamond Farmer rank and above. You can transfer
-                                    stock to other
-                                    distributors using their ID. Each transfer is recorded in your stock history. Coupon
-                                    stock transfers
-                                    require special coupons that can be purchased or earned through achievements.
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Support -->
-                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#faq7">
-                                    <i class="fas fa-headset me-3 text-primary"></i>
-                                    How do I contact customer support for technical issues?
-                                </button>
-                            </h2>
-                            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body bg-light">
-                                    Our support team is available via WhatsApp at +91 9416373249, Monday to Saturday
-                                    from 10 AM to 6 PM.
-                                    For urgent issues, you can also email support@geokranti.com. Include your
-                                    distributor ID and
-                                    detailed description of the issue for faster resolution.
-                                </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="accordion custom-accordion" id="faqAccordion">
+                    <!-- Vision -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq1">
+                                <i class="fas fa-eye me-3 text-primary"></i>
+                                What is the vision of GeoKranti?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                Our vision is "Organic Bharat, Svasth Bharat, Shikshit Bharat, Viksit Bharat", which
+                                means building a healthier, educated, and developed India rooted in organic living
+                                and sustainable growth.
                             </div>
                         </div>
                     </div>
 
+                    <!-- Herbal Park -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq2">
+                                <i class="fas fa-leaf me-3 text-primary"></i>
+                                What is the purpose of the 100-acre herbal park?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                The herbal park will serve as a center for medicinal plant cultivation, biodiversity
+                                conservation, and rainwater harvesting, promoting sustainability and natural
+                                healthcare.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq3">
+                                <i class="fas fa-graduation-cap me-3 text-primary"></i>
+                                How does GeoKranti combine Vedic and modern education?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                We aim to blend ancient Vedic wisdom with modern learning systems so that students
+                                grow with strong values, knowledge, and innovative skills for the future.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wellness -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq4">
+                                <i class="fas fa-spa me-3 text-primary"></i>
+                                What role do Yoga, Acupressure, and Ayurveda play in your mission?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                These practices promote self-healing, preventive healthcare, and holistic
+                                well-being, empowering individuals to take charge of their health naturally.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Energy -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq5">
+                                <i class="fas fa-bolt me-3 text-primary"></i>
+                                Why is GeoKranti setting up a Gobar Gas Plant?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                The plant will generate clean, renewable energy from organic waste, reducing
+                                dependence on non-renewable resources and making rural communities more
+                                self-reliant.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sports -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq6">
+                                <i class="fas fa-running me-3 text-primary"></i>
+                                How is GeoKranti supporting sports and athletes?
+                            </button>
+                        </h2>
+                        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                We provide organic food, holistic lifestyle practices, and natural health support to
+                                nurture sportspersons, enhancing both their health and performance.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Membership -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq7">
+                                <i class="fas fa-users me-3 text-primary"></i>
+                                Who can join or support GeoKranti?
+                            </button>
+                        </h2>
+                        <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                We welcome educators, farmers, healthcare practitioners, sportspersons, and
+                                conscious citizens who believe in holistic living, sustainability, and
+                                nation-building.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nation Building -->
+                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq8">
+                                <i class="fas fa-flag me-3 text-primary"></i>
+                                How is GeoKranti contributing to nation-building?
+                            </button>
+                        </h2>
+                        <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body bg-light">
+                                By integrating organic farming, renewable energy, traditional wisdom, modern
+                                education, and holistic health, we are creating a sustainable model that benefits
+                                both society and the nation.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <style>
         .custom-accordion .accordion-button:not(.collapsed) {

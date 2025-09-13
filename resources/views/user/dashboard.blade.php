@@ -491,7 +491,7 @@
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card shadow-lg border-0">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
                                 <h5 class="card-title mb-0 text-primary">Sales Performance Report</h5>
                                 <p class="text-muted mb-0">Track your business growth over time</p>
@@ -506,7 +506,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center mb-2">
                             <div class="bg-primary rounded p-2 me-2">
                                 <i class="bi bi-graph-up text-white"></i>
                             </div>
@@ -515,7 +515,7 @@
                             </p>
                         </div>
 
-                        <div style="overflow-x: auto; position: relative; height: 300px;">
+                        <div style="overflow-x: auto; position: relative; height: 200px;">
                             <canvas id="sales-chart"></canvas>
                         </div>
 

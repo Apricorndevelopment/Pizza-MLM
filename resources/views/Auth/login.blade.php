@@ -185,9 +185,10 @@
         }
 
         a {
-            color: var(--primary-green);
+            color: #005204;
             text-decoration: none;
             transition: all 0.3s ease;
+            font-weight: 700;
         }
 
         a:hover {

@@ -152,7 +152,7 @@ class AdminController extends Controller
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
     }
 
-     public function editPdf()
+    public function editPdf()
     {
         $breadcrumbs = [
             ['title' => 'Manage PDFs', 'url' => route('admin.pdf.edit')]
@@ -186,7 +186,7 @@ class AdminController extends Controller
     {
         $photos = Gallery::orderBy('created_at', 'desc')->paginate(10);
 
-        return view('admin.addPhoto',compact('photos'));
+        return view('admin.addPhoto', compact('photos'));
     }
 
     public function addPhoto(Request $request)
@@ -196,7 +196,7 @@ class AdminController extends Controller
             'photo' => 'required|mimes:jpeg,png,jpg,webp|max:5120'
         ]);
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $extension = $file->getClientOriginalExtension();
             $filename = uniqid() . '.' . $extension;
@@ -238,13 +238,19 @@ class AdminController extends Controller
     public function viewmemeber(Request $request)
     {
         $status = $request->input('status', 'all');
+        $ulid = $request->input('ulid');
 
         $member = User::when($status !== 'all', function ($query) use ($status) {
             return $query->where('status', $status);
+        })->when($ulid, function ($query) use ($ulid) {
+            return $query->where('ulid', 'LIKE', '%' . $ulid . '%');
         })
             ->paginate(10);
 
-        return view('admin.members.viewmember', compact('member', 'status'));
+        // Append the search query and status filter to the pagination links
+        $member->appends(['status' => $status, 'ulid' => $ulid]);
+
+        return view('admin.members.viewmember', compact('member', 'status', 'ulid'));
     }
 
     public function editMember($id)
@@ -292,24 +298,32 @@ class AdminController extends Controller
         DB::beginTransaction();
         try {
             $member = User::findOrFail($id);
+
+            $sponsorIdOfDeletedMember = $member->sponsor_id;
+
             // Delete from all related tables
             DB::table('level_incomes')->where('user_id', $member->id)->delete();
+            DB::table('login_activities')->where('user_id', $member->id)->delete();
             DB::table('loyalty_transactions')->where('user_id', $member->id)->delete();
+            DB::table('maturity_monthly_deductions')->where('user_id', $member->id)->delete();
             DB::table('package2_purchases')->where('user_id', $member->id)->delete();
             DB::table('package_monthly_distributions')->where('user_id', $member->id)->delete();
             DB::table('package_transactions')->where('user_id', $member->id)->delete();
             DB::table('points_transactions')->where('user_id', $member->id)->delete();
+            DB::table('royalty_rewards_income')->where('user_id', $member->id)->delete();
+            DB::table('sales_stock')->where('user_id', $member->id)->delete();
+            DB::table('user_package_inventories')->where('user_ulid', $member->ulid)->delete();
 
-            // Update any reference fields
-            User::where('sponsor_id', $member->ulid)->update(['sponsor_id' => null]);
-            User::where('parent_id', $member->ulid)->update(['parent_id' => null]);
+            // Update downline members to take on the sponsor of the deleted member
+            User::where('sponsor_id', $member->ulid)->update(['sponsor_id' => $sponsorIdOfDeletedMember]);
+            User::where('parent_id', $member->ulid)->update(['parent_id' => $sponsorIdOfDeletedMember]);
 
             // Finally delete the user
             $member->forceDelete();
 
             DB::commit();
 
-            return redirect()->route('admin.viewmember')->with('success', 'Member deleted successfully');
+            return redirect()->route('admin.viewmember')->with('success', 'Member deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -521,7 +535,7 @@ class AdminController extends Controller
                         'user_id' => $user->id,
                         'user_ulid' => $user->ulid,
                         'points' => $perUserAmount,
-                        'notes' => "₹$perUserAmount received for $year yearly profit as $levels->level" ,
+                        'notes' => "₹$perUserAmount received for $year yearly profit as $levels->level",
                         'admin_id' => Auth::id()
                     ]);
                 }

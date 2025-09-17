@@ -165,21 +165,19 @@
                     <a href="{{ '/' }}" class="m-0 h5 gradient_text">Geo Kranti</a>
                 </div>
 
-                <!-- Right Side: Login/Register -->
                 <div class="d-flex align-items-center gap-sm-3 gap-2">
-                    <a href="{{ route('aboutus') }}"
-                        class="d-sm-flex d-none align-items-center gap-2 download_app_btn">
+                    <a href="{{ route('aboutus') }}" class="d-flex align-items-center gap-2 download_app_btn">
                         <img src="{{ asset('assetsfront/front_web/images/character.png') }}" alt="img"
                             class="img-fluid" width="20" height="20">
                         <span class="d-none d-md-block">About Us</span>
                     </a>
-                    <a href="{{ route('auth.login') }}"
-                        class="d-sm-flex d-none align-items-center gap-2 download_app_btn">
+                    <a href="{{ route('auth.login') }}" class="d-flex align-items-center gap-2 download_app_btn">
                         <img src="{{ asset('assetsfront/front_web/images/download_app.png') }}" alt="img"
                             class="img-fluid" width="24" height="24">
                         <span class="d-none d-md-block">Login</span>
                     </a>
-                    <a href="{{ route('auth.register') }}" class="btn btn_primary text-white">Create
+                    <a href="{{ route('auth.register') }}"
+                        class="btn btn_primary text-white d-none d-sm-inline-block">Create
                         Account</a>
                 </div>
             </div>
@@ -215,15 +213,15 @@
         <div class="container">
             <div class="row">
                 <div class="col-xl-6 col-lg-6 col-12 z-1">
-                    <h6 class="text-white">The Future of Virtual Land Investment</h6>
+                    <h6 class="text-white">A People's Movement for Nation-Building</h6>
                     <h1 class="gradient_text">Geo Kranti !</h1>
                     <p class="text-white py-2">
-                        Step into the future of geospatial innovation with Geo Kranti, where technology empowers land
-                        management and environmental awareness.
-                        Our dynamic platform bridges digital solutions with real-world impact, making land data more
-                        accessible, transparent, and community-focused for everyone.
+                        At GeoKranti, we are committed to building a **healthier, wiser and sustainably developed
+                        India** by blending our nation’s heritage with modern needs. This is more than a program - it is
+                        a
+                        collective movement for change.
                     </p>
-                    <a class="btn btn-primary arrow_btn" href="{{ route('auth.register') }}">Get Started</a>
+                    <a class="btn btn-primary arrow_btn" href="{{ route('auth.register') }}">Join the Movement</a>
                 </div>
                 <div class="col-xl-6 col-lg-6 col-12 text-center">
                     <div class="banner_right_vector position-absolute">
@@ -233,41 +231,32 @@
                     <ul
                         class="banner_sub_data flex-column flex-sm-row d-flex gap-md-4 gap-2 mt-sm-5 pt-5 text-white align-items-center justify-content-sm-start justify-content-center">
                         <li class="d-flex gap-2 align-items-center">
-                            <h2 class="inter_font m-0 fs-4">200K+</h2>
-                            Community Members
+                            <h2 class="inter_font m-0 fs-4">100+</h2>
+                            Acre Herbal Park
                         </li>
                         <li class="banner_content_seprator d-none d-sm-block">|</li>
                         <li class="d-flex gap-2 align-items-center">
-                            <h2 class="inter_font m-0 fs-4">5+</h2>
-                            Over Market Experience
+                            <h2 class="inter_font m-0 fs-4">5</h2>
+                            Pillars of Action
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
-    <!-- =========== banner section end =========== -->
 
-    <!-- =========== banner sub section =========== -->
     <section class="banner_sub_section common_section">
         <div class="container">
             <div class="row row-cols-lg-3 row-cols-1 gy-4 gy-lg-0 gx-xxl-5">
                 <div class="col position-relative d-flex justify-content-between align-items-start gap-2"
                     data-aos="zoom-in" data-aos-duration="300">
                     <div>
-                        <h3 class="text-white fw-light fs-5">Vision and Mission</h3>
+                        <h3 class="text-white fw-light fs-5">Education & Water Security</h3>
                         <p class="m-0">
-                            🌿 Vision Statement (Future-Oriented, Inspirational)
-                            "To lead the world toward a healthier planet by making organic living accessible,
-                            sustainable, and a natural choice for all."
-                            <br>
-                            <br class="d-none d-lg-block">
-                            🌱 Mission Statement (Present-Focused, Action-Oriented)
-                            "To provide high-quality, certified organic products that promote wellness,
-                            protect the environment, and support ethical farming communities."
-                            {{-- Help redefine how we manage natural resources with transparency, innovation, and impact. --}}
+                            We are building a 100-acre **herbal park with integrated rainwater harvesting** to promote
+                            biodiversity and water security. Our approach to education blends **ancient Vedic wisdom
+                            with modern learning** to foster both values and innovation.
                         </p>
-
                     </div>
                     <img src="{{ asset('assetsfront/front_web/images/banner_sub_ing_1.png') }}" alt="img"
                         class="img-fluid" width="40" height="40">
@@ -275,19 +264,13 @@
                 <div class="col position-relative d-flex justify-content-between align-items-start gap-2"
                     data-aos="zoom-in" data-aos-duration="300">
                     <div>
-                        <h4 class="text-white fw-light fs-5">BENEFITS OF ORGANIC FARMING
+                        <h4 class="text-white fw-light fs-5">Health & Self-Reliance
                         </h4>
                         <p class="m-0">
-                            🌿 More Nutrients Available For Crops. NO Pollution, Improves Soil Properties. Contains PGR
-                            And
-                            Enzymes. Generates Employments .Better Use of Waste, Best for Enviornment, Earth, Human and
-                            Animals
-                            <br>
-                            <br class="d-none d-lg-block">
-                            🌱 Improves soil health through crop rotation, compost, and natural fertilizers. Reduces
-                            pollution avoids chemical runoff into water bodies.
+                            We empower communities with **holistic health practices** like Yoga, Acupressure, and
+                            Ayurveda for accessible, preventive healthcare. Our **Gobar Gas Plant** champions clean
+                            energy, helping rural communities become more self-reliant.
                         </p>
-
                     </div>
                     <img src="{{ asset('assetsfront/front_web/images/banner_sub_ing_2.png') }}" alt="img"
                         class="img-fluid" width="40" height="40">
@@ -295,19 +278,12 @@
                 <div class="col d-flex justify-content-between align-items-start gap-2" data-aos="zoom-in"
                     data-aos-duration="300">
                     <div>
-                        <h5 class="text-white fw-light">Unique Selling Point</h5>
+                        <h5 class="text-white fw-light">Contributing to National Pride</h5>
                         <p class="m-0">
-                            🌿 Collaborate with change-makers to build a more informed and sustainable future. Eco
-                            friendly, Highly Qualified Management, Noble vision & Mission, Promote Healthy life,
-                            Promote chemical free farming
-                            <br class="d-none d-lg-block">
-                            <br>
-                            🌱 Protect us from dangerous diseases, Helps in geological balance, Total Transparency,
-                            Nominee facility & KYC, Land became organic Free of cost.
-
-
+                            We support national pride by **nurturing sportspersons** with organic nutrition and a
+                            holistic lifestyle, elevating their health and performance. We invite all citizens—from
+                            educators to farmers—to join us in this movement.
                         </p>
-
                     </div>
                     <img src="{{ asset('assetsfront/front_web/images/banner_sub_ing_3.png') }}" alt="img"
                         class="img-fluid" width="40" height="40">
@@ -376,7 +352,7 @@
 
                                         </p>
 
-                                        <a class="btn btn_primary arrow_btn mt-3"
+                                        <a class="btn btn_primary arrow_btn mt-3" style="background-color: #495eff"
                                             href="{{ route('auth.login') }}">Join the Mission</a>
                                     </div>
                                 </div>
@@ -404,7 +380,7 @@
                                         </div>
 
                                         </p>
-                                        <a class="btn btn_primary arrow_btn mt-3"
+                                        <a class="btn btn_primary arrow_btn mt-3" style="background-color: #495eff"
                                             href="{{ route('auth.login') }}">Join the Mission</a>
                                     </div>
                                 </div>
@@ -429,7 +405,8 @@
                                             <li>Nominee and KYC facilities for members</li>
                                             <li>Strong community support and employment generation</li>
                                         </ul>
-                                        <a class="btn btn_primary arrow_btn mt-3" href="{{ route('auth.login') }}">Be
+                                        <a class="btn btn_primary arrow_btn mt-3" style="background-color: #495eff"
+                                            href="{{ route('auth.login') }}">Be
                                             a Changemaker</a>
                                     </div>
                                 </div>
@@ -446,59 +423,6 @@
 
     <!-- =========== real estate section =========== -->
 
-
-    {{-- <section class="common_section real_estate_section position-relative overflow-hidden">
-        <div class="wgl-canvas-outer">
-            <canvas id="wgl-webgl-fluid_2"></canvas>
-        </div>
-        <div class="container">
-            <div class="row gy-4">
-                <div class="col-xl-6 col-12 position-relative z-1">
-                    <h3 class="color_purple">Geo Kranti & Organic Agriculture</h3>
-                    <h2 class="text-white">Unlocking Rural Prosperity</h2>
-                    <p class="text-white pt-2">
-                        Geo Kranti is transforming traditional farming with modern, sustainable, and chemical-free
-                        methods.
-                        We aim to create a healthier planet while opening doors for employment, rural empowerment, and
-                        ethical land use — all through the power of organic farming.
-                    </p>
-                    <div class="card card_type_1 mt-sm-5" data-aos="fade-up" data-aos-duration="400">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h3 class="text-white fs-5">Sustainable & Transparent Farming</h3>
-                            <img src="{{ asset('assetsfront/front_web/images/banner_sub_ing_1.png') }}"
-                                alt="img" class="img-fluid" width="40" height="40">
-                        </div>
-                        <p class="text-white pt-2">
-                            Say goodbye to chemical-laden farming. Geo Kranti promotes eco-friendly cultivation that
-                            improves soil,
-                            reduces pollution, and respects the planet. All while creating transparency in land
-                            ownership and food production.
-                        </p>
-                    </div>
-                    <div class="card card_type_1 mt-4" data-aos="fade-up" data-aos-duration="400">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <h3 class="text-white fs-5">Income & Employment for All</h3>
-                            <img src="{{ asset('assetsfront/front_web/images/banner_sub_ing_1.png') }}"
-                                alt="img" class="img-fluid" width="40" height="40">
-                        </div>
-                        <p class="text-white pt-2">
-                            Our organic farm initiatives generate rural jobs, support local economies, and offer income
-                            through multi-level farming models. Whether you're a farmer, investor, or entrepreneur — Geo
-                            Kranti is
-                            your opportunity for lifelong financial freedom and social impact.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-12 d-flex align-items-end justify-content-center">
-                    <div class="realestate_custom_outer position-relative">
-                        <img src="{{ asset('assetsfront/front_web/images/organic-farming.jpg') }}" alt="img"
-                            width="700" height="580" class="img-fluid" loading="lazy">
-                        <div class="gradient_card"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
     <section class="common_section real_estate_section position-relative overflow-hidden">
         <div class="wgl-canvas-outer">
             <canvas id="wgl-webgl-fluid_2"></canvas>
@@ -517,7 +441,8 @@
 
                     <div class="row mt-5 gap-4 flex-md-nowrap flex-wrap">
                         <!-- Card 1 -->
-                        <div class="col-md-6 col-12 card card_type_1" data-aos="fade-up" data-aos-duration="400">
+                        <div class="col-md-6 col-12 card card_type_1" style="background-color: rgb(40, 40, 40)"
+                            data-aos="fade-up" data-aos-duration="400">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h3 class="text-white fs-5">Sustainable & Transparent Farming</h3>
                             </div>
@@ -530,7 +455,8 @@
                         </div>
 
                         <!-- Card 2 -->
-                        <div class="col-md-6 col-12 card card_type_1" data-aos="fade-up" data-aos-duration="400">
+                        <div class="col-md-6 col-12 card card_type_1" style="background-color: rgb(40, 40, 40)"
+                            data-aos="fade-up" data-aos-duration="400">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h3 class="text-white fs-5">Income & Employment for All</h3>
                             </div>
@@ -548,7 +474,6 @@
             </div>
         </div>
     </section>
-
 
     <!-- =========== real estate section end =========== -->
 
@@ -571,7 +496,8 @@
                         visionary investors to be part of a future-ready ecosystem that values real-world impact
                         alongside economic growth.
                     </p>
-                    <a class="btn btn_primary arrow_btn mt-sm-3" href="{{ route('auth.login') }}">Get Started</a>
+                    <a class="btn btn_primary arrow_btn mt-sm-3" style="background-color: #495eff"
+                        href="{{ route('auth.login') }}">Get Started</a>
                 </div>
 
                 <div class="col position-relative d-none d-xl-block" data-aos="zoom-in" data-aos-duration="400">
@@ -584,7 +510,7 @@
     <!-- =========== investors section end =========== -->
 
     <!-- =========== explor lands section =========== -->
-    <section class="common_section">
+    {{-- <section class="common_section">
         <div class="container">
             <div class="row row-cols-1">
                 <div class="col text-center">
@@ -597,6 +523,18 @@
                     <div id="carouselExampleFade" class="carousel explore_lands_slider slide mt-5"
                         data-bs-ride="carousel">
                         <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="https://via.placeholder.com/1200x600/f0f0f0/333333?text=Land+Option+1"
+                                    class="d-block w-100" alt="Sustainable Land Option 1">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://via.placeholder.com/1200x600/e0e0e0/333333?text=Land+Option+2"
+                                    class="d-block w-100" alt="Sustainable Land Option 2">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://via.placeholder.com/1200x600/d0d0d0/333333?text=Land+Option+3"
+                                    class="d-block w-100" alt="Sustainable Land Option 3">
+                            </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade"
                             data-bs-slide="prev">
@@ -609,12 +547,18 @@
                             <span class="visually-hidden">Next</span>
                         </button>
                         <div class="carousel-indicators mt-3 m-0">
+                            <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="0"
+                                class="active" aria-current="true" aria-label="Slide 1"></button>
+                            <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="1"
+                                aria-label="Slide 2"></button>
+                            <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="2"
+                                aria-label="Slide 3"></button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
     <!-- =========== explor lands section end =========== -->
 
     <!-- =========== the future section =========== -->
@@ -641,7 +585,8 @@
                         progress.
                     </p>
 
-                    <a class="btn btn_primary arrow_btn my-3" href="login.html">Get Started</a>
+                    <a class="btn btn_primary arrow_btn my-3" style="background-color: #495eff" href="login.html">Get
+                        Started</a>
                 </div>
                 <div
                     class="col d-flex flex-column justify-content-center align-items-lg-end align-items-center position-relative z-2 gap-4 pe-lg-5">
@@ -657,7 +602,8 @@
             </div>
         </div>
     </section>
-    <!-- =========== the future section end =========== -->
+
+    {{-- Gallery Section --}}
     <section class="container py-5">
         <div class="row">
             <div class="col text-center">
@@ -670,15 +616,18 @@
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-2" id="gallery-container">
             @foreach ($photos->take(3) as $photo)
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <img src="{{ asset('storage/photos/' . basename($photo->photo)) }}"
-                            alt="{{ $photo->title }}" class="card-img-top img-fluid"
-                            style="height: 250px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $photo->title }}</h5>
+                <div class="col gallery-item">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal"
+                        data-photo-url="{{ asset('storage/photos/' . basename($photo->photo)) }}"
+                        data-photo-title="{{ $photo->title }}">
+                        <div class="card h-100 shadow-sm border-0">
+                            <img src="{{ asset('storage/photos/' . basename($photo->photo)) }}"
+                                alt="{{ $photo->title }}" class="card-img-top img-fluid">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ $photo->title }}</h5>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             @endforeach
         </div>
@@ -686,7 +635,6 @@
         @if ($photos->count() > 3)
             <div class="row mt-5">
                 <div class="col text-center">
-                    {{-- Start with page=1 (first load after 3 photos) --}}
                     <button id="load-more" class="btn btn-primary px-4 py-2" data-page="1">
                         Show More <span class="ms-2">+</span>
                     </button>
@@ -694,6 +642,52 @@
             </div>
         @endif
     </section>
+    <style>
+        .gallery-item a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .gallery-item .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            /* Ensures image doesn't overflow during zoom */
+            border-radius: 10px;
+        }
+
+        .gallery-item .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .gallery-item .card-img-top {
+            height: 250px;
+            /* Keep fixed height */
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item .card:hover .card-img-top {
+            transform: scale(1.1);
+            /* Subtle zoom effect on hover */
+        }
+    </style>
+
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="photoModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0 text-center">
+                    <img id="modal-photo" src="" alt="" class="img-fluid"
+                        style="max-height: 80vh;">
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- =========== get in touch section =========== -->
     <section class="common_section get_in_touch_section" id="contact">
@@ -712,36 +706,12 @@
                                     for any queries or concerns.
                                 </p>
                                 <h3 class="color_purple mt-lg-5 fs-4">We are always happy to help you!</h3>
-                                <!-- <h4 class="color_theme_dark fw-semibold fs-5"><a href="cdn-cgi/l/email-protection.html"
-                                        class="__cf_email__"
-                                        data-cfemail="54272124243b262014203c31273b3d3822312627317a373b39">[email&#160;protected]</a>
-                                </h4> -->
+
                                 <h4 class="color_theme_dark fw-semibold fs-5">
                                     geokranti@gmail.com
                                 </h4>
                             </div>
                             <div class="col">
-                                {{-- <form class="row g-3 pt-md-0 pt-4" method="POST" id="contactform">
-                                    <input name="csrf_name" value="" type="hidden">
-                                    <div class="col-12 form-group">
-                                        <input type="text" placeholder="Your name" class="form-control"
-                                            id="name" name="name">
-                                    </div>
-                                    <div class="col-sm-6 col-12 form-group">
-                                        <input type="email" placeholder="Your email" class="form-control"
-                                            id="email" name="email">
-                                    </div>
-                                    <div class="col-sm-6 col-12 form-group">
-                                        <input type="number" placeholder="Your phone" class="form-control"
-                                            id="uphone" name="uphone">
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <textarea placeholder="Your message" rows="5" class="form-control" id="message" name="message"></textarea>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <button type="submit" class="btn btn_primary">Send Message</button>
-                                    </div>
-                                </form> --}}
                                 <form class="row g-3 pt-md-0 pt-4" method="POST"
                                     action="{{ route('contact.send') }}">
                                     @csrf
@@ -761,7 +731,8 @@
                                         <textarea placeholder="Your message" rows="5" class="form-control" name="message" required></textarea>
                                     </div>
                                     <div class="col-12 form-group">
-                                        <button type="submit" class="btn btn_primary">Send Message</button>
+                                        <button type="submit" class="btn btn_primary"
+                                            style="background-color: #495eff">Send Message</button>
                                     </div>
                                 </form>
 
@@ -774,164 +745,164 @@
     </section>
 
     {{-- FAQ Section --}}
-   <section class="py-5" style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center mb-5">
-                <span class="badge bg-primary rounded-pill px-4 py-2 mb-3">SUPPORT</span>
-                <h2 class="display-5 fw-bold text-dark mb-3">Frequently Asked Questions</h2>
-                <p class="lead text-muted">Get answers to common questions about GeoKranti website</p>
+    <section class="py-5" style="background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center mb-5">
+                    <span class="badge bg-primary rounded-pill px-4 py-2 mb-3">SUPPORT</span>
+                    <h2 class="display-5 fw-bold text-dark mb-3">Frequently Asked Questions</h2>
+                    <p class="lead text-muted">Get answers to common questions about GeoKranti website</p>
+                </div>
             </div>
-        </div>
 
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="accordion custom-accordion" id="faqAccordion">
-                    <!-- Vision -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq1">
-                                <i class="fas fa-eye me-3 text-primary"></i>
-                                What is the vision of GeoKranti?
-                            </button>
-                        </h2>
-                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                Our vision is "Organic Bharat, Svasth Bharat, Shikshit Bharat, Viksit Bharat", which
-                                means building a healthier, educated, and developed India rooted in organic living
-                                and sustainable growth.
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="accordion custom-accordion" id="faqAccordion">
+                        <!-- Vision -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    <i class="fas fa-eye me-3 text-primary"></i>
+                                    What is the vision of GeoKranti?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    Our vision is "Organic Bharat, Svasth Bharat, Shikshit Bharat, Viksit Bharat", which
+                                    means building a healthier, educated, and developed India rooted in organic living
+                                    and sustainable growth.
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Herbal Park -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq2">
-                                <i class="fas fa-leaf me-3 text-primary"></i>
-                                What is the purpose of the 100-acre herbal park?
-                            </button>
-                        </h2>
-                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                The herbal park will serve as a center for medicinal plant cultivation, biodiversity
-                                conservation, and rainwater harvesting, promoting sustainability and natural
-                                healthcare.
+                        <!-- Herbal Park -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    <i class="fas fa-leaf me-3 text-primary"></i>
+                                    What is the purpose of the 100-acre herbal park?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    The herbal park will serve as a center for medicinal plant cultivation, biodiversity
+                                    conservation, and rainwater harvesting, promoting sustainability and natural
+                                    healthcare.
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Education -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq3">
-                                <i class="fas fa-graduation-cap me-3 text-primary"></i>
-                                How does GeoKranti combine Vedic and modern education?
-                            </button>
-                        </h2>
-                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                We aim to blend ancient Vedic wisdom with modern learning systems so that students
-                                grow with strong values, knowledge, and innovative skills for the future.
+                        <!-- Education -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    <i class="fas fa-graduation-cap me-3 text-primary"></i>
+                                    How does GeoKranti combine Vedic and modern education?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    We aim to blend ancient Vedic wisdom with modern learning systems so that students
+                                    grow with strong values, knowledge, and innovative skills for the future.
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Wellness -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq4">
-                                <i class="fas fa-spa me-3 text-primary"></i>
-                                What role do Yoga, Acupressure, and Ayurveda play in your mission?
-                            </button>
-                        </h2>
-                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                These practices promote self-healing, preventive healthcare, and holistic
-                                well-being, empowering individuals to take charge of their health naturally.
+                        <!-- Wellness -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    <i class="fas fa-spa me-3 text-primary"></i>
+                                    What role do Yoga, Acupressure, and Ayurveda play in your mission?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    These practices promote self-healing, preventive healthcare, and holistic
+                                    well-being, empowering individuals to take charge of their health naturally.
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Energy -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq5">
-                                <i class="fas fa-bolt me-3 text-primary"></i>
-                                Why is GeoKranti setting up a Gobar Gas Plant?
-                            </button>
-                        </h2>
-                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                The plant will generate clean, renewable energy from organic waste, reducing
-                                dependence on non-renewable resources and making rural communities more
-                                self-reliant.
+                        <!-- Energy -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    <i class="fas fa-bolt me-3 text-primary"></i>
+                                    Why is GeoKranti setting up a Gobar Gas Plant?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    The plant will generate clean, renewable energy from organic waste, reducing
+                                    dependence on non-renewable resources and making rural communities more
+                                    self-reliant.
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Sports -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq6">
-                                <i class="fas fa-running me-3 text-primary"></i>
-                                How is GeoKranti supporting sports and athletes?
-                            </button>
-                        </h2>
-                        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                We provide organic food, holistic lifestyle practices, and natural health support to
-                                nurture sportspersons, enhancing both their health and performance.
+                        <!-- Sports -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq6">
+                                    <i class="fas fa-running me-3 text-primary"></i>
+                                    How is GeoKranti supporting sports and athletes?
+                                </button>
+                            </h2>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    We provide organic food, holistic lifestyle practices, and natural health support to
+                                    nurture sportspersons, enhancing both their health and performance.
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Membership -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq7">
-                                <i class="fas fa-users me-3 text-primary"></i>
-                                Who can join or support GeoKranti?
-                            </button>
-                        </h2>
-                        <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                We welcome educators, farmers, healthcare practitioners, sportspersons, and
-                                conscious citizens who believe in holistic living, sustainability, and
-                                nation-building.
+                        <!-- Membership -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq7">
+                                    <i class="fas fa-users me-3 text-primary"></i>
+                                    Who can join or support GeoKranti?
+                                </button>
+                            </h2>
+                            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    We welcome educators, farmers, healthcare practitioners, sportspersons, and
+                                    conscious citizens who believe in holistic living, sustainability, and
+                                    nation-building.
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Nation Building -->
-                    <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-semibold py-3" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#faq8">
-                                <i class="fas fa-flag me-3 text-primary"></i>
-                                How is GeoKranti contributing to nation-building?
-                            </button>
-                        </h2>
-                        <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body bg-light">
-                                By integrating organic farming, renewable energy, traditional wisdom, modern
-                                education, and holistic health, we are creating a sustainable model that benefits
-                                both society and the nation.
+                        <!-- Nation Building -->
+                        <div class="accordion-item shadow-lg mb-4 border-0 rounded-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-semibold py-3" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq8">
+                                    <i class="fas fa-flag me-3 text-primary"></i>
+                                    How is GeoKranti contributing to nation-building?
+                                </button>
+                            </h2>
+                            <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-light">
+                                    By integrating organic farming, renewable energy, traditional wisdom, modern
+                                    education, and holistic health, we are creating a sustainable model that benefits
+                                    both society and the nation.
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <style>
         .custom-accordion .accordion-button:not(.collapsed) {
@@ -977,69 +948,111 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- =========== footer section =========== -->
-    <footer>
+    <footer style="background: linear-gradient(135deg, #1a2a3a 0%, #0d1b2a 100%); color: #fff; padding: 3rem 0 1rem;">
         <div class="container">
-            <div class="row pb-4 gy-4 gy-lg-0 fs-14 border-bottom position-relative z-1">
+            <div class="row pb-4 gy-4 gy-lg-0 border-bottom position-relative z-1">
+                <!-- Logo and Description -->
                 <div class="col-lg-4 col-12">
                     <a href="{{ '/' }}">
                         <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                            alt="img" class="iimg-fluid" style="width: 40%;
-    height: 159px;">
+                            alt="Geo Kranti Logo" class="img-fluid" style="width: 100px;height: 100px;">
                     </a>
-                    <p class="pt-3 fw-light footer_main_para">
+                    <p class="pt-2 fw-light" style="color: #b1b1b1; line-height: 1.6;">
                         Embark on your journey today and unlock the boundless opportunities of virtual real estate with
                         TheSoilverse. Create, innovate, invest, and prosper within the ever-expanding metaverse.
                     </p>
-
-                </div>
-
-                <div class="col-md-4 col-12 mt-4">
-                    <div class="ruf" style=" width: 50%; height: 169px;"></div>
-                    <div class="w-max-content mx-auto">
-
-                        <h4 class="text-white pb-sm-4 pb-2 fs-5">Contact Us</h4>
-                        <div class="d-flex gap-4 align-items-start">
-                            <img src="{{ asset('assetsfront/front_web/images/footer_address_icon.png') }}"
-                                alt="img" class="img-fluid" width="20" height="18">
-                            <span class="fw-light">Ganaur, Sonipat
-                                <br>
-                                Haryana, India
-                            </span>
-                        </div>
-                        <div class="d-flex gap-4 align-items-start pt-3">
-                            <img src="{{ asset('assetsfront/front_web/images/mail_icon.png') }}" alt="img"
-                                class="img-fluid" width="20" height="20">
-                            <span class="fw-light">
-                                geokranti@gmail.com
-                            </span>
-                        </div>
+                    <!-- Social Media Icons -->
+                    <div class="social-icons mt-3">
+                        <a href="https://t.me/+6U8XYmLhNGthYjg1" target="_blank" class="text-white me-3"><i class="fab fa-telegram"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-3 col-6 mt-4 mt-lg-0">
+                    <h5 class="text-white mb-4" style="font-size: 1.1rem;">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-decoration-none"
+                                style="color: #b1b1b1;">Home</a></li>
+                        <li class="mb-2"><a href="/about-us" class="text-decoration-none"
+                                style="color: #b1b1b1;">About Us</a></li>
+                        <li class="mb-2"><a href="#contact" class="text-decoration-none"
+                                style="color: #b1b1b1;">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="col-md-5 col-12 mt-4 mt-lg-0">
+                    <h5 class="text-white mb-4" style="font-size: 1.1rem;">Contact Us</h5>
+                    <div class="d-flex gap-3 align-items-start mb-3">
+                        <div style="color: #694ecd; font-size: 1.2rem;">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <span class="fw-light" style="color: #b1b1b1;">Ganaur, Sonipat<br>Haryana, India</span>
+                    </div>
+                    <div class="d-flex gap-3 align-items-start mb-3">
+                        <div style="color: #694ecd; font-size: 1.2rem;">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span class="fw-light" style="color: #b1b1b1;">geokranti@gmail.com</span>
+                    </div>
+                    <div class="d-flex gap-3 align-items-start">
+                        <div style="color: #694ecd; font-size: 1.2rem;">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <span class="fw-light" style="color: #b1b1b1;">+91 94163 73249</span>
+                    </div>
+                </div>
+
             </div>
+
+            <!-- Copyright -->
             <div class="row row-cols-1 py-3">
                 <div class="col text-center">
-                    <small class="fw-light">&copy; 2025 Geo Kranti. All Rights Reserved.</small>
+                    <small class="fw-light" style="color: #b1b1b1;">&copy; 2025 Geo Kranti. All Rights
+                        Reserved.</small>
                 </div>
             </div>
         </div>
     </footer>
 
+
     <!-- jQuery (required for Bootstrap JavaScript components) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    {{-- Script for Load More functionality --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const galleryContainer = document.getElementById('gallery-container');
             const loadMoreButton = document.getElementById('load-more');
+            const photoModal = document.getElementById('photoModal');
+
+            // Use event delegation for opening the modal
+            galleryContainer.addEventListener('click', function(event) {
+                const link = event.target.closest('a[data-bs-toggle="modal"]');
+                if (link) {
+                    const photoUrl = link.getAttribute('data-photo-url');
+                    const photoTitle = link.getAttribute('data-photo-title');
+
+                    const modalImage = photoModal.querySelector('#modal-photo');
+                    const modalTitle = photoModal.querySelector('#photoModalLabel');
+
+                    modalImage.src = photoUrl;
+                    modalImage.alt = photoTitle;
+                    modalTitle.textContent = photoTitle;
+                }
+            });
 
             if (loadMoreButton) {
                 loadMoreButton.addEventListener('click', function() {
                     const page = parseInt(this.getAttribute('data-page'));
                     const nextPage = page + 1;
 
-                    // Show loading spinner
                     this.innerHTML =
                         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
 
-                    // Build request URL
                     const url = new URL('{{ route('gallery.load-more') }}');
                     url.searchParams.append('page', page);
 
@@ -1056,7 +1069,6 @@
                         })
                         .then(data => {
                             if (data.html) {
-                                const galleryContainer = document.getElementById('gallery-container');
                                 galleryContainer.insertAdjacentHTML('beforeend', data.html);
 
                                 // Update button page
@@ -1066,7 +1078,6 @@
                                     loadMoreButton.style.display = 'none';
                                 }
                             }
-
                             this.innerHTML = 'Show More <span class="ms-2">+</span>';
                         })
                         .catch(error => {
@@ -1078,6 +1089,7 @@
             }
         });
     </script>
+
     <!-- =========== footer section end =========== -->
     <!-- <script src="https://thesoilverse.com/assets/front_web/js/jquery.js" defer></script>  -->
     {{-- <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script> --}}

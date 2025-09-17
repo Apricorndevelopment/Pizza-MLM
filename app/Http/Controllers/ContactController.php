@@ -22,7 +22,7 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        Mail::to('developerapricorn1234@gmail.com')->send(new ContactMail($data));
+        Mail::to('geokranti@gmail.com')->send(new ContactMail($data));
 
         return back()->with('success', 'Your message has been sent successfully!');
     }

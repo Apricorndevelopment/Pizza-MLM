@@ -39,14 +39,17 @@ class AuthController extends Controller
 
         if ($request->ajax()) {
             $html = '';
-            foreach ($photos as $photo) {
-                $html .= '<div class="col">';
-                $html .= '<div class="card h-100 shadow-sm">';
-                $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . e($photo->title) . '" class="card-img-top img-fluid" style="height: 250px; object-fit: cover;">';
-                $html .= '<div class="card-body">';
-                $html .= '<h5 class="card-title">' . e($photo->title) . '</h5>';
-                $html .= '</div></div></div>';
-            }
+           foreach ($photos as $photo) {
+            // Updated HTML to match the initial gallery section
+            $html .= '<div class="col gallery-item">';
+            $html .= '<a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" data-photo-url="' . asset('storage/photos/' . basename($photo->photo)) . '" data-photo-title="' . e($photo->title) . '">';
+            $html .= '<div class="card h-100 shadow-sm border-0">';
+            $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . e($photo->title) . '" class="card-img-top img-fluid">';
+            $html .= '<div class="card-body text-center">';
+            $html .= '<h5 class="card-title">' . e($photo->title) . '</h5>';
+            $html .= '</div></div></a></div>';
+        }
+
 
             return response()->json([
                 'html' => $html,

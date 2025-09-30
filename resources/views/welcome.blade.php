@@ -32,6 +32,14 @@
 <body class="p-0">
 
     <style>
+        :root {
+            --primary: #2a288a;
+            --secondary: #4b49ac;
+            --accent: #ff6b35;
+            --light: #f8f9ff;
+            --dark: #212529;
+        }
+
         .form-group.has-error small {
             color: red;
         }
@@ -151,38 +159,116 @@
             margin-left: 0;
             padding-left: 0;
         }
+
+        .message-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: none;
+            position: relative;
+        }
+
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+
+        .cmd-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--light);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        .section-title.center:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        blockquote {
+            border-left: 4px solid var(--accent);
+            padding-left: 20px;
+            font-style: italic;
+        }
     </style>
 
     <header class="w-100" id="header">
         <nav class="navbar p-0">
             <div class="container d-flex align-items-center justify-content-between">
-
                 <div class="logo-container">
                     <a href="{{ '/' }}" class="p-0 m-0">
                         <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                            alt="img" width="79px;" height="79px;">
+                            alt="img" width="79px;" height="79spx;">
                     </a>
-                    <a href="{{ '/' }}" class="m-0 h5 gradient_text">Geo Kranti</a>
+                    <a href="{{ '/' }}" class="m-0 h5 gradient_text text-decoration-none"
+                        style="color: var(--secondary);">Geo Kranti</a>
                 </div>
 
-                <div class="d-flex align-items-center gap-sm-3 gap-2">
-                    <a href="{{ route('aboutus') }}" class="d-flex align-items-center gap-2 download_app_btn">
+                <div class="d-none d-md-flex align-items-center gap-3">
+                    <a href="{{ route('aboutus') }}"
+                        class="d-flex align-items-center gap-2 text-white text-decoration-none download_app_btn">
                         <img src="{{ asset('assetsfront/front_web/images/character.png') }}" alt="img"
                             class="img-fluid" width="20" height="20">
-                        <span class="d-none d-md-block">About Us</span>
+                        <span>About Us</span>
                     </a>
-                    <a href="{{ route('auth.login') }}" class="d-flex align-items-center gap-2 download_app_btn">
+                    <a href="{{ route('auth.login') }}"
+                        class="d-flex align-items-center gap-2 text-white text-decoration-none download_app_btn">
                         <img src="{{ asset('assetsfront/front_web/images/download_app.png') }}" alt="img"
                             class="img-fluid" width="24" height="24">
-                        <span class="d-none d-md-block">Login</span>
+                        <span>Login</span>
                     </a>
-                    <a href="{{ route('auth.register') }}"
-                        class="btn btn_primary text-white d-none d-sm-inline-block">Create
-                        Account</a>
+                    <a href="{{ route('auth.register') }}" class="btn btn_primary text-white">Create Account</a>
                 </div>
+
+                <button class="navbar-toggler text-white d-md-none border-0" style="color: white" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-controls="mobileMenu"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
         </nav>
+
+        <div class="collapse d-md-none bg-black shadow-sm" id="mobileMenu">
+            <div class="d-flex flex-column p-3 gap-2">
+                <a href="{{ route('aboutus') }}" class="text-white text-decoration-none p-2 rounded">
+                    About Us
+                </a>
+
+                <a href="{{ route('auth.login') }}" class="text-white text-decoration-none p-2 rounded">
+                    Login
+                </a>
+
+                <a href="{{ route('auth.register') }}" class="btn btn_primary w-100 text-white mt-2">
+                    Create Account
+                </a>
+            </div>
+        </div>
     </header>
+
 
     <!-- =========== header section end =========== -->
     <!--========= TSV Celebrating Day Modal end ==========-->
@@ -213,7 +299,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-xl-6 col-lg-6 col-12 z-1">
-                    <h6 class="text-white">A People's Movement for Nation-Building</h6>
+                    <h6 class="text-white">A Movement for Nation-Building</h6>
                     <h1 class="gradient_text">Geo Kranti !</h1>
                     <p class="text-white py-2">
                         At GeoKranti, we are committed to building a **healthier, wiser and sustainably developed
@@ -240,6 +326,42 @@
                             Pillars of Action
                         </li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CMD Message Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="message-card p-4 p-md-5">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 text-center mb-4 mb-md-0">
+                                <img src="/dinesh.jpg" alt="CMD Dinesh Gaur" class="cmd-image">
+                                <h4 class="mt-3 mb-0">Dinesh Gaur</h4>
+                                <p class="text-muted">CMD, GeoKranti</p>
+                            </div>
+                            <div class="col-md-8">
+                                <h3 class="section-title">Message from our CMD</h3>
+                                <blockquote class="blockquote">
+                                    "ऑर्गेनिक भारत, स्वस्थ भारत, शिक्षित भारत, विकसित भारत "
+                                    <p class="font-italic">"Dear Fellow Citizens, At GeoKranti, our vision is clear and
+                                        collective: We are committed to nation-building through solutions that are
+                                        rooted in India's heritage and aligned with modern needs."</p>
+
+                                    <p class="font-italic">"This is more than a program—it is a people's movement. I
+                                        invite educators, farmers, healthcare practitioners, sportspersons, and
+                                        conscious citizens to join hands with us. Together, let's build an India that is
+                                        healthier, wiser, and sustainably developed."</p>
+
+                                    <footer class="blockquote-footer mt-3" style="background-color: white">Jai Hind
+                                    </footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -963,7 +1085,8 @@
                     </p>
                     <!-- Social Media Icons -->
                     <div class="social-icons mt-3">
-                        <a href="https://t.me/+6U8XYmLhNGthYjg1" target="_blank" class="text-white me-3"><i class="fab fa-telegram"></i></a>
+                        <a href="https://t.me/+6U8XYmLhNGthYjg1" target="_blank" class="text-white me-3"><i
+                                class="fab fa-telegram"></i></a>
                         <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
                         <a href="#" class="text-white me-3"><i class="fab fa-linkedin-in"></i></a>

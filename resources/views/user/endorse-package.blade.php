@@ -49,7 +49,7 @@
                     </div>
                     <div class="alert alert-info mt-3">
                         <i class="fas fa-info-circle me-2"></i>
-                        <strong>Conversion Rule:</strong> 2 maturity packages = 1 regular package
+                        <strong>Conversion Rule for this package: </strong> {{ (int) (1 / $maturityPackage->package2->package_quantity) }} maturity packages = 1 regular package
                     </div>
                 </div>
             </div>
@@ -115,6 +115,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const maturityQuantity = {{ $maturityPackage->quantity }};
+        const realMaturityQuantity ={{ $maturityPackage->package2->package_quantity }};
         
         // Form validation
         const forms = document.querySelectorAll('.needs-validation');
@@ -192,7 +193,7 @@
                 '<span class="badge bg-secondary">No</span>';
 
             // Calculate how many regular packages user will get
-            const regularPackagesCount = Math.floor(maturityQuantity * 0.5);
+            const regularPackagesCount = Math.floor(maturityQuantity * realMaturityQuantity);
 
             document.getElementById('summaryDetails').innerHTML = `
                 <div class="col-md-6">

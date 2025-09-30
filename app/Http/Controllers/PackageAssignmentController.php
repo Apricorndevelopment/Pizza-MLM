@@ -175,7 +175,7 @@ class PackageAssignmentController extends Controller
 
         $breadcrumbs = [
             ['title' => 'Packages', 'url' => route('user.packages')],
-            ['title' => 'Invoices', 'url' => route('user.packages')],
+            ['title' => 'Monthly Invoices', 'url' => route('user.maturity.packages')],
             ['title' => 'Endorse Package', 'url' => route('user.packages.endorse', $id)]
         ];
 

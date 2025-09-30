@@ -405,7 +405,7 @@
                                 <a class="nav-link d-flex align-items-center"
                                     href="{{ route('user.maturity.packages') }}">
                                     <i class="fas fa-box-open me-2" style="font-size: 0.8rem;"></i>
-                                    <span class="menu-title">Maturity Package</span>
+                                    <span class="menu-title">Monthly Invoice</span>
                                 </a>
                             </li>
                             <li class="nav-item">

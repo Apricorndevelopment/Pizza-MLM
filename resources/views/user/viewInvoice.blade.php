@@ -16,7 +16,7 @@
                             </div>
                         </div>
                         <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i> Ganaur, Sonipat Haryana, India</p>
-                        <p class="mb-1"><i class="fas fa-phone me-2"></i> +91 XXXXX XXXXX</p>
+                        <p class="mb-1"><i class="fas fa-phone me-2"></i> +91 97292 07249</p>
                         <p class="mb-0"><i class="fas fa-envelope me-2"></i> geokranti@gmail.com</p>
                     </div>
                     <div class="col-sm-6 text-md-end mt-4 mt-sm-2">
@@ -44,7 +44,7 @@
                                         <th class="text-center">Quantity</th>
                                         <th class="text-center">Rate</th>
                                         <th class="text-center">Duration</th>
-                                        <th class="text-center">Profit Share</th>
+                                        {{-- <th class="text-center">Profit Share</th> --}}
                                         <th class="text-end">Price</th>
                                     </tr>
                                 </thead>
@@ -54,11 +54,11 @@
                                         <td class="text-center">{{ $transaction->quantity }}</td>
                                         <td class="text-center">{{ $transaction->rate }}%</td>
                                         <td class="text-center">{{ $transaction->time }} years</td>
-                                        <td class="text-center">{{ $transaction->profit_share == 1 ? 'Yes' : 'No' }}</td>
+                                        {{-- <td class="text-center">{{ $transaction->profit_share == 1 ? 'Yes' : 'No' }}</td> --}}
                                         <td class="text-end">₹{{ number_format($transaction->final_price, 2) }}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5" class="text-end fw-bold">Total Amount:</td>
+                                        <td colspan="4" class="text-end fw-bold">Total Amount:</td>
                                         <td class="text-end fw-bold">₹{{ number_format($transaction->final_price, 2) }}
                                         </td>
                                     </tr>
@@ -87,8 +87,7 @@
                                 <p class="small mb-0">Authorized Signature</p>
                             </div>
                         </div>
-                        <p class="small text-muted mt-4">For any queries, contact us at: geokranti@gmail.com | +91 XXXXX
-                            XXXXX</p>
+                        <p class="small text-muted mt-4">For any queries, contact us at: geokranti@gmail.com | +91 97292 07249</p>
                     </div>
                 </div>
 

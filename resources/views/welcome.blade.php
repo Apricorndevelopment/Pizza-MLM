@@ -105,9 +105,8 @@
     <div id="showLoaderAjax" class="loader-overlay" style="display: none;">
         <div class="loader-content loader-center text-center">
 
-            <div id="loaderCall"> <img
-                    src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                    class="img-fluid" alt="loader-logo" width="145" height="145"></div>
+            <div id="loaderCall"> <img src="{{ asset('geokranti-white.png') }}" class="img-fluid" alt="loader-logo"
+                    style="border: 0px;border-radius: 100%" width="145" height="145"></div>
             <div class="loader-center loader-text">Do not close or reload the page</div>
         </div>
     </div>
@@ -115,8 +114,8 @@
     <div id="loader-wrapper" class="page-loading">
         <div id="preloader">
             <div id="loader">
-                <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                    class="img-fluid" alt="loader-logo" width="165" height="165">
+                <img src="{{ asset('geokranti-white.jpg') }}" class="img-fluid" alt="loader-logo"
+                    style="border: 0px;border-radius: 100%;" width="160" height="160">
             </div>
         </div>
         <div class="loader-section section-left"></div>
@@ -221,10 +220,10 @@
             <div class="container d-flex align-items-center justify-content-between">
                 <div class="logo-container">
                     <a href="{{ '/' }}" class="p-0 m-0">
-                        <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                            alt="img" width="79px;" height="79spx;">
+                        <img src="{{ asset('geokranti-white.jpg') }}" alt="img" width="70px;" height="70px;"
+                            style="border: 0px;border-radius: 100%">
                     </a>
-                    <a href="{{ '/' }}" class="m-0 h5 gradient_text text-decoration-none"
+                    <a href="{{ '/' }}" class="ms-2 m-0 h4 gradient_text text-decoration-none"
                         style="color: var(--secondary);">Geo Kranti</a>
                 </div>
 
@@ -707,7 +706,7 @@
                         progress.
                     </p>
 
-                    <a class="btn btn_primary arrow_btn my-3" style="background-color: #495eff" href="login.html">Get
+                    <a class="btn btn_primary arrow_btn my-3" style="background-color: #495eff" href="/login">Get
                         Started</a>
                 </div>
                 <div
@@ -794,7 +793,132 @@
             transform: scale(1.1);
             /* Subtle zoom effect on hover */
         }
+
+        /* News Section Styles */
+        .news-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .news-image-container {
+            overflow: hidden;
+        }
+
+        .news-image {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .news-card:hover .news-image {
+            transform: scale(1.05);
+        }
+
+        .news-day {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6c63ff;
+            line-height: 1;
+        }
+
+        .news-month {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+        }
+
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+
+        .news-body {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Load More Button Styles */
+        #load-more-news {
+            border: 2px solid #6c63ff;
+            color: #6c63ff;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        #load-more-news:hover {
+            background-color: #6c63ff;
+            color: white;
+            transform: translateY(-2px);
+        }
     </style>
+
+    {{-- News & Updates Section --}}
+    <section class="container py-5">
+        <div class="row">
+            <div class="col text-center">
+                <h3 class="text-purple">News & Updates</h3>
+                <h2 class="text-dark">
+                    Latest News & Updates
+                </h2>
+                <p class="text-muted">Stay updated with our latest news and announcements</p>
+            </div>
+        </div>
+
+        <div class="row mt-4" id="news-container">
+            @foreach ($news->take(3) as $newsItem)
+                <div class="col-md-6 col-lg-4 news-item mb-4">
+                    <div class="card h-100 shadow-sm border-0 news-card">
+                        <div class="news-image-container">
+                            <img src="{{ asset('storage/news_pics/' . basename($newsItem->news_pic)) }}"
+                                alt="{{ $newsItem->title }}" class="card-img-top news-image">
+                            {{-- <div class="news-date">
+                                <span class="news-day">{{ $newsItem->created_at->format('d') }}</span>
+                                <span class="news-month">{{ $newsItem->created_at->format('M') }}</span>
+                            </div> --}}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title news-title">{{ $newsItem->title }}</h5>
+                            <p class="news-meta">
+                                <i class="far fa-clock me-1"></i>{{ $newsItem->created_at->format('M d, Y') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        @if ($news->count() > 3)
+            <div class="row mt-5">
+                <div class="col text-center">
+                    <button id="load-more-news" class="btn btn-outline-primary px-4 py-2" data-page="1">
+                        Load Older News <span class="ms-2">↓</span>
+                    </button>
+                </div>
+            </div>
+        @endif
+    </section>
 
     <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -1076,8 +1200,8 @@
                 <!-- Logo and Description -->
                 <div class="col-lg-4 col-12">
                     <a href="{{ '/' }}">
-                        <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                            alt="Geo Kranti Logo" class="img-fluid" style="width: 100px;height: 100px;">
+                        <img src="{{ asset('geokranti-white.jpg') }}" alt="Geo Kranti Logo" class="img-fluid"
+                            style="width: 90px;height: 90px;border-radius: 50%;">
                     </a>
                     <p class="pt-2 fw-light" style="color: #b1b1b1; line-height: 1.6;">
                         Embark on your journey today and unlock the boundless opportunities of virtual real estate with
@@ -1087,9 +1211,12 @@
                     <div class="social-icons mt-3">
                         <a href="https://t.me/+6U8XYmLhNGthYjg1" target="_blank" class="text-white me-3"><i
                                 class="fab fa-telegram"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.facebook.com/share/1A9SEQX3q8/" target="_blank"
+                            class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/geokranti?igsh=ejBkNXJ6b3BwMTd2" target="_blank"
+                            class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="https://youtube.com/@geokranti?si=ZYTkC_2q2d6obmvk" target="_blank"
+                            class="text-white me-3"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
 
@@ -1207,6 +1334,80 @@
                             console.error('Error:', error);
                             alert('Error loading more photos');
                             this.innerHTML = 'Show More <span class="ms-2">+</span>';
+                        });
+                });
+            }
+        });
+
+        //Load more for the news section
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsContainer = document.getElementById('news-container');
+            const loadMoreNewsButton = document.getElementById('load-more-news');
+
+            if (loadMoreNewsButton) {
+                loadMoreNewsButton.addEventListener('click', function() {
+                    const page = parseInt(this.getAttribute('data-page'));
+                    const nextPage = page + 1;
+
+                    // Show loading state
+                    const originalText = this.innerHTML;
+                    this.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+                    this.disabled = true;
+
+                    const url = new URL('{{ route('news.load-more') }}');
+                    url.searchParams.append('page', page);
+
+                    fetch(url, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.html) {
+                                // Add fade-in animation to new items
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = data.html;
+                                const newItems = tempDiv.querySelectorAll('.news-item');
+
+                                newItems.forEach(item => {
+                                    item.style.opacity = '0';
+                                    item.style.transform = 'translateY(20px)';
+                                    newsContainer.appendChild(item);
+
+                                    // Animate in
+                                    setTimeout(() => {
+                                        item.style.transition = 'all 0.5s ease';
+                                        item.style.opacity = '1';
+                                        item.style.transform = 'translateY(0)';
+                                    }, 100);
+                                });
+
+                                // Update button page
+                                loadMoreNewsButton.setAttribute('data-page', nextPage);
+
+                                if (!data.hasMore) {
+                                    loadMoreNewsButton.style.display = 'none';
+                                }
+                            }
+
+                            // Reset button state
+                            this.innerHTML = 'Load Older News <span class="ms-2">↓</span>';
+                            this.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Error loading more news');
+
+                            // Reset button state on error
+                            this.innerHTML = 'Load Older News <span class="ms-2">↓</span>';
+                            this.disabled = false;
                         });
                 });
             }

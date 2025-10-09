@@ -85,7 +85,7 @@
         }
 
         .logo img {
-            width: 100px;
+            width: 90px;
             height: auto;
         }
 
@@ -256,7 +256,8 @@
             <div class="auth-header">
                 <div class="logo-container">
                     <div class="logo">
-                        <img src="geokrantilogo-removebg.png" alt="Geokranti Logo">
+                        <a href="/">
+                        <img src="geokranti-white.jpg" alt="Geokranti Logo" style="border: 0px;border-radius: 100%"></a>
                     </div>
                     <div class="brand-name">Geokranti</div>
                 </div>

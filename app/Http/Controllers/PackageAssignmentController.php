@@ -161,6 +161,18 @@ class PackageAssignmentController extends Controller
         return view('user.viewInvoice', compact('transaction', 'breadcrumbs'));
     }
 
+    public function showMaturityInvoice($id)
+    {
+        $transaction = Package2Purchase::findOrFail($id);
+        $breadcrumbs = [
+            ['title' => 'Package', 'url' => route('user.packages')],
+            ['title' => 'Monthly Invoice', 'url' => route('user.maturity.packages')],
+            ['title' => 'View Invoice', 'url' => '#'],
+        ];
+
+        return view('user.viewMaturityInvoice', compact('transaction', 'breadcrumbs'));
+    }
+
     public function showEndorseForm($id)
     {
         $maturityPackage = Package2Purchase::with('package2')->findOrFail($id);
@@ -175,7 +187,7 @@ class PackageAssignmentController extends Controller
 
         $breadcrumbs = [
             ['title' => 'Packages', 'url' => route('user.packages')],
-            ['title' => 'Monthly Invoices', 'url' => route('user.maturity.packages')],
+            ['title' => 'Monthly Invoice', 'url' => route('user.maturity.packages')],
             ['title' => 'Endorse Package', 'url' => route('user.packages.endorse', $id)]
         ];
 

@@ -257,14 +257,14 @@
 <body>
 
     <header class="w-100" id="header">
-        <nav class="navbar navbar-dark bg-black p-0">
+        <nav class="navbar navbar-dark bg-black p-2">
             <div class="container d-flex align-items-center justify-content-between">
                 <div class="logo-container">
                     <a href="{{ '/' }}" class="p-0 m-0">
-                        <img src="{{ asset('assetsfront/front_web/images/geokranti-dark-removebg-preview.png') }}"
-                            alt="img" width="79px;" height="79spx;">
+                        <img src="{{ asset('geokranti-white.jpg') }}"
+                            alt="img" width="70px;" height="70px;" style="border-radius: 50%">
                     </a>
-                    <a href="{{ '/' }}" class="m-0 h5 gradient_text text-decoration-none"
+                    <a href="{{ '/' }}" class="m-0 h4 gradient_text text-decoration-none"
                         style="color: var(--secondary);">Geo Kranti</a>
                 </div>
 
@@ -457,7 +457,7 @@
                     <h2 class="mb-4">Join the Movement</h2>
                     <p class="lead mb-5">Be part of India's transformation towards sustainable development and holistic
                         living</p>
-                    <a href="#" class="btn btn-light btn-lg">Get Involved</a>
+                    <a href="{{ route('register') }}" class="btn btn-light btn-lg">Get Involved</a>
                 </div>
             </div>
         </div>

@@ -6,6 +6,7 @@ use App\Mail\UserRegisteredMail;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Gallery;
+use App\Models\News;
 use App\Models\Package2Purchase;
 use App\Models\PasswordOtp;
 use Illuminate\Support\Str;
@@ -39,16 +40,16 @@ class AuthController extends Controller
 
         if ($request->ajax()) {
             $html = '';
-           foreach ($photos as $photo) {
-            // Updated HTML to match the initial gallery section
-            $html .= '<div class="col gallery-item">';
-            $html .= '<a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" data-photo-url="' . asset('storage/photos/' . basename($photo->photo)) . '" data-photo-title="' . e($photo->title) . '">';
-            $html .= '<div class="card h-100 shadow-sm border-0">';
-            $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . e($photo->title) . '" class="card-img-top img-fluid">';
-            $html .= '<div class="card-body text-center">';
-            $html .= '<h5 class="card-title">' . e($photo->title) . '</h5>';
-            $html .= '</div></div></a></div>';
-        }
+            foreach ($photos as $photo) {
+                // Updated HTML to match the initial gallery section
+                $html .= '<div class="col gallery-item">';
+                $html .= '<a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" data-photo-url="' . asset('storage/photos/' . basename($photo->photo)) . '" data-photo-title="' . e($photo->title) . '">';
+                $html .= '<div class="card h-100 shadow-sm border-0">';
+                $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . e($photo->title) . '" class="card-img-top img-fluid">';
+                $html .= '<div class="card-body text-center">';
+                $html .= '<h5 class="card-title">' . e($photo->title) . '</h5>';
+                $html .= '</div></div></a></div>';
+            }
 
 
             return response()->json([
@@ -56,6 +57,49 @@ class AuthController extends Controller
                 'hasMore' => $hasMore,
                 'loaded' => $photos->count(),
                 'total' => $totalPhotos,
+            ]);
+        }
+
+        return abort(404);
+    }
+
+    public function loadMoreNews(Request $request)
+    {
+        $page = (int) $request->get('page', 1); // First page = after first 3
+        $perPage = 3;
+        $initialDisplayCount = 3;
+
+        // Skip initial 3, then apply pagination
+        $skip = $initialDisplayCount + (($page - 1) * $perPage);
+
+        $news = News::orderBy('created_at', 'desc')
+            ->skip($skip)
+            ->take($perPage)
+            ->get();
+        $totalNews = News::count();
+        $hasMore = $totalNews > $skip + $news->count();
+
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($news as $newsItem) {
+                $html .= '<div class="col-md-6 col-lg-4 news-item mb-4">';
+                $html .= '<div class="card h-100 shadow-sm border-0 news-card">';
+                $html .= '<div class="news-image-container">';
+                $html .= '<img src="' . asset('storage/news_pics/' . basename($newsItem->news_pic)) . '" alt="' . e($newsItem->title) . '" class="card-img-top news-image">';
+                $html .= '</div>';
+                $html .= '<div class="card-body">';
+                $html .= '<h5 class="card-title news-title">' . e($newsItem->title) . '</h5>';
+                $html .= '<p class="news-meta"><i class="far fa-clock me-1"></i>' . $newsItem->created_at->format('M d, Y') . '</p>';
+                $html .= '</div>';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+
+            return response()->json([
+                'html' => $html,
+                'hasMore' => $hasMore,
+                'loaded' => $news->count(),
+                'total' => $totalNews,
             ]);
         }
 

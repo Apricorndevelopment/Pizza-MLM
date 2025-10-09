@@ -84,7 +84,7 @@
                                 <td class="text-start">{{ $package->time ?? '0' }} yrs</td>
                                 <td class="text-start">{{ $package->created_at->format('d M Y') }}</td>
                                 <td class="text-start pe-3">
-                                    <a href="{{ route('user.packages.invoice', ['id' => $package->id]) }}"
+                                    <a href="{{ route('user.packages.maturity.invoice', ['id' => $package->id]) }}"
                                         class="btn btn-sm btn-outline-primary compact-btn mb-1">
                                         <i class="fas fa-receipt me-1"></i>Invoice
                                     </a>

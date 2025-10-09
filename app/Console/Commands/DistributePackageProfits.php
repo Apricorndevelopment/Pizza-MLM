@@ -115,7 +115,6 @@ class DistributePackageProfits extends Command
 
         // Get active package purchases (where time hasn't expired)
         $purchases = Package2Purchase::where('maturity', 0)
-            ->where('profit_share', 0)
             ->where('purchased_at', '<=', $currentDate)
             ->where('rate', '>', 0)
             ->with('user')

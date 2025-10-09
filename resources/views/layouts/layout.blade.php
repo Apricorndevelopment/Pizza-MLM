@@ -202,17 +202,17 @@
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.faq.index') }}">
-                        <i class="fa fa-tags menu-icon me-3"></i>
-                        <span class="menu-title">Manage FAQs</span>
-                    </a>
-                </li> --}}
-
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" href="{{ route('admin.photo.manage') }}">
-                        <i class="fa fa-tags menu-icon me-3"></i>
+                        <i class="fa fa-photo menu-icon me-3"></i>
                         <span class="menu-title">Manage Gallery</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{{ route('admin.news.manage') }}">
+                        <i class="fa fa-newspaper menu-icon me-3"></i>
+                        <span class="menu-title">Manage News</span>
                     </a>
                 </li>
 

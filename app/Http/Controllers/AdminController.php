@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Gallery;
+use App\Models\News;
 use App\Models\Package1;
 use App\Models\Package2;
 use App\Models\Package2Purchase;
@@ -233,6 +234,59 @@ class AdminController extends Controller
         $photo->delete();
 
         return redirect()->route('admin.photo.manage')->with('success', 'Photo deleted successfully!');
+    }
+
+    public function manageNews()
+    {
+        $news_pics = News::orderBy('created_at', 'desc')->paginate(10);
+
+        return view('admin.addNews', compact('news_pics'));
+    }
+
+    public function addNews(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'news_pic' => 'required|mimes:jpeg,png,jpg,webp|max:5120'
+        ]);
+
+        if ($request->hasFile('news_pic')) {
+            $file = $request->file('news_pic');
+            $extension = $file->getClientOriginalExtension();
+            $filename = uniqid() . '.' . $extension;
+            $directory = 'storage/news_pics';
+
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            $file->move($directory, $filename);
+
+            News::create([
+                'title' => $request->input('title'),
+                'news_pic' =>  $filename
+            ]);
+
+            return redirect()->route('admin.news.manage')->with('success', 'Photo uploaded successfully!');
+        } else {
+            return redirect()->back()->withErrors(['news_pic' => 'Photo upload failed. Please try again.']);
+        }
+    }
+
+    public function deleteNews($id)
+    {
+        $news_pic = News::findOrFail($id);
+
+        // Delete the news_pic file from storage
+        $filePath = 'storage/news_pics/' . $news_pic->news_pic;
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+        }
+
+        // Delete the database record
+        $news_pic->delete();
+
+        return redirect()->route('admin.news.manage')->with('success', 'News deleted successfully!');
     }
 
     public function viewmemeber(Request $request)

@@ -56,8 +56,8 @@
                                     <tr>
                                         <th>Package Name</th>
                                         <th class="text-center">Quantity</th>
-                                        <th class="text-center">Rate</th>
-                                        <th class="text-center">Duration</th>
+                                        <th class="text-center">Maturity Duration</th>
+                                        <th class="text-center">Capital Earned</th>
                                         {{-- <th class="text-center">Profit Share</th> --}}
                                         <th class="text-end">Price</th>
                                     </tr>
@@ -66,8 +66,8 @@
                                     <tr>
                                         <td>{{ $transaction->package_name }}</td>
                                         <td class="text-center">{{ $transaction->quantity }}</td>
-                                        <td class="text-center">{{ $transaction->rate }}%</td>
                                         <td class="text-center">{{ $transaction->time }} years</td>
+                                        <td class="text-center">{{ $transaction->capital }}%</td>
                                         {{-- <td class="text-center">{{ $transaction->profit_share == 1 ? 'Yes' : 'No' }}</td> --}}
                                         <td class="text-end">₹{{ number_format($transaction->final_price, 2) }}</td>
                                     </tr>

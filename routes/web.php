@@ -15,18 +15,21 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
 use App\Models\Gallery;
+use App\Models\News;
 use App\Models\Package2;
 use App\Models\Package2Details;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     $photos = Gallery::all();
-    return view('welcome' , compact('photos'));
+    $news = News::orderBy('created_at', 'desc')->get(); 
+    return view('welcome', compact('photos', 'news'));
 });
 
 Route::view('/about-us','aboutus')->name('aboutus');
 
 Route::get('/gallery/load-more', [AuthController::class, 'loadMore'])->name('gallery.load-more');
+Route::get('/news/load-more', [AuthController::class, 'loadMoreNews'])->name('news.load-more');
 
 Route::get('/test-mail', function () {
     \Illuminate\Support\Facades\Mail::raw('This is a test email.', function ($message) {
@@ -69,6 +72,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/maturity-packages', [PackageAssignmentController::class, 'viewUserMaturityPackage'])->name('user.maturity.packages');
     Route::post('/maturity-packages/pay-deduction/{id}', [PackageAssignmentController::class, 'payDeduction'])->name('user.maturity.pay-deduction');
     Route::get('/user/packages/invoice/{id}', [PackageAssignmentController::class, 'showInvoice'])->name('user.packages.invoice');
+    Route::get('/user/packages/monthly-invoice/{id}', [PackageAssignmentController::class, 'showMaturityInvoice'])->name('user.packages.maturity.invoice');
     Route::get('/packages/endorse/{id}', [PackageAssignmentController::class, 'showEndorseForm'])->name('user.packages.endorse');
     Route::post('/packages/process-endorsement', [PackageAssignmentController::class, 'processEndorsement'])->name('user.packages.process-endorsement');
 
@@ -150,6 +154,10 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/gallery', [AdminController::class, 'managePhoto'])->name('admin.photo.manage');
     Route::post('/admin/gallery', [AdminController::class, 'addPhoto'])->name('admin.gallery.store');
     Route::delete('/admin/gallery/{id}', [AdminController::class, 'deletePhoto'])->name('admin.gallery.delete');
+    
+    Route::get('/admin/news', [AdminController::class, 'manageNews'])->name('admin.news.manage');
+    Route::post('/admin/news', [AdminController::class, 'addNews'])->name('admin.news.store');
+    Route::delete('/admin/news/{id}', [AdminController::class, 'deleteNews'])->name('admin.news.delete');
 
     Route::get('/profit-distribution', [AdminController::class, 'showFormForProfitDistribution'])->name('admin.profit.distribution');
     Route::post('/profit-distribution', [AdminController::class, 'distributeYearlyProfit'])->name('admin.profit.distribute');

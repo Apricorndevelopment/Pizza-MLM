@@ -10,7 +10,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\CheckRewardsForAllUsers::class,
         \App\Console\Commands\DistributePackageProfits::class,
-        \App\Console\Commands\ProcessMaturityPackages::class, // Add this line
+        \App\Console\Commands\ProcessMaturityPackages::class,
+        \App\Console\Commands\ProcessMaturityMonthlyDeductions::class,
+        \App\Console\Commands\TestCronCommand::class, 
     ];
 
     protected function schedule(Schedule $schedule)

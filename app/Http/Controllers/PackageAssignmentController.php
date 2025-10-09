@@ -72,6 +72,15 @@ class PackageAssignmentController extends Controller
             ->with('success', 'Package assigned successfully!');
     }
 
+    public function viewUserPackagePurchases()
+    {
+        $purchases = Package2Purchase::with(['user', 'package2', 'rateDetail'])
+            ->orderBy('purchased_at', 'desc')
+            ->paginate(10);
+
+        return view('admin.package-purchases', compact('purchases'));
+    }
+
 
 
     // For the User's Dashboard

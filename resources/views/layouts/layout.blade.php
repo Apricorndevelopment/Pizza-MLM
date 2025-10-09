@@ -306,6 +306,13 @@
                                     <span>Active</span>
                                 </a>
                             </li>
+                            <li class="nav-item m-0 p-0">
+                                <a class="nav-link d-flex align-items-center"
+                                    href="{{ route('admin.package-purchases') }}">
+                                    <i class="fa fa-suitcase me-2" style="font-size: 0.8rem;"></i>
+                                    <span>View User Packages</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

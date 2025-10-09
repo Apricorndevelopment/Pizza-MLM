@@ -212,6 +212,8 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::put('/packages/package2/{id}', [PackageController::class, 'updatePackage2'])->name('admin.package2.update');
         Route::delete('/packages/package2/{id}', [PackageController::class, 'destroyPackage2'])->name('admin.package2.destroy');
 
+        Route::get('/package-purchases', [PackageAssignmentController::class, 'viewUserPackagePurchases'])->name('admin.package-purchases');
+
         Route::prefix('admin/packages')->name('admin.packages.')->group(function () {
             Route::get('/assign', [PackageAssignmentController::class, 'index'])->name('assign');
             Route::post('/search', [PackageAssignmentController::class, 'search'])->name('search');

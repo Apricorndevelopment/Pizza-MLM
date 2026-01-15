@@ -109,7 +109,7 @@ Route::middleware(['auth'])->group(function () {
             'price' => $package->price,
             'quantity_in_one_unit' => $package->package_quantity,
             'description' => $package->description,
-            'user_balance' => Auth::check() ? Auth::user()->points_balance : 0
+            'user_balance' => Auth::check() ? Auth::user()->wallet1_balance : 0
         ]);
     });
 });

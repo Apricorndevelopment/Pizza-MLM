@@ -2,9 +2,6 @@
 
 namespace App\Http;
 
-use App\Console\Commands\CheckRewardsForAllUsers;
-use App\Console\Commands\DistributePackageProfits;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel

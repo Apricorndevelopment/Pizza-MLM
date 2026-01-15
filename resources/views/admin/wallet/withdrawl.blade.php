@@ -2,7 +2,7 @@
 @section('title', 'Wallet Management')
 @section('container')
 
-    <div class="container mt-4">
+    <div class="container">
         <!-- Pending Withdrawals Card -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">

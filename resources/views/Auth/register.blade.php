@@ -4,223 +4,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geokranti Register Page</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <title>Join FoodVendor - Healthy Food Network</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
-            --primary-green: #2e7d32;
-            --dark-green: #1b5e20;
-            --light-green: #81c784;
-            --earth-brown: #5d4037;
-            --sky-blue: #0288d1;
-            --gradient: linear-gradient(135deg, var(--primary-green) 0%, var(--sky-blue) 100%);
+            --primary: #FF6B35;
+            --secondary: #4CAF50;
+            --accent: #FFD166;
+            --dark: #2A4365;
+            --light: #FFF9F0;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            background: url('/logoimg.png') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Poppins', sans-serif;
             min-height: 100vh;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+                url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             display: flex;
             align-items: center;
+            justify-content: center;
             padding: 20px;
             position: relative;
         }
 
+        /* Animated Gradient Background */
         body::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(76, 175, 80, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 209, 102, 0.1) 0%, transparent 50%);
             z-index: -1;
         }
 
-        .auth-container {
-            max-width: 500px;
-            width: 100%;
-            margin: 2rem auto;
-            padding: 1.5rem 2rem;
-            border-radius: 20px;
-            background: rgba(198, 198, 198, 0.578);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .gradient-animate {
+            background: linear-gradient(-45deg, #FF6B35, #FFD166, #4CAF50, #2A4365);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
         }
 
-        .auth-container::before {
+        .card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            right: 0;
             height: 6px;
-            background: var(--gradient);
+            background: linear-gradient(90deg, #FF6B35, #FFD166, #4CAF50);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-input {
+            border: 2px solid rgba(229, 231, 235, 0.8);
+            border-radius: 14px;
+            padding: 12px 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            color: #374151;
+        }
+
+        .form-input:focus {
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+            outline: none;
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: #9CA3AF;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon input {
+            padding-left: 56px;
+        }
+
+        .form-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FF6B35;
+            z-index: 10;
+            font-size: 1.2rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            background: rgba(255, 107, 53, 0.1);
+            color: #FF6B35;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #FF6B35, #4CAF50);
+            color: white;
+            padding: 18px;
+            border-radius: 14px;
+            font-weight: 600;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-register:hover::before {
+            left: 100%;
+        }
+
+        .btn-register:active {
+            transform: translateY(-1px);
         }
 
         .logo-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 1.5rem;
+            gap: 14px;
+            margin-bottom: 14px;
         }
 
         .logo {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35, #FFD166);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
         }
 
         .logo img {
-            width: 90px;
-            height: auto;
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
         }
 
         .brand-name {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6B35, #4CAF50);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .auth-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .auth-header h1 {
-            text-align: center;
-            margin-bottom: 0.5rem;
-            background: var(--gradient);
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 1.8rem;
-            padding: 10px 0;
+        .food-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF6B35, #FFD166);
             color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .text-muted {
-            color: #6b7280;
-            margin-bottom: 1rem;
-        }
-
-        .form-control {
-            padding: 12px 15px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-green);
-            box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
-        }
-
-        .input-group-text {
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.611);
-            border-right: none;
-            color: var(--primary-green);
-        }
-
-        .input-group .form-control {
-            background-color: rgba(255, 255, 255, 0.611);
-            border-left: none;
-        }
-
-        .btn-auth {
-            background: var(--gradient);
-            color: white;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 10px 25px;
+            border-radius: 50px;
             font-weight: 600;
-            width: 100%;
-            margin-top: 1rem;
-            border: none;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+            margin-bottom: 14px;
         }
 
-        .btn-auth:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3);
-        }
-
-        .btn-auth:active {
-            transform: translateY(0);
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            cursor: pointer;
-            color: var(--primary-green);
-            z-index: 5;
-        }
-
-        .form-check-input:checked {
-            background-color: var(--primary-green);
-            border-color: var(--primary-green);
-        }
-
-        a {
-            color: #005204;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 700;
-        }
-
-        a:hover {
-            color: var(--dark-green);
-            text-decoration: underline;
-        }
-
-        .alert {
+        .success-badge {
+            background: linear-gradient(135deg, #10B981, #34D399);
+            color: white;
+            padding: 12px 20px;
             border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
         }
 
-        .privacy-policy {
-            margin: 1.5rem 0;
+        .error-badge {
+            background: linear-gradient(135deg, #EF4444, #F87171);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(76, 175, 80, 0.1));
+            border-left: 4px solid #FF6B35;
             padding: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            border-left: 3px solid var(--primary-green);
+            border-radius: 12px;
+            margin-top: 12px;
+            backdrop-filter: blur(5px);
         }
 
-        @media (max-width: 576px) {
-            body {
-                padding: 10px;
+        .form-label {
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .form-label span {
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .password-requirements li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #6B7280;
+        }
+
+        .password-requirements li::before {
+            content: '•';
+            color: #FF6B35;
+            font-size: 1.2rem;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(40px);
+        }
+
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            background: #FF6B35;
+            top: 10%;
+            left: 10%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            background: #4CAF50;
+            bottom: 15%;
+            right: 10%;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        .floating-3 {
+            width: 100px;
+            height: 100px;
+            background: #FFD166;
+            top: 40%;
+            right: 20%;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card {
+                padding: 30px 25px;
             }
 
-            .auth-container {
-                padding: 1rem;
-                margin: 1rem auto;
-            }
-
-            .text-muted {
-                font-size: 12px;
-                line-height: 0.5;
+            .logo-container {
+                gap: 12px;
             }
 
             .logo {
@@ -229,325 +405,399 @@
             }
 
             .brand-name {
+                font-size: 2rem;
+            }
+
+            .form-input {
+                padding: 10px 14px;
+            }
+
+            .btn-register {
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+
+            .brand-name {
                 font-size: 1.8rem;
             }
 
-            .auth-header h1 {
-                font-size: 1.5rem;
+            .food-badge {
+                padding: 8px 20px;
+                font-size: 1rem;
             }
-
-            .btn-auth {
-                padding: 10px;
-                margin-top: 0;
-            }
-
-            .privacy-policy {
-                margin: 1rem 0;
-                padding: 12px;
-            }
-
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="auth-container">
-            <div class="auth-header">
+    <!-- Floating Background Elements -->
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+    <div class="floating-element floating-3"></div>
+
+    <div class="container max-w-2xl mx-auto animate-float">
+        <div class="card px-6 sm:px-8 py-5 sm:py-6">
+            <!-- Header -->
+            <div class="text-center mb-6">
                 <div class="logo-container">
                     <div class="logo">
-                        <a href="/">
-                        <img src="geokranti-white.jpg" alt="Geokranti Logo" style="border: 0px;border-radius: 100%"></a>
+                        <img src="{{ asset('foodvendor-logo.png') }}" alt="FoodVendor">
                     </div>
-                    <div class="brand-name">Geokranti</div>
+                    <div class="brand-name font-poppins">
+                        Food<span style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Vendor</span>
+                    </div>
                 </div>
-                <h1>Create Account</h1>
-                <p class="text-muted">Join us today. Fill in your details to get started.</p>
+
+                <div class="mb-2">
+                    <span class="food-badge">
+                        <i class="bi bi-rocket-takeoff-fill mr-2"></i>
+                        Join Our Network
+                    </span>
+                </div>
+
+                <h2 class="text-3xl font-bold text-gray-800 mb-2 font-poppins">
+                    Start Your Food Journey
+                </h2>
+            
             </div>
 
+            <!-- Messages -->
             @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
+                <div class="mb-6 success-badge">
+                    <i class="bi bi-check-circle-fill text-xl"></i>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
             @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
+                <div class="mb-6 error-badge">
+                    <i class="bi bi-x-circle-fill text-xl"></i>
+                    <span>{{ session('error') }}</span>
                 </div>
             @endif
 
+            <!-- Registration Form -->
             <form action="{{ route('register') }}" method="POST" id="registrationForm">
                 @csrf
 
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input type="text" name="full_name" value="{{ old('full_name') }}" class="form-control"
-                            placeholder="Full Name" required>
+                <div class="space-y-5">
+                    <!-- Full Name -->
+                    <div>
+                        <label class="form-label">Full Name</label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-person-fill"></i>
+                            <input type="text" name="full_name" value="{{ old('full_name') }}" class="form-input"
+                                placeholder="Enter your full name" required>
+                        </div>
+                        @error('full_name')
+                            <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('full_name')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
 
-                <div class="mb-3 position-relative">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
-                        <input type="text" name="sponsor_id" value="{{ old('sponsor_id', request('sponsor_id')) }}"
-                            id="sponsor_id" class="form-control" placeholder="Sponsor ID" required>
+                    <!-- Sponsor ID -->
+                    <div>
+                        <label class="form-label">Sponsor ID <span class="text-gray-500 font-normal">(Required)</span></label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-person-plus-fill"></i>
+                            <input type="text" name="sponsor_id"
+                                value="{{ old('sponsor_id', request('sponsor_id')) }}" id="sponsor_id"
+                                class="form-input" placeholder="Enter sponsor ID" required>
+                        </div>
+                        <div id="sponsor-message" class="text-sm mt-1 ml-2"></div>
+                        @error('sponsor_id')
+                            <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('sponsor_id')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                    <small id="sponsor-message" class="text-muted"></small>
-                </div>
 
-                <div class="mb-3 position-relative">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
-                        <input type="text" name="parent_id" value="{{ old('parent_id') }}" id="parent_id"
-                            class="form-control" placeholder="Parent ID (optional)">
+                    <!-- Email -->
+                    <div>
+                        <label class="form-label">Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-envelope-fill"></i>
+                            <input type="email" name="email" value="{{ old('email') }}" id="email"
+                                class="form-input" placeholder="your@email.com" required>
+                        </div>
+                        <div id="email-message" class="text-sm mt-1 ml-2"></div>
+                        @error('email')
+                            <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('parent_id')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                    <small id="parent-message" class="text-muted"></small>
-                </div>
 
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="email" name="email" value="{{ old('email') }}" id="email"
-                            class="form-control" placeholder="Email Address" required>
+                    <!-- Phone -->
+                    <div>
+                        <label class="form-label">Phone Number</label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-telephone-fill"></i>
+                            <input type="tel" name="phone" value="{{ old('phone') }}" class="form-input"
+                                placeholder="+91 98765 43210" required>
+                        </div>
+                        @error('phone')
+                            <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('email')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                    <small id="email-message" class="text-muted"></small>
-                </div>
 
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                        <input type="text" name="phone" value="{{ old('phone') }}" class="form-control"
-                            placeholder="Phone Number" required>
+                    <!-- Password -->
+                    <div>
+                        <label class="form-label">Password</label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-lock-fill"></i>
+                            <input type="password" name="password" id="password" class="form-input"
+                                placeholder="Create a strong password" required>
+                            <span class="toggle-password" data-target="#password">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
+                        <div class="info-box">
+                            <p class="text-sm text-gray-700 font-semibold mb-2">Password must contain:</p>
+                            <div class="password-requirements">
+                                <ul>
+                                    <li>At least 8 characters</li>
+                                    <li>1 uppercase letter</li>
+                                    <li>1 lowercase letter</li>
+                                    <li>1 number</li>
+                                    <li>1 special character (@$!%*#?&)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        @error('password')
+                            <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('phone')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
 
-                <div class="mb-3 position-relative">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" id="password" class="form-control"
-                            placeholder="Password" required>
+                    <!-- Confirm Password -->
+                    <div>
+                        <label class="form-label">Confirm Password</label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-shield-lock-fill"></i>
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                class="form-input" placeholder="Confirm your password" required>
+                            <span class="toggle-password" data-target="#password_confirmation">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
                     </div>
-                    <i class="fas fa-eye toggle-password" toggle="#password"></i>
-                    @error('password')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                    <div class="password-requirements mt-2">
-                        <small class="text-muted">Password must contain: at least 8 characters, 1 letter, 1 number, 1
-                            special character (@$!%*#?&) </small>
+
+                    <!-- Terms & Conditions -->
+                    <div class="pt-4">
+                        <div class="flex items-start space-x-4">
+                            <input type="checkbox" id="privacy_policy" name="privacy_policy"
+                                class="mt-1 rounded border-gray-300 text-orange-500 focus:ring-orange-500 focus:ring-2 focus:ring-offset-0"
+                                style="width: 20px; height: 20px;" required>
+                            <label for="privacy_policy" class="text-gray-700">
+                                I agree to the
+                                <a href="#" class="text-orange-500 hover:text-orange-600 font-semibold hover:underline transition-colors">Terms of Service</a>
+                                and
+                                <a href="#" class="text-orange-500 hover:text-orange-600 font-semibold hover:underline transition-colors">Privacy Policy</a>.
+                                I understand this is a network marketing opportunity.
+                            </label>
+                        </div>
+                        @error('privacy_policy')
+                            <p class="text-red-500 text-sm mt-1 ml-6">{{ $message }}</p>
+                        @enderror
                     </div>
-                </div>
 
-                <div class="mb-3 position-relative">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password_confirmation" id="password_confirmation"
-                            class="form-control" placeholder="Confirm Password" required>
-                    </div>
-                    <i class="fas fa-eye toggle-password" toggle="#password_confirmation"></i>
+                    <!-- Submit Button -->
+                    <button type="submit"
+                        onclick="return confirm('Are you sure you want to register with FoodVendor?')"
+                        class="btn-register mt-8">
+                        <i class="bi bi-person-plus-fill mr-3"></i>
+                        Create Account & Start Earning
+                    </button>
                 </div>
-
-                <div class="privacy-policy mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="privacy_policy" name="privacy_policy"
-                            required>
-                        <label class="form-check-label" for="privacy_policy">
-                            I agree to the Privacy Policy and Terms of Service
-                        </label>
-                    </div>
-                </div>
-
-                <button type="submit" onclick="return confirm('Are you sure you want to register')"
-                    class="btn btn-auth">
-                    <i class="fas fa-user-plus me-2"></i> Register
-                </button>
-
-                <div class="text-center mt-4">
-                    <p class="text-muted">Already have an account? <a href="{{ route('auth.login') }}">Login</a></p>
-                </div>
-                <p class="text-center text-muted">आओ साथ मिलकर प्राकृतिक खेती से जूडें ।</p>
             </form>
+
+            <!-- Login Link -->
+            <div class="text-center mt-6 pt-4 border-t border-gray-200">
+                <p class="text-gray-600 text-lg">
+                    Already have an account?
+                    <a href="{{ route('auth.login') }}" 
+                       class="text-orange-500 font-semibold hover:text-orange-600 hover:underline transition-colors">
+                        Sign In Here
+                    </a>
+                </p>
+            </div>
         </div>
 
-    </div>
+        <!-- Support Information -->
+        <div class="text-center mt-6 pt-4 border-t border-gray-200/50">
+            <p class="text-gray-300 mb-2 text-lg">Need help with registration?</p>
+            <div class="flex items-center justify-center space-x-6 text-sm">
+                <a href="tel:+919876543210" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                    <i class="bi bi-telephone-fill mr-2 text-lg"></i>
+                    <span class="text-lg">+91 98765 xxxxx</span>
+                </a>
+                <a href="mailto:support@foodvendor.com" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                    <i class="bi bi-envelope-fill mr-2 text-lg"></i>
+                    <span class="text-lg">support@foodvendor.com</span>
+                </a>
+            </div>
+        </div>
     </div>
 
+    <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $('#sendOtpBtn').on('click', function() {
-            let email = $('#email').val();
+        $(document).ready(function() {
+            // Toggle password visibility
+            $('.toggle-password').click(function() {
+                const target = $(this).data('target');
+                const input = $(target);
+                const icon = $(this).find('i');
 
-            if (!email) {
-                alert('Please enter an email address first.');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('send.email.otp') }}",
-                type: "POST",
-                data: {
-                    email: email,
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(res) {
-                    if (res.status) {
-                        $('#otpSection').show();
-                        $('#otpStatus').text(res.message);
-                    }
-                },
-                error: function(err) {
-                    alert('Failed to send OTP. Please check email format or try again.');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
                 }
             });
-        });
-    </script>
 
+            // Check sponsor ID
+            $('#sponsor_id').on('blur', function() {
+                const sponsorId = $(this).val();
+                const messageDiv = $('#sponsor-message');
 
-    {{--
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
-    {{-- for eye icon --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check for sponsor_id in URL and prefill
+                if (sponsorId) {
+                    $.ajax({
+                        url: '/check-sponsor/' + sponsorId,
+                        type: 'GET',
+                        beforeSend: function() {
+                            messageDiv.html('<span class="text-blue-500 animate-pulse">Checking sponsor...</span>');
+                        },
+                        success: function(response) {
+                            if (response.exists) {
+                                messageDiv.html(`
+                                    <span class="text-green-600 font-semibold flex items-center">
+                                        <i class="bi bi-check-circle-fill mr-2"></i>
+                                        Sponsor found: <strong class="ml-1">${response.name}</strong>
+                                    </span>
+                                `);
+                            } else {
+                                messageDiv.html(`
+                                    <span class="text-red-500 font-semibold flex items-center">
+                                        <i class="bi bi-x-circle-fill mr-2"></i>
+                                        Sponsor not found
+                                    </span>
+                                `);
+                            }
+                        },
+                        error: function() {
+                            messageDiv.html('<span class="text-red-500">Error checking sponsor</span>');
+                        }
+                    });
+                }
+            });
+
+            // Check parent ID
+            $('#parent_id').on('blur', function() {
+                const parentId = $(this).val();
+                const messageDiv = $('#parent-message');
+
+                if (parentId) {
+                    $.ajax({
+                        url: '/check-parent/' + parentId,
+                        type: 'GET',
+                        beforeSend: function() {
+                            messageDiv.html('<span class="text-blue-500 animate-pulse">Checking parent...</span>');
+                        },
+                        success: function(response) {
+                            if (response.exists) {
+                                messageDiv.html(`
+                                    <span class="text-green-600 font-semibold flex items-center">
+                                        <i class="bi bi-check-circle-fill mr-2"></i>
+                                        Parent found: <strong class="ml-1">${response.name}</strong>
+                                    </span>
+                                `);
+                            } else {
+                                messageDiv.html(`
+                                    <span class="text-red-500 font-semibold flex items-center">
+                                        <i class="bi bi-x-circle-fill mr-2"></i>
+                                        Parent not found
+                                    </span>
+                                `);
+                            }
+                        },
+                        error: function() {
+                            messageDiv.html('<span class="text-red-500">Error checking parent</span>');
+                        }
+                    });
+                }
+            });
+
+            // Check email availability
+            $('#email').on('blur', function() {
+                const email = $(this).val();
+                const messageDiv = $('#email-message');
+
+                if (email && validateEmail(email)) {
+                    $.ajax({
+                        url: '/check-email',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            email: email
+                        },
+                        beforeSend: function() {
+                            messageDiv.html('<span class="text-blue-500 animate-pulse">Checking email...</span>');
+                        },
+                        success: function(response) {
+                            if (response.exists) {
+                                messageDiv.html(`
+                                    <span class="text-red-500 font-semibold flex items-center">
+                                        <i class="bi bi-x-circle-fill mr-2"></i>
+                                        Email already registered
+                                    </span>
+                                `);
+                            } else {
+                                messageDiv.html(`
+                                    <span class="text-green-600 font-semibold flex items-center">
+                                        <i class="bi bi-check-circle-fill mr-2"></i>
+                                        Email available
+                                    </span>
+                                `);
+                            }
+                        },
+                        error: function() {
+                            messageDiv.html('<span class="text-red-500">Error checking email</span>');
+                        }
+                    });
+                } else if (email) {
+                    messageDiv.html(`
+                        <span class="text-red-500 font-semibold flex items-center">
+                            <i class="bi bi-x-circle-fill mr-2"></i>
+                            Please enter a valid email
+                        </span>
+                    `);
+                }
+            });
+
+            // Validate email format
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            // Check URL for sponsor_id parameter
             const urlParams = new URLSearchParams(window.location.search);
             const sponsorId = urlParams.get('sponsor_id');
             if (sponsorId) {
-                document.getElementById('sponsor_id').value = sponsorId;
-            }
-        });
-
-
-        document.querySelectorAll('.toggle-password').forEach(function(element) {
-            element.addEventListener('click', function() {
-                const input = document.querySelector(this.getAttribute('toggle'));
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    this.classList.remove('fa-eye');
-                    this.classList.add('fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    this.classList.remove('fa-eye-slash');
-                    this.classList.add('fa-eye');
-                }
-            });
-        });
-
-        // Email availability check
-        $('#email').on('blur', function() {
-            const email = $(this).val();
-            if (email) {
-                $.ajax({
-                    url: '/check-email',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        email: email
-                    },
-                    success: function(response) {
-                        if (response.exists) {
-                            $('#email-message').html(
-                                '<span class="text-danger"><i class="fas fa-times-circle"></i> This email is already registered. Please enter another email</span>'
-                            );
-                        } else {
-                            $('#email-message').html(
-                                '<span class="text-success"><i class="fas fa-check-circle"></i> Email available</span>'
-                            );
-                        }
-                    }
-                });
+                $('#sponsor_id').val(sponsorId);
+                // Trigger the blur event to check sponsor
+                setTimeout(() => {
+                    $('#sponsor_id').trigger('blur');
+                }, 500);
             }
         });
     </script>
-
-
-    <script>
-        $('#sponsor_id').on('input', function() {
-            let sponsorId = $(this).val();
-            let statusIcon = $('#sponsor-status');
-            let statusMessage = $('#sponsor-message');
-
-            if (sponsorId.length === 0) {
-                statusIcon.html('');
-                statusMessage.text('');
-                return;
-            }
-
-            $.ajax({
-                url: '/check-sponsor/' + sponsorId,
-                type: 'GET',
-                success: function(response) {
-                    if (response.exists) {
-                        statusIcon.html('<i class="fas fa-check-circle text-success"></i>');
-                        statusMessage.html(
-                            `<span style="color: green;">Sponsor available: <strong>${response.name}</strong></span>`
-                        );
-                    } else {
-                        statusIcon.html('<i class="fas fa-times-circle text-danger"></i>');
-                        statusMessage.text('No sponsor found').css('color', 'red');
-                    }
-                },
-                error: function() {
-                    statusIcon.html('');
-                    statusMessage.text('Error checking sponsor.').css('color', 'red');
-                }
-            });
-        });
-
-        $('#parent_id').on('input', function() {
-            let parentId = $(this).val();
-            let statusIcon = $('#parent-status');
-            let statusMessage = $('#parent-message');
-
-            if (parentId.length === 0) {
-                statusIcon.html('');
-                statusMessage.text('');
-                return;
-            }
-
-            $.ajax({
-                url: '/check-parent/' + parentId,
-                type: 'GET',
-                success: function(response) {
-                    if (response.exists) {
-                        statusIcon.html('<i class="fas fa-check-circle text-success"></i>');
-                        statusMessage.html(
-                            `<span style="color: green;">parent available: <strong>${response.name}</strong></span>`
-                        );
-                    } else {
-                        statusIcon.html('<i class="fas fa-times-circle text-danger"></i>');
-                        statusMessage.text('No parent found').css('color', 'red');
-                    }
-                },
-                error: function() {
-                    statusIcon.html('');
-                    statusMessage.text('Error checking parent.').css('color', 'red');
-                }
-            });
-        });
-    </script>
-    <script>
-        // Validate email
-        // ===========================================================================
-        function validateEmail(email) {
-            var regEx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-            console.log(regEx.test(email));
-            return regEx.test(email);
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</body>
+</html>

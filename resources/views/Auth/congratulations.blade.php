@@ -1,245 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geokranti Registration Success</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Welcome to FoodVendor - Registration Successful</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
     <style>
-        :root {
-            --primary-green: #2e7d32;
-            --dark-green: #1b5e20;
-            --light-green: #81c784;
-            --earth-brown: #5d4037;
-            --sky-blue: #0288d1;
-            --gradient: linear-gradient(135deg, var(--primary-green) 0%, var(--sky-blue) 100%);
-        }
-
         body {
-            background: url('/logoimg.png') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FFF9F0 0%, #F0FFEE 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: 20px;
-            position: relative;
+            justify-content: center;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: -1;
-        }
-
-        .congrats-container {
-            max-width: 480px;
-            width: 100%;
-            margin: 2rem auto;
-            padding: 1.5rem 2rem;
-            border-radius: 20px;
-            background: rgba(198, 198, 198, 0.578);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            position: relative;
+            max-width: 500px;
             overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #FF6B35, #4CAF50);
+            padding: 20px 15px;
             text-align: center;
+            color: white;
         }
-
-        .congrats-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .check-icon {
+            font-size: 4rem;
+            color: #10B981;
+            margin-bottom: 10px;
+            animation: checkmark 0.6s ease-out;
+        }
+        
+        @keyframes checkmark {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .user-details {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #4b5563;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #1f2937;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            background: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #FF6B35, #4CAF50);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-weight: 600;
             width: 100%;
-            height: 5px;
-            background: var(--gradient);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+        
         .logo-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 1.5rem;
+            gap: 10px;
+            margin-bottom: 15px;
         }
-
+        
         .logo {
-            width: 80px;
-            height: 80px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            padding: 8px;
         }
-
+        
         .logo img {
-            width: 100px;
-            height: auto;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
-
+        
         .brand-name {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .congrats-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .congrats-header h1 {
-            text-align: center;
-            margin-bottom: 0.5rem;
-            background: var(--gradient);
-            border-radius: 30px;
-            font-weight: 600;
             font-size: 1.8rem;
-            padding: 10px 0;
-            color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .check-icon {
-            font-size: 5rem;
-            color: var(--primary-green);
-            margin: 1rem 0;
-            animation: bounce 1s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from {
-                transform: translateY(0);
-            }
-            to {
-                transform: translateY(-10px);
-            }
-        }
-
-        .user-details {
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .user-details p {
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .user-details strong {
-            color: var(--dark-green);
-        }
-
-        .btn-login {
-            background: var(--gradient);
-            color: white;
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: 600;
-            margin-top: 1rem;
-            border: none;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3);
+            font-weight: 700;
             color: white;
         }
-
-        .btn-login:active {
-            transform: translateY(0);
+        
+        .brand-name span {
+            color: #FFD166;
         }
-
+        
         .text-muted {
             color: #6b7280;
-            margin-bottom: 1.2rem;
-        }
-
-        @media (max-width: 576px) {
-            .congrats-container {
-                padding: 1.5rem;
-                margin: 1rem auto;
-            }
-
-            .logo {
-                width: 60px;
-                height: 60px;
-            }
-
-            .brand-name {
-                font-size: 1.8rem;
-            }
-
-            .congrats-header h1 {
-                font-size: 1.5rem;
-            }
+            margin: 10px 0;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="congrats-container">
-            <div class="congrats-header">
-                <div class="logo-container">
-                    <div class="logo">
-                        <img src="geokrantilogo-removebg.png" alt="Geokranti Logo">
-                    </div>
-                    <div class="brand-name">Geokranti</div>
+    <div class="card">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="{{ asset('foodvendor-logo.png') }}" alt="FoodVendor">
                 </div>
-                <h1>Registration Successful!</h1>
+                <div class="brand-name">
+                    Food<span>Vendor</span>
+                </div>
             </div>
-
-            <div class="check-icon">
-                <i class="fas fa-check-circle"></i>
+            <h2 class="text-xl font-bold">Registration Successful!</h2>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Success Icon -->
+            <div class="text-center">
+                <div class="check-icon">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-2">
+                    Welcome to FoodVendor, {{ $user->name }}! 🎉
+                </h3>
+                <p class="text-muted mb-4">
+                    You're now part of India's fastest growing food network
+                </p>
             </div>
             
-            <h3 class="mb-4">Congratulations, {{ $user->name }}!</h3>
-            
+            <!-- User Details -->
             <div class="user-details">
-                <h5>Your Account Details</h5>
-                <p><strong>Your Email:</strong> {{ $user->email }}</p>
-                <p><strong>Your Unique ID:</strong> {{ $user->ulid }}</p>
+                <h4 class="font-semibold text-gray-800 mb-3 text-center">
+                    <i class="bi bi-person-badge mr-2"></i>
+                    Your Account Details
+                </h4>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Full Name:</span>
+                    <span class="detail-value">{{ $user->name }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Email Address:</span>
+                    <span class="detail-value">{{ $user->email }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Unique ID:</span>
+                    <span class="detail-value">{{ $user->ulid }}</span>
+                </div>
             </div>
             
-            <p class="text-muted">You're now part of our community. Please keep your login details secure.</p>
+            <!-- Important Note -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div class="flex items-start">
+                    <i class="bi bi-shield-check text-yellow-500 text-lg mr-3 mt-1"></i>
+                    <div>
+                        <p class="text-sm text-yellow-800 font-medium">Keep your login details secure</p>
+                        <p class="text-xs text-yellow-600 mt-1">
+                            Do not share your password with anyone. FoodVendor will never ask for your password.
+                        </p>
+                    </div>
+                </div>
+            </div>
             
-            <a href="{{ route('auth.login') }}" class="btn btn-login">
-                <i class="fas fa-sign-in-alt me-2"></i> Proceed to Login
+            <!-- Login Button -->
+            <a href="{{ route('auth.login') }}" class="btn-login">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Proceed to Login
             </a>
+          
         </div>
     </div>
-
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Simple animation for the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.querySelector('.card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
 </body>
-
 </html>

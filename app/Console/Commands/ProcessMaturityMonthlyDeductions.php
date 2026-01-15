@@ -68,9 +68,9 @@ class ProcessMaturityMonthlyDeductions extends Command
                 DB::beginTransaction();
 
                 // Check if user has sufficient balance
-                if ($user->points_balance >= $deductionAmount) {
+                if ($user->wallet1_balance >= $deductionAmount) {
                     // Sufficient balance - deduct normally
-                    $user->decrement('points_balance', $deductionAmount);
+                    $user->decrement('wallet1_balance', $deductionAmount);
                     $penalty = 0;
                     $status = 'paid';
                     $notes = "Monthly deduction for maturity package: {$package->package_name}";

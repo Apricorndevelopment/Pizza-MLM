@@ -456,7 +456,7 @@ class UserController extends Controller
         $discountAmount = $package->discount_per ? ($package->price * $package->discount_per) / 100 : 0;
         $totalCost = $package->price;
 
-        if ($user->points_balance < $totalCost) {
+        if ($user->wallet1_balance < $totalCost) {
             return back()->with('error', 'Insufficient balance to purchase this package');
         }
 
@@ -486,7 +486,7 @@ class UserController extends Controller
         // Deduct points directly from DB
         DB::table('users')
             ->where('id', $user->id)
-            ->decrement('points_balance', $totalCost);
+            ->decrement('wallet1_balance', $totalCost);
 
         PointsTransaction::create([
             'user_id' => $user->id,
@@ -529,7 +529,7 @@ class UserController extends Controller
         $finalPrice = $package->price * $request->quantity;
 
         // Check user's balance
-        if ($user->points_balance < $finalPrice) {
+        if ($user->wallet1_balance < $finalPrice) {
             return redirect()->back()->with('error', 'Insufficient balance to purchase this package');
         }
 
@@ -561,7 +561,7 @@ class UserController extends Controller
             // Deduct from user's balance
             DB::table('users')
                 ->where('id', $user->id)
-                ->decrement('points_balance', $finalPrice);
+                ->decrement('wallet1_balance', $finalPrice);
 
             // Record points transaction
             PointsTransaction::create([
@@ -633,7 +633,7 @@ class UserController extends Controller
                 if ($this->isUserEligibleForCommission($parent)) {
                     $hasParent = true;
                     $commission = $amount * 0.03;
-                    $parent->increment('points_balance', $commission);
+                    $parent->increment('wallet1_balance', $commission);
 
                     Commission::create([
                         'user_id' => $parent->id,
@@ -652,7 +652,7 @@ class UserController extends Controller
             $sponsorL1 = User::where('ulid', $user->sponsor_id)->first();
             if ($sponsorL1 && $sponsorL1->status == 'active' && $this->isUserEligibleForCommission($sponsorL1)) {
                 $commissionL1 = $amount * 0.03;
-                $sponsorL1->increment('points_balance', $commissionL1);
+                $sponsorL1->increment('wallet1_balance', $commissionL1);
                 Commission::create([
                     'user_id' => $sponsorL1->id,
                     'from_ulid' => $user->ulid,
@@ -676,7 +676,7 @@ class UserController extends Controller
 
                     if ($downlineCount >= 2 && $sponsorL2->status == 'active' && $this->isUserEligibleForCommission($sponsorL2)) {
                         $commissionL2 = $amount * 0.01;
-                        $sponsorL2->increment('points_balance', $commissionL2);
+                        $sponsorL2->increment('wallet1_balance', $commissionL2);
                         Commission::create([
                             'user_id' => $sponsorL2->id,
                             'from_ulid' => $user->ulid,
@@ -697,7 +697,7 @@ class UserController extends Controller
 
                             if ($downlineCountL2 >= 3 && $sponsorL3->status == 'active' && $this->isUserEligibleForCommission($sponsorL3)) {
                                 $commissionL3 = $amount * 0.01;
-                                $sponsorL3->increment('points_balance', $commissionL3);
+                                $sponsorL3->increment('wallet1_balance', $commissionL3);
                                 Commission::create([
                                     'user_id' => $sponsorL3->id,
                                     'from_ulid' => $user->ulid,
@@ -922,8 +922,8 @@ class UserController extends Controller
 
     public function viewWallet(Request $request)
     {
-        $points = Auth::user()->points_balance;
-        $loyalty = Auth::user()->loyalty_balance;
+        $points = Auth::user()->wallet1_balance;
+        $loyalty = Auth::user()->wallet2_balance;
         $user = Auth::user();
 
         // Withdrawals with pagination
@@ -1090,7 +1090,7 @@ class UserController extends Controller
 
         // Optional: Add points to user balance
         $user = User::find($reward->user_id);
-        $user->increment('points_balance', $reward->points);
+        $user->increment('wallet1_balance', $reward->points);
 
         return redirect()->back()->with('success', 'Reward claimed successfully.');
     }

@@ -442,7 +442,7 @@
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <span class="fw-medium">Your Balance:</span>
                                         <span class="badge bg-success rounded-pill px-3">
-                                            ₹{{ Auth::user()->points_balance }}
+                                            ₹{{ Auth::user()->wallet1_balance }}
                                         </span>
                                     </div>
 
@@ -708,7 +708,7 @@
 
     <script>
         document.getElementById('activationForm')?.addEventListener('submit', function(e) {
-            const balance = {{ Auth::user()->points_balance }};
+            const balance = {{ Auth::user()->wallet1_balance }};
             const packagePrice = {{ $packages->isNotEmpty() ? $packages->first()->price : 0 }};
 
             if (balance < packagePrice) {

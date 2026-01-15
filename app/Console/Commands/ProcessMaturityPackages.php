@@ -46,7 +46,7 @@ class ProcessMaturityPackages extends Command
                 DB::beginTransaction();
 
                 // Add payout to user's balance
-                $package->user->increment('points_balance', $payoutAmount);
+                $package->user->increment('wallet1_balance', $payoutAmount);
 
                 // Record points transaction
                 PointsTransaction::create([

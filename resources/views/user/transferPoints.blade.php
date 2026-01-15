@@ -26,7 +26,7 @@
                         <div class="card border-success mb-1">
                             <div class="card-body">
                                 <h6 class="card-title text-muted">YOUR POINTS BALANCE</h6>
-                                <h2 class="text-success fw-bold">{{ number_format(Auth::user()->points_balance) }}</h2>
+                                <h2 class="text-success fw-bold">{{ number_format(Auth::user()->wallet1_balance) }}</h2>
                             </div>
                         </div>
                     </div>
@@ -96,12 +96,12 @@
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->ulid }}</td>
                                         <td>{{ $user->email }}</td>
-                                        <td>{{ number_format($user->points_balance) }}</td>
+                                        <td>{{ number_format($user->wallet1_balance) }}</td>
                                         <td>
                                             <button class="btn btn-sm btn-outline-primary select-user"
                                                 data-ulid="{{ $user->ulid }}" data-name="{{ $user->name }}"
                                                 data-email="{{ $user->email }}"
-                                                data-balance="{{ $user->points_balance }}">
+                                                data-balance="{{ $user->wallet1_balance }}">
                                                 <i class="fas fa-hand-pointer me-1"></i> Select
                                             </button>
                                         </td>
@@ -150,7 +150,7 @@
                                 data.user.ulid + ')';
                             document.getElementById('userEmail').textContent = data.user.email;
                             document.getElementById('userBalance').textContent = data.user
-                                .points_balance;
+                                .wallet1_balance;
                             document.getElementById('userDetails').style.display = 'block';
                             document.getElementById('transferBtn').disabled = false;
                         } else {
@@ -185,7 +185,7 @@
             // Form validation
             document.getElementById('transferForm').addEventListener('submit', function(e) {
                 const points = parseInt(document.getElementById('points').value);
-                const balance = parseInt('{{ Auth::user()->points_balance }}');
+                const balance = parseInt('{{ Auth::user()->wallet1_balance }}');
 
                 if (points > balance) {
                     e.preventDefault();

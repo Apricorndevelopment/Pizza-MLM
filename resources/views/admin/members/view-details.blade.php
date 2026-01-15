@@ -62,11 +62,11 @@
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label text-muted small">Points Balance:</label>
-                                    <p class="fw-bold">{{ $member->points_balance }}</p>
+                                    <p class="fw-bold">{{ $member->wallet1_balance }}</p>
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label text-muted small">Loyalty Balance:</label>
-                                    <p class="fw-bold">{{ $member->loyalty_balance }}</p>
+                                    <p class="fw-bold">{{ $member->wallet2_balance }}</p>
                                 </div>
                             </div>
                         </div>

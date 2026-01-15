@@ -131,7 +131,7 @@ class PackageAssignmentController extends Controller
 
        $totalDue = $deduction->total_deduction;
 
-        if (Auth::user()->points_balance < $totalDue) {
+        if (Auth::user()->wallet1_balance < $totalDue) {
             return redirect()->back()->with('error', 'Insufficient balance to make this payment.');
         }
 
@@ -139,7 +139,7 @@ class PackageAssignmentController extends Controller
 
         DB::transaction(function () use ($deduction, $totalDue,$user) {
             // Deduct from user balance
-            $user->decrement('points_balance', $totalDue);
+            $user->decrement('wallet1_balance', $totalDue);
 
             // Record points transaction
             PointsTransaction::create([

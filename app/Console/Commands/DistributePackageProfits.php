@@ -82,7 +82,7 @@ class DistributePackageProfits extends Command
                 $incomeAmount = $monthlyAmount * ($percentage / 100);
 
                 // Add to user's balance
-                $sponsor->increment('points_balance', $incomeAmount);
+                $sponsor->increment('wallet1_balance', $incomeAmount);
 
                 // Record in level income table
                 LevelIncome::create([
@@ -137,7 +137,7 @@ class DistributePackageProfits extends Command
             $monthlyProfit = $purchase->final_price * ($purchase->rate / 100);
 
             // Update user's balance
-            $purchase->user->increment('points_balance', $monthlyProfit);
+            $purchase->user->increment('wallet1_balance', $monthlyProfit);
 
             // Record distribution
             PackageMonthlyDistribution::create([

@@ -4,335 +4,587 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geokranti Login Page</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Login - FoodVendor Healthy Food Network</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-green: #2e7d32;
-            --dark-green: #1b5e20;
-            --light-green: #81c784;
-            --earth-brown: #5d4037;
-            --sky-blue: #0288d1;
-            --gradient: linear-gradient(135deg, var(--primary-green) 0%, var(--sky-blue) 100%);
+            --primary: #FF6B35;
+            --secondary: #4CAF50;
+            --accent: #FFD166;
+            --dark: #2A4365;
+            --light: #FFF9F0;
         }
-
-        body {
-            background: url('/logoimg.png') no-repeat center center fixed;
-            background-size: cover;
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        h1, h2, h3, h4, h5, .font-poppins {
             font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
             min-height: 100vh;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+                url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             display: flex;
             align-items: center;
+            justify-content: center;
             padding: 20px;
             position: relative;
         }
-
+        
+        /* Animated Gradient Background */
         body::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(76, 175, 80, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 209, 102, 0.1) 0%, transparent 50%);
             z-index: -1;
         }
-
-        .auth-container {
-            max-width: 480px;
-            width: 100%;
-            margin: 2rem auto;
-            padding: 1.5rem 2rem;
-            border-radius: 20px;
-            background: rgba(198, 198, 198, 0.578);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
-
-        .auth-container::before {
+        
+        .card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient);
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #FF6B35, #FFD166, #4CAF50);
+            border-radius: 24px 24px 0 0;
         }
-
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .form-input {
+            border: 2px solid rgba(229, 231, 235, 0.8);
+            border-radius: 14px;
+            padding: 16px 20px;
+            width: 100%;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            color: #374151;
+        }
+        
+        .form-input:focus {
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+            outline: none;
+            background: white;
+            transform: translateY(-2px);
+        }
+        
+        .form-input::placeholder {
+            color: #9CA3AF;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon input {
+            padding-left: 56px;
+        }
+        
+        .form-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FF6B35;
+            z-index: 10;
+            font-size: 1.2rem;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-password:hover {
+            background: rgba(255, 107, 53, 0.1);
+            color: #FF6B35;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #FF6B35, #4CAF50);
+            color: white;
+            padding: 18px;
+            border-radius: 14px;
+            font-weight: 600;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
+        }
+        
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        
+        .btn-login:active {
+            transform: translateY(-1px);
+        }
+        
         .logo-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 1.5rem;
+            gap: 14px;
+            margin-bottom: 14px;
         }
-
+        
         .logo {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35, #FFD166);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); */
-            /* background: linear-gradient(135deg, var(--primary-green), var(--dark-green)); */
+            border: 3px solid white;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
         }
-
+        
         .logo img {
-            width: 90px;
-            height: auto;
+            object-fit: contain;
+            border-radius: 50%;
         }
-
+        
         .brand-name {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6B35, #4CAF50);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .auth-header h1 {
-            text-align: center;
-            margin-bottom: 0.5rem;
-            border-radius: 30px;
-            font-weight: 900;
-            font-size: 1.8rem;
-            padding: 10px 0;
-        }
-
-        .text-muted {
-            color: #6b7280;
-            margin-bottom: 1.2rem;
-        }
-
-        .form-control {
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin-bottom: 0.5rem;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-green);
-            box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
-        }
-
-        .input-group-text {
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.611);
-            border-right: none;
-            color: var(--primary-green);
-        }
-
-        .input-group .form-control {
-            background-color: rgba(255, 255, 255, 0.611);
-            border-left: none;
-        }
-
-        .btn-auth {
-            background: var(--gradient);
+        
+        .food-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF6B35, #FFD166);
             color: white;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 10px 25px;
+            border-radius: 50px;
             font-weight: 600;
-            width: 100%;
-            margin-top: 0.5rem;
-            border: none;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+            margin-bottom: 14px;
         }
-
-        .btn-auth:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3);
-        }
-
-        .btn-auth:active {
-            transform: translateY(0);
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            cursor: pointer;
-            color: var(--primary-green);
-            z-index: 5;
-        }
-
-        .form-check-input:checked {
-            background-color: var(--primary-green);
-            border-color: var(--primary-green);
-        }
-
-        a {
-            color: #005204;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 700;
-        }
-
-        a:hover {
-            color: var(--dark-green);
-            text-decoration: underline;
-        }
-
-        .alert {
+        
+        .success-badge {
+            background: linear-gradient(135deg, #10B981, #34D399);
+            color: white;
+            padding: 12px 20px;
             border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
         }
-
-        @media (max-width: 576px) {
-            body {
-                padding: 10px;
+        
+        .error-badge {
+            background: linear-gradient(135deg, #EF4444, #F87171);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2);
+        }
+        
+        .form-label {
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 1rem;
+        }
+        
+        /* Checkbox Styling */
+        .form-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #D1D5DB;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .form-checkbox:checked {
+            background-color: #FF6B35;
+            border-color: #FF6B35;
+        }
+        
+        .form-checkbox:focus {
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+        
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(40px);
+        }
+        
+        .floating-1 {
+            width: 200px;
+            height: 200px;
+            background: #FF6B35;
+            top: 10%;
+            left: 10%;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .floating-2 {
+            width: 150px;
+            height: 150px;
+            background: #4CAF50;
+            bottom: 15%;
+            right: 10%;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+        
+        .floating-3 {
+            width: 100px;
+            height: 100px;
+            background: #FFD166;
+            top: 40%;
+            right: 20%;
+            animation: float 12s ease-in-out infinite;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card {
+                padding: 30px 25px;
             }
-
-            .auth-container {
-                padding: 1rem;
-                margin: 1rem auto;
+            
+            .logo-container {
+                gap: 12px;
             }
-
-            .text-muted {
-                font-size: 12px;
-                line-height: 0.5;
-            }
-
+            
             .logo {
-                width: 50px;
-                height: 50px;
+                width: 60px;
+                height: 60px;
             }
-
+            
+            .brand-name {
+                font-size: 2rem;
+            }
+            
+            .form-input {
+                padding: 14px 18px;
+            }
+            
+            .btn-login {
+                padding: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 25px 20px;
+            }
+            
             .brand-name {
                 font-size: 1.8rem;
             }
-
-            .text-muted {
-                font-size: 12px;
-                line-height: 1.3;
-            }
-
-            .btn-auth {
-                padding: 10px;
-                margin-top: 0;
-            }
-
-            .auth-header h1 {
-                font-size: 1.5rem;
+            
+            .food-badge {
+                padding: 8px 20px;
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="auth-container">
-            <div class="auth-header">
+    <!-- Floating Background Elements -->
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+    <div class="floating-element floating-3"></div>
+    
+    <div class="container max-w-xl mx-auto animate-float">
+        <div class="card px-6 sm:px-8 py-5 sm:py-6">
+            <!-- Header -->
+            <div class="text-center mb-10">
                 <div class="logo-container">
                     <div class="logo">
                         <a href="/">
-                        <img src="geokranti-white.jpg" alt="Geokranti Logo" style="border: 0px;border-radius: 100%" ></a>
+                            <img src="{{ asset('foodvendor-logo.png') }}" alt="FoodVendor">
+                        </a>
                     </div>
-                    <div class="brand-name">Geokranti</div>
+                    <div class="brand-name font-poppins">
+                        Food<span style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Vendor</span>
+                    </div>
                 </div>
-                <h1>Welcome Back</h1>
-                <p class="text-muted">Nice to see you again. Sign in to continue to your account</p>
+                
+                <div class="mb-2">
+                    <span class="food-badge">
+                        <i class="bi bi-heart-fill mr-2"></i>
+                        Healthy Food Network
+                    </span>
+                </div>
+                
+                <h2 class="text-3xl font-bold text-gray-800 mb-2 font-poppins">
+                    Welcome Back
+                </h2>
+                <p class="text-gray-600 text-lg mb-2">
+                    Nice to see you again. Sign in to continue to your account
+                </p>
             </div>
-
+            
+            <!-- Messages -->
             @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
+            <div class="mb-8 success-badge">
+                <i class="bi bi-check-circle-fill text-xl"></i>
+                <span>{{ session('success') }}</span>
+            </div>
             @endif
 
             @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
+            <div class="mb-8 error-badge">
+                <i class="bi bi-x-circle-fill text-xl"></i>
+                <span>{{ session('error') }}</span>
+            </div>
             @endif
-
+            
+            <!-- Login Form -->
             <form action="{{ route('auth.login') }}" method="POST">
                 @csrf
-
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                        <input type="text" name="email" class="form-control" placeholder="Email Address"
-                            value="{{ old('email') }}" required>
+                
+                <div class="space-y-5">
+                    <!-- Email -->
+                    <div>
+                        <label class="form-label">Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-envelope-fill"></i>
+                            <input type="text" 
+                                   name="email" 
+                                   class="form-input" 
+                                   placeholder="your@email.com"
+                                   value="{{ old('email') }}" 
+                                   required>
+                        </div>
+                        @error('email')
+                            <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('email')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="mb-3 position-relative">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" id="password" class="form-control"
-                            placeholder="Password" required>
+                    
+                    <!-- Password -->
+                    <div>
+                        <label class="form-label">Password</label>
+                        <div class="input-with-icon">
+                            <i class="form-icon bi bi-lock-fill"></i>
+                            <input type="password" 
+                                   name="password" 
+                                   id="password" 
+                                   class="form-input"
+                                   placeholder="Enter your password" 
+                                   required>
+                            <span class="toggle-password" data-target="#password">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
+                        @error('password')
+                            <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
+                        @enderror
                     </div>
-                    <i class="fas fa-eye toggle-password" toggle="#password"></i>
-                    @error('password')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="d-flex justify-content-between mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" 
+                                   id="rememberMe" 
+                                   name="remember"
+                                   class="form-checkbox">
+                            <label for="rememberMe" class="text-gray-700 cursor-pointer select-none">
+                                Remember me
+                            </label>
+                        </div>
+                        <a href="{{ route('password.request') }}" 
+                           class="text-orange-500 hover:text-orange-600 font-semibold text-sm hover:underline transition-colors">
+                            Forgot password?
+                        </a>
                     </div>
-                    <a href="{{ route('password.request') }}">Forgot password?</a>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            onclick="return confirm('Are you sure you want to login to FoodVendor?')" 
+                            class="btn-login">
+                        <i class="bi bi-box-arrow-in-right mr-3"></i>
+                        Sign In to Your Account
+                    </button>
                 </div>
-
-                <button type="submit" onclick="return confirm('Are you sure you want to Login')" class="btn btn-auth">
-                    <i class="fas fa-sign-in-alt me-2"></i> Login
-                </button>
-
-                <div class="text-center mt-4">
-                    <p class="text-muted">Don't have an account? <a href="{{ route('auth.register') }}">Sign up</a></p>
-                </div>
-                <p class="text-center text-muted">You are going to choose a noble field</p>
             </form>
+            
+            <!-- Registration Link -->
+            <div class="text-center mt-6 pt-4 border-t border-gray-200">
+                <p class="text-gray-600 text-lg">
+                    Don't have an account?
+                    <a href="{{ route('auth.register') }}" 
+                       class="text-orange-500 font-semibold hover:text-orange-600 hover:underline transition-colors">
+                        Create Account
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Support Information -->
+        <div class="text-center mt-6 pt-4 border-t border-gray-200/50">
+            <p class="text-gray-300 mb-2 text-lg">Need help with login?</p>
+            <div class="flex items-center justify-center space-x-6 text-sm">
+                <a href="tel:+919876543210" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                    <i class="bi bi-telephone-fill mr-2 text-lg"></i>
+                    <span class="text-lg">+91 98765 xxxxx</span>
+                </a>
+                <a href="mailto:support@foodvendor.com" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                    <i class="bi bi-envelope-fill mr-2 text-lg"></i>
+                    <span class="text-lg">support@foodvendor.com</span>
+                </a>
+            </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.querySelectorAll('.toggle-password').forEach(function(element) {
-            element.addEventListener('click', function() {
-                const input = document.querySelector(this.getAttribute('toggle'));
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    this.classList.remove('fa-eye');
-                    this.classList.add('fa-eye-slash');
+        $(document).ready(function() {
+            // Toggle password visibility
+            $('.toggle-password').click(function() {
+                const target = $(this).data('target');
+                const input = $(target);
+                const icon = $(this).find('i');
+                
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
                 } else {
-                    input.type = 'password';
-                    this.classList.remove('fa-eye-slash');
-                    this.classList.add('fa-eye');
+                    input.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
                 }
             });
+            
+            // Auto-focus email field if there's an error
+            @if($errors->has('email') || $errors->has('password'))
+                setTimeout(() => {
+                    $('input[name="email"]').focus();
+                }, 100);
+            @endif
         });
     </script>
 </body>
-
 </html>

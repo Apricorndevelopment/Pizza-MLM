@@ -42,7 +42,7 @@
         }
     </style>
 
-    <div class="container mt-4">
+    <div class="container">
         <h2>User Tree for: {{ $admin->name }}</h2>
 
         <div class="row">

@@ -11,7 +11,7 @@
                 </h4>
                 <span class="badge bg-white text-primary">
                     <i class="fas fa-wallet me-1"></i>
-                    Balance: ₹{{ auth()->user()->points_balance }}
+                    Balance: ₹{{ auth()->user()->wallet1_balance }}
                 </span>
             </div>
         </div>

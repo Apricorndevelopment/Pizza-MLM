@@ -46,12 +46,12 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $package1Count = Package1::count();
-        $package2Count = Package2::count();
-        $userCount = User::count();
-        $businessCount = Package2Purchase::sum('final_price');
+        // $package1Count = Package1::count();
+        // $package2Count = Package2::count();
+        // $userCount = User::count();
+        // $businessCount = Package2Purchase::sum('final_price');
 
-        return view('admin.dashboard', compact('package1Count', 'package2Count', 'userCount', 'businessCount'));
+        return view('admin.dashboard');
     }
 
     public function logout(Request $request)
@@ -583,7 +583,7 @@ class AdminController extends Controller
                 $perUserAmount = $levelAmount / $userCount;
 
                 foreach ($users as $user) {
-                    $user->increment('points_balance', $perUserAmount);
+                    $user->increment('wallet1_balance', $perUserAmount);
 
                     PointsTransaction::create([
                         'user_id' => $user->id,
@@ -633,7 +633,7 @@ class AdminController extends Controller
 
                 if ($userAmount > 0) {
                     $user = $buyer['user'];
-                    $user->increment('points_balance', $userAmount);
+                    $user->increment('wallet1_balance', $userAmount);
 
                     PointsTransaction::create([
                         'user_id' => $user->id,

@@ -2,767 +2,503 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Geo Kranti User</title>
-
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ asset('assets2/vendors/feather/feather.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets2/vendors/ti-icons/css/themify-icons.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets2/vendors/css/vendor.bundle.base.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets2/vendors/font-awesome/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets2/vendors/mdi/css/materialdesignicons.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets2/js/select.dataTables.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets2/css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
-    <link rel="shortcut icon" href="{{ asset('assets2/images/favicon.png') }}" />
-
+    <title>User Dashboard </title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .sub-menu,
-        .sub-menu li,
-        .sub-menu li::before,
-        .sub-menu li::after {
-            list-style: none !important;
-            content: none !important;
-            margin: 0 !important;
+        * {
+            font-family: 'Inter', sans-serif;
         }
 
-        .breadcrumb-wrapper {
-            padding: 0;
+        .sidebar-menu-item.active {
+            background-color: rgba(16, 185, 129, 0.15);
+            border-left: 4px solid #10b981;
+            color: #10b981;
         }
 
-        .breadcrumb {
-            padding: 0.1rem 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
+        .sidebar-menu-item.active i {
+            color: #10b981;
         }
 
-        .breadcrumb-item+.breadcrumb-item::before {
-            content: ">";
-            padding: 0 0.3rem;
+        .sidebar-submenu {
+            display: none;
         }
 
-        .breadcrumb-item a:hover {
-            color: #2a288a;
-            text-decoration: underline;
+        .sidebar-submenu.active {
+            display: block;
         }
 
-        .breadcrumb-item.active {
-            color: #495057;
+        .sidebar-submenu a.active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
             font-weight: 500;
         }
 
-        .content-wrapper {
-            padding: 1.5rem 1.7rem;
-            width: 100%;
-            flex-grow: 1;
+        .menu-header.parent-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-left: 4px solid #10b981;
         }
 
-        /* Quick Actions Button */
-        .quick-actions-btn {
-            position: fixed;
-            right: 30px;
-            bottom: 30px;
-            z-index: 1000;
-            width: 60px;
-            height: 60px;
+        .menu-header.parent-active i:not(.bi-chevron-down) {
+            color: #10b981;
+        }
+
+        .profile-pic-wrapper {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .profile-pic-wrapper img {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #4b49ac, #2a288a);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            cursor: pointer;
-            transition: all 0.3s ease;
+            border: 2px solid #10b981;
+            object-fit: cover;
         }
 
-        .quick-actions-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+        .online-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border: 2px solid #fff;
+            border-radius: 50%;
         }
 
-        .quick-actions-btn i {
-            font-size: 1.5rem;
+        /* Hide scrollbar but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
 
-        .quick-actions-menu {
-            position: fixed;
-            right: 30px;
-            bottom: 100px;
-            z-index: 999;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            padding: 15px 0;
-            width: 250px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE & Edge */
+            scrollbar-width: none;
+            /* Firefox */
         }
 
-        .quick-actions-menu.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .quick-action-item {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            transition: all 0.2s ease;
-            color: #495057;
-            text-decoration: none;
-        }
-
-        .quick-action-item:hover {
-            background-color: #f8f9fa;
-            color: #4b49ac;
-        }
-
-        .quick-action-item i {
-            margin-right: 12px;
-            font-size: 1.1rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #e9ecef;
-            margin: 8px 0;
-        }
-
-        @media(max-width:768px) {
-            .content-wrapper {
-                padding: 1.2rem 1rem;
+        /* Hide sidebar on mobile */
+        @media (max-width: 1024px) {
+            #sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                height: 100vh;
+                z-index: 50;
             }
 
-            .quick-actions-btn {
-                right: 20px;
-                bottom: 20px;
-                width: 50px;
-                height: 50px;
-            }
-
-            .quick-actions-menu {
-                right: 20px;
-                bottom: 80px;
-                width: 220px;
-            }
-        }
-
-        @media(max-width:450px) {
-            .content-wrapper {
-                padding: 0.8rem 0.5rem;
-            }
-        }
-
-        /* Fix sidebar completely */
-        .sidebar-offcanvas {
-            position: fixed !important;
-            top: 60px !important;
-            left: 0;
-            height: calc(100vh - 60px) !important;
-            overflow-y: auto;
-            z-index: 50;
-        }
-
-        .sidebar-offcanvas::-webkit-scrollbar {
-            display: none;      
-        }
-
-        /* Adjust main content */
-        .main-panel {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 991px) {
-            .sidebar-offcanvas {
-                transform: translateX(100%);
-                right: 0;
-                left: auto;
-                transition: transform 0.3s ease;
-                width: 280px !important;
-            }
-
-            .sidebar-offcanvas.show {
+            #sidebar.mobile-open {
                 transform: translateX(0);
             }
 
-            .main-panel {
-                margin-left: 0;
-                width: 100%;
+            #sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+            }
+
+            #sidebar-overlay.mobile-open {
+                display: block;
             }
         }
     </style>
 </head>
 
-<body>
-    <!-- partial:partials/_navbar.html -->
-    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-        <div
-            class="text-center navbar-brand-wrapper ps-0 ps-sm-1 ps-xl-2 d-flex align-items-center justify-content-start">
-            <a class="navbar-brand brand-logo me-5 d-flex align-items-center" href="">
-                <img src="{{ asset('geokrantilogo.jpg') }}" alt="logo"
-                    style="width: 55px; height: 55px; object-fit: cover;" class="me-2" />
-                <h3 class="mb-0">Geokranti</h3>
-            </a>
-            <a class="navbar-brand brand-logo-mini" href="">
-                <img src="{{ asset('geokrantilogo.jpg') }}" alt="logo" />
-            </a>
-        </div>
+<body class="bg-gray-50">
 
-        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-            <h3 class="mb-0 d-block d-lg-none" style="position: absolute;left:58px;">Geokranti</h3>
-            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-                <span class="icon-menu"></span>
-            </button>
-            <ul class="navbar-nav mr-lg-2">
-                <li class="nav-item nav-search d-none d-lg-block">
-                    <div class="input-group">
-                        <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                            <span class="input-group-text" id="search">
-                                <i class="icon-search"></i>
-                            </span>
+    <!-- Mobile overlay -->
+    <div id="sidebar-overlay" class="lg:hidden"></div>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar - Green Theme -->
+        <aside id="sidebar"
+            class="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0 transition-transform duration-300 lg:translate-x-0">
+            <!-- Logo -->
+            <div class="h-16 flex items-center px-4 border-b border-gray-200 bg-emerald-50">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center">
+                        <i class="bi bi-shop text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">FoodVendor</span>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <nav class="flex-1 overflow-y-auto no-scrollbar py-4 scroll-smooth">
+                <div class="px-3 space-y-1">
+                    <!-- Dashboard -->
+                    <a href="{{ route('user.dashboard') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-speedometer2 mr-3 text-lg"></i>
+                        <span class="font-medium">Dashboard</span>
+                    </a>
+
+                    <!-- Profile -->
+                    <a href="{{ route('user.profile') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-person mr-3 text-lg"></i>
+                        <span class="font-medium">My Profile</span>
+                    </a>
+
+                    <!-- Wallet -->
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-wallet2 mr-3 text-lg"></i>
+                                <span class="font-medium">My Wallet</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
                         </div>
-                        <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now"
-                            aria-label="search" aria-describedby="search">
+                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                            <a href="{{ route('user.viewwallet') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Manage Wallet
+                            </a>
+                            <a href="{{ route('user.transferPointsForm') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Transfer Wallet
+                            </a>
+                        </div>
                     </div>
-                </li>
-            </ul>
-            <ul class="navbar-nav navbar-nav-right">
-                <li class="nav-item dropdown">
-                    <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
-                        data-bs-toggle="dropdown">
-                        <i class="icon-bell mx-0"></i>
-                        <span class="count"></span>
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-wallet2 mr-3 text-lg"></i>
+                                <span class="font-medium">Packages</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                            <a href="{{ route('package2.purchase') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Purchase Package
+                            </a>
+                            <a href="{{ route('user.packages') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Invoices
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- My Network -->
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-diagram-3 mr-3 text-lg"></i>
+                                <span class="font-medium">My Network</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                            <a href="{{ route('user.view.userTree') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Network Tree
+                            </a>
+                            <a href="{{ route('user.network.summary') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Network Summary
+                            </a>
+                            <a href="{{ route('user.direct.team') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Direct Team
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-headset mr-3 text-lg"></i>
+                                <span class="font-medium">Incentives</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                            <a href="{{ route('user.commissions.level1') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Direct Commissions
+                            </a>
+                            <a href="{{ route('user.commissions.level2') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Network Bonus
+                            </a>
+                            <a href="{{ route('user.reports.level-income') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Level Income
+                            </a>
+                            <a href="{{ route('user.rewards.rankRewards', Auth::user()->ulid) }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Reward Income
+                            </a>
+                            <a href="{{ route('user.yearly.profits') }}"
+                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                Yearly Profits
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('logout') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-person mr-3 text-lg"></i>
+                        <span class="font-medium">Logout</span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
-                        aria-labelledby="notificationDropdown">
-                        <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-success">
-                                    <i class="ti-info-alt mx-0"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject font-weight-normal">Application Error</h6>
-                                <p class="font-weight-light small-text mb-0 text-muted"> Just now </p>
-                            </div>
-                        </a>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-warning">
-                                    <i class="ti-settings mx-0"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject font-weight-normal">Settings</h6>
-                                <p class="font-weight-light small-text mb-0 text-muted"> Private message </p>
-                            </div>
-                        </a>
-                        <a class="dropdown-item preview-item">
-                            <div class="preview-thumbnail">
-                                <div class="preview-icon bg-info">
-                                    <i class="ti-user mx-0"></i>
-                                </div>
-                            </div>
-                            <div class="preview-item-content">
-                                <h6 class="preview-subject font-weight-normal">New user registration</h6>
-                                <p class="font-weight-light small-text mb-0 text-muted"> 2 days ago </p>
-                            </div>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item nav-profile dropdown">
-                    <a class="nav-link dropdown-toggle" href="" data-bs-toggle="dropdown" id="profileDropdown">
-                        <?php
-                        use Illuminate\Support\Facades\Auth;
-                        $user = Auth::user();
-                        ?>
-                        @if ($user->profile_picture)
-                            <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
-                                alt="Profile Picture">
+                </div>
+            </nav>
+
+            <!-- Footer -->
+            <div class="p-3 border-t border-gray-200">
+                <div class="flex items-center">
+                   <div class="profile-pic-wrapper">
+                        @if (Auth::user()->profile_picture)
+                            <img src="{{ asset('storage/profile-pictures/' . basename(Auth::user()->profile_picture)) }}"
+                                alt="Profile">
                         @else
-                            <img src="{{ asset('geokrantilogo.jpg') }}" alt="profile" />
+                            <img src="{{ asset('foodvendor-logo.png') }}" alt="Profile">
                         @endif
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                        <a href="{{ route('user.profile') }}" class="dropdown-item">
-                            <i class="ti-settings text-primary"></i> Profile </a>
-                        <a class="dropdown-item" href="">
-                            <i class="ti-power-off text-primary"></i>
-                            <form action="{{ route('logout') }}" method="get">
-                                <input type="submit" value="logout"
-                                    style="border: none; background: none; color: inherit; cursor: pointer;">
-                            </form>
-                        </a>
+                        <span class="online-status"></span>
                     </div>
-                </li>
-            </ul>
-            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
-                data-toggle="offcanvas">
-                <span class="icon-menu"></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- partial -->
-    <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_sidebar.html -->
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
-            <ul class="nav" style="list-style: none; padding-left: 0;">
-                <!-- Dashboard -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('user.dashboard') }}">
-                        <i class="icon-grid menu-icon me-3"></i>
-                        <span class="menu-title">Dashboard</span>
-                    </a>
-                </li>
-
-                <!-- Network Section -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables5"
-                        aria-expanded="false" aria-controls="tables5">
-                        <i class="fa fa-sitemap menu-icon me-3"></i>
-                        <span class="menu-title flex-grow-1">Network</span>
-                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
-                    </a>
-                    <div class="collapse" id="tables5">
-                        <ul class="nav flex-column sub-menu ps-3"
-                            style="border-left: 2px solid #4b49ac; list-style: none;">
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.view.userTree') }}">
-                                    <i class="fa fa-sitemap me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Network Explorer</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.network.summary') }}">
-                                    <i class="fa fa-network-wired me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Network Summary</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.direct.team') }}">
-                                    <i class="fas fa-users me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Direct Team</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Package Section -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables6"
-                        aria-expanded="false" aria-controls="tables6">
-                        <i class="fas fa-box menu-icon me-3"></i>
-                        <span class="menu-title flex-grow-1">Package</span>
-                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
-                    </a>
-                    <div class="collapse" id="tables6">
-                        <ul class="nav flex-column sub-menu ps-3"
-                            style="border-left: 2px solid #4b49ac; list-style: none;">
-                            <li class="nav-item">
-                                @php
-                                    $user = Auth::user();
-                                @endphp
-                                @if ($user->status === 'inactive')
-                                    <a class="nav-link d-flex align-items-center"
-                                        onclick="alert('Please activate your account first to purchase any package.')">
-                                        <i class="fas fa-shopping-cart menu-icon me-2" style="font-size: 0.8rem;"></i>
-                                        <span class="menu-title">Purchase Package</span>
-                                    </a>
-                                @else
-                                    <a class="nav-link d-flex align-items-center"
-                                        href="{{ route('package2.purchase') }}">
-                                        <i class="fas fa-shopping-cart me-2" style="font-size: 0.8rem;"></i>
-                                        <span class="menu-title">Purchase Package</span>
-                                    </a>
-                                @endif
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.packages') }}">
-                                    <i class="fas fa-box-open me-2" style="font-size: 0.8rem;"></i>
-                                    <span class="menu-title">Invoices</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.maturity.packages') }}">
-                                    <i class="fas fa-box-open me-2" style="font-size: 0.8rem;"></i>
-                                    <span class="menu-title">Monthly Invoice</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.monthly.profits') }}">
-                                    <i class="fas fa-calendar-alt me-2"
-                                        style="font-size: 0.8rem; margin-left:1.5px;"></i>
-                                    <span>Monthly Income</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Shopping Card -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('user.activation.package') }}">
-                        <i class="fas fa-box-open menu-icon me-3"></i>
-                        <span class="menu-title">Shopping Card</span>
-                    </a>
-                </li>
-
-                <!-- Wallet Section -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables3"
-                        aria-expanded="false" aria-controls="tables3">
-                        <i class="fa fa-wallet menu-icon me-3"></i>
-                        <span class="menu-title flex-grow-1">Wallet</span>
-                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
-                    </a>
-                    <div class="collapse" id="tables3">
-                        <ul class="nav flex-column sub-menu ps-3"
-                            style="border-left: 2px solid #4b49ac; list-style: none;">
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.viewwallet') }}">
-                                    <i class="fa fa-coins me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Manage Wallet</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.transferPointsForm') }}">
-                                    <i class="fa fa-exchange-alt me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Transfer Wallet</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Manage Stock Section -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables4"
-                        aria-expanded="false" aria-controls="tables4">
-                        <i class="fas fa-cubes menu-icon me-3"></i>
-                        <span class="menu-title flex-grow-1">Manage Stock</span>
-                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
-                    </a>
-                    <div class="collapse" id="tables4">
-                        <ul class="nav flex-column sub-menu ps-3"
-                            style="border-left: 2px solid #4b49ac; list-style: none;">
-                            @php
-                                $user = Auth::user();
-                                $eligibleRanks = DB::table('royalty_level_rewards')
-                                    ->whereBetween('sr_no', [7, 13])
-                                    ->pluck('level')
-                                    ->toArray();
-                                $hasAccess = in_array($user->current_rank, $eligibleRanks);
-                            @endphp
-
-                            <li class="nav-item">
-                                @if ($hasAccess)
-                                    <a class="nav-link d-flex align-items-center"
-                                        href="{{ route('user.stock.form') }}">
-                                    @else
-                                        <a class="nav-link d-flex align-items-center text-muted" href="#"
-                                            onclick="event.preventDefault(); alert('You must be Diamond Farmer rank or above to access this feature')">
-                                @endif
-                                <i class="fas fa-truck-moving me-2" style="font-size: 0.8rem;"></i>
-                                <span>Transfer Stock</span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                @if ($hasAccess)
-                                    <a class="nav-link d-flex align-items-center"
-                                        href="{{ route('user.stock.coupon-transfer') }}">
-                                    @else
-                                        <a class="nav-link d-flex align-items-center text-muted" href="#"
-                                            onclick="event.preventDefault(); alert('You must be Diamond Farmer rank or above to access this feature')">
-                                @endif
-                                <i class="fas fa-truck-moving me-2" style="font-size: 0.8rem;"></i>
-                                <span>Coupon Stock Transfer</span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.viewStock') }}">
-                                    <i class="fas fa-history me-2" style="font-size: 0.8rem;"></i>
-                                    <span>View Stock History</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="{{ route('user.allStocks') }}">
-                                    <i class="fas fa-history me-2" style="font-size: 0.8rem;"></i>
-                                    <span>View Stocks Location</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Incentives Section -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables1"
-                        aria-expanded="false" aria-controls="tables1">
-                        <i class="fas fa-award menu-icon me-3"></i>
-                        <span class="menu-title flex-grow-1">Incentives</span>
-                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
-                    </a>
-                    <div class="collapse" id="tables1">
-                        <ul class="nav flex-column sub-menu ps-3"
-                            style="border-left: 2px solid #4b49ac; list-style: none;">
-                            <li class="nav-item"><a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.commissions.level1') }}">
-                                    <i class="fas fa-hand-holding-usd me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Direct Commissions</span>
-                                </a></li>
-                            <li class="nav-item"><a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.commissions.level2') }}">
-                                    <i class="fas fa-network-wired me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Network Bonus</span>
-                                </a></li>
-                            <li class="nav-item"><a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.reports.level-income') }}">
-                                    <i class="fas fa-couch me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Passive Income</span>
-                                </a></li>
-                            <li class="nav-item"><a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.rewards.rankRewards', $user->ulid) }}">
-                                    <i class="fas fa-trophy me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Reward Income</span>
-                                </a></li>
-                            <li class="nav-item"><a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.yearly.profits') }}">
-                                    <i class="fas fa-crown me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Royalty Income</span>
-                                </a></li>
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Download PDF Section -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#tables2"
-                        aria-expanded="false" aria-controls="tables2">
-                        <i class="fas fa-file-download menu-icon me-3"></i>
-                        <span class="menu-title flex-grow-1">Download Pdf</span>
-                        <i class="menu-arrow fa fa-angle-down transition-all"></i>
-                    </a>
-                    <div class="collapse" id="tables2">
-                        <ul class="nav flex-column sub-menu ps-3"
-                            style="border-left: 2px solid #4b49ac; list-style: none;">
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="/English-Geokranti.pdf" download>
-                                    <i class="fas fa-language me-2" style="font-size: 0.8rem;"></i>
-                                    <span>In English</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" href="/Hindi-Geokranti.pdf" download>
-                                    <i class="fas fa-language me-2" style="font-size: 0.8rem;"></i>
-                                    <span>In Hindi</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Support & Account Section -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('user.profile') }}">
-                        <i class="ti-settings menu-icon me-3"></i>
-                        <span class="menu-title">Profile</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('user.login-activity') }}">
-                        <i class="fa fa-history menu-icon me-3"></i>
-                        <span class="menu-title">Login Activity</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="https://wa.me/9416373249" target="_blank">
-                        <i class="fa fa-headset menu-icon me-3"></i>
-                        <span class="menu-title">Support</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" href="{{ route('logout') }}">
-                        <i class="fa fa-power-off menu-icon me-3"></i>
-                        <span class="menu-title">Logout</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- Breadcrumb -->
-        <div class="main-panel">
-            <div class="content-wrapper">
-                <div class="row mb-0">
-                    <div class="col-12">
-                        <nav aria-label="breadcrumb" class="breadcrumb-wrapper">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('user.dashboard') }}"><i
-                                            class="fas fa-home"></i> Home</a></li>
-                                @isset($breadcrumbs)
-                                    @foreach ($breadcrumbs as $breadcrumb)
-                                        @if ($loop->last)
-                                            <li class="breadcrumb-item active" aria-current="page">
-                                                {{ $breadcrumb['title'] }}</li>
-                                        @else
-                                            <li class="breadcrumb-item">
-                                                <a href="{{ $breadcrumb['url'] ?? '#' }}">{{ $breadcrumb['title'] }}</a>
-                                            </li>
-                                        @endif
-                                    @endforeach
-                                @endisset
-                            </ol>
-                        </nav>
+                    <div class="ml-2">
+                        <p class="font-medium text-gray-800">{{ Auth::user()->name }}</p>
+                        <p class="text-sm text-gray-500">Member Since {{ Auth::user()->created_at->format('M Y') }}
+                        </p>
                     </div>
                 </div>
-
-                @section('container') @show
             </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header
+                class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0">
+                <!-- Left side -->
+                <div class="flex items-center">
+                    <button id="sidebar-toggle" class="lg:hidden text-gray-500 hover:text-gray-700 mr-4">
+                        <i class="bi bi-list text-xl"></i>
+                    </button>
+                    <h1 class="text-lg font-semibold text-gray-800" id="page-title">Dashboard</h1>
+                </div>
+
+                <!-- Right side -->
+                <div class="flex items-center space-x-4">
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <button id="profile-dropdown-toggle" class="flex items-center space-x-3 focus:outline-none">
+                            <div class="profile-pic-wrapper">
+                                @if (Auth::user()->profile_picture)
+                                    <img src="{{ asset('storage/profile-pictures/' . basename(Auth::user()->profile_picture)) }}"
+                                        alt="Profile">
+                                @else
+                                    <img src="{{ asset('foodvendor-logo.png') }}" alt="profile" />
+                                @endif
+                                <span class="online-status"></span>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <p class="font-medium text-gray-800">{{ Auth::user()->name }}</p>
+                                <p class="text-sm text-gray-500">Member</p>
+                            </div>
+                            <i id="profile-arrow" class="bi bi-chevron-down text-gray-500 hidden md:block transition-transfrom duration-300"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="profile-dropdown-menu"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden">
+                            <a href="{{ route('user.profile') }}"
+                                class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
+                                <i class="bi bi-person-circle mr-3 text-gray-500"></i>
+                                <span>Profile</span>
+                            </a>
+                            <a href="{{ route('user.viewwallet') }}"
+                                class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
+                                <i class="bi bi-wallet2 mr-3 text-gray-500"></i>
+                                <span>Wallet</span>
+                            </a>
+                            <div class="border-t border-gray-200 my-2"></div>
+                            <a href="{{ route('logout') }}"
+                                class="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
+                                <i class="bi bi-box-arrow-right mr-3 text-gray-500"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                @section('container')
+                @show
+            </main>
         </div>
-
     </div>
 
-    <!-- Quick Actions Button -->
-    <div class="quick-actions-btn" id="quickActionsBtn">
-        <i class="fas fa-bolt"></i>
-    </div>
-
-    <div class="quick-actions-menu" id="quickActionsMenu">
-        <a href="{{ route('user.dashboard') }}" class="quick-action-item">
-            <i class="fas fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-        </a>
-
-        <a href="{{ route('user.viewwallet') }}" class="quick-action-item">
-            <i class="fas fa-wallet"></i>
-            <span>My Wallet</span>
-        </a>
-
-        <a href="{{ route('package2.purchase') }}" class="quick-action-item">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Purchase Package</span>
-        </a>
-        <a href="{{ route('user.direct.team') }}" class="quick-action-item">
-            <i class="fas fa-users"></i>
-            <span>Direct Team</span>
-        </a>
-
-        <a href="{{ route('user.commissions.level1') }}" class="quick-action-item">
-            <i class="fas fa-hand-holding-usd"></i>
-            <span>Commissions</span>
-        </a>
-
-        <div class="divider"></div>
-
-        <a href="{{ route('user.profile') }}" class="quick-action-item">
-            <i class="fas fa-user-cog"></i>
-            <span>Profile Settings</span>
-        </a>
-
-        <a href="https://wa.me/9416373249" target="_blank" class="quick-action-item">
-            <i class="fas fa-headset"></i>
-            <span>Support</span>
-        </a>
-        <a class="quick-action-item" href="{{ route('logout') }}">
-            <i class="fa fa-power-off "></i>
-            <span>Logout</span>
-
-    </div>
-    <script src="{{ asset('assets2/vendors/js/vendor.bundle.base.js') }}"></script>
-    <script src="{{ asset('assets2/vendors/chart.js/chart.umd.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-
-    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-    <script src="{{ asset('assets2/js/dataTables.select.min.js') }}"></script>
-    <script src="{{ asset('assets2/js/off-canvas.js') }}"></script>
-    <script src="{{ asset('assets2/js/template.js') }}"></script>
-    <script src="{{ asset('assets2/js/settings.js') }}"></script>
-    <script src="{{ asset('assets2/js/todolist.js') }}"></script>
-    <script src="{{ asset('assets2/js/jquery.cookie.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets2/js/dashboard.js') }}"></script>
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
-    @stack('scripts')
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        // DOM ready function
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar for mobile
+            const sidebarToggle = document.getElementById('sidebar-toggle');
             const sidebar = document.getElementById('sidebar');
-            const menuBtn = document.querySelector(
-                '.navbar-toggler[data-toggle="offcanvas"]'); // Adjust if you use a different selector
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
 
-            function closeSidebar() {
-                sidebar.classList.remove('active'); // Replace 'active' if your show class is different
-                // Also hide via Bootstrap if using collapse
-                if (sidebar.classList.contains('show')) {
-                    sidebar.classList.remove('show');
-                }
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+                sidebarOverlay.classList.toggle('mobile-open');
+            });
+
+            // Close sidebar when clicking on overlay
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('mobile-open');
+            });
+
+            // Toggle profile dropdown
+            const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
+            const profileDropdownMenu = document.getElementById('profile-dropdown-menu');
+            const profileArrow = document.getElementById('profile-arrow'); // Arrow ko select kiya
+
+            if (profileDropdownToggle) {
+                profileDropdownToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    profileDropdownMenu.classList.toggle('hidden');
+
+                    // Arrow ko rotate karne ke liye ye line add karein
+                    profileArrow.classList.toggle('rotate-180');
+                });
             }
 
-            // Toggle on menu button
-            menuBtn.addEventListener("click", function(e) {
-                e.stopPropagation();
-                sidebar.classList.toggle('show');
-            });
-
-            // Detect click outside
-            document.addEventListener("click", function(event) {
-                if (
-                    sidebar.classList.contains('show') && // Only if sidebar is open
-                    !sidebar.contains(event.target) && // Click is not inside sidebar
-                    event.target !== menuBtn // Click is not menu button itself
-                ) {
-                    closeSidebar();
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (profileDropdownToggle && !profileDropdownToggle.contains(e.target) && !
+                    profileDropdownMenu.contains(e.target)) {
+                    profileDropdownMenu.classList.add('hidden');
+                    profileArrow.classList.remove('rotate-180'); // Bahar click ho to arrow wapas seedha ho jaye
                 }
             });
 
-            // Optional: Prevent sidebar click from propagating to document
-            sidebar.addEventListener("click", function(e) {
-                e.stopPropagation();
+            // Toggle submenus in sidebar
+            const menuHeaders = document.querySelectorAll('.menu-header');
+
+            menuHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const submenu = header.nextElementSibling;
+                    const icon = header.querySelector('.bi-chevron-down');
+
+                    submenu.classList.toggle('active');
+                    icon.classList.toggle('rotate-180');
+
+                    // Close other submenus if needed
+                    menuHeaders.forEach(otherHeader => {
+                        if (otherHeader !== header) {
+                            const otherSubmenu = otherHeader.nextElementSibling;
+                            const otherIcon = otherHeader.querySelector('.bi-chevron-down');
+
+                            if (otherSubmenu.classList.contains('active')) {
+                                otherSubmenu.classList.remove('active');
+                                otherIcon.classList.remove('rotate-180');
+                            }
+                        }
+                    });
+                });
             });
 
-            document.getElementById('quickActionsBtn').addEventListener('click', function() {
-                const menu = document.getElementById('quickActionsMenu');
-                menu.classList.toggle('show');
+            // Set active menu item on click
+            const menuItems = document.querySelectorAll('.sidebar-menu-item');
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+
+                    // Remove active class from all items
+                    menuItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                    });
+
+                    // Add active class to clicked item
+                    item.classList.add('active');
+
+                    // Update page title
+                    const pageTitle = item.querySelector('span').textContent;
+                    document.getElementById('page-title').textContent = pageTitle;
+
+                    // Close sidebar on mobile after clicking a menu item
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.remove('mobile-open');
+                        sidebarOverlay.classList.remove('mobile-open');
+                    }
+                });
             });
 
-            // Close menu when clicking outside
-            document.addEventListener('click', function(event) {
-                const btn = document.getElementById('quickActionsBtn');
-                const menu = document.getElementById('quickActionsMenu');
+            const currentUrl = window.location.href;
 
-                if (!btn.contains(event.target) && !menu.contains(event.target)) {
-                    menu.classList.remove('show');
+            /* Main menu active */
+            document.querySelectorAll('.sidebar-menu-item').forEach(link => {
+                if (link.href === currentUrl) {
+                    link.classList.add('active');
+
+                    document.getElementById('page-title').textContent = link.querySelector('span')
+                        .textContent;
+                }
+            });
+
+            /* Submenu + Parent active */
+            document.querySelectorAll('.sidebar-submenu a').forEach(subLink => {
+                if (subLink.href === currentUrl) {
+                    // Submenu active
+                    subLink.classList.add('active');
+
+                    const submenu = subLink.closest('.sidebar-submenu');
+                    submenu.classList.add('active');
+
+                    const header = submenu.previousElementSibling;
+                    const icon = header.querySelector('.bi-chevron-down');
+
+                    // 🔥 PARENT ACTIVE EFFECT
+                    header.classList.add('parent-active');
+                    icon.classList.add('rotate-180');
+
+                    document.getElementById('page-title').textContent = subLink.textContent.trim();
+                }
+            });
+
+            // Close sidebar when window is resized to desktop size
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('mobile-open');
                 }
             });
         });
     </script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
 </body>
 
 </html>

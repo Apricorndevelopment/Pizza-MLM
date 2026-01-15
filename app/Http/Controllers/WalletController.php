@@ -74,7 +74,7 @@ class WalletController extends Controller
 
     public function getUserByUlid(Request $request)
     {
-        $user = User::where('ulid', $request->ulid)->first(['name', 'email', 'points_balance', 'loyalty_balance']);
+        $user = User::where('ulid', $request->ulid)->first(['name', 'email', 'wallet1_balance', 'wallet2_balance']);
 
         if (!$user) {
             return response()->json([
@@ -88,8 +88,8 @@ class WalletController extends Controller
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
-                'points_balance' => $user->points_balance,
-                'loyalty_balance' => $user->loyalty_balance
+                'wallet1_balance' => $user->wallet1_balance,
+                'wallet2_balance' => $user->wallet2_balance
             ]
         ]);
     }
@@ -111,10 +111,10 @@ class WalletController extends Controller
             'points' => $request->points,
             'notes' => $request->notes,
             'admin_id' => $adminId,
-            'balance' => $user->points_balance + $request->points
+            'balance' => $user->wallet1_balance + $request->points
         ]);
 
-        $user->increment('points_balance', $request->points);
+        $user->increment('wallet1_balance', $request->points);
 
         return redirect()->back()->with('success', 'Points transaction completed successfully.');
     }
@@ -139,7 +139,7 @@ class WalletController extends Controller
             'admin_id' => $adminId
         ]);
 
-        $user->increment('loyalty_balance', $request->loyalty);
+        $user->increment('wallet2_balance', $request->loyalty);
 
         return redirect()->back()->with('success', 'Loyalty transaction completed successfully.');
     }
@@ -156,7 +156,7 @@ class WalletController extends Controller
         }
 
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:500|max:' . $user->points_balance,
+            'amount' => 'required|numeric|min:500|max:' . $user->wallet1_balance,
             'payment_method' => 'required|in:bank,upi'
         ]);
 
@@ -207,7 +207,7 @@ class WalletController extends Controller
 
         // Deduct points from user
         $user = $withdrawal->user;
-        $user->decrement('points_balance', $withdrawal->total_amount);
+        $user->decrement('wallet1_balance', $withdrawal->total_amount);
         $user->save();
 
         // Update withdrawal status
@@ -273,7 +273,7 @@ class WalletController extends Controller
             'user' => [
                 'name' => $downlineUser->name,
                 'email' => $downlineUser->email,
-                'points_balance' => $downlineUser->points_balance,
+                'wallet1_balance' => $downlineUser->wallet1_balance,
                 'ulid' => $downlineUser->ulid
             ]
         ]);
@@ -314,7 +314,7 @@ class WalletController extends Controller
         }
 
         // Check if sender has enough points
-        if ($sender->points_balance < $request->points) {
+        if ($sender->wallet1_balance < $request->points) {
             return back()->with('error', 'Insufficient points balance');
         }
 
@@ -324,21 +324,21 @@ class WalletController extends Controller
                 'user_id' => $sender->id,
                 'points' => -$request->points,
                 'notes' => 'Wallet Point Transfered to ' . $receiver->name . ' (' . $receiver->ulid . ')',
-                'balance' => $sender->points_balance - $request->points
+                'balance' => $sender->wallet1_balance - $request->points
             ]);
             DB::table('users')
                 ->where('id', $sender->id)
-                ->decrement('points_balance', $request->points);
-            // $sender->decrement('points_balance', $request->points);
+                ->decrement('wallet1_balance', $request->points);
+            // $sender->decrement('wallet1_balance', $request->points);
 
             // Add to receiver
             PointsTransaction::create([
                 'user_id' => $receiver->id,
                 'points' => $request->points,
                 'notes' => 'Recieved Wallet Point from ' . $sender->name . ' (' . $sender->ulid . ')',
-                'balance' => $receiver->points_balance + $request->points
+                'balance' => $receiver->wallet1_balance + $request->points
             ]);
-            $receiver->increment('points_balance', $request->points);
+            $receiver->increment('wallet1_balance', $request->points);
         });
 
         return back()->with('success', 'Points transferred successfully');

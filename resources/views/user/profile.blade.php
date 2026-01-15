@@ -122,10 +122,10 @@
                                             <div class="col-md-6">
                                                 <h5 class="text-muted">Balance Information</h5>
                                                 <p><strong>Points Balance:</strong>
-                                                    <span class="badge bg-info">{{ $user->points_balance ?? 0 }}</span>
+                                                    <span class="badge bg-info">{{ $user->wallet1_balance ?? 0 }}</span>
                                                 </p>
                                                 <p><strong>Loyalty Balance:</strong>
-                                                    <span class="badge bg-success">{{ $user->loyalty_balance ?? 0 }}</span>
+                                                    <span class="badge bg-success">{{ $user->wallet2_balance ?? 0 }}</span>
                                                 </p>
                                             </div>
                                         </div>

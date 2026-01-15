@@ -2,7 +2,7 @@
 @section('title', 'Dashboard')
 @section('container')
 
-<div class="container mt-4">
+<div class="container">
     <!-- Header with back button -->
     <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
         <h4 class="mb-0 text-primary">

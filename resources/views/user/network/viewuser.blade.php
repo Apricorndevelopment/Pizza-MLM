@@ -3,7 +3,7 @@
 @section('title', 'Network Explorer')
 
 @section('container')
-    <div class="container mt-4">
+    <div class="container">
         <h3 class="mb-4">Network Explorer</h3>
 
         <div class="row">

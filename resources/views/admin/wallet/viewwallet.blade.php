@@ -354,7 +354,7 @@
                                     document.getElementById('pointsUserEmail').textContent = data.user
                                     .email;
                                     document.getElementById('pointsUserBalance').textContent = data.user
-                                        .points_balance;
+                                        .wallet1_balance;
                                     document.getElementById('pointsUserDetails').style.display = 'block';
                                 } else {
                                     alert('User not found');
@@ -408,7 +408,7 @@
                                     document.getElementById('rewardsUserEmail').textContent = data.user
                                         .email;
                                     document.getElementById('rewardsUserBalance').textContent = data.user
-                                        .loyalty_balance;
+                                        .wallet2_balance;
                                     document.getElementById('rewardsUserDetails').style.display = 'block';
                                 } else {
                                     alert('User not found');

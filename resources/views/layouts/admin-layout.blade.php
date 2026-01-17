@@ -284,7 +284,7 @@
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center" href="{{ route('admin.wallet') }}">
                                     <i class="fa fa-share me-2" style="font-size: 0.8rem;"></i>
-                                    <span>Provide Points</span>
+                                    <span>Provide Wallet1</span>
                                 </a>
                             </li>
                             <li class="nav-item">

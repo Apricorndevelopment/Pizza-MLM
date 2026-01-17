@@ -13,12 +13,6 @@ class PackageTransaction extends Model
         'ulid',
         'package_name',
         'price',
-        'discount_percentage',
-        'discount_amount',
-        'quantity',
-        'final_price',
-        'coupon_code',
-        'status',
         'transaction_date'
     ];
 

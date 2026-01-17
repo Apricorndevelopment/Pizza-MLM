@@ -36,6 +36,6 @@ class LevelIncome extends Model
     
     public function package()
     {
-        return $this->belongsTo(Package2::class);
+        return $this->belongsTo(ProductPackage::class);
     }
 }

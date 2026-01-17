@@ -13,7 +13,7 @@ class ProductPackage extends Model
 
     // public function details()
     // {
-    //     return $this->hasMany(Package2Details::class, 'package2_id');
+    //     return $this->hasMany(ProductPackageDetails::class, 'package2_id');
     // }
 
 }

@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\LevelIncome;
 use Illuminate\Console\Command;
-use App\Models\Package2Purchase;
+use App\Models\ProductPackagePurchase;
 use App\Models\PackageMonthlyDistribution;
 use App\Models\User;
 use Carbon\Carbon;
@@ -114,7 +114,7 @@ class DistributePackageProfits extends Command
         $currentMonth = Carbon::now()->format('Y-m');
 
         // Get active package purchases (where time hasn't expired)
-        $purchases = Package2Purchase::where('maturity', 0)
+        $purchases = ProductPackagePurchase::where('maturity', 0)
             ->where('purchased_at', '<=', $currentDate)
             ->where('rate', '>', 0)
             ->with('user')

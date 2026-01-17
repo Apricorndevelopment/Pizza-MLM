@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactMail;
-use App\Models\Package2Purchase;
+use App\Models\ProductPackagePurchase;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -49,13 +49,13 @@ class ContactController extends Controller
             $user->level = $this->calculateLevel($authUser->ulid, $user->ulid);
 
             // Check if user has purchases (paid/unpaid status)
-            $hasPurchases = Package2Purchase::where('user_id', $user->id)
+            $hasPurchases = ProductPackagePurchase::where('user_id', $user->id)
                 ->exists();
             $user->purchase_status = $hasPurchases ? 'paid' : 'unpaid';
 
             // Calculate total purchases if user has any
             if ($hasPurchases) {
-                $user->total_purchases = Package2Purchase::where('user_id', $user->id)
+                $user->total_purchases = ProductPackagePurchase::where('user_id', $user->id)
                     ->sum('final_price');
             } else {
                 $user->total_purchases = 0;

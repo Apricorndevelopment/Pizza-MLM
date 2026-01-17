@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LoyaltyTransaction extends Model
+class Wallet2Transaction extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'loyalty',
+        'user_ulid',
+        'wallet2',
         'notes',
-        'admin_id'
+        'admin_id',
+        'balance'
     ];
 
     public function user()

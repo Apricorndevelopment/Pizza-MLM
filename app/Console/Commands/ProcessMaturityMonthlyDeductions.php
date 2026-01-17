@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Package2Purchase;
-use App\Models\PointsTransaction;
+use App\Models\ProductPackagePurchase;
+use App\Models\Wallet1Transaction;
 use App\Models\User;
 use App\Models\MaturityMonthlyDeduction;
 use Carbon\Carbon;
@@ -22,7 +22,7 @@ class ProcessMaturityMonthlyDeductions extends Command
         $this->info("Processing monthly maturity package deductions as of: " . $currentDate->format('Y-m-d H:i:s'));
 
         // Get active maturity packages that haven't completed 3 years
-        $maturityPackages = Package2Purchase::where('maturity', 1)
+        $maturityPackages = ProductPackagePurchase::where('maturity', 1)
             ->where('payout_processed', 0) // Not paid out yet
             ->where('purchased_at', '>', $currentDate->copy()->subYears(3)) // Within 3 years
             ->with('user')
@@ -76,7 +76,7 @@ class ProcessMaturityMonthlyDeductions extends Command
                     $notes = "Monthly deduction for maturity package: {$package->package_name}";
 
                     // Record points transaction
-                    PointsTransaction::create([
+                    Wallet1Transaction::create([
                         'user_id' => $user->id,
                         'user_ulid' => $user->ulid,
                         'points' => -$deductionAmount,

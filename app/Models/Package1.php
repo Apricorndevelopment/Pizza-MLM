@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Package1 extends Model
 {
     protected $table = 'package1';
-    protected $fillable = ['package_name', 'package_quantity', 'description', 'price', 'discount', 'discount_per'];
+    protected $fillable = ['package_name', 'description', 'price'];
 
     public $timestamps = false;
 

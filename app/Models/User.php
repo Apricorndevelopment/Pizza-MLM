@@ -27,10 +27,10 @@ class User extends Authenticatable
         'state',
         'status',
         'sponsor_id',
-        'parent_id',
         'role',
         'wallet1_balance',
         'wallet2_balance',
+        'is_vendor',
         'user_doa',
         'profile_picture',
         'current_rank',
@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function pointsTransactions()
     {
-        return $this->hasMany(PointsTransaction::class);
+        return $this->hasMany(Wallet1Transaction::class);
     }
 
     public function packageInventories()

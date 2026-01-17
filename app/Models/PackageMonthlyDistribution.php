@@ -25,7 +25,7 @@ class PackageMonthlyDistribution extends Model
 
     public function packagePurchase()
     {
-        return $this->belongsTo(Package2Purchase::class, 'package2_purchase_id');
+        return $this->belongsTo(ProductPackagePurchase::class, 'package2_purchase_id');
     }
 
 }

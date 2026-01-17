@@ -447,7 +447,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center"
-                                    href="{{ route('user.transferPointsForm') }}">
+                                    href="{{ route('user.transferWallet1Form') }}">
                                     <i class="fa fa-exchange-alt me-2" style="font-size: 0.8rem;"></i>
                                     <span>Transfer Wallet</span>
                                 </a>

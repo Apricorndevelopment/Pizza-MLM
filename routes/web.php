@@ -14,11 +14,13 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VendorController;
 use App\Models\Gallery;
 use App\Models\News;
-use App\Models\Package2;
-use App\Models\Package2Details;
+use App\Models\ProductPackage;
+use App\Models\ProductPackageDetails;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\IsVendor;
 
 Route::get('/', function () {
     $photos = Gallery::all();
@@ -59,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profile/update', [UserController::class, 'update'])->name('user.profile.update');
     });
 
+    // "Become a Vendor" पेज दिखाने और खरीदने का रूट
+    Route::get('/become-vendor', [VendorController::class, 'showPurchasePage'])->name('user.become_vendor');
+    Route::post('/purchase-vendor', [VendorController::class, 'processPurchase'])->name('user.purchase_vendor');
 
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile');
     Route::get('/user/profile/edit', [UserController::class, 'edit'])->name('user.profile.edit');
@@ -100,11 +105,11 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::get('/get-package-rates/{packageId}', function ($packageId) {
-        $rates = Package2Details::where('package2_id', $packageId)->get();
+        $rates = ProductPackageDetails::where('package2_id', $packageId)->get();
         return response()->json($rates);
     });
     Route::get('/get-package-price/{packageId}', function ($packageId) {
-        $package = Package2::findOrFail($packageId);
+        $package = ProductPackage::findOrFail($packageId);
         return response()->json([
             'price' => $package->price,
             'quantity_in_one_unit' => $package->package_quantity,
@@ -113,10 +118,21 @@ Route::middleware(['auth'])->group(function () {
         ]);
     });
 });
+
+
+// === VENDOR ROUTES (Protected by 'is_vendor') ===
+Route::middleware(['auth', IsVendor::class])->group(function () {
+    // वेंडर का अपना डैशबोर्ड
+    Route::get('/vendor-dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
+    
+    // वेंडर के अन्य फीचर्स (Products, Orders etc.)
+    // Route::get('/products', ...);
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/user/transfer-points', [WalletController::class, 'showTransferForm'])->name('user.transferPointsForm');
+    Route::get('/user/transfer-wallet1', [WalletController::class, 'showTransferForm'])->name('user.transferWallet1Form');
     Route::post('/user/search-downline', [WalletController::class, 'searchDownlineUser'])->name('user.search.downline');
-    Route::post('/user/transfer-points', [WalletController::class, 'transferPoints'])->name('user.transfer.points');
+    Route::post('/user/transfer-wallet1', [WalletController::class, 'transferWallet1'])->name('user.transfer.wallet1');
 
     Route::get('/user/stock-transfer', [StockController::class, 'showUserTransferForm'])->name('user.stock.form');
     Route::post('/user/stock-transfer/search-user', [StockController::class, 'searchUserInUserSide'])->name('user.stock.search-user');
@@ -184,8 +200,8 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::get('/wallet', [WalletController::class, 'index'])->name('admin.wallet');
         Route::get('/wallet-transactions', [WalletController::class, 'viewAllTransactions'])->name('admin.wallet-transactions');
         Route::post('/get-user-by-ulid', [WalletController::class, 'getUserByUlid']);
-        Route::post('/add-points', [WalletController::class, 'addPoints'])->name('admin.addPoints');
-        Route::post('/add-loyalty', [WalletController::class, 'addLoyalty'])->name('admin.addLoyalty');
+        Route::post('/add-wallet1', [WalletController::class, 'addWallet1'])->name('admin.addWallet1');
+        Route::post('/add-wallet2', [WalletController::class, 'addWallet2'])->name('admin.addWallet2');
 
         Route::get('/stock-transfer', [StockController::class, 'showTransferForm'])->name('admin.stock.form');
         Route::post('/stock-transfer/search-user', [StockController::class, 'searchUser'])->name('admin.stock.search-user');
@@ -200,17 +216,17 @@ Route::middleware(['auth:admin'])->group(function () {
 
         Route::get('/package', [PackageController::class, 'package'])->name('admin.package');
         Route::get('/packages/package1/create', [PackageController::class, 'createPackage1'])->name('admin.package1.create');
-        Route::get('/packages/package2/create', [PackageController::class, 'createPackage2'])->name('admin.package2.create');
+        Route::get('/packages/package2/create', [PackageController::class, 'createProductPackage'])->name('admin.package2.create');
         Route::post('/packages/package1', [PackageController::class, 'storePackage1'])->name('admin.package1.store');
-        Route::post('/packages/package2', [PackageController::class, 'storePackage2'])->name('admin.package2.store');
+        Route::post('/packages/package2', [PackageController::class, 'storeProductPackage'])->name('admin.package2.store');
 
         Route::get('/packages/package1/{id}/edit', [PackageController::class, 'editPackage1'])->name('admin.package1.edit');
         Route::put('/packages/package1/{id}', [PackageController::class, 'updatePackage1'])->name('admin.package1.update');
         Route::delete('/packages/package1/{id}', [PackageController::class, 'destroyPackage1'])->name('admin.package1.destroy');
 
-        Route::get('/packages/package2/{id}/edit', [PackageController::class, 'editPackage2'])->name('admin.package2.edit');
-        Route::put('/packages/package2/{id}', [PackageController::class, 'updatePackage2'])->name('admin.package2.update');
-        Route::delete('/packages/package2/{id}', [PackageController::class, 'destroyPackage2'])->name('admin.package2.destroy');
+        Route::get('/packages/package2/{id}/edit', [PackageController::class, 'editProductPackage'])->name('admin.package2.edit');
+        Route::put('/packages/package2/{id}', [PackageController::class, 'updateProductPackage'])->name('admin.package2.update');
+        Route::delete('/packages/package2/{id}', [PackageController::class, 'destroyProductPackage'])->name('admin.package2.destroy');
 
         Route::get('/package-purchases', [PackageAssignmentController::class, 'viewUserPackagePurchases'])->name('admin.package-purchases');
 
@@ -225,7 +241,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/viewwallet', [UserController::class, 'viewWallet'])->name('user.viewwallet');
-    Route::post('/user/withdraw/points', [WalletController::class, 'withdrawPoints'])->name('user.withdraw.points');
+    Route::post('/user/withdraw/wallet1', [WalletController::class, 'withdrawWallet1'])->name('user.withdraw.wallet1');
 });
 
 Route::get('/check-sponsor/{id}', function ($id) {

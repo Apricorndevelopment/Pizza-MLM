@@ -61,11 +61,11 @@
                                     <p class="fw-bold">{{ $member->user_doa ?? 'Not Active' }}</p>
                                 </div>
                                 <div class="mb-2">
-                                    <label class="form-label text-muted small">Points Balance:</label>
+                                    <label class="form-label text-muted small">Wallet1 Balance:</label>
                                     <p class="fw-bold">{{ $member->wallet1_balance }}</p>
                                 </div>
                                 <div class="mb-2">
-                                    <label class="form-label text-muted small">Loyalty Balance:</label>
+                                    <label class="form-label text-muted small">Wallet2 Balance:</label>
                                     <p class="fw-bold">{{ $member->wallet2_balance }}</p>
                                 </div>
                             </div>

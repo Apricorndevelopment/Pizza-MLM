@@ -1,11 +1,11 @@
 @extends('userlayouts.layouts')
-@section('title', 'Transfer Points')
+@section('title', 'Transfer Wallet1')
 
 @section('container')
     <div class="container py-4">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i> Transfer Points to Downline</h5>
+                <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i> Transfer Wallet1 to Downline</h5>
             </div>
             <div class="card-body">
                 @if (session('success'))
@@ -25,7 +25,7 @@
                     <div class="col-md-6">
                         <div class="card border-success mb-1">
                             <div class="card-body">
-                                <h6 class="card-title text-muted">YOUR POINTS BALANCE</h6>
+                                <h6 class="card-title text-muted">YOUR Wallet1 Balance</h6>
                                 <h2 class="text-success fw-bold">{{ number_format(Auth::user()->wallet1_balance) }}</h2>
                             </div>
                         </div>
@@ -51,13 +51,13 @@
                         <div class="card-body">
                             <h5 class="card-title" id="userName"></h5>
                             <p class="mb-1"><strong>Email:</strong> <span id="userEmail"></span></p>
-                            <p class="mb-1"><strong>Current Points:</strong> <span id="userBalance"></span></p>
+                            <p class="mb-1"><strong>Current Wallet1:</strong> <span id="userBalance"></span></p>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="points" class="form-label">Points to Transfer</label>
+                            <label for="points" class="form-label">Wallet1 to Transfer</label>
                             <input type="number" class="form-control" id="points" name="points" min="1"
                                 required>
                             <div class="form-text">Minimum transfer: 1 point</div>
@@ -65,7 +65,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary" id="transferBtn" onclick="Are you sure you want to transfer points ?" disabled>
-                        <i class="fas fa-paper-plane me-1"></i> Transfer Points
+                        <i class="fas fa-paper-plane me-1"></i> Transfer Wallet1
                     </button>
                 </form>
             </div>
@@ -86,7 +86,7 @@
                                     <th>Name</th>
                                     <th>ULID</th>
                                     <th>Email</th>
-                                    <th>Points</th>
+                                    <th>Wallet1</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>

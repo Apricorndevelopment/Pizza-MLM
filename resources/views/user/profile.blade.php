@@ -121,10 +121,10 @@
 
                                             <div class="col-md-6">
                                                 <h5 class="text-muted">Balance Information</h5>
-                                                <p><strong>Points Balance:</strong>
+                                                <p><strong>Wallet1 Balance:</strong>
                                                     <span class="badge bg-info">{{ $user->wallet1_balance ?? 0 }}</span>
                                                 </p>
-                                                <p><strong>Loyalty Balance:</strong>
+                                                <p><strong>Wallet2 Balance:</strong>
                                                     <span class="badge bg-success">{{ $user->wallet2_balance ?? 0 }}</span>
                                                 </p>
                                             </div>
@@ -218,7 +218,10 @@
                         </div>
 
                         <!-- Edit Profile Button -->
-                        <div class="d-flex justify-content-end mt-4">
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ route('user.become_vendor') }}" class="btn btn-success">
+                                <i class="fa fa-user me-2"></i> Become a Vendor
+                            </a>
                             <a href="{{ route('user.profile.edit') }}" class="btn btn-primary">
                                 <i class="fa fa-edit me-2"></i> Edit Details
                             </a>

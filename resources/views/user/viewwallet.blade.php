@@ -29,19 +29,19 @@
     <ul class="nav nav-tabs nav-fill mb-3" id="walletTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active d-flex align-items-center justify-content-center" id="points-tab" data-bs-toggle="tab" data-bs-target="#points" type="button" role="tab">
-                <i class="fas fa-coins me-2"></i> Points Wallet
+                <i class="fas fa-coins me-2"></i> Wallet1 Wallet
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link d-flex align-items-center justify-content-center" id="loyalty-tab" data-bs-toggle="tab" data-bs-target="#loyalty" type="button" role="tab">
-                <i class="fas fa-gem me-2"></i> Loyalty Wallet
+                <i class="fas fa-gem me-2"></i> Wallet2 Wallet
             </button>
         </li>
     </ul>
 
     <!-- Tab Content -->
     <div class="tab-content" id="walletTabContent">
-        <!-- Points Tab -->
+        <!-- Wallet1 Tab -->
         <div class="tab-pane fade show active" id="points" role="tabpanel">
             <!-- Balance Card -->
             <div class="row mb-4">
@@ -50,7 +50,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="card-title text-muted mb-2">POINTS BALANCE</h6>
+                                    <h6 class="card-title text-muted mb-2">Wallet1 Balance</h6>
                                     <h2 class="mb-0 fw-bold text-success">{{ number_format($points) }}</h2>
                                 </div>
                                 <div class="bg-success bg-opacity-10 p-3 rounded-circle">
@@ -64,7 +64,7 @@
                 <!-- Withdraw Button -->
                 <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center justify-content-end">
                     <button class="btn btn-primary px-4 py-2" data-bs-toggle="modal" data-bs-target="#withdrawModal">
-                        <i class="fas fa-money-bill-wave me-2"></i> Withdraw Points
+                        <i class="fas fa-money-bill-wave me-2"></i> Withdraw Wallet1
                     </button>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header border-0">
-                            <h5 class="modal-title fw-bold">Withdraw Points</h5>
+                            <h5 class="modal-title fw-bold">Withdraw Wallet1</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form id="withdrawForm" action="{{ route('user.withdraw.points') }}" method="POST">
@@ -85,7 +85,7 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Available Points</label>
+                                    <label class="form-label fw-bold">Available Wallet1</label>
                                     <input type="text" class="form-control-plaintext" value="{{ number_format($points) }}" readonly>
                                 </div>
                                 
@@ -234,12 +234,12 @@
                 </div>
             @endif
 
-            <!-- Points Transactions -->
+            <!-- Wallet1 Transactions -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 py-2">
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <h5 class="mb-0 fw-bold">
-                            <i class="fas fa-exchange-alt me-2 text-primary"></i> Points Transactions
+                            <i class="fas fa-exchange-alt me-2 text-primary"></i> Wallet1 Transactions
                         </h5>
 
                     </div>
@@ -286,7 +286,7 @@
                                     <tr>
                                         <th class="ps-4">Date</th>
                                         <th>Description</th>
-                                        <th class="text-end pe-4">Points</th>
+                                        <th class="text-end pe-4">Wallet1</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -304,12 +304,12 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Points Transactions Pagination -->
+                        <!-- Wallet1 Transactions Pagination -->
                         <div class="d-flex justify-content-between align-items-center p-3">
                             <div class="text-muted">
                                 Showing {{ $pointsTransactions->firstItem() }} to {{ $pointsTransactions->lastItem() }} of {{ $pointsTransactions->total() }} entries
                             </div>
-                            <nav aria-label="Points transactions pagination">
+                            <nav aria-label="Wallet1 transactions pagination">
                                 <ul class="pagination mb-0">
                                     {{ $pointsTransactions->withQueryString()->onEachSide(1)->links('pagination::bootstrap-4') }}
                                 </ul>
@@ -328,7 +328,7 @@
             </div>
         </div>
 
-        <!-- Loyalty Tab -->
+        <!-- Wallet2 Tab -->
         <div class="tab-pane fade" id="loyalty" role="tabpanel">
             <div class="row mb-4">
                 <div class="col-md-6">
@@ -336,7 +336,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="card-title text-muted mb-2">LOYALTY BALANCE</h6>
+                                    <h6 class="card-title text-muted mb-2">Wallet2 Balance</h6>
                                     <h2 class="mb-0 fw-bold text-info">{{ number_format($loyalty) }}</h2>
                                 </div>
                                 <div class="bg-info bg-opacity-10 p-3 rounded-circle">
@@ -349,16 +349,16 @@
                 
                 <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center">
                     <div class="alert alert-info mb-0 w-100">
-                        <i class="fas fa-info-circle me-2"></i> Loyalty points can be redeemed for exclusive rewards
+                        <i class="fas fa-info-circle me-2"></i> Wallet2 points can be redeemed for exclusive rewards
                     </div>
                 </div>
             </div>
 
-            <!-- Loyalty Transactions -->
+            <!-- Wallet2 Transactions -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0 fw-bold">
-                        <i class="fas fa-exchange-alt me-2 text-primary"></i> Loyalty Transactions
+                        <i class="fas fa-exchange-alt me-2 text-primary"></i> Wallet2 Transactions
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -369,7 +369,7 @@
                                     <tr>
                                         <th class="ps-4">Date</th>
                                         <th>Description</th>
-                                        <th class="text-end pe-4">Points</th>
+                                        <th class="text-end pe-4">Wallet1</th>
                                     </tr>
                                 </thead>
                                 <tbody>

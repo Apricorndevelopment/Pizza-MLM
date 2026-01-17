@@ -553,7 +553,7 @@
             </div>
 
             <div class="row">
-                <!-- Power Leg Points Card -->
+                <!-- Power Leg Wallet1 Card -->
                 <div class="col-md-6 mb-4">
                     <div class="dashboard-card power-leg-card shadow-sm"
                         style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
@@ -561,7 +561,7 @@
                             <div class="card-icon">
                                 <i class="fas fa-chart-line"></i>
                             </div>
-                            <p class="card-title">Power Leg Points</p>
+                            <p class="card-title">Power Leg Wallet1</p>
                             <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->left_business) }}</h2>
                             <hr class="card-divider">
                             <p class="card-description">Your stronger leg's accumulated business volume</p>
@@ -569,14 +569,14 @@
                     </div>
                 </div>
 
-                <!-- Weaker Leg Points Card -->
+                <!-- Weaker Leg Wallet1 Card -->
                 <div class="col-md-6 mb-4">
                     <div class="dashboard-card weaker-leg-card shadow-sm">
                         <div class="card-content">
                             <div class="card-icon">
                                 <i class="fas fa-chart-bar"></i>
                             </div>
-                            <p class="card-title">Weaker Leg Points</p>
+                            <p class="card-title">Weaker Leg Wallet1</p>
                             <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->right_business) }}</h2>
                             <hr class="card-divider">
                             <p class="card-description">Your weaker leg's total business volume</p>

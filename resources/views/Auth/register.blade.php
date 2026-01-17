@@ -698,42 +698,6 @@
                 }
             });
 
-            // Check parent ID
-            $('#parent_id').on('blur', function() {
-                const parentId = $(this).val();
-                const messageDiv = $('#parent-message');
-
-                if (parentId) {
-                    $.ajax({
-                        url: '/check-parent/' + parentId,
-                        type: 'GET',
-                        beforeSend: function() {
-                            messageDiv.html('<span class="text-blue-500 animate-pulse">Checking parent...</span>');
-                        },
-                        success: function(response) {
-                            if (response.exists) {
-                                messageDiv.html(`
-                                    <span class="text-green-600 font-semibold flex items-center">
-                                        <i class="bi bi-check-circle-fill mr-2"></i>
-                                        Parent found: <strong class="ml-1">${response.name}</strong>
-                                    </span>
-                                `);
-                            } else {
-                                messageDiv.html(`
-                                    <span class="text-red-500 font-semibold flex items-center">
-                                        <i class="bi bi-x-circle-fill mr-2"></i>
-                                        Parent not found
-                                    </span>
-                                `);
-                            }
-                        },
-                        error: function() {
-                            messageDiv.html('<span class="text-red-500">Error checking parent</span>');
-                        }
-                    });
-                }
-            });
-
             // Check email availability
             $('#email').on('blur', function() {
                 const email = $(this).val();

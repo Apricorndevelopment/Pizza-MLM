@@ -6,10 +6,10 @@ use App\Models\Admin;
 use App\Models\Gallery;
 use App\Models\News;
 use App\Models\Package1;
-use App\Models\Package2;
-use App\Models\Package2Purchase;
+use App\Models\ProductPackage;
+use App\Models\ProductPackagePurchase;
 use App\Models\PackageMonthlyDistribution;
-use App\Models\PointsTransaction;
+use App\Models\Wallet1Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -47,9 +47,9 @@ class AdminController extends Controller
     public function dashboard()
     {
         // $package1Count = Package1::count();
-        // $package2Count = Package2::count();
+        // $package2Count = ProductPackage::count();
         // $userCount = User::count();
-        // $businessCount = Package2Purchase::sum('final_price');
+        // $businessCount = ProductPackagePurchase::sum('final_price');
 
         return view('admin.dashboard');
     }
@@ -403,13 +403,13 @@ class AdminController extends Controller
             $user->level = $this->calculateLevelFromAdmin($admin->auid, $user->ulid);
 
             // Check if user has purchases (paid/unpaid status)
-            $hasPurchases = Package2Purchase::where('user_id', $user->id)
+            $hasPurchases = ProductPackagePurchase::where('user_id', $user->id)
                 ->exists();
             $user->purchase_status = $hasPurchases ? 'paid' : 'unpaid';
 
             // Calculate total purchases if user has any
             if ($hasPurchases) {
-                $user->total_purchases = Package2Purchase::where('user_id', $user->id)
+                $user->total_purchases = ProductPackagePurchase::where('user_id', $user->id)
                     ->sum('final_price');
             } else {
                 $user->total_purchases = 0;
@@ -585,7 +585,7 @@ class AdminController extends Controller
                 foreach ($users as $user) {
                     $user->increment('wallet1_balance', $perUserAmount);
 
-                    PointsTransaction::create([
+                    Wallet1Transaction::create([
                         'user_id' => $user->id,
                         'user_ulid' => $user->ulid,
                         'points' => $perUserAmount,
@@ -599,7 +599,7 @@ class AdminController extends Controller
 
     protected function distributeToPackageBuyers($finalProfit, $profitSharePercentage, $year)
     {
-        $packageBuyers = Package2Purchase::where('profit_share', 1)
+        $packageBuyers = ProductPackagePurchase::where('profit_share', 1)
             ->with('user')
             ->get();
 
@@ -635,7 +635,7 @@ class AdminController extends Controller
                     $user = $buyer['user'];
                     $user->increment('wallet1_balance', $userAmount);
 
-                    PointsTransaction::create([
+                    Wallet1Transaction::create([
                         'user_id' => $user->id,
                         'user_ulid' => $user->ulid,
                         'points' => $userAmount,

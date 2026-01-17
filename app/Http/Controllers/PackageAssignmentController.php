@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Gallery;
 use App\Models\MaturityMonthlyDeduction;
 use App\Models\Package1;
-use App\Models\Package2;
-use App\Models\Package2Details;
-use App\Models\Package2Purchase;
+use App\Models\ProductPackage;
+use App\Models\ProductPackageDetails;
+use App\Models\ProductPackagePurchase;
 use App\Models\User;
 use App\Models\PackageTransaction;
-use App\Models\PointsTransaction;
+use App\Models\Wallet1Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +74,7 @@ class PackageAssignmentController extends Controller
 
     public function viewUserPackagePurchases()
     {
-        $purchases = Package2Purchase::with(['user', 'package2', 'rateDetail'])
+        $purchases = ProductPackagePurchase::with(['user', 'package2', 'rateDetail'])
             ->orderBy('purchased_at', 'desc')
             ->paginate(10);
 
@@ -90,7 +90,7 @@ class PackageAssignmentController extends Controller
         $userId = Auth::id();
 
         // Get all package transactions for this user with package details
-        $regularPackages = Package2Purchase::with(['package2', 'rateDetail'])
+        $regularPackages = ProductPackagePurchase::with(['package2', 'rateDetail'])
             ->where('user_id', $userId)
             ->where('maturity', 0)
             ->latest()
@@ -108,7 +108,7 @@ class PackageAssignmentController extends Controller
     {
         $userId = Auth::id();
 
-        $maturityPackages = Package2Purchase::with(['package2', 'rateDetail','maturityMonthlyDeductions'])
+        $maturityPackages = ProductPackagePurchase::with(['package2', 'rateDetail','maturityMonthlyDeductions'])
             ->where('user_id', $userId)
             ->where('maturity', 1)
             ->where('payout_processed', 0)
@@ -142,7 +142,7 @@ class PackageAssignmentController extends Controller
             $user->decrement('wallet1_balance', $totalDue);
 
             // Record points transaction
-            PointsTransaction::create([
+            Wallet1Transaction::create([
                 'user_id' => Auth::id(),
                 'user_ulid' => Auth::user()->ulid,
                 'points' => -$totalDue,
@@ -160,7 +160,7 @@ class PackageAssignmentController extends Controller
 
     public function showInvoice($id)
     {
-        $transaction = Package2Purchase::findOrFail($id);
+        $transaction = ProductPackagePurchase::findOrFail($id);
         $breadcrumbs = [
             ['title' => 'Package', 'url' => route('user.packages')],
             ['title' => 'Invoices', 'url' => route('user.packages')],
@@ -172,7 +172,7 @@ class PackageAssignmentController extends Controller
 
     public function showMaturityInvoice($id)
     {
-        $transaction = Package2Purchase::findOrFail($id);
+        $transaction = ProductPackagePurchase::findOrFail($id);
         $breadcrumbs = [
             ['title' => 'Package', 'url' => route('user.packages')],
             ['title' => 'Monthly Invoice', 'url' => route('user.maturity.packages')],
@@ -184,7 +184,7 @@ class PackageAssignmentController extends Controller
 
     public function showEndorseForm($id)
     {
-        $maturityPackage = Package2Purchase::with('package2')->findOrFail($id);
+        $maturityPackage = ProductPackagePurchase::with('package2')->findOrFail($id);
 
         // Check if the package belongs to the authenticated user and is a maturity package
         if ($maturityPackage->user_id !== Auth::id() || $maturityPackage->maturity != 1) {
@@ -192,7 +192,7 @@ class PackageAssignmentController extends Controller
         }
 
         // Get regular packages (maturity = 0)
-        $regularPackages = Package2::where('maturity', 0)->get();
+        $regularPackages = ProductPackage::where('maturity', 0)->get();
 
         $breadcrumbs = [
             ['title' => 'Packages', 'url' => route('user.packages')],
@@ -213,10 +213,10 @@ class PackageAssignmentController extends Controller
 
         DB::beginTransaction();
         try {
-            $maturityPackage = Package2Purchase::findOrFail($request->maturity_package_id);
-            $maturityPackageDetails = Package2::findOrFail($maturityPackage->package2_id);
-            $regularPackage = Package2::findOrFail($request->regular_package_id);
-            $rateDetail = Package2Details::findOrFail($request->package_detail_id);
+            $maturityPackage = ProductPackagePurchase::findOrFail($request->maturity_package_id);
+            $maturityPackageDetails = ProductPackage::findOrFail($maturityPackage->package2_id);
+            $regularPackage = ProductPackage::findOrFail($request->regular_package_id);
+            $rateDetail = ProductPackageDetails::findOrFail($request->package_detail_id);
 
             // Check authorization
             if ($maturityPackage->user_id !== Auth::id() || $maturityPackage->maturity != 1) {
@@ -255,7 +255,7 @@ class PackageAssignmentController extends Controller
     {
         $datePart = now()->format('Ymd');
         $prefix = "INV-{$datePart}-";
-        $last = Package2Purchase::where('invoice_no', 'like', "{$prefix}%")
+        $last = ProductPackagePurchase::where('invoice_no', 'like', "{$prefix}%")
             ->orderBy('invoice_no', 'desc')
             ->first();
 
@@ -271,7 +271,7 @@ class PackageAssignmentController extends Controller
     {
         $datePart = now()->format('Ymd');
         $prefix = "GEOBED-{$datePart}-";
-        $last = Package2Purchase::where('bed_no', 'like', "{$prefix}%")
+        $last = ProductPackagePurchase::where('bed_no', 'like', "{$prefix}%")
             ->orderBy('bed_no', 'desc')
             ->first();
 

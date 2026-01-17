@@ -60,7 +60,7 @@ class MaturityMonthlyDeduction extends Model
      */
     public function packagePurchase(): BelongsTo
     {
-        return $this->belongsTo(Package2Purchase::class, 'package2_purchase_id');
+        return $this->belongsTo(ProductPackagePurchase::class, 'package2_purchase_id');
     }
 
 }

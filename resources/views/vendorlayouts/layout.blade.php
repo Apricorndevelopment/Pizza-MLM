@@ -146,21 +146,21 @@
             <nav class="flex-1 overflow-y-auto no-scrollbar py-4 scroll-smooth">
                 <div class="px-3 space-y-1">
                     <!-- Dashboard -->
-                    <a href="{{ route('user.dashboard') }}"
+                    <a href="{{ route('vendor.dashboard') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-speedometer2 mr-3 text-lg"></i>
-                        <span class="font-medium">Dashboard</span>
+                        <span class="font-medium">Vendor Dashboard</span>
                     </a>
 
                     <!-- Profile -->
-                    <a href="{{ route('user.profile') }}"
+                    {{-- <a href="#"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-person mr-3 text-lg"></i>
                         <span class="font-medium">My Profile</span>
-                    </a>
+                    </a> --}}
 
                     <!-- Wallet -->
-                    <div class="menu-group">
+                    {{-- <div class="menu-group">
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
                             <div class="flex items-center">
@@ -179,93 +179,13 @@
                                 Transfer Wallet
                             </a>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-wallet2 mr-3 text-lg"></i>
-                                <span class="font-medium">Packages</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
-                            <a href="{{ route('package2.purchase') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Purchase Package
-                            </a>
-                            <a href="{{ route('user.packages') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Invoices
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- My Network -->
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-diagram-3 mr-3 text-lg"></i>
-                                <span class="font-medium">My Network</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
-                            <a href="{{ route('user.view.userTree') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Network Tree
-                            </a>
-                            <a href="{{ route('user.network.summary') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Network Summary
-                            </a>
-                            <a href="{{ route('user.direct.team') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Direct Team
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-headset mr-3 text-lg"></i>
-                                <span class="font-medium">Incentives</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
-                            <a href="{{ route('user.commissions.level1') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Direct Commissions
-                            </a>
-                            <a href="{{ route('user.commissions.level2') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Network Bonus
-                            </a>
-                            <a href="{{ route('user.reports.level-income') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Level Income
-                            </a>
-                            <a href="{{ route('user.rewards.rankRewards', Auth::user()->ulid) }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Reward Income
-                            </a>
-                            <a href="{{ route('user.yearly.profits') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                Yearly Profits
-                            </a>
-                        </div>
-                    </div>
-
-                    <a href="{{ route('logout') }}"
+                    {{-- <a href="{{ route('logout') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-person mr-3 text-lg"></i>
                         <span class="font-medium">Logout</span>
-                    </a>
+                    </a> --}}
                 </div>
             </nav>
 
@@ -300,7 +220,7 @@
                     <button id="sidebar-toggle" class="lg:hidden text-gray-500 hover:text-gray-700 mr-4">
                         <i class="bi bi-list text-xl"></i>
                     </button>
-                    <h1 class="text-lg font-semibold text-gray-800" id="page-title">Dashboard</h1>
+                    <h1 class="text-lg font-semibold text-gray-800" id="page-title">Vendor Dashboard</h1>
                 </div>
 
                 <!-- Right side -->
@@ -328,7 +248,7 @@
                         <!-- Dropdown Menu -->
                         <div id="profile-dropdown-menu"
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden">
-                            <a href="{{ route('user.profile') }}"
+                            {{-- <a href="{{ route('user.profile') }}"
                                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
                                 <i class="bi bi-person-circle mr-3 text-gray-500"></i>
                                 <span>Profile</span>
@@ -337,7 +257,7 @@
                                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
                                 <i class="bi bi-wallet2 mr-3 text-gray-500"></i>
                                 <span>Wallet</span>
-                            </a>
+                            </a> --}}
                             <div class="border-t border-gray-200 my-2"></div>
                             <a href="{{ route('logout') }}"
                                 class="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
@@ -351,7 +271,7 @@
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-                @section('container')
+                @section('content')
                 @show
             </main>
         </div>

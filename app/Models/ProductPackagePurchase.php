@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Package2Purchase extends Model
+class ProductPackagePurchase extends Model
 {
     protected $table = 'package2_purchases';
     protected $fillable = [
@@ -40,12 +40,12 @@ class Package2Purchase extends Model
 
     public function package2()
     {
-        return $this->belongsTo(Package2::class);
+        return $this->belongsTo(ProductPackage::class);
     }
 
     public function rateDetail()
     {
-        return $this->belongsTo(Package2Details::class, 'package2_detail_id');
+        return $this->belongsTo(ProductPackageDetails::class, 'package2_detail_id');
     }
 
     public function maturityMonthlyDeductions()

@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Gallery;
 use App\Models\News;
-use App\Models\Package2Purchase;
+use App\Models\ProductPackagePurchase;
 use App\Models\PasswordOtp;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -121,15 +121,14 @@ class AuthController extends Controller
                 'regex:/[!@#$%^&*(),.?":{}|<>]/',
             ],
             'sponsor_id' => 'required|string|max:50|exists:users,ulid',
-            'parent_id' => 'nullable|string|max:50|exists:users,ulid',
         ], [
             'password.regex' => 'Please use a strong password with at least one special character.',
         ]);
 
-        $customUlid = 'AH' . rand(100000, 999999);
+        $customUlid = 'AH' . rand(1000000, 9999999);
 
         while (User::where('ulid', $customUlid)->exists()) {
-            $customUlid = 'AH' . rand(100000, 999999);
+            $customUlid = 'AH' . rand(1000000, 9999999);
         }
         $plainPassword = $request->password;
         $user = User::create([
@@ -142,6 +141,7 @@ class AuthController extends Controller
             'password' => Hash::make($plainPassword),
             'role' => 'user',
             'status' => 'inactive',
+            'wallet2_balance' => 50,
         ]);
 
         Mail::to($user->email)->send(new UserRegisteredMail($user, $plainPassword));
@@ -158,10 +158,11 @@ class AuthController extends Controller
     {
         return view('Auth.login');
     }
+
     // public function logindetails(Request $request)
     // {
     //     $request->validate([
-    //         'email' => 'required|email',
+    //         'email' => 'required',
     //         'password' => 'required',
     //     ]);
 
@@ -174,24 +175,32 @@ class AuthController extends Controller
     //             session(['admin_logged_in' => true]);
     //             return redirect()->route('admin.dashboard');
     //         } else {
-    //             return back()->withErrors(['email' => 'Invalid admin credentials']);
+    //             return back()->with('error', 'Login details are wrong.');
     //         }
     //     }
 
-    //     // User login
-    //     if (Auth::attempt(['email' => $email, 'password' => $password])) {
+    //     // Check if input is email or ULID
+    //     $fieldType = filter_var($email, FILTER_VALIDATE_EMAIL) ? 'email' : 'ulid';
+
+    //     if (Auth::attempt([$fieldType => $email, 'password' => $password])) {
     //         $request->session()->regenerate();
 
     //         if (Auth::user()->role === 'user') {
-    //             return redirect()->route('user.dashboard');
+    //             if (Auth::user()->role === 'user') {
+    //                 return redirect()->route('user.dashboard')
+    //                     ->with('welcome_popup', true)
+    //                     ->with('welcome_name', Auth::user()->name);
+    //             }
     //         } else {
     //             Auth::logout();
-    //             return back()->withErrors(['email' => 'Invalid user role']);
+    //             return back()->with('error', 'Login details are wrong.');
     //         }
     //     }
 
-    //     return back()->withErrors(['email' => 'Invalid login credentials']);
+
+    //     return back()->with('error', 'Login details are wrong.');
     // }
+
     public function logindetails(Request $request)
     {
         $request->validate([
@@ -202,6 +211,7 @@ class AuthController extends Controller
         $email = $request->email;
         $password = $request->password;
 
+        // 1. Admin Login Check
         if ($request->is('admin/login')) {
             if (Auth::attempt(['email' => $email, 'password' => $password, 'role' => 'admin'])) {
                 $request->session()->regenerate();
@@ -212,24 +222,35 @@ class AuthController extends Controller
             }
         }
 
+        // 2. User & Vendor Login Check
         // Check if input is email or ULID
         $fieldType = filter_var($email, FILTER_VALIDATE_EMAIL) ? 'email' : 'ulid';
 
         if (Auth::attempt([$fieldType => $email, 'password' => $password])) {
             $request->session()->regenerate();
+            $user = Auth::user(); // Logged in user ka data lein
 
-            if (Auth::user()->role === 'user') {
-                if (Auth::user()->role === 'user') {
+            if ($user->role === 'user') {
+
+                // === MAIN LOGIC CHANGE HERE ===
+
+                if ($user->is_vendor == 1) {
+                    // अगर is_vendor 1 है, तो Vendor Dashboard पर भेजें
+                    return redirect()->route('vendor.dashboard');
+                } else {
+                    // अगर is_vendor 0 है, तो User Dashboard पर भेजें
                     return redirect()->route('user.dashboard')
                         ->with('welcome_popup', true)
-                        ->with('welcome_name', Auth::user()->name);
+                        ->with('welcome_name', $user->name);
                 }
+
+                // ==============================
+
             } else {
                 Auth::logout();
                 return back()->with('error', 'Login details are wrong.');
             }
         }
-
 
         return back()->with('error', 'Login details are wrong.');
     }
@@ -323,7 +344,7 @@ class AuthController extends Controller
         }
 
         // Purchase Amount
-        $purchaseAmount = Package2Purchase::where('user_id', $user->id)->sum('final_price');
+        $purchaseAmount = ProductPackagePurchase::where('user_id', $user->id)->sum('final_price');
 
         // Level Calculation (ULID-based)
         $level = $this->calculateLevel($authUser->ulid, $user->ulid);
@@ -355,7 +376,7 @@ class AuthController extends Controller
         }
 
         // Purchase Amount
-        $purchaseAmount = Package2Purchase::where('user_id', $user->id)->sum('final_price');
+        $purchaseAmount = ProductPackagePurchase::where('user_id', $user->id)->sum('final_price');
 
         return response()->json([
             'id' => $user->id,

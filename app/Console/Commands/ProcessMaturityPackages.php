@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Package2Purchase;
-use App\Models\PointsTransaction;
+use App\Models\ProductPackagePurchase;
+use App\Models\Wallet1Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ class ProcessMaturityPackages extends Command
         $this->info("Processing maturity package payouts as of: " . $currentDate->format('Y-m-d H:i:s'));
 
         // Get maturity packages that are exactly 3 years old and haven't been paid out yet
-        $maturityPackages = Package2Purchase::where('maturity', 1)
+        $maturityPackages = ProductPackagePurchase::where('maturity', 1)
             ->where('payout_processed', 0) // Not paid out yet
             ->where('purchased_at', '<=', $currentDate->copy()->subYears(3))
             ->with('user')
@@ -49,7 +49,7 @@ class ProcessMaturityPackages extends Command
                 $package->user->increment('wallet1_balance', $payoutAmount);
 
                 // Record points transaction
-                PointsTransaction::create([
+                Wallet1Transaction::create([
                     'user_id' => $package->user->id,
                     'user_ulid' => $package->user->ulid,
                     'points' => $payoutAmount,

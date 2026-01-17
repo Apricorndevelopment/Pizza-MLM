@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Commission;
 use App\Models\LevelIncome;
-use App\Models\LoyaltyTransaction;
+use App\Models\Wallet2Transaction;
 use App\Models\MoneyWithdrawl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Package1;
-use App\Models\Package2;
-use App\Models\Package2Details;
-use App\Models\Package2Purchase;
+use App\Models\ProductPackage;
+use App\Models\ProductPackageDetails;
+use App\Models\ProductPackagePurchase;
 use App\Models\PackageMonthlyDistribution;
 use App\Models\PackageTransaction;
-use App\Models\PointsTransaction;
+use App\Models\Wallet1Transaction;
 use App\Models\RoyaltyRewardsIncome;
 use App\Models\User;
 use Carbon\Carbon;
@@ -27,6 +27,10 @@ class UserController extends Controller
 {
     public function dashboard()
     {
+        if (Auth::user()->is_vendor == 1) {
+            return redirect()->route('vendor.dashboard');
+        }
+        
         $referralCommission = Commission::where('user_id', Auth::id())
             ->where('level', 1)
             ->sum('commission');
@@ -43,12 +47,12 @@ class UserController extends Controller
 
         $rewardIncome = RoyaltyRewardsIncome::where('user_id', Auth::id())->sum('points');
 
-        $royaltyRewards = PointsTransaction::where('user_id', Auth::id())
+        $royaltyRewards = Wallet1Transaction::where('user_id', Auth::id())
             ->where(function ($query) {
                 $query->where('notes', 'like', '%yearly package profit share%')
                     ->orWhere('notes', 'like', '%yearly profit as%');
             })
-            ->sum('points');
+            ->sum('wallet1');
 
         $totalIncome = $referralCommission + $networkCommission + $monthlyIncome + $levelIncome + $rewardIncome + $royaltyRewards;
 
@@ -78,7 +82,7 @@ class UserController extends Controller
      */
     private function getBusinessForUlids($ulids, $startDate = null, $endDate = null)
     {
-        $query = Package2Purchase::whereIn('ulid', $ulids);
+        $query = ProductPackagePurchase::whereIn('ulid', $ulids);
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -112,7 +116,7 @@ class UserController extends Controller
 
                     $totalBusiness = $this->getBusinessForUlids($allUlids, $dayStart, $dayEnd);
 
-                    $labels[] = $date->format('d M'); 
+                    $labels[] = $date->format('d M');
                     $data[] = $totalBusiness;
                 }
                 break;
@@ -488,7 +492,7 @@ class UserController extends Controller
             ->where('id', $user->id)
             ->decrement('wallet1_balance', $totalCost);
 
-        PointsTransaction::create([
+        Wallet1Transaction::create([
             'user_id' => $user->id,
             'user_ulid' => $user->ulid,
             'points' => -$totalCost,
@@ -506,7 +510,7 @@ class UserController extends Controller
 
     public function showPurchaseForm()
     {
-        $packages = Package2::with('details')->get();
+        $packages = ProductPackage::with('details')->get();
         $breadcrumbs = [
             ['title' => 'Package', 'url' => route('package2.purchase')],
             ['title' => 'Buy Package', 'url' => route('package2.purchase')]
@@ -523,8 +527,8 @@ class UserController extends Controller
         ]);
 
         $user = Auth::user();
-        $package = Package2::findOrFail($request->package2_id);
-        $rateDetail = Package2Details::findOrFail($request->package2_detail_id);
+        $package = ProductPackage::findOrFail($request->package2_id);
+        $rateDetail = ProductPackageDetails::findOrFail($request->package2_detail_id);
 
         $finalPrice = $package->price * $request->quantity;
 
@@ -539,7 +543,7 @@ class UserController extends Controller
             $bedNumber = $this->getNextBedNumber();
 
             // Create package purchase record
-            $purchase = Package2Purchase::create([
+            $purchase = ProductPackagePurchase::create([
                 'user_id' => $user->id,
                 'ulid' => $user->ulid,
                 'package2_id' => $package->id,
@@ -564,7 +568,7 @@ class UserController extends Controller
                 ->decrement('wallet1_balance', $finalPrice);
 
             // Record points transaction
-            PointsTransaction::create([
+            Wallet1Transaction::create([
                 'user_id' => $user->id,
                 'user_ulid' => $user->ulid,
                 'points' => -$finalPrice,
@@ -591,7 +595,7 @@ class UserController extends Controller
     {
         $datePart = now()->format('Ymd');
         $prefix = "INV-{$datePart}-";
-        $last = Package2Purchase::where('invoice_no', 'like', "{$prefix}%")
+        $last = ProductPackagePurchase::where('invoice_no', 'like', "{$prefix}%")
             ->orderBy('invoice_no', 'desc')
             ->first();
 
@@ -607,7 +611,7 @@ class UserController extends Controller
     {
         $datePart = now()->format('Ymd');
         $prefix = "GEOBED-{$datePart}-";
-        $last = Package2Purchase::where('bed_no', 'like', "{$prefix}%")
+        $last = ProductPackagePurchase::where('bed_no', 'like', "{$prefix}%")
             ->orderBy('bed_no', 'desc')
             ->first();
 
@@ -903,7 +907,7 @@ class UserController extends Controller
         if (!$user) return 0;
 
         // Sum own purchases
-        $ownBusiness = Package2Purchase::where('ulid', $ulid)->sum('final_price');
+        $ownBusiness = ProductPackagePurchase::where('ulid', $ulid)->sum('final_price');
 
         // Get direct downline
         $downlines = User::where('sponsor_id', $ulid)->get();
@@ -930,8 +934,8 @@ class UserController extends Controller
         $withdrawalsQuery = MoneyWithdrawl::where('user_id', $user->id);
         $withdrawals = $withdrawalsQuery->latest()->paginate(5, ['*'], 'withdrawals_page');
 
-        // Points Transactions with filters and pagination
-        $pointsQuery = PointsTransaction::where('user_id', $user->id);
+        // Wallet1 Transactions with filters and pagination
+        $pointsQuery = Wallet1Transaction::where('user_id', $user->id);
 
         // Apply filters if requested
         if ($request->has('points_type') && !empty($request->points_type)) {
@@ -952,8 +956,8 @@ class UserController extends Controller
 
         $pointsTransactions = $pointsQuery->latest()->paginate(10, ['*'], 'points_page');
 
-        // Loyalty Transactions (keep your existing logic)
-        $loyaltyTransactions = LoyaltyTransaction::where('user_id', $user->id)
+        // Wallet2 Transactions (keep your existing logic)
+        $loyaltyTransactions = Wallet2Transaction::where('user_id', $user->id)
             ->latest()
             ->take(10)
             ->get();
@@ -1111,7 +1115,7 @@ class UserController extends Controller
         $user = Auth::user();
 
         // Get rank-based profits
-        $rankProfits = PointsTransaction::where('user_id', $user->id)
+        $rankProfits = Wallet1Transaction::where('user_id', $user->id)
             ->where('notes', 'like', '%yearly profit as %')
             ->orderBy('created_at', 'desc')
             ->get()
@@ -1133,7 +1137,7 @@ class UserController extends Controller
             ->groupBy('year');
 
         // Get user's packages eligible for profit share
-        $eligiblePackages = Package2Purchase::where('user_id', $user->id)
+        $eligiblePackages = ProductPackagePurchase::where('user_id', $user->id)
             ->where('profit_share', 1)
             ->get();
 

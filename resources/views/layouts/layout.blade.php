@@ -201,7 +201,7 @@
                         <div class="sidebar-submenu pl-11 mt-1 space-y-1">
                             <a href="{{ route('admin.wallet') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                Provide Points
+                                Transfer Money
                             </a>
                             <a href="{{ route('admin.withdrawls.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LoyaltyTransaction;
+use App\Models\Wallet2Transaction;
 use App\Models\MoneyWithdrawl;
 use App\Models\User;
-use App\Models\PointsTransaction;
+use App\Models\Wallet1Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,47 +16,72 @@ class WalletController extends Controller
 
     public function index(Request $request)
     {
-        // Points Transactions with filters
-        $pointsQuery = PointsTransaction::with(['user', 'admin'])
+        // --- Wallet 1 Logic ---
+        $wallet1Query = Wallet1Transaction::with(['user', 'admin'])
             ->where('admin_id', 1);
 
-        // Apply filters if requested
-        if ($request->has('points_ulid') && !empty($request->points_ulid)) {
-            $pointsQuery->whereHas('user', function ($q) use ($request) {
-                $q->where('ulid', 'like', '%' . $request->points_ulid . '%');
+        // Wallet 1 Filters
+        if ($request->has('wallet1_ulid') && !empty($request->wallet1_ulid)) {
+            $wallet1Query->whereHas('user', function ($q) use ($request) {
+                $q->where('ulid', 'like', '%' . $request->wallet1_ulid . '%');
             });
         }
 
-        if ($request->has('points_type') && !empty($request->points_type)) {
-            if ($request->points_type === 'credit') {
-                $pointsQuery->where('points', '>=', 0);
-            } elseif ($request->points_type === 'debit') {
-                $pointsQuery->where('points', '<', 0);
+        if ($request->has('wallet1_type') && !empty($request->wallet1_type)) {
+            if ($request->wallet1_type === 'credit') {
+                $wallet1Query->where('wallet1', '>=', 0);
+            } elseif ($request->wallet1_type === 'debit') {
+                $wallet1Query->where('wallet1', '<', 0);
             }
         }
 
-        if ($request->has('points_start_date') && !empty($request->points_start_date)) {
-            $pointsQuery->whereDate('created_at', '>=', $request->points_start_date);
+        if ($request->has('wallet1_start_date') && !empty($request->wallet1_start_date)) {
+            $wallet1Query->whereDate('created_at', '>=', $request->wallet1_start_date);
         }
 
-        if ($request->has('points_end_date') && !empty($request->points_end_date)) {
-            $pointsQuery->whereDate('created_at', '<=', $request->points_end_date);
+        if ($request->has('wallet1_end_date') && !empty($request->wallet1_end_date)) {
+            $wallet1Query->whereDate('created_at', '<=', $request->wallet1_end_date);
         }
 
-        $pointsTransactions = $pointsQuery->latest()->paginate(10, ['*'], 'points_page');
+        // Pagination for Wallet 1 (Page Name: wallet1_page)
+        $wallet1Transactions = $wallet1Query->latest()->paginate(10, ['*'], 'wallet1_page');
 
-        // Loyalty Transactions (keep your existing logic)
-        $loyaltyTransactions = LoyaltyTransaction::with(['user', 'admin'])
-            ->latest()
-            ->take(10)
-            ->get();
 
-        return view('admin.wallet.viewwallet', compact('pointsTransactions', 'loyaltyTransactions'));
+        // --- Wallet 2 Logic ---
+        $wallet2Query = Wallet2Transaction::with(['user', 'admin'])->where('admin_id', 1); // Uncomment if Wallet 2 also needs admin_id check
+
+        // Wallet 2 Filters
+        if ($request->has('wallet2_ulid') && !empty($request->wallet2_ulid)) {
+            $wallet2Query->whereHas('user', function ($q) use ($request) {
+                $q->where('ulid', 'like', '%' . $request->wallet2_ulid . '%');
+            });
+        }
+
+        if ($request->has('wallet2_type') && !empty($request->wallet2_type)) {
+            if ($request->wallet2_type === 'credit') {
+                $wallet2Query->where('wallet2', '>=', 0);
+            } elseif ($request->wallet2_type === 'debit') {
+                $wallet2Query->where('wallet2', '<', 0);
+            }
+        }
+
+        if ($request->has('wallet2_start_date') && !empty($request->wallet2_start_date)) {
+            $wallet2Query->whereDate('created_at', '>=', $request->wallet2_start_date);
+        }
+
+        if ($request->has('wallet2_end_date') && !empty($request->wallet2_end_date)) {
+            $wallet2Query->whereDate('created_at', '<=', $request->wallet2_end_date);
+        }
+
+        // Pagination for Wallet 2 (Page Name: wallet2_page)
+        $wallet2Transactions = $wallet2Query->latest()->paginate(10, ['*'], 'wallet2_page');
+
+        return view('admin.wallet.viewwallet', compact('wallet1Transactions', 'wallet2Transactions'));
     }
-    
+
     public function viewAllTransactions(Request $request)
     {
-        $query = PointsTransaction::with(['user', 'admin'])
+        $query = Wallet1Transaction::with(['user', 'admin'])
             ->latest();
 
         // Add search functionality
@@ -67,9 +92,9 @@ class WalletController extends Controller
             });
         }
 
-        $pointsTransactions = $query->paginate(15);
+        $wallet1Transactions = $query->paginate(15);
 
-        return view('admin.wallet.allTransaction', compact('pointsTransactions'));
+        return view('admin.wallet.allTransaction', compact('wallet1Transactions'));
     }
 
     public function getUserByUlid(Request $request)
@@ -94,11 +119,11 @@ class WalletController extends Controller
         ]);
     }
 
-    public function addPoints(Request $request)
+    public function addWallet1(Request $request)
     {
         $request->validate([
             'ulid' => 'required',
-            'points' => 'required|numeric',
+            'wallet1' => 'required|numeric',
             'notes' => 'nullable|string'
         ]);
 
@@ -106,25 +131,26 @@ class WalletController extends Controller
 
         $adminId = Auth::guard('admin')->id();
 
-        PointsTransaction::create([
+        Wallet1Transaction::create([
             'user_id' => $user->id,
-            'points' => $request->points,
+            'user_ulid' => $user->ulid,
+            'wallet1' => $request->wallet1,
             'notes' => $request->notes,
             'admin_id' => $adminId,
-            'balance' => $user->wallet1_balance + $request->points
+            'balance' => $user->wallet1_balance + $request->wallet1
         ]);
 
-        $user->increment('wallet1_balance', $request->points);
+        $user->increment('wallet1_balance', $request->wallet1);
 
-        return redirect()->back()->with('success', 'Points transaction completed successfully.');
+        return redirect()->back()->with('success', 'Wallet1 transaction completed successfully.');
     }
 
 
-    public function addLoyalty(Request $request)
+    public function addWallet2(Request $request)
     {
         $request->validate([
             'ulid' => 'required',
-            'loyalty' => 'required|numeric',
+            'wallet2' => 'required|numeric',
             'notes' => 'nullable|string'
         ]);
 
@@ -132,21 +158,23 @@ class WalletController extends Controller
 
         $adminId = Auth::guard('admin')->id();
 
-        LoyaltyTransaction::create([
+        Wallet2Transaction::create([
             'user_id' => $user->id,
-            'loyalty' => $request->loyalty,
+            'user_ulid' => $user->ulid,
+            'wallet2' => $request->wallet2,
             'notes' => $request->notes,
-            'admin_id' => $adminId
+            'admin_id' => $adminId,
+            'balance' => $user->wallet2_balance + $request->wallet2
         ]);
 
-        $user->increment('wallet2_balance', $request->loyalty);
+        $user->increment('wallet2_balance', $request->wallet2);
 
-        return redirect()->back()->with('success', 'Loyalty transaction completed successfully.');
+        return redirect()->back()->with('success', 'Wallet2 transaction completed successfully.');
     }
 
 
     // WithdrawalController.php
-    public function withdrawPoints(Request $request)
+    public function withdrawWallet1(Request $request)
     {
         $user = Auth::user();
 
@@ -205,7 +233,7 @@ class WalletController extends Controller
     {
         $withdrawal = MoneyWithdrawl::findOrFail($id);
 
-        // Deduct points from user
+        // Deduct wallet1 from user
         $user = $withdrawal->user;
         $user->decrement('wallet1_balance', $withdrawal->total_amount);
         $user->save();
@@ -230,7 +258,7 @@ class WalletController extends Controller
 
 
 
-    //Transfer Points to Downline User in the user panel
+    //Transfer Wallet1 to Downline User in the user panel
 
     public function showTransferForm()
     {
@@ -239,11 +267,11 @@ class WalletController extends Controller
         $downlineUsers = User::where('sponsor_id', $user->ulid)->get();
 
         $breadcrumbs = [
-            ['title' => 'Wallet', 'url' => route('user.transferPointsForm')],
-            ['title' => 'Transfer Wallet', 'url' => route('user.transferPointsForm')]
+            ['title' => 'Wallet', 'url' => route('user.transferWallet1Form')],
+            ['title' => 'Transfer Wallet', 'url' => route('user.transferWallet1Form')]
         ];
 
-        return view('user.transferPoints', compact('user', 'downlineUsers', 'breadcrumbs'));
+        return view('user.transferWallet1', compact('user', 'downlineUsers', 'breadcrumbs'));
     }
 
     public function searchDownlineUser(Request $request)
@@ -298,11 +326,11 @@ class WalletController extends Controller
         return $this->isInDownline($sponsorUlid, $sponsor);
     }
 
-    public function transferPoints(Request $request)
+    public function transferWallet1(Request $request)
     {
         $request->validate([
             'ulid' => 'required|string',
-            'points' => 'required|numeric|min:1',
+            'wallet1' => 'required|numeric|min:1',
         ]);
 
         $sender = Auth::user();
@@ -313,34 +341,34 @@ class WalletController extends Controller
             return back()->with('error', 'User is not in your downline');
         }
 
-        // Check if sender has enough points
-        if ($sender->wallet1_balance < $request->points) {
-            return back()->with('error', 'Insufficient points balance');
+        // Check if sender has enough wallet1
+        if ($sender->wallet1_balance < $request->wallet1) {
+            return back()->with('error', 'Insufficient Wallet1 Balance');
         }
 
         DB::transaction(function () use ($sender, $receiver, $request) {
             // Deduct from sender
-            PointsTransaction::create([
+            Wallet1Transaction::create([
                 'user_id' => $sender->id,
-                'points' => -$request->points,
+                'wallet1' => -$request->wallet1,
                 'notes' => 'Wallet Point Transfered to ' . $receiver->name . ' (' . $receiver->ulid . ')',
-                'balance' => $sender->wallet1_balance - $request->points
+                'balance' => $sender->wallet1_balance - $request->wallet1
             ]);
             DB::table('users')
                 ->where('id', $sender->id)
-                ->decrement('wallet1_balance', $request->points);
-            // $sender->decrement('wallet1_balance', $request->points);
+                ->decrement('wallet1_balance', $request->wallet1);
+            // $sender->decrement('wallet1_balance', $request->wallet1);
 
             // Add to receiver
-            PointsTransaction::create([
+            Wallet1Transaction::create([
                 'user_id' => $receiver->id,
-                'points' => $request->points,
+                'wallet1' => $request->wallet1,
                 'notes' => 'Recieved Wallet Point from ' . $sender->name . ' (' . $sender->ulid . ')',
-                'balance' => $receiver->wallet1_balance + $request->points
+                'balance' => $receiver->wallet1_balance + $request->wallet1
             ]);
-            $receiver->increment('wallet1_balance', $request->points);
+            $receiver->increment('wallet1_balance', $request->wallet1);
         });
 
-        return back()->with('success', 'Points transferred successfully');
+        return back()->with('success', 'Wallet1 transferred successfully');
     }
 }

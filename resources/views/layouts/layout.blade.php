@@ -159,7 +159,7 @@
                     <a href="{{ route('admin.products.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
                         <i class="fas fa-chart-line mr-3 text-lg"></i>
-                        <span class="font-medium">Manage Products</span>
+                        <span class="font-medium">Vendor Products</span>
                     </a>
 
                     @php

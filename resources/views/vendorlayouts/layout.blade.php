@@ -152,6 +152,12 @@
                         <span class="font-medium">Vendor Dashboard</span>
                     </a>
 
+                    <a href="{{ route('vendor.products.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-speedometer2 mr-3 text-lg"></i>
+                        <span class="font-medium">Vendor Products</span>
+                    </a>
+
                     <!-- Profile -->
                     {{-- <a href="#"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">

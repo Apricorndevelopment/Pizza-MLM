@@ -9,6 +9,7 @@ use App\Models\Gallery;
 use App\Models\News;
 use App\Models\ProductPackagePurchase;
 use App\Models\PasswordOtp;
+use App\Models\UserCoupon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -143,6 +144,33 @@ class AuthController extends Controller
             'status' => 'inactive',
             'wallet2_balance' => 50,
         ]);
+
+        $sponsor = User::where('ulid', $request->sponsor_id)->first();
+
+        UserCoupon::create([
+            'user_id' => $user->id,
+            'user_ulid' => $user->ulid,
+            'coupon_quantity' => 10,
+            'coupon_value' => 10.00 // Fixed value ₹10
+        ]);
+
+        $sponsor = User::where('ulid', $request->sponsor_id)->first();
+
+        if ($sponsor) {
+            $coupon = UserCoupon::where('user_id', $sponsor->id)->first();
+
+            if ($coupon) {
+                $coupon->increment('coupon_quantity', 10);
+            } else {
+                UserCoupon::create([
+                    'user_id' => $sponsor->id,
+                    'user_ulid' => $sponsor->ulid,
+                    'coupon_quantity' => 10,
+                    'coupon_value' => 10.00
+                ]);
+            }
+        }
+
 
         Mail::to($user->email)->send(new UserRegisteredMail($user, $plainPassword));
 

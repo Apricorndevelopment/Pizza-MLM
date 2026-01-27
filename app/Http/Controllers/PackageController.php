@@ -53,6 +53,7 @@ class PackageController extends Controller
             'gst' => 'required|numeric|min:0|max:100',
             'dp' => 'required|numeric|min:0',
             'pv' => 'required|numeric|min:0',
+            'max_coupon_usage' => 'required|integer|min:1',
             'percentage' => 'required|numeric|min:0|max:100',
         ]);
 
@@ -76,6 +77,7 @@ class PackageController extends Controller
             'gst' => $request->gst,
             'dp' => $request->dp,
             'pv' => $request->pv,
+            'max_coupon_usage' => $request->max_coupon_usage,
             'percentage' => $request->percentage,
         ]);
 
@@ -130,6 +132,7 @@ class PackageController extends Controller
             'gst' => 'required|numeric|min:0|max:100',
             'dp' => 'required|numeric|min:0',
             'pv' => 'required|numeric|min:0',
+            'max_coupon_usage' => 'required|integer|min:1',
             'percentage' => 'required|numeric|min:0|max:100',
         ]);
 
@@ -160,6 +163,7 @@ class PackageController extends Controller
             'dp' => $request->dp,
             'pv' => $request->pv,
             'percentage' => $request->percentage,
+            'max_coupon_usage' => $request->max_coupon_usage
         ]);
 
         return redirect()->route('admin.package')->with('success', 'Product updated successfully!');

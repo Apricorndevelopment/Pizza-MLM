@@ -15,6 +15,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\VendorProductController;
 use App\Models\Gallery;
 use App\Models\News;
 use App\Models\ProductPackage;
@@ -124,9 +125,10 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', IsVendor::class])->group(function () {
     // वेंडर का अपना डैशबोर्ड
     Route::get('/vendor-dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
-    
-    // वेंडर के अन्य फीचर्स (Products, Orders etc.)
-    // Route::get('/products', ...);
+   
+   Route::prefix('vendor')->name('vendor.')->group(function () {
+        Route::resource('products', VendorProductController::class);
+    });
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

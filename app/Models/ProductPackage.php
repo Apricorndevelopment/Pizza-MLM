@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class ProductPackage extends Model
 {
     protected $table = 'product-package';
-    protected $fillable = ['product_name', 'product_image', 'description','max_coupon_usage', 'mrp', 'gst', 'dp', 'pv','percentage' ];
+    protected $fillable = ['product_name', 'product_image', 'description','max_coupon_usage', 'mrp', 'gst', 'dp', 'pv','percentage','isVeg' ];
 
     // public $timestamps = false;
 
     // public function details()
     // {
     //     return $this->hasMany(ProductPackageDetails::class, 'package2_id');
-    // }
+    // }    
 
 }

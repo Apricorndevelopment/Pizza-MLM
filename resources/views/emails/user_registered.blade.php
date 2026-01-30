@@ -18,6 +18,7 @@
 
     <ul>
         <li>Username: {{ $user->ulid }}</li>
+        <li>Email: {{ $user->email }}</li>
         <li>Password: {{ $plainPassword }}</li>
     </ul>
 

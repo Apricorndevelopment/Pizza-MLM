@@ -156,6 +156,30 @@
                         </div>
                     </div>
 
+                      <!-- Is Veg or Non Veg -->
+                        <div class="space-y-2">
+                            <label for="isVeg" class="block text-sm font-medium text-gray-700">
+                                Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
+                            </label>
+
+                            <select name="isVeg" id="isVeg" class="form-select">
+                                <option value="veg" {{ old('isVeg', $product->isVeg) === 'veg' ? 'selected' : '' }}>
+                                    Veg
+                                </option>
+
+                                <option value="non-veg"
+                                    {{ old('isVeg', $product->isVeg) === 'non-veg' ? 'selected' : '' }}>
+                                    Non Veg
+                                </option>
+                            </select>
+
+                            @error('isVeg')
+                                <p class="text-sm text-red-600 mt-1 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
                     <hr class="border-gray-100 my-8">
 
                     {{-- Section 2: Pricing --}}
@@ -220,7 +244,10 @@
                                         class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">%</span>
                                 </div>
                             </div>
+                            
                         </div>
+
+            
                     </div>
 
                     {{-- Actions --}}

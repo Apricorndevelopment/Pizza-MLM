@@ -1,19 +1,18 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Mail\UserRegisteredMail;
-use App\Models\User;
 use App\Models\Admin;
 use App\Models\Gallery;
 use App\Models\News;
-use App\Models\ProductPackagePurchase;
 use App\Models\PasswordOtp;
+use App\Models\ProductPackagePurchase;
+use App\Models\User;
 use App\Models\UserCoupon;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -27,14 +26,14 @@ class AuthController extends Controller
 
     public function loadMore(Request $request)
     {
-        $page = (int) $request->get('page', 1); // First page = after first 3
-        $perPage = 6;
+        $page                = (int) $request->get('page', 1); // First page = after first 3
+        $perPage             = 6;
         $initialDisplayCount = 3;
 
         // Skip initial 3, then apply pagination
         $skip = $initialDisplayCount + (($page - 1) * $perPage);
 
-        $photos = Gallery::skip($skip)->take($perPage)->get();
+        $photos      = Gallery::skip($skip)->take($perPage)->get();
         $totalPhotos = Gallery::count();
 
         $hasMore = $totalPhotos > $skip + $photos->count();
@@ -52,12 +51,11 @@ class AuthController extends Controller
                 $html .= '</div></div></a></div>';
             }
 
-
             return response()->json([
-                'html' => $html,
+                'html'    => $html,
                 'hasMore' => $hasMore,
-                'loaded' => $photos->count(),
-                'total' => $totalPhotos,
+                'loaded'  => $photos->count(),
+                'total'   => $totalPhotos,
             ]);
         }
 
@@ -66,8 +64,8 @@ class AuthController extends Controller
 
     public function loadMoreNews(Request $request)
     {
-        $page = (int) $request->get('page', 1); // First page = after first 3
-        $perPage = 3;
+        $page                = (int) $request->get('page', 1); // First page = after first 3
+        $perPage             = 3;
         $initialDisplayCount = 3;
 
         // Skip initial 3, then apply pagination
@@ -78,7 +76,7 @@ class AuthController extends Controller
             ->take($perPage)
             ->get();
         $totalNews = News::count();
-        $hasMore = $totalNews > $skip + $news->count();
+        $hasMore   = $totalNews > $skip + $news->count();
 
         if ($request->ajax()) {
             $html = '';
@@ -97,24 +95,23 @@ class AuthController extends Controller
             }
 
             return response()->json([
-                'html' => $html,
+                'html'    => $html,
                 'hasMore' => $hasMore,
-                'loaded' => $news->count(),
-                'total' => $totalNews,
+                'loaded'  => $news->count(),
+                'total'   => $totalNews,
             ]);
         }
 
         return abort(404);
     }
 
-
     public function register(Request $request)
     {
         $request->validate([
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:15',
-            'password' => [
+            'full_name'  => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email',
+            'phone'      => 'required|string|max:15',
+            'password'   => [
                 'required',
                 'string',
                 'min:8',
@@ -126,51 +123,58 @@ class AuthController extends Controller
             'password.regex' => 'Please use a strong password with at least one special character.',
         ]);
 
-        $customUlid = 'AH' . rand(1000000, 9999999);
+        DB::beginTransaction();
+        try {
 
-        while (User::where('ulid', $customUlid)->exists()) {
             $customUlid = 'AH' . rand(1000000, 9999999);
-        }
-        $plainPassword = $request->password;
-        $user = User::create([
-            'name' => $request->full_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'sponsor_id' => $request->sponsor_id,
-            'parent_id' => $request->parent_id,
-            'ulid' => $customUlid,
-            'password' => Hash::make($plainPassword),
-            'role' => 'user',
-            'status' => 'inactive',
-            'wallet2_balance' => 50,
-        ]);
 
-        $sponsor = User::where('ulid', $request->sponsor_id)->first();
-
-        UserCoupon::create([
-            'user_id' => $user->id,
-            'user_ulid' => $user->ulid,
-            'coupon_quantity' => 10,
-            'coupon_value' => 10.00 // Fixed value ₹10
-        ]);
-
-        $sponsor = User::where('ulid', $request->sponsor_id)->first();
-
-        if ($sponsor) {
-            $coupon = UserCoupon::where('user_id', $sponsor->id)->first();
-
-            if ($coupon) {
-                $coupon->increment('coupon_quantity', 10);
-            } else {
-                UserCoupon::create([
-                    'user_id' => $sponsor->id,
-                    'user_ulid' => $sponsor->ulid,
-                    'coupon_quantity' => 10,
-                    'coupon_value' => 10.00
-                ]);
+            while (User::where('ulid', $customUlid)->exists()) {
+                $customUlid = 'AH' . rand(1000000, 9999999);
             }
-        }
+            $plainPassword = $request->password;
+            $user          = User::create([
+                'name'            => $request->full_name,
+                'email'           => $request->email,
+                'phone'           => $request->phone,
+                'sponsor_id'      => $request->sponsor_id,
+                'parent_id'       => $request->parent_id,
+                'ulid'            => $customUlid,
+                'password'        => Hash::make($plainPassword),
+                'role'            => 'user',
+                'status'          => 'inactive',
+                'wallet2_balance' => 50,
+            ]);
 
+            $sponsor = User::where('ulid', $request->sponsor_id)->first();
+
+            UserCoupon::create([
+                'user_id'         => $user->id,
+                'user_ulid'       => $customUlid,
+                'coupon_quantity' => 10,
+                'coupon_value'    => 10.00, // Fixed value ₹10
+            ]);
+
+            $sponsor = User::where('ulid', $request->sponsor_id)->first();
+
+            if ($sponsor) {
+                $coupon = UserCoupon::where('user_id', $sponsor->id)->first();
+
+                if ($coupon) {
+                    $coupon->increment('coupon_quantity', 10);
+                } else {
+                    UserCoupon::create([
+                        'user_id'         => $sponsor->id,
+                        'user_ulid'       => $sponsor->ulid,
+                        'coupon_quantity' => 10,
+                        'coupon_value'    => 10.00,
+                    ]);
+                }
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Registration failed. Please try again. Error:' . $e->getMessage());
+        }
 
         Mail::to($user->email)->send(new UserRegisteredMail($user, $plainPassword));
 
@@ -225,18 +229,17 @@ class AuthController extends Controller
     //         }
     //     }
 
-
     //     return back()->with('error', 'Login details are wrong.');
     // }
 
     public function logindetails(Request $request)
     {
         $request->validate([
-            'email' => 'required',
+            'email'    => 'required',
             'password' => 'required',
         ]);
 
-        $email = $request->email;
+        $email    = $request->email;
         $password = $request->password;
 
         // 1. Admin Login Check
@@ -291,24 +294,31 @@ class AuthController extends Controller
 
         return redirect()->route('auth.login')->withHeaders([
             'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-            'Pragma' => 'no-cache',
-            'Expires' => 'Sat, 01 Jan 2000 00:00:00 GMT',
+            'Pragma'        => 'no-cache',
+            'Expires'       => 'Sat, 01 Jan 2000 00:00:00 GMT',
         ]);
     }
-
 
     // For user Tree
     public function showTreeRecursive()
     {
         $user = Auth::user(); // Logged-in user
 
-        $tree = $this->buildTree($user->ulid); // Use ULID as key
+        // Build the tree for the current user
+        $children = $this->buildTree($user->ulid);
 
-        $treeHtml = $this->renderTreeHtml($user, $tree);
+        // Attach children to the main user object to make them the root
+        $user->children   = $children;
+        $user->total_team = $this->countTotalTeam($user->ulid);
+
+        // Pass the user as a collection to render them as the single root node
+        $rootCollection = collect([$user]);
+
+        $treeHtml = $this->renderTreeHtml($rootCollection);
 
         $breadcrumbs = [
             ['title' => 'Network', 'url' => route('user.view.userTree')],
-            ['title' => 'Network Explorer', 'url' => route('user.view.userTree')]
+            ['title' => 'Network Explorer', 'url' => route('user.view.userTree')],
         ];
 
         return view('user.network.viewuser', compact('user', 'treeHtml', 'breadcrumbs'));
@@ -319,43 +329,51 @@ class AuthController extends Controller
         $users = User::where('sponsor_id', $ulid)->get();
 
         return $users->map(function ($user) {
-            $user->children = $this->buildTree($user->ulid); // Recursive by ULID
+            $user->children   = $this->buildTree($user->ulid); // Recursive by ULID
             $user->total_team = $this->countTotalTeam($user->ulid);
             return $user;
         });
     }
 
-    private function renderTreeHtml($user, $children, $isRoot = true)
+    private function renderTreeHtml($users, $isRoot = true)
     {
-        $html = $isRoot ? '<ul class="tree" style="padding-left:10px; margin:0; font-family:Arial, sans-serif;">' : '<ul class="nested" style="padding-left:0px; margin:6px 0 0 8px; border-left:1px dotted black;">';
+        $html = $isRoot
+            ? '<ul class="tree" style="padding-left:10px; margin:0; font-family:Arial, sans-serif;">'
+            : '<ul class="nested" style="padding-left:10px; margin:6px 0 0 5px; border-left:1px solid #e0e0e0;">';
 
-        $hasChildren = $children->isNotEmpty();
-        $icon = $hasChildren ? '<span style="border:1.3px solid black;padding:1px;font-size:10px">➖</span> <i class="fa-solid fa-folder-open text-primary"></i>' : '―<i class="fa-solid fa-folder text-primary"></i>';
+        foreach ($users as $user) {
+            $hasChildren = $user->children->isNotEmpty();
 
-        $html .= '<li class="my-1 list-unstyled">';
+            $html .= '<li class="my-1 list-unstyled">';
 
-        // Add data-user-ulid attribute for easier selection
-        $html .= '<span class="tree-node small lh-sm d-flex flex-wrap align-items-center" data-user-ulid="' . $user->ulid . '" onclick="toggleNode(this); loadUserDetails(\'' . $user->ulid . '\')">';
-
-        $html .= '<span class="toggle-icon me-1">' . $icon . '</span>';
-
-        $html .= '<span class="node-label fw-medium text-dark">';
-        $html .= $user->name . ' ';
-        $html .= '<span class="text-muted">(' . $user->ulid . ')</span>';
-        $html .= ' | <span class="d-none d-md-inline">Total </span> Team:' . $user->total_team;
-        $html .= '</span>';
-
-        $html .= '</span>';
-
-        if ($hasChildren) {
-            $html .= '<ul class="nested">';
-            foreach ($children as $child) {
-                $html .= $this->renderTreeHtml($child, $child->children, false);
+            // Toggle Icon
+            if ($hasChildren) {
+                // Added onclick to toggle node
+                $html .= '<span class="toggle-icon me-1" style="cursor:pointer;" onclick="toggleNode(this)">➕</span>';
+            } else {
+                $html .= '<span class="toggle-icon me-1">🔹</span>'; // Changed folder to dot/icon for leaf
             }
-            $html .= '</ul>';
+
+            // Node Label (Clickable for details)
+            // Added 'tree-node' class for selection highlighting
+            $html .= '<span class="tree-node node-label" style="cursor:pointer;" data-user-ulid="' . $user->ulid . '" onclick="loadUserDetails(\'' . $user->ulid . '\')">';
+
+            $html .= '<span class="fw-medium text-dark">';
+            $html .= $user->name;
+            $html .= ' <span class="text-muted" style="font-size:0.85em">(' . $user->ulid . ')</span>';
+            $html .= ' | <span class="d-none d-md-inline" style="font-size:0.85em">Team: ' . $user->total_team . '</span>';
+            $html .= '</span>'; // End text wrapper
+
+            $html .= '</span>'; // End Node Label
+
+            // Recursion
+            if ($hasChildren) {
+                $html .= $this->renderTreeHtml($user->children, false);
+            }
+
+            $html .= '</li>';
         }
 
-        $html .= '</li>';
         $html .= '</ul>';
 
         return $html;
@@ -367,7 +385,7 @@ class AuthController extends Controller
 
         $user = User::where('ulid', $ulid)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'User not found'], 404);
         }
 
@@ -378,19 +396,19 @@ class AuthController extends Controller
         $level = $this->calculateLevel($authUser->ulid, $user->ulid);
 
         return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
-            'ulid' => $user->ulid,
-            'email' => $user->email,
+            'id'              => $user->id,
+            'name'            => $user->name,
+            'ulid'            => $user->ulid,
+            'email'           => $user->email,
             'registered_date' => $user->created_at->format('d-m-Y, H:i A'),
             'activation_date' => $user->user_doa,
-            'rank' => $user->current_rank,
-            'status' => $user->status,
+            'rank'            => $user->current_rank,
+            'status'          => $user->status,
             'wallet1_balance' => $user->wallet1_balance,
             'wallet2_balance' => $user->wallet2_balance,
-            'left_business' => $user->left_business,
-            'right_business' => $user->right_business,
-            'level' => $level,
+            'left_business'   => $user->left_business,
+            'right_business'  => $user->right_business,
+            'level'           => $level,
             'purchase_amount' => $purchaseAmount,
         ]);
     }
@@ -399,7 +417,7 @@ class AuthController extends Controller
     {
         $user = User::where('ulid', $ulid)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'User not found'], 404);
         }
 
@@ -407,18 +425,18 @@ class AuthController extends Controller
         $purchaseAmount = ProductPackagePurchase::where('user_id', $user->id)->sum('final_price');
 
         return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
-            'ulid' => $user->ulid,
-            'email' => $user->email,
+            'id'              => $user->id,
+            'name'            => $user->name,
+            'ulid'            => $user->ulid,
+            'email'           => $user->email,
             'registered_date' => $user->created_at->format('d-m-Y, H:i A'),
             'activation_date' => $user->user_doa,
-            'rank' => $user->current_rank,
-            'status' => $user->status,
+            'rank'            => $user->current_rank,
+            'status'          => $user->status,
             'wallet1_balance' => $user->wallet1_balance,
             'wallet2_balance' => $user->wallet2_balance,
-            'left_business' => $user->left_business,
-            'right_business' => $user->right_business,
+            'left_business'   => $user->left_business,
+            'right_business'  => $user->right_business,
             'purchase_amount' => $purchaseAmount,
         ]);
     }
@@ -435,7 +453,7 @@ class AuthController extends Controller
         // Find the target user
         $targetUser = User::where('ulid', $targetUlid)->first();
 
-        if (!$targetUser || !$targetUser->sponsor_id) {
+        if (! $targetUser || ! $targetUser->sponsor_id) {
             return null; // Not in tree or no sponsor
         }
 
@@ -462,7 +480,7 @@ class AuthController extends Controller
         $users = User::where('sponsor_id', $sponsor_id)->get();
 
         return $users->map(function ($user) {
-            $user->children = $this->buildTreeFromAdmin($user->ulid);
+            $user->children   = $this->buildTreeFromAdmin($user->ulid);
             $user->total_team = $this->countTotalTeam($user->ulid);
             return $user;
         });
@@ -511,26 +529,10 @@ class AuthController extends Controller
         return $html;
     }
 
-    private function renderTreeTextStyled($user, $children, $prefix = '', $isLast = true)
-    {
-        $branch = $isLast ? '└──' : '├──';
-        $output = $prefix . $branch . ' 📁 ' . $user->name . ' (' . $user->ulid . ')' . "\n";
-
-        $newPrefix = $prefix . ($isLast ? '    ' : '│   ');
-
-        foreach ($children as $index => $child) {
-            $childIsLast = $index === count($children) - 1;
-            $output .= $this->renderTreeTextStyled($child, $child->children ?? collect(), $newPrefix, $childIsLast);
-        }
-
-        return $output;
-    }
-
     private function countTotalTeam($ulid)
     {
         return User::where('sponsor_id', $ulid)->count();
     }
-
 
     public function sendEmailOtp(Request $request)
     {
@@ -559,10 +561,10 @@ class AuthController extends Controller
     public function sendOtp(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email'
+            'email' => 'required|email|exists:users,email',
         ]);
 
-        $otp = rand(100000, 999999);
+        $otp       = rand(100000, 999999);
         $expiresAt = Carbon::now()->addMinutes(10);
 
         PasswordOtp::updateOrCreate(
@@ -584,12 +586,11 @@ class AuthController extends Controller
         return view('Auth.reset-password', compact('email'));
     }
 
-
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'otp' => 'required|digits:6',
+            'email'    => 'required|email|exists:users,email',
+            'otp'      => 'required|digits:6',
             'password' => [
                 'required',
                 'string',
@@ -603,7 +604,7 @@ class AuthController extends Controller
 
         $record = PasswordOtp::where('email', $request->email)->first();
 
-        if (!$record || $record->otp != $request->otp || Carbon::now()->gt($record->expires_at)) {
+        if (! $record || $record->otp != $request->otp || Carbon::now()->gt($record->expires_at)) {
             return back()->withErrors(['otp' => 'Invalid or expired OTP']);
         }
 

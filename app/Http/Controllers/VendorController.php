@@ -73,6 +73,27 @@ class VendorController extends Controller
     // 3. Vendor Dashboard View
     public function dashboard()
     {
-        return view('vendors.dashboard');
+        $user = Auth::user();
+        $vendor = Vendor::where('user_id', $user->id)->first();
+        $isShopOpen = $vendor->isShopOpen;
+
+        return view('vendors.dashboard', compact('isShopOpen'));
     }
+
+     public function toggleShopStatus(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|boolean'
+        ]);
+
+        $user = Auth::user(); // Assuming the vendor is the User
+        
+        $vendor = Vendor::where('user_id', $user->id)->first();
+        // Update the column
+        $vendor->isShopOpen = $request->status;
+        $vendor->save();
+
+       return redirect()->back()->with('success', 'Shop status updated successfully!');
+    }
+    
 }

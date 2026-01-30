@@ -161,6 +161,26 @@
                         <i class="fas fa-chart-line mr-3 text-lg"></i>
                         <span class="font-medium">Vendor Products</span>
                     </a>
+                    <a href="{{ route('admin.orders.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-shopping-bag mr-3 text-gray-500"></i>
+
+                        <span class="font-medium">Vendor Orders</span>
+                    </a>
+
+                    <a href="{{ route('admin.percentage.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-shopping-bag mr-3 text-gray-500"></i>
+
+                        <span class="font-medium">Levels</span>
+                    </a>
+
+                    <a href="{{ route('admin.income.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-shopping-bag mr-3 text-gray-500"></i>
+
+                        <span class="font-medium">Percentage Income</span>
+                    </a>
 
                     @php
                         $adminId = Auth::guard('admin')->id();
@@ -351,7 +371,8 @@
                                 <p class="font-medium text-gray-800">{{ $user->name }}</p>
                                 <p class="text-sm text-gray-500">Administrator</p>
                             </div>
-                            <i id="profile-arrow" class="fas fa-chevron-down text-gray-500 hidden md:block transition-transform duration-300"></i>
+                            <i id="profile-arrow"
+                                class="fas fa-chevron-down text-gray-500 hidden md:block transition-transform duration-300"></i>
                         </button>
 
                         <!-- Profile Dropdown Menu -->
@@ -376,7 +397,9 @@
                             <form action="{{ route('admin.logout') }}" method="POST" id="logout-form"
                                 class="flex items-center">
                                 @csrf
-                                <button type="submit" class="dropdown-item text-danger px-4 py-3 text-gray-700 hover:bg-gray-50" style="padding: 0">
+                                <button type="submit"
+                                    class="dropdown-item text-danger px-4 py-3 text-gray-700 hover:bg-gray-50"
+                                    style="padding: 0">
                                     <i class="fa fa-power-off me-2"></i> Logout
                                 </button>
                             </form>
@@ -386,7 +409,7 @@
             </header>
 
             <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <main class="flex-1 overflow-y-auto px-4 pt-2 bg-gray-50">
 
                 @section('container')
 
@@ -435,7 +458,8 @@
                     profileDropdownMenu && !profileDropdownMenu.contains(e.target)) {
 
                     profileDropdownMenu.classList.add('hidden');
-                    profileArrow.classList.remove('rotate-180'); // Bahar click ho to arrow wapas seedha ho jaye
+                    profileArrow.classList.remove(
+                        'rotate-180'); // Bahar click ho to arrow wapas seedha ho jaye
                 }
             });
 

@@ -154,6 +154,29 @@
                         </div>
                     </div>
 
+                     <!-- Is Veg or Non Veg -->
+                        <div class="space-y-2">
+                            <label for="isVeg" class="block text-sm font-medium text-gray-700">
+                                Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
+                            </label>
+
+                            <select name="isVeg" id="isVeg" class="form-select">
+                                <option value="veg">
+                                    Veg
+                                </option>
+
+                                <option value="non-veg">Non Veg</option>
+                    
+                            </select>
+
+                            @error('isVeg')
+                                <p class="text-sm text-red-600 mt-1 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
                     <hr class="border-gray-100 my-8">
 
                     {{-- Section 2: Pricing --}}

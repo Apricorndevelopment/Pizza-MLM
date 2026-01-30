@@ -38,6 +38,7 @@ class VendorProductController extends Controller
             'gst' => 'required|numeric|min:0',
             'dp' => 'required|numeric|min:0',
             'description' => 'nullable|string',
+            'isVeg'=>'required|string|in:veg,non-veg',
         ]);
 
         $user = Auth::user();
@@ -53,6 +54,7 @@ class VendorProductController extends Controller
         $product->dp = $request->dp;
         $product->description = $request->description;
         $product->status = 'pending'; // Default Pending
+        $product->isVeg =  $request->isVeg;
 
         // Image Upload Logic (Provided by you)
         if ($request->hasFile('product_image')) {
@@ -92,6 +94,8 @@ class VendorProductController extends Controller
             'gst' => 'required|numeric',
             'dp' => 'required|numeric',
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'description' => 'nullable|string',
+            'isVeg'=>'required|string|in:veg,non-veg',
         ]);
 
         $product->product_name = $request->product_name;
@@ -100,6 +104,7 @@ class VendorProductController extends Controller
         $product->gst = $request->gst;
         $product->dp = $request->dp;
         $product->description = $request->description;
+        $product->isVeg =  $request->isVeg;
         
         // Agar edit kiya to wapas pending kar sakte hain logic ke hisaab se
         $product->status = 'pending'; 

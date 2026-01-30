@@ -70,6 +70,7 @@ class ProductController extends Controller
             'pv' => 'nullable|numeric|min:0',
             'max_coupon_usage' => 'nullable|integer|min:0',
             'percentage' => 'nullable|numeric|min:0',
+            'isVeg'=>'required|string|in:veg,non-veg', 
         ]);
 
         $product->fill($request->except('product_image'));

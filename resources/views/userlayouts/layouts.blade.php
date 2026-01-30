@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     
-    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -159,6 +158,13 @@
                         <span class="font-medium">My Profile</span>
                     </a>
 
+                    <a href="{{ route('user.shop.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-person mr-3 text-lg"></i>
+                        <span class="font-medium">View Product</span>
+                    </a>
+                    
+
                     <!-- Wallet -->
                     <div class="menu-group">
                         <div
@@ -261,6 +267,13 @@
                         </div>
                     </div>
 
+                       <a href="{{ route('user.orders.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-receipt mr-3 text-lg"></i> 
+                        <span class="font-medium">View Product</span>
+                    </a>
+                    
+
                     <a href="{{ route('logout') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-person mr-3 text-lg"></i>
@@ -344,13 +357,13 @@
                                 <i class="bi bi-box-arrow-right mr-3 text-gray-500"></i>
                                 <span>Logout</span>
                             </a>
-                        </div>
+                        </div>  
                     </div>
                 </div>
             </header>
 
             <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <main class="flex-1 overflow-y-auto bg-gray-50">
                 @section('container')
                 @show
             </main>
@@ -497,8 +510,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+
+    {{-- Ye line MISSING thi, ise add karein: --}}
+    @stack('scripts')
 </body>
 
 </html>

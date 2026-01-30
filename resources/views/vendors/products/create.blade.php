@@ -156,6 +156,22 @@
                         </p>
                     @enderror
                 </div>
+                 <div class="space-y-2">
+                   <label for="isVeg" class="block text-sm font-medium text-gray-700">
+                        Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
+                    </label>
+                    <select name="isVeg" id="isVeg">
+                        default value="{{ old('isVeg') }}">
+                        <option value="veg">Veg</option>
+                        <option value="non-veg">Non Veg</option>
+                    </select>
+                    @error('isVeg')
+                        <p class="text-sm text-red-600 mt-1 flex items-center">
+                            <i class="bi bi-exclamation-circle mr-1"></i>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
 
                 <!-- Buttons -->
                 <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">

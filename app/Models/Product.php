@@ -19,6 +19,7 @@ class Product extends Model
         'pv',          // Admin Only
         'percentage',  // Admin Only
         'status',
+        'isVeg',
         'max_coupon_usage' // From previous step
     ];
    

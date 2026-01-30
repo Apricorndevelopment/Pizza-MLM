@@ -18,6 +18,7 @@ class Vendor extends Model
         'zip_code',
         'status',
         'gst',
+        'isShopOpen',
     ];
 
     public function user()

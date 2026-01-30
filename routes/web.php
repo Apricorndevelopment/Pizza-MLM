@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\PercentageIncomeController;
+use App\Http\Controllers\Admin\PercentageLevelController;
 use App\Models\User;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Route;
@@ -11,9 +14,12 @@ use App\Http\Controllers\LoginActivityController;
 use App\Http\Controllers\PackageAssignmentController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserOrderController;
+use App\Http\Controllers\Vendor\VendorOrderController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorProductController;
 use App\Models\Gallery;
@@ -25,11 +31,11 @@ use App\Http\Middleware\IsVendor;
 
 Route::get('/', function () {
     $photos = Gallery::all();
-    $news = News::orderBy('created_at', 'desc')->get(); 
+    $news = News::orderBy('created_at', 'desc')->get();
     return view('welcome', compact('photos', 'news'));
 });
 
-Route::view('/about-us','aboutus')->name('aboutus');
+Route::view('/about-us', 'aboutus')->name('aboutus');
 
 Route::get('/gallery/load-more', [AuthController::class, 'loadMore'])->name('gallery.load-more');
 Route::get('/news/load-more', [AuthController::class, 'loadMoreNews'])->name('news.load-more');
@@ -125,10 +131,15 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', IsVendor::class])->group(function () {
     // वेंडर का अपना डैशबोर्ड
     Route::get('/vendor-dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
-   
-   Route::prefix('vendor')->name('vendor.')->group(function () {
+
+    Route::prefix('vendor')->name('vendor.')->group(function () {
         Route::resource('products', VendorProductController::class);
     });
+
+    Route::get('/orders', [VendorOrderController::class, 'index'])->name('vendor.orders.index');
+    Route::get('/orders/{id}', [VendorOrderController::class, 'show'])->name('vendor.orders.show');
+    Route::post('/orders/update-status', [VendorOrderController::class, 'updateStatus'])->name('vendor.orders.updateStatus');
+    Route::post('/toggle-shop-status', [VendorController::class, 'toggleShopStatus'])->name('vendor.toggleShopStatus');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -145,6 +156,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/user/viewStock', [StockController::class, 'stockTransferHistory'])->name('user.viewStock');
     Route::get('/user/allStocks', [StockController::class, 'viewUserStocks'])->name('user.allStocks');
+
+    Route::get('/my-orders', [UserOrderController::class, 'index'])->name('user.orders.index');
+    Route::prefix('user/shop')->name('user.shop.')->group(function () {
+        Route::get('/', [ShopController::class, 'index'])->name('index');
+        Route::post('/purchase', [ShopController::class, 'purchase'])->name('purchase');
+    });
 });
 
 
@@ -172,7 +189,7 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/gallery', [AdminController::class, 'managePhoto'])->name('admin.photo.manage');
     Route::post('/admin/gallery', [AdminController::class, 'addPhoto'])->name('admin.gallery.store');
     Route::delete('/admin/gallery/{id}', [AdminController::class, 'deletePhoto'])->name('admin.gallery.delete');
-    
+
     Route::get('/admin/news', [AdminController::class, 'manageNews'])->name('admin.news.manage');
     Route::post('/admin/news', [AdminController::class, 'addNews'])->name('admin.news.store');
     Route::delete('/admin/news/{id}', [AdminController::class, 'deleteNews'])->name('admin.news.delete');
@@ -237,6 +254,40 @@ Route::middleware(['auth:admin'])->group(function () {
             Route::post('/search', [PackageAssignmentController::class, 'search'])->name('search');
             Route::post('/assign', [PackageAssignmentController::class, 'assignPackage'])->name('assign.submit');
         });
+
+
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+
+        // Update Status (Admin Override)
+        Route::post('/orders/update-status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+    });
+    // Percentage Level Routes
+    Route::group(['prefix' => 'admin'], function () {
+
+        // List
+        Route::get('/percentage-levels', [PercentageLevelController::class, 'index'])
+            ->name('admin.percentage.index');
+
+        // Create
+        Route::get('/percentage-level/add', [PercentageLevelController::class, 'create'])
+            ->name('admin.percentage.create');
+        Route::post('/percentage-level/store', [PercentageLevelController::class, 'store'])
+            ->name('admin.percentage.store');
+
+        // Edit
+        Route::get('/percentage-level/edit/{id}', [PercentageLevelController::class, 'edit'])
+            ->name('admin.percentage.edit');
+        Route::put('/percentage-level/update/{id}', [PercentageLevelController::class, 'update'])
+            ->name('admin.percentage.update');
+
+        // Delete
+        Route::delete('/percentage-level/delete/{id}', [PercentageLevelController::class, 'destroy'])
+            ->name('admin.percentage.destroy');
+
+
+        Route::get('/percentage-income', [PercentageIncomeController::class, 'index'])->name('admin.income.index');
+        Route::put('/percentage-income/update/{id}', [PercentageIncomeController::class, 'update'])->name('admin.income.update');
+        
     });
 });
 

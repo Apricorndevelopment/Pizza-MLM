@@ -55,6 +55,7 @@ class PackageController extends Controller
             'pv' => 'required|numeric|min:0',
             'max_coupon_usage' => 'required|integer|min:1',
             'percentage' => 'required|numeric|min:0|max:100',
+            'isVeg'=>'required|string|in:veg,non-veg',
         ]);
 
         $imagePath = null;
@@ -79,6 +80,7 @@ class PackageController extends Controller
             'pv' => $request->pv,
             'max_coupon_usage' => $request->max_coupon_usage,
             'percentage' => $request->percentage,
+            'isVeg' => $request->isVeg,
         ]);
 
         return redirect()->route('admin.package')->with('success', 'Product Package created successfully!');
@@ -134,6 +136,7 @@ class PackageController extends Controller
             'pv' => 'required|numeric|min:0',
             'max_coupon_usage' => 'required|integer|min:1',
             'percentage' => 'required|numeric|min:0|max:100',
+            'isVeg'=>'required|string|in:veg,non-veg',
         ]);
 
         $product = ProductPackage::findOrFail($id);
@@ -163,7 +166,8 @@ class PackageController extends Controller
             'dp' => $request->dp,
             'pv' => $request->pv,
             'percentage' => $request->percentage,
-            'max_coupon_usage' => $request->max_coupon_usage
+            'max_coupon_usage' => $request->max_coupon_usage,
+            'isVeg' => $request->isVeg
         ]);
 
         return redirect()->route('admin.package')->with('success', 'Product updated successfully!');

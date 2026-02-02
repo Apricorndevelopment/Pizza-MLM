@@ -2,9 +2,34 @@
 @section('title', 'Dashboard')
 @section('container')
 
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Welcome back, John!</h2>
-        <p class="text-gray-600">Here's what's happening with your store today.</p>
+    <div class="mb-6 flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">Welcome back, {{ Auth::guard('admin')->user()->name }}!</h2>
+            <p class="text-gray-500 text-sm mt-1">Here's what's happening with your store today.</p>
+        </div>
+
+        <div>
+            <form action="{{ route('admin.shop.toggle') }}" method="POST" id="shopStatusForm">
+                @csrf
+                {{-- Toggle Container --}}
+                <label class="relative inline-flex items-center cursor-pointer group">
+                    <input type="checkbox" name="isShopOpen" value="1" class="sr-only peer"
+                        onchange="document.getElementById('shopStatusForm').submit()"
+                        {{ Auth::guard('admin')->user()->isShopOpen ? 'checked' : '' }}>
+
+                    {{-- Toggle Background --}}
+                    <div
+                        class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner">
+                    </div>
+
+                    {{-- Status Text --}}
+                    <span
+                        class="ml-3 text-sm font-bold {{ Auth::guard('admin')->user()->isShopOpen ? 'text-emerald-600' : 'text-slate-500' }}">
+                        {{ Auth::guard('admin')->user()->isShopOpen ? 'Shop is Open' : 'Shop is Closed' }}
+                    </span>
+                </label>
+            </form>
+        </div>
     </div>
 
     <!-- Stats Cards -->

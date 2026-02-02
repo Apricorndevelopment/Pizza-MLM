@@ -1,6 +1,6 @@
 @extends('vendorlayouts.layout')
 @section('title', 'Edit My Product')
-@section('content')
+@section('container')
 
     <div class="max-w-6xl mx-auto">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">

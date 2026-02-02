@@ -21,11 +21,20 @@ class Order extends Model
     }
 
     /**
-     * Relationship: An Order belongs to a User (Customer).
-     * Used in: ->with(..., 'user')
+     * Relationship: An Order belongs to a User (The Customer who bought the item).
+     * Used in: ->with('user')
      */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Relationship: Get the Admin associated with the order.
+     * Assumes 'admin_id' exists in the orders table.
+     */
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
     }
 }

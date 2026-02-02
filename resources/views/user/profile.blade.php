@@ -1,355 +1,409 @@
-@extends('userlayouts.layouts')
-@section('title', 'Dashboard')
+@extends(Auth::user()->is_vendor === 1 ? 'vendorlayouts.layout' : 'userlayouts.layouts')
+@section('title', 'My Profile')
 @section('container')
-    <div class="container py-3">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">Hello, {{ $user->name }}</h3>
+
+    <div class="min-h-screen bg-slate-50/50 py-4 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+
+            <div id="alerts-container">
+                @if (session('success'))
+                    <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex justify-between items-center mb-4 text-sm"
+                        id="alert-success">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i> <span>{{ session('success') }}</span>
+                        </div>
+                        <button onclick="document.getElementById('alert-success').remove()" class="hover:text-emerald-900"><i
+                                class="fas fa-times"></i></button>
                     </div>
-
-                    <div class="card-body">
-                        <!-- Referral Link Section -->
-                        <div>
-                            @session('success')
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endsession
-                            @session('error')
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ session('error') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                            @endsession            
+                @endif
+                @if (session('error'))
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex justify-between items-center mb-4 text-sm"
+                        id="alert-error">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-exclamation-circle"></i> <span>{{ session('error') }}</span>
                         </div>
-                        <div class="alert alert-info mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div>
-                                    <strong><i class="fas fa-link me-2"></i>Your Referral Link:</strong>
-                                    <span id="referralLink">{{ url('/register') }}?sponsor_id={{ $user->ulid }}</span>
+                        <button onclick="document.getElementById('alert-error').remove()" class="hover:text-red-900"><i
+                                class="fas fa-times"></i></button>
+                    </div>
+                @endif
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6">
+
+                <div class="w-full lg:w-1/3">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+
+                        <div class="h-24 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+
+
+                        <div class="px-4 p-4">
+
+                            <div class="relative flex justify-between items-end -mt-10 mb-4">
+                                <div class="relative">
+                                    @if ($user->profile_picture)
+                                        <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
+                                            class="w-20 h-20 rounded-full border-4 border-white shadow-sm object-cover bg-white"
+                                            alt="Profile">
+                                    @else
+                                        <div
+                                            class="w-20 h-20 rounded-full border-4 border-white shadow-sm bg-slate-100 flex items-center justify-center text-slate-300">
+                                            <i class="fas fa-user text-3xl"></i>
+                                        </div>
+                                    @endif
+                                    <span
+                                        class="absolute bottom-1 right-1 w-4 h-4 border-2 border-white rounded-full {{ $user->status == 'active' ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-primary" onclick="copyReferralLink()">
-                                    <i class="fas fa-copy me-1"></i> Copy
-                                </button>
+                                <div class="mb-1">
+                                    <a href="{{ route('user.profile.edit') }}"
+                                        class="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline">
+                                        Edit Profile
+                                    </a>
+                                </div>
                             </div>
 
-                            <div class="share-buttons">
-                                <strong class="d-block mb-2"><i class="fas fa-share-alt me-2"></i>Share Referral Link
-                                    via:</strong>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-success" onclick="shareOnWhatsApp()">
-                                        <i class="fab fa-whatsapp"></i> WhatsApp
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="shareOnFacebook()">
-                                        <i class="fab fa-facebook"></i> Facebook
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-info" onclick="shareOnTelegram()">
-                                        <i class="fab fa-telegram"></i> Telegram
-                                    </button>
+                            <div class="mb-3">
+                                <h2 class="text-lg font-bold text-slate-800 leading-tight">{{ $user->name }}</h2>
+                                <p class="text-xs text-slate-500 font-mono mt-1 truncate">{{ $user->email }}</p>
+
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span
+                                        class="bg-slate-100 text-slate-600 text-[10px] uppercase font-bold px-2 py-1 rounded border border-slate-200">
+                                        ID: {{ $user->ulid }}
+                                    </span>
+                                    <span
+                                        class="bg-slate-100 text-slate-600 text-[10px] uppercase font-bold px-2 py-1 rounded border border-slate-200">
+                                        Sponsor: {{ $user->sponsor_id ?? '--' }}
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Tab Navigation -->
-                        <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab"
-                                    data-bs-target="#profile" type="button" role="tab">Profile</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="kyc-tab" data-bs-toggle="tab" data-bs-target="#kyc"
-                                    type="button" role="tab">KYC Details</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="nominee-tab" data-bs-toggle="tab" data-bs-target="#nominee"
-                                    type="button" role="tab">Nominee Update</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank"
-                                    type="button" role="tab">Bank Details</button>
-                            </li>
-                        </ul>
+                            <div class="grid grid-cols-2 gap-0 border-t border-slate-100 py-3 ">
+                                <div class="text-center border-r border-slate-100 pr-2">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Wallet 1</p>
+                                    <p class="text-sm font-bold text-slate-700">₹{{ $user->wallet1_balance ?? 0 }}</p>
+                                </div>
+                                <div class="text-center pl-2">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Wallet 2</p>
+                                    <p class="text-sm font-bold text-emerald-600">₹{{ $user->wallet2_balance ?? 0 }}</p>
+                                </div>
+                            </div>
 
-                        <!-- Tab Content -->
-                        <div class="tab-content" id="profileTabsContent">
-                            <!-- Profile Tab -->
-                            <div class="tab-pane fade show active" id="profile" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-md-4 text-center">
-                                        <!-- Profile picture display -->
-                                        @if ($user->profile_picture)
-                                            <div class="mb-3">
-                                                <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
-                                                    class="profile-pic img-thumbnail rounded-circle" alt="Profile Picture">
-                                            </div>
-                                        @else
-                                            <div class="profile-pic-placeholder mb-3">
-                                                <i class="fa fa-user-circle fa-5x text-secondary"></i>
-                                            </div>
-                                        @endif
+                            <div class="border-t border-slate-100 space-y-4 pt-3">
+                                <div class="flex items-center justify-between">
+                                    <h3
+                                        class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1">
+                                        <i class="fas fa-gift text-indigo-500"></i> Refer & Earn
+                                    </h3>
 
-                                        <p class="badge bg-{{ $user->status == 'active' ? 'success' : 'danger' }}">
-                                            Status: {{ ucfirst($user->status) }}
+                                    <div class="flex gap-1.5">
+                                        <button onclick="shareOnWhatsApp()"
+                                            class="w-6 h-6 rounded bg-green-50 text-green-600 hover:bg-green-100 border border-green-200 flex items-center justify-center transition">
+                                            <i class="fab fa-whatsapp text-xs"></i>
+                                        </button>
+                                        <button onclick="shareOnFacebook()"
+                                            class="w-6 h-6 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 flex items-center justify-center transition">
+                                            <i class="fab fa-facebook-f text-xs"></i>
+                                        </button>
+                                        <button onclick="shareOnTelegram()"
+                                            class="w-6 h-6 rounded bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-200 flex items-center justify-center transition">
+                                            <i class="fab fa-telegram-plane text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-0 shadow-sm rounded-md overflow-hidden">
+                                    <div class="flex-1 min-w-0 bg-slate-50 border border-r-0 border-slate-300 py-2 px-3">
+                                        <p id="referralLink" class="text-xs text-slate-600 font-mono truncate select-all">
+                                            {{ url('/register') }}?sponsor_id={{ $user->ulid }}
                                         </p>
                                     </div>
-
-                                    <div class="col-md-8">
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <h5 class="text-muted">Personal Information</h5>
-                                                <p><strong>ULID:</strong> {{ $user->ulid }}</p>
-                                                <p><strong>Name:</strong> {{ $user->name }}</p>
-                                                <p><strong>Email:</strong> {{ $user->email }}</p>
-                                                <p><strong>Phone:</strong> {{ $user->phone ?? 'Not provided' }}</p>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <h5 class="text-muted">Address Information</h5>
-                                                <p><strong>Address:</strong> {{ $user->address ?? 'Not provided' }}</p>
-                                                <p><strong>City/State:</strong> {{ $user->state ?? 'Not provided' }}</p>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <h5 class="text-muted">Network Information</h5>
-                                                <p><strong>Sponsor ID:</strong> {{ $user->sponsor_id ?? 'None' }}</p>
-                                                <p><strong>Parent ID:</strong> {{ $user->parent_id ?? 'None' }}</p>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <h5 class="text-muted">Balance Information</h5>
-                                                <p><strong>Wallet1 Balance:</strong>
-                                                    <span class="badge bg-info">{{ $user->wallet1_balance ?? 0 }}</span>
-                                                </p>
-                                                <p><strong>Wallet2 Balance:</strong>
-                                                    <span class="badge bg-success">{{ $user->wallet2_balance ?? 0 }}</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <button onclick="copyReferralLink(this)"
+                                        class="bg-white border border-slate-300 px-3 py-2 hover:bg-slate-50 transition text-indigo-600 font-bold text-xs uppercase tracking-wider">
+                                        Copy
+                                    </button>
                                 </div>
                             </div>
 
-                            <!-- KYC Tab -->
-                            <div class="tab-pane fade" id="kyc" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-header bg-light">
-                                                <h5 class="mb-0">Aadhaar Details</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <p><strong>Aadhaar Number:</strong> {{ $user->adhar_no ?? 'Not provided' }}
-                                                </p>
-                                                @if ($user->adhar_photo)
-                                                    <div class="mt-3">
-                                                        <img src="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_photo)) }}"
-                                                            class="img-thumbnail" style="max-width: 100%; height: 200px;"
-                                                            alt="Aadhaar Card">
-                                                    </div>
-                                                @else
-                                                    <p class="text-danger mt-3">Aadhaar photo not uploaded</p>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-header bg-light">
-                                                <h5 class="mb-0">PAN Details</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <p><strong>PAN Number:</strong> {{ $user->pan_no ?? 'Not provided' }}</p>
-                                                @if ($user->pan_photo)
-                                                    <div class="mt-3">
-                                                        <img src="{{ asset('storage/pan-documents/' . basename($user->pan_photo)) }}"
-                                                            class="img-thumbnail" style="max-width: 100%; height: 200px;"
-                                                            alt="PAN Card">
-                                                    </div>
-                                                @else
-                                                    <p class="text-danger mt-3">PAN photo not uploaded</p>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
+                            <div class="pt-4 border-t border-slate-100">
+                                <a href="{{ route('user.become_vendor') }}"
+                                    class="block w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold uppercase tracking-wider text-center rounded-lg shadow-sm transition-transform active:scale-[0.98]">
+                                    Become a Vendor
+                                </a>
                             </div>
 
-                            <!-- Nominee Tab -->
-                            <div class="tab-pane fade" id="nominee" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h5 class="text-muted">Nominee Details</h5>
-                                        <p><strong>Nominee Name:</strong> {{ $user->nom_name ?? 'Not provided' }}</p>
-                                        <p><strong>Relationship:</strong> {{ $user->nom_relation ?? 'Not provided' }}
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <!-- Bank Tab -->
-                            <div class="tab-pane fade" id="bank" role="tabpanel">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h5 class="text-muted">Bank Account Details</h5>
-                                        <p><strong>Account Number:</strong> {{ $user->account_no ?? 'Not provided' }}</p>
-                                        <p><strong>Bank Name:</strong> {{ $user->bank_name ?? 'Not provided' }}</p>
-                                        <p><strong>IFSC Code:</strong> {{ $user->ifsc_code ?? 'Not provided' }}</p>
-                                        <p><strong>UPI ID:</strong> {{ $user->upi_id ?? 'Not provided' }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5 class="text-muted">Bank Proof</h5>
-                                        @if ($user->passbook_photo)
-                                            <img src="{{ asset('storage/passbook-photos/' . basename($user->passbook_photo)) }}"
-                                                class="img-thumbnail" style="max-width: 100%; max-height: 150px;"
-                                                alt="Passbook Proof">
-                                        @else
-                                            <p class="text-danger">No passbook proof uploaded</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Edit Profile Button -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="{{ route('user.become_vendor') }}" class="btn btn-success">
-                                <i class="fa fa-user me-2"></i> Become a Vendor
-                            </a>
-                            <a href="{{ route('user.profile.edit') }}" class="btn btn-primary">
-                                <i class="fa fa-edit me-2"></i> Edit Details
-                            </a>
                         </div>
                     </div>
                 </div>
+
+                <div class="w-full h-full lg:w-2/3">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 min-h-[500px]">
+
+                        <div class="border-b border-slate-100 px-2 pt-2">
+                            <nav class="flex space-x-4 overflow-x-auto scrollbar-hide" aria-label="Tabs">
+                                <button onclick="switchTab('profile')" id="tab-btn-profile"
+                                    class="tab-btn border-b-2 border-indigo-500 text-indigo-600 px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors">
+                                    Profile Info
+                                </button>
+                                <button onclick="switchTab('kyc')" id="tab-btn-kyc"
+                                    class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors">
+                                    KYC Docs
+                                </button>
+                                <button onclick="switchTab('nominee')" id="tab-btn-nominee"
+                                    class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors">
+                                    Nominee
+                                </button>
+                                <button onclick="switchTab('bank')" id="tab-btn-bank"
+                                    class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-4 py-3 text-sm font-medium whitespace-nowrap flex items-center gap-2 transition-colors">
+                                    Banking
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div class="p-6">
+                            <div id="tab-content-profile" class="tab-content block animate-fade-in">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Personal Details
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                                    <div class="border-b border-slate-50 pb-2">
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Full
+                                            Name</label>
+                                        <span class="block text-sm font-medium text-slate-800">{{ $user->name }}</span>
+                                    </div>
+                                    <div class="border-b border-slate-50 pb-2">
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Email
+                                            Address</label>
+                                        <span
+                                            class="block text-sm font-medium text-slate-800 break-all">{{ $user->email }}</span>
+                                    </div>
+                                    <div class="border-b border-slate-50 pb-2">
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Phone
+                                            Number</label>
+                                        <span
+                                            class="block text-sm font-medium text-slate-800">{{ $user->phone ?? 'Not provided' }}</span>
+                                    </div>
+                                    <div class="border-b border-slate-50 pb-2">
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Parent
+                                            ID</label>
+                                        <span
+                                            class="block text-sm font-medium text-slate-800">{{ $user->parent_id ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="md:col-span-2 border-b border-slate-50 pb-2">
+                                        <label
+                                            class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Address</label>
+                                        <span class="block text-sm font-medium text-slate-800">
+                                            {{ $user->address ?? 'Not provided' }}{{ $user->state ? ', ' . $user->state : '' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="tab-content-kyc" class="tab-content hidden animate-fade-in">
+                                <div class="space-y-6">
+                                    <div
+                                        class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50/50">
+                                        <div class="sm:w-1/3">
+                                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Document</p>
+                                            <p class="text-sm font-bold text-slate-700 mb-1">Aadhaar Card</p>
+                                            <p
+                                                class="text-xs font-mono text-slate-500 bg-white border px-2 py-1 rounded inline-block">
+                                                {{ $user->adhar_no ?? 'N/A' }}</p>
+                                        </div>
+                                        <div class="sm:w-2/3">
+                                            <div
+                                                class="h-40 w-full bg-white rounded-lg overflow-hidden border border-slate-200 flex items-center justify-center">
+                                                @if ($user->adhar_photo)
+                                                    <img src="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_photo)) }}"
+                                                        class="w-full h-full object-cover" alt="Aadhaar">
+                                                @else
+                                                    <span
+                                                        class="text-xs text-slate-400 flex flex-col items-center gap-1"><i
+                                                            class="fas fa-image text-xl"></i> No Upload</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50/50">
+                                        <div class="sm:w-1/3">
+                                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Document</p>
+                                            <p class="text-sm font-bold text-slate-700 mb-1">PAN Card</p>
+                                            <p
+                                                class="text-xs font-mono text-slate-500 bg-white border px-2 py-1 rounded inline-block">
+                                                {{ $user->pan_no ?? 'N/A' }}</p>
+                                        </div>
+                                        <div class="sm:w-2/3">
+                                            <div
+                                                class="h-40 w-full bg-white rounded-lg overflow-hidden border border-slate-200 flex items-center justify-center">
+                                                @if ($user->pan_photo)
+                                                    <img src="{{ asset('storage/pan-documents/' . basename($user->pan_photo)) }}"
+                                                        class="w-full h-full object-cover" alt="PAN">
+                                                @else
+                                                    <span
+                                                        class="text-xs text-slate-400 flex flex-col items-center gap-1"><i
+                                                            class="fas fa-image text-xl"></i> No Upload</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="tab-content-nominee" class="tab-content hidden animate-fade-in">
+                                <div
+                                    class="bg-indigo-50 rounded-xl p-8 text-center border border-indigo-100 max-w-md mx-auto mt-4">
+                                    <div
+                                        class="w-14 h-14 bg-white text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                        <i class="fas fa-user-shield text-xl"></i>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-slate-800 mb-6">Nominee Details</h4>
+                                    <div class="text-left space-y-3">
+                                        <div
+                                            class="bg-white p-3 rounded-lg border border-indigo-100 flex justify-between items-center">
+                                            <span class="text-[10px] uppercase text-slate-400 font-bold">Name</span>
+                                            <span
+                                                class="text-sm font-medium text-slate-700">{{ $user->nom_name ?? 'Not Assigned' }}</span>
+                                        </div>
+                                        <div
+                                            class="bg-white p-3 rounded-lg border border-indigo-100 flex justify-between items-center">
+                                            <span
+                                                class="text-[10px] uppercase text-slate-400 font-bold">Relationship</span>
+                                            <span
+                                                class="text-sm font-medium text-slate-700">{{ $user->nom_relation ?? 'Not Assigned' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="tab-content-bank" class="tab-content hidden animate-fade-in">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Account
+                                            Information</h4>
+                                        <div class="space-y-4">
+                                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                                <span
+                                                    class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Bank
+                                                    Name</span>
+                                                <p class="text-sm font-medium text-slate-800">
+                                                    {{ $user->bank_name ?? 'N/A' }}</p>
+                                            </div>
+                                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                                <span
+                                                    class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Account
+                                                    No</span>
+                                                <p class="text-sm font-mono text-slate-800">
+                                                    {{ $user->account_no ?? 'N/A' }}</p>
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                                    <span
+                                                        class="text-[10px] text-slate-400 uppercase font-bold block mb-1">IFSC</span>
+                                                    <p class="text-sm font-mono text-slate-800">
+                                                        {{ $user->ifsc_code ?? 'N/A' }}</p>
+                                                </div>
+                                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                                    <span
+                                                        class="text-[10px] text-slate-400 uppercase font-bold block mb-1">UPI
+                                                        ID</span>
+                                                    <p class="text-sm font-medium text-slate-800 truncate">
+                                                        {{ $user->upi_id ?? 'N/A' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Proof
+                                            Document</h4>
+                                        <div
+                                            class="rounded-xl border border-slate-200 overflow-hidden h-56 bg-slate-50 flex items-center justify-center">
+                                            @if ($user->passbook_photo)
+                                                <img src="{{ asset('storage/passbook-photos/' . basename($user->passbook_photo)) }}"
+                                                    class="w-full h-full object-cover" alt="Passbook">
+                                            @else
+                                                <div class="text-center text-slate-400">
+                                                    <i class="fas fa-file-invoice text-3xl mb-2 opacity-50"></i>
+                                                    <p class="text-xs">No passbook photo</p>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <style>
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border: 3px solid #dee2e6;
-        }
-
-        .profile-pic-placeholder {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background-color: #f8f9fa;
-            border: 3px solid #dee2e6;
-        }
-
-        .card {
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            border-radius: 10px 10px 0 0 !important;
-        }
-
-        .nav-tabs {
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .nav-tabs .nav-link {
-            color: #495057;
-            font-weight: 500;
-            border: none;
-            padding: 10px 20px;
-            margin-right: 5px;
-        }
-
-        .nav-tabs .nav-link.active {
-            color: #0d6efd;
-            background-color: transparent;
-            border-bottom: 3px solid #0d6efd;
-        }
-
-        .nav-tabs .nav-link:hover {
-            border-color: transparent;
-            color: #0d6efd;
-        }
-
-        .tab-content {
-            padding: 20px 0;
-        }
-    </style>
-
     <script>
-        function copyReferralLink() {
-            // Get the referral link text
-            const referralLink = document.getElementById('referralLink').innerText;
+        // COPY FUNCTION
+        function copyReferralLink(btn) {
+            const text = document.getElementById('referralLink').innerText.trim();
+            const originalText = btn.innerText;
 
-            // Create a temporary textarea element
-            const textarea = document.createElement('textarea');
-            textarea.value = referralLink;
-            textarea.style.position = 'fixed'; // Prevent scrolling to bottom
-            document.body.appendChild(textarea);
-            textarea.select();
-
-            try {
-                // Execute the copy command
-                const successful = document.execCommand('copy');
-
-                // Get the button that was clicked
-                const button = event.target.tagName === 'BUTTON' ? event.target : event.target.closest('button');
-
-                if (successful) {
-                    // Show success message
-                    const originalText = button.innerHTML;
-                    button.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
-                    button.classList.remove('btn-outline-primary');
-                    button.classList.add('btn-success');
-
-                    // Revert after 2 seconds
-                    setTimeout(() => {
-                        button.innerHTML = originalText;
-                        button.classList.remove('btn-success');
-                        button.classList.add('btn-outline-primary');
-                    }, 2000);
-                } else {
-                    alert('Failed to copy referral link. Please try again.');
-                }
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                alert('Failed to copy referral link. Please try again.');
-            } finally {
-                document.body.removeChild(textarea);
-            }
+            navigator.clipboard.writeText(text).then(() => {
+                btn.innerHTML = '<span class="text-emerald-600 font-bold">Copied!</span>';
+                setTimeout(() => {
+                    btn.innerHTML = '<span>Copy</span>';
+                }, 2000);
+            }).catch(err => {
+                console.error('Copy failed', err);
+            });
         }
+
+        // TAB FUNCTION
+        function switchTab(tabName) {
+            // Hide Contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+
+            // Update Buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-500', 'text-indigo-600');
+                btn.classList.add('border-transparent', 'text-slate-500', 'hover:text-slate-700');
+            });
+            const activeBtn = document.getElementById('tab-btn-' + tabName);
+            activeBtn.classList.remove('border-transparent', 'text-slate-500', 'hover:text-slate-700');
+            activeBtn.classList.add('border-indigo-500', 'text-indigo-600');
+        }
+
+        // SHARE FUNCTIONS
+        const getLink = () => document.getElementById('referralLink').innerText.trim();
+        const getMsg = () => `Join me here: ${getLink()}`;
 
         function shareOnWhatsApp() {
-            const referralLink = document.getElementById('referralLink').innerText;
-            const message = `Join me on this platform! Use my referral link: ${referralLink}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+            window.open(`https://wa.me/?text=${encodeURIComponent(getMsg())}`, '_blank');
         }
 
         function shareOnFacebook() {
-            const referralLink = document.getElementById('referralLink').innerText;
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}`, '_blank');
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getLink())}`, '_blank');
         }
 
         function shareOnTelegram() {
-            const referralLink = document.getElementById('referralLink').innerText;
-            const message = `Join me on this platform! Use my referral link: ${referralLink}`;
-            window.open(
-                `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(message)}`,
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(getLink())}&text=${encodeURIComponent(getMsg())}`,
                 '_blank');
         }
     </script>
+
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(2px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+    </style>
 
 @endsection

@@ -54,6 +54,20 @@ class AdminController extends Controller
         return view('admin.dashboard');
     }
 
+    public function toggleShopStatus(Request $request)
+    {
+        // Get the currently authenticated admin
+        $admin = Auth::guard('admin')->user();
+
+        // Toggle the status (if 1 make 0, if 0 make 1)
+        $admin->isShopOpen = !$admin->isShopOpen;
+        $admin->save();
+
+        $statusMessage = $admin->isShopOpen ? 'Store is now Open!' : 'Store is now Closed.';
+
+        return back()->with('success', $statusMessage);
+    }
+
     public function logout(Request $request)
     {
         Auth::guard('admin')->logout();

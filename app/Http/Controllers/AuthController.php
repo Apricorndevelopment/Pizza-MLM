@@ -389,9 +389,6 @@ class AuthController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        // Purchase Amount
-        $purchaseAmount = ProductPackagePurchase::where('user_id', $user->id)->sum('final_price');
-
         // Level Calculation (ULID-based)
         $level = $this->calculateLevel($authUser->ulid, $user->ulid);
 
@@ -409,7 +406,6 @@ class AuthController extends Controller
             'left_business'   => $user->left_business,
             'right_business'  => $user->right_business,
             'level'           => $level,
-            'purchase_amount' => $purchaseAmount,
         ]);
     }
 
@@ -420,9 +416,6 @@ class AuthController extends Controller
         if (! $user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-
-        // Purchase Amount
-        $purchaseAmount = ProductPackagePurchase::where('user_id', $user->id)->sum('final_price');
 
         return response()->json([
             'id'              => $user->id,
@@ -437,7 +430,6 @@ class AuthController extends Controller
             'wallet2_balance' => $user->wallet2_balance,
             'left_business'   => $user->left_business,
             'right_business'  => $user->right_business,
-            'purchase_amount' => $purchaseAmount,
         ]);
     }
 

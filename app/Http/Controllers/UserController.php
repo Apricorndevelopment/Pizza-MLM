@@ -926,8 +926,8 @@ class UserController extends Controller
 
     public function viewWallet(Request $request)
     {
-        $points = Auth::user()->wallet1_balance;
-        $loyalty = Auth::user()->wallet2_balance;
+        $wallet1 = Auth::user()->wallet1_balance;
+        $wallet2 = Auth::user()->wallet2_balance;
         $user = Auth::user();
 
         // Withdrawals with pagination
@@ -935,29 +935,29 @@ class UserController extends Controller
         $withdrawals = $withdrawalsQuery->latest()->paginate(5, ['*'], 'withdrawals_page');
 
         // Wallet1 Transactions with filters and pagination
-        $pointsQuery = Wallet1Transaction::where('user_id', $user->id);
+        $wallet1Query = Wallet1Transaction::where('user_id', $user->id);
 
         // Apply filters if requested
-        if ($request->has('points_type') && !empty($request->points_type)) {
-            if ($request->points_type === 'credit') {
-                $pointsQuery->where('points', '>=', 0);
-            } elseif ($request->points_type === 'debit') {
-                $pointsQuery->where('points', '<', 0);
+        if ($request->has('wallet1_type') && !empty($request->wallet1_type)) {
+            if ($request->wallet1_type === 'credit') {
+                $wallet1Query->where('wallet1', '>=', 0);
+            } elseif ($request->wallet1_type === 'debit') {
+                $wallet1Query->where('wallet1', '<', 0);
             }
         }
 
-        if ($request->has('points_start_date') && !empty($request->points_start_date)) {
-            $pointsQuery->whereDate('created_at', '>=', $request->points_start_date);
+        if ($request->has('wallet1_start_date') && !empty($request->wallet1_start_date)) {
+            $wallet1Query->whereDate('created_at', '>=', $request->wallet1_start_date);
         }
 
-        if ($request->has('points_end_date') && !empty($request->points_end_date)) {
-            $pointsQuery->whereDate('created_at', '<=', $request->points_end_date);
+        if ($request->has('wallet1_end_date') && !empty($request->wallet1_end_date)) {
+            $wallet1Query->whereDate('created_at', '<=', $request->wallet1_end_date);
         }
 
-        $pointsTransactions = $pointsQuery->latest()->paginate(10, ['*'], 'points_page');
+        $wallet1Transactions = $wallet1Query->latest()->paginate(10, ['*'], 'wallet1_page');
 
         // Wallet2 Transactions (keep your existing logic)
-        $loyaltyTransactions = Wallet2Transaction::where('user_id', $user->id)
+        $wallet2Transactions = Wallet2Transaction::where('user_id', $user->id)
             ->latest()
             ->take(10)
             ->get();
@@ -967,7 +967,7 @@ class UserController extends Controller
             ['title' => 'Manage Wallet', 'url' => route('user.viewwallet')]
         ];
 
-        return view('user.viewwallet', compact('points', 'loyalty', 'pointsTransactions', 'loyaltyTransactions', 'withdrawals', 'breadcrumbs'));
+        return view('user.viewwallet', compact('wallet1', 'wallet2', 'wallet1Transactions', 'wallet2Transactions', 'withdrawals', 'breadcrumbs'));
     }
 
     public function level1Commissions(Request $request)

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\ComplaintController as AdminComplaintController;
 use App\Http\Controllers\Admin\PercentageIncomeController;
 use App\Http\Controllers\Admin\PercentageLevelController;
+use App\Http\Controllers\Admin\PercentageRewardController;
 use App\Models\User;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +18,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\user\ComplaintController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserOrderController;
@@ -109,6 +112,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/login-activity', [LoginActivityController::class, 'index'])->name('user.login-activity');
         Route::delete('/login-activity/{id}', [LoginActivityController::class, 'destroy'])->name('user.login-activity.destroy');
         Route::post('/login-activity/logout-all', [LoginActivityController::class, 'logoutAllDevices'])->name('user.login-activity.logout-all');
+
+        Route::get('/complaints', [ComplaintController::class, 'index'])->name('user.complaints.index');
+        Route::post('/complaints', [ComplaintController::class, 'store'])->name('user.complaints.store');
     });
 
     Route::get('/get-package-rates/{packageId}', function ($packageId) {
@@ -287,8 +293,21 @@ Route::middleware(['auth:admin'])->group(function () {
 
         Route::get('/percentage-income', [PercentageIncomeController::class, 'index'])->name('admin.income.index');
         Route::put('/percentage-income/update/{id}', [PercentageIncomeController::class, 'update'])->name('admin.income.update');
-        
+
+
+        // percentage reward 
+        Route::get('/percentage-rewards', [PercentageRewardController::class, 'index'])->name('admin.rewards.index');
+        Route::post('/percentage-rewards/store', [PercentageRewardController::class, 'store'])->name('admin.rewards.store');
+        Route::put('/percentage-rewards/update/{id}', [PercentageRewardController::class, 'update'])->name('admin.rewards.update');
+        Route::delete('/percentage-rewards/delete/{id}', [PercentageRewardController::class, 'destroy'])->name('admin.rewards.destroy');
+
+        Route::post('/admin/toggle-shop', [AdminController::class, 'toggleShopStatus'])->name('admin.shop.toggle');
     });
+
+    // Admin Complaints Routes
+    Route::get('admin/complaints', [AdminComplaintController::class, 'index'])->name('admin.complaints.index');
+    // Update Complaint (Reply & Status Change)
+    Route::put('admin/complaints/{id}', [AdminComplaintController::class, 'update'])->name('admin.complaints.store');
 });
 
 

@@ -13,7 +13,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    
+
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -145,7 +145,7 @@
             <!-- Menu -->
             <nav class="flex-1 overflow-y-auto no-scrollbar py-4 scroll-smooth">
                 <div class="px-3 space-y-1">
-                    <!-- Dashboard -->
+
                     <a href="{{ route('vendor.dashboard') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-speedometer2 mr-3 text-lg"></i>
@@ -154,25 +154,49 @@
 
                     <a href="{{ route('vendor.products.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-speedometer2 mr-3 text-lg"></i>
+                        <i class="bi bi-box-seam mr-3 text-lg"></i> {{-- Used 'box-seam' for products --}}
                         <span class="font-medium">Vendor Products</span>
                     </a>
 
-                     <a href="{{ route('vendor.orders.index') }}"
+                    <a href="{{ route('vendor.orders.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-speedometer2 mr-3 text-lg"></i>
+                        <i class="bi bi-bag-check mr-3 text-lg"></i> {{-- Used 'bag-check' for orders --}}
                         <span class="font-medium">View Orders</span>
                     </a>
 
-                    <!-- Profile -->
-                    {{-- <a href="#"
+                    <a href="{{ route('user.profile') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-person mr-3 text-lg"></i>
+                        <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
                         <span class="font-medium">My Profile</span>
-                    </a> --}}
+                    </a>
 
-                    <!-- Wallet -->
-                    {{-- <div class="menu-group">
+
+                    {{-- Order --}}
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-bag-check mr-3 text-lg"></i> {{-- Changed to bag-check for generic orders --}}
+                                <span class="font-medium">Orders</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                            <a href="{{ route('user.shop.index') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-cart-plus mr-2"></i> {{-- Icon for ordering --}}
+                                Order Products
+                            </a>
+
+                            <a href="{{ route('user.orders.index') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-list-ul mr-2"></i> {{-- Icon for viewing list --}}
+                                View Orders
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-group">
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
                             <div class="flex items-center">
@@ -183,28 +207,93 @@
                         </div>
                         <div class="sidebar-submenu pl-8 mt-1 space-y-1">
                             <a href="{{ route('user.viewwallet') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-credit-card mr-2"></i> {{-- Icon for managing --}}
                                 Manage Wallet
                             </a>
                             <a href="{{ route('user.transferWallet1Form') }}"
-                                class="block px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-arrow-left-right mr-2"></i> {{-- Icon for transfer --}}
                                 Transfer Wallet
                             </a>
                         </div>
-                    </div> --}}
+                    </div>
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-diagram-3 mr-3 text-lg"></i>
+                                <span class="font-medium">My Network</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                            <a href="{{ route('user.view.userTree') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-tree mr-2"></i> {{-- Icon for tree --}}
+                                Network Tree
+                            </a>
+                            <a href="{{ route('user.network.summary') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-grid-3x3-gap mr-2"></i> {{-- Icon for summary --}}
+                                Network Summary
+                            </a>
+                            <a href="{{ route('user.direct.team') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-people mr-2"></i> {{-- Icon for team --}}
+                                Direct Team
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('user.complaints.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
+                        <span class="font-medium">Complaints</span>
+                    </a>
+
+                    {{-- <a href="#"
+            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+            <i class="bi bi-person-circle mr-3 text-lg"></i>
+            <span class="font-medium">My Profile</span>
+        </a> --}}
+
+                    {{-- <div class="menu-group">
+            <div
+                class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                <div class="flex items-center">
+                    <i class="bi bi-wallet2 mr-3 text-lg"></i>
+                    <span class="font-medium">My Wallet</span>
+                </div>
+                <i class="bi bi-chevron-down text-xs transition-transform"></i>
+            </div>
+            <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                <a href="{{ route('user.viewwallet') }}"
+                    class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                    <i class="bi bi-credit-card mr-2"></i>
+                    Manage Wallet
+                </a>
+                <a href="{{ route('user.transferWallet1Form') }}"
+                    class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                    <i class="bi bi-arrow-left-right mr-2"></i>
+                    Transfer Wallet
+                </a>
+            </div>
+        </div> --}}
 
                     {{-- <a href="{{ route('logout') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-person mr-3 text-lg"></i>
-                        <span class="font-medium">Logout</span>
-                    </a> --}}
+            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+            <i class="bi bi-box-arrow-right mr-3 text-lg"></i>
+            <span class="font-medium">Logout</span>
+        </a> --}}
                 </div>
             </nav>
 
             <!-- Footer -->
             <div class="p-3 border-t border-gray-200">
                 <div class="flex items-center">
-                   <div class="profile-pic-wrapper">
+                    <div class="profile-pic-wrapper">
                         @if (Auth::user()->profile_picture)
                             <img src="{{ asset('storage/profile-pictures/' . basename(Auth::user()->profile_picture)) }}"
                                 alt="Profile">
@@ -254,18 +343,19 @@
                                 <p class="font-medium text-gray-800">{{ Auth::user()->name }}</p>
                                 <p class="text-sm text-gray-500">Member</p>
                             </div>
-                            <i id="profile-arrow" class="bi bi-chevron-down text-gray-500 hidden md:block transition-transfrom duration-300"></i>
+                            <i id="profile-arrow"
+                                class="bi bi-chevron-down text-gray-500 hidden md:block transition-transfrom duration-300"></i>
                         </button>
 
                         <!-- Dropdown Menu -->
                         <div id="profile-dropdown-menu"
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden">
-                            {{-- <a href="{{ route('user.profile') }}"
+                            <a href="{{ route('user.profile') }}"
                                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
                                 <i class="bi bi-person-circle mr-3 text-gray-500"></i>
                                 <span>Profile</span>
                             </a>
-                            <a href="{{ route('user.viewwallet') }}"
+                            {{-- <a href="{{ route('user.viewwallet') }}"
                                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
                                 <i class="bi bi-wallet2 mr-3 text-gray-500"></i>
                                 <span>Wallet</span>
@@ -283,7 +373,7 @@
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-                @section('content')
+                @section('container')
                 @show
             </main>
         </div>
@@ -328,7 +418,8 @@
                 if (profileDropdownToggle && !profileDropdownToggle.contains(e.target) && !
                     profileDropdownMenu.contains(e.target)) {
                     profileDropdownMenu.classList.add('hidden');
-                    profileArrow.classList.remove('rotate-180'); // Bahar click ho to arrow wapas seedha ho jaye
+                    profileArrow.classList.remove(
+                        'rotate-180'); // Bahar click ho to arrow wapas seedha ho jaye
                 }
             });
 
@@ -431,6 +522,9 @@
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+
+    {{-- Ye line MISSING thi, ise add karein: --}}
+    @stack('scripts')
 </body>
 
 </html>

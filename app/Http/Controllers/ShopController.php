@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Models\ProductPackage;
 use App\Models\Product;
@@ -22,6 +23,7 @@ class ShopController extends Controller
     {
         $query = $request->input('search');
 
+        $admin = Admin::first();
         // Admin Products
         $adminProducts = ProductPackage::query();
         if ($query) {
@@ -58,7 +60,7 @@ class ShopController extends Controller
 
         return view(
             'user.shop.index',
-            compact('adminProducts', 'vendorProducts', 'query', 'userCouponCount')
+            compact('adminProducts', 'admin','vendorProducts', 'query', 'userCouponCount')
         );
     }
 

@@ -1,133 +1,230 @@
-@extends('userlayouts.layouts')
+@extends(Auth::user()->is_vendor === 1 ? 'vendorlayouts.layout' : 'userlayouts.layouts')
 
 @section('title', 'Network Summary')
 
 @section('container')
-    <div class="container mt-2">
-        <h4 class="mb-3 text-primary">Network Summary</h4>
+    <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <!-- Filters Section -->
-        <div class="card shadow-sm border-0 mb-3">
-            <div class="card-header bg-gradient-info text-white py-2 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0"><i class="fas fa-filter me-1"></i>Filters</h6>
-                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-            </div>
-            <div class="collapse show" id="filterCollapse">
-                <div class="card-body p-3">
-                    <form method="GET" action="{{ route('user.network.summary') }}">
-                        <div class="row g-2">
-                            <div class="col-md-4">
-                                <label for="designation" class="form-label small fw-bold">Designation</label>
-                                <select class="form-select form-select-sm" id="designation" name="designation">
-                                    <option value="">All Designations</option>
-                                    @foreach ($designations as $designation)
-                                        <option value="{{ $designation }}"
-                                            {{ request('designation') == $designation ? 'selected' : '' }}>
-                                            {{ $designation }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="status" class="form-label small fw-bold">Status</label>
-                                <select class="form-select form-select-sm" id="status" name="status">
-                                    <option value="">All Status</option>
-                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active
-                                    </option>
-                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
-                                        Inactive</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="purchase_status" class="form-label small fw-bold">Purchase Status</label>
-                                <select class="form-select form-select-sm" id="purchase_status" name="purchase_status">
-                                    <option value="">All Status</option>
-                                    <option value="paid" {{ request('purchase_status') == 'paid' ? 'selected' : '' }}>Paid
-                                    </option>
-                                    <option value="unpaid" {{ request('purchase_status') == 'unpaid' ? 'selected' : '' }}>
-                                        Unpaid</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="start_date" class="form-label small fw-bold">Start Date</label>
-                                <input type="date" class="form-control form-control-sm" id="start_date" name="start_date"
-                                    value="{{ request('start_date') }}">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="end_date" class="form-label small fw-bold">End Date</label>
-                                <input type="date" class="form-control form-control-sm" id="end_date" name="end_date"
-                                    value="{{ request('end_date') }}">
-                            </div>
-                            <div class="col-md-12 text-end mt-2">
-                                <a href="{{ route('user.network.summary') }}"
-                                    class="btn btn-sm btn-outline-secondary me-2">Reset</a>
-                                <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
-                            </div>
-                        </div>
-                    </form>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Network Overview</h1>
+                    <p class="text-sm text-slate-500 mt-1">Real-time analysis of your organizational hierarchy.</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-1 pr-4 flex items-center gap-4 shadow-sm">
+                    <div class="bg-[#ECFDF5] text-emerald-700 h-12 w-12 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Downline</p>
+                        <p class="text-xl font-bold text-slate-800 leading-none">{{ $paginatedUsers->total() }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Results Section -->
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-gradient-info text-white py-2 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0"><i class="fas fa-network-wired me-1"></i>Downline Team</h6>
-                <span class="badge bg-light text-dark">{{ $paginatedUsers->total() }} Users</span>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden transition-all duration-300"
+                id="filterContainer">
+
+                <div class="px-6 py-4 bg-white border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors"
+                    onclick="toggleFilters()">
+                    <div class="flex items-center gap-2 text-slate-700">
+                        <div class="bg-slate-100 p-1.5 rounded text-slate-500">
+                            <i class="fas fa-filter text-xs"></i>
+                        </div>
+                        <span class="text-sm font-bold uppercase tracking-wide">Search & Filters</span>
+                    </div>
+                    <div>
+                        <a href="{{ route('user.network.summary') }}"
+                            class="text-sm font-bold text-slate-500 hover:text-slate-800 transition px-4 py-2">Refresh</a>
+
+                        <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform duration-300"
+                            id="filterIcon"></i>
+                    </div>
+
+                </div>
+
+                <div id="filterBody" class="hidden">
+                    <div class="p-6 bg-slate-50/50">
+                        <form method="GET" action="{{ route('user.network.summary') }}">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+
+                                <div class="space-y-1.5">
+                                    <label
+                                        class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Designation</label>
+                                    <div class="relative">
+                                        <select name="designation"
+                                            class="w-full appearance-none rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 shadow-sm">
+                                            <option value="">All Ranks</option>
+                                            @foreach ($designations as $designation)
+                                                <option value="{{ $designation }}"
+                                                    {{ request('designation') == $designation ? 'selected' : '' }}>
+                                                    {{ $designation }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label
+                                        class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Status</label>
+                                    <div class="relative">
+                                        <select name="status"
+                                            class="w-full appearance-none rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 shadow-sm">
+                                            <option value="">All Status</option>
+                                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="inactive"
+                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">From</label>
+                                    <input type="date" name="start_date" value="{{ request('start_date') }}"
+                                        class="w-full rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 shadow-sm text-slate-600">
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">To</label>
+                                    <input type="date" name="end_date" value="{{ request('end_date') }}"
+                                        class="w-full rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 shadow-sm text-slate-600">
+                                </div>
+
+                                <div class="flex items-end">
+                                    <button type="submit"
+                                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg shadow-md shadow-emerald-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                        <i class="fas fa-search"></i> Apply
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover table-striped mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Sr. No</th>
-                                <th>Name/Ulid</th>
-                                <th class="text-center">Sponsor</th>
-                                <th class="text-center">Reg. Date/ Paid Date</th>
-                                <th class="text-center">Purchase Status</th>
-                                <th class="text-center">Total Purchased</th>
-                                <th class="text-center">Level</th>
-                                <th class="text-center">Designation</th>
+
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-[#ECFDF5] border-b border-[#baffdf] text-xs uppercase font-bold text-slate-500 tracking-wider">
+                                <th class="px-6 py-3 text-center w-16">#</th>
+                                <th class="px-6 py-3">Member Profile</th>
+                                <th class="px-6 py-3 text-center">Level</th>
+                                <th class="px-6 py-3">Sponsor</th>
+                                <th class="px-6 py-3 text-center">Status</th>
+                                <th class="px-6 py-3 text-center">Designation</th>
+                                <th class="px-6 py-3 text-right">Joined</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @php
-                                $index = ($paginatedUsers->currentPage() - 1) * $paginatedUsers->perPage() + 1;
-                            @endphp
+                        <tbody class="divide-y divide-slate-100">
+                            @php $index = ($paginatedUsers->currentPage() - 1) * $paginatedUsers->perPage() + 1; @endphp
                             @forelse($paginatedUsers as $user)
-                                <tr class="align-middle">
-                                    <td>{{ $index++ }}</td>
-                                    <td class="fw-medium">{{ $user->name }}({{ $user->ulid }})</td>
-                                    <td class="text-center"><span class="badge bg-secondary">{{ $user->sponsor_id }}</span>
+                                <tr class="group hover:bg-[#ECFDF5] transition-colors duration-200">
+                                    <td class="px-3 py-3 text-center text-slate-400 font-mono text-sm font-bold">
+                                        {{ $index++ }}
                                     </td>
-                                    <td class="text-center">{{ $user->created_at->format('d M Y') }} /
-                                        {{ $user->user_doa ?? 'Not Active' }}</td>
-                                    <td class="text-center">
+
+                                    <td class="px-3 py-4">
+                                        <div class="flex items-center gap-3">
+
+                                            <div class="flex flex-col">
+                                                <span
+                                                    class="text-md font-bold text-slate-800 group-hover:text-emerald-800 transition-colors">
+                                                    {{ $user->name }}
+                                                </span>
+                                                <span class="text-xs font-mono text-slate-400 flex items-center gap-1">
+                                                    <i class="fas fa-id-card text-[10px]"></i> {{ $user->ulid }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-3 py-3 text-center">
+                                        <span class=" text-slate-600 text-sm font-bold ">
+                                            {{ $user->level }}
+                                        </span>
+                                    </td>
+
+                                    <td class="px-3 py-4">
+                                        <div class="flex items-center gap-2 text-slate-500">
+                                            <i class="fas fa-user-tag text-slate-300 text-xs"></i>
+                                            <span class="text-sm font-mono font-medium">{{ $user->sponsor_id }}</span>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-3 py-3 text-center">
+                                        <div class="flex flex-col gap-1 items-center">
+                                            <div class="flex items-center gap-1.5">
+                                                <div
+                                                    class="w-2 h-2 rounded-full {{ $user->status == 'active' ? 'bg-emerald-500' : 'bg-slate-300' }}">
+                                                </div>
+                                                <span
+                                                    class="text-[10px] font-bold uppercase text-slate-500">{{ $user->status }}</span>
+                                            </div>
+                                            {{-- @if ($user->purchase_status == 'paid')
+                                                <span
+                                                    class="text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Paid</span>
+                                            @else
+                                                <span
+                                                    class="text-[9px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Unpaid</span>
+                                            @endif --}}
+                                        </div>
+                                    </td>
+
+                                    {{-- <td class="px-3 py-3 text-center">
                                         <span
-                                            class="badge {{ $user->purchase_status == 'paid' ? 'bg-success' : 'bg-warning' }} rounded-pill text-capitalize">
-                                            {{ $user->purchase_status }}
+                                            class="text-md font-bold font-mono {{ $user->total_purchases > 0 ? 'text-slate-700' : 'text-slate-300' }}">
+                                            ₹{{ number_format($user->total_purchases, 2) }}
                                         </span>
+                                    </td> --}}
+
+                                    <td class="px-3 py-3 text-center">
+                                        @if ($user->current_rank)
+                                            <span
+                                                class="inline-flex px-3 py-1 rounded-full bg-slate-900 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                                {{ $user->current_rank }}
+                                            </span>
+                                        @else
+                                            <span class="text-sm text-slate-400 italic">--</span>
+                                        @endif
                                     </td>
-                                    <td
-                                        class="text-center fw-medium {{ $user->total_purchases > 0 ? 'text-success' : 'text-muted' }}">
-                                        ₹{{ number_format($user->total_purchases, 2) }}
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-primary rounded-pill">{{ $user->level }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-success rounded-pill text-capitalize">
-                                            {{ $user->current_rank ?? 'N/A' }}
-                                        </span>
+
+                                    <td class="px-3 py-3 text-right">
+                                        <div class="flex flex-col">
+                                            <span
+                                                class="text-sm font-bold text-slate-700">{{ $user->created_at->format('M d, Y') }}</span>
+                                            <span
+                                                class="text-[12px] text-slate-400">{{ $user->created_at->format('h:i A') }}</span>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-3 text-muted small">
-                                        <i class="fas fa-users-slash fa-lg mb-1"></i><br>
-                                        No downline users found
+                                    <td colspan="8" class="px-6 py-16 text-center bg-slate-50/50">
+                                        <div class="flex flex-col items-center">
+                                            <div class="bg-white p-4 rounded-full shadow-sm mb-3">
+                                                <i class="fas fa-search text-slate-300 text-2xl"></i>
+                                            </div>
+                                            <h3 class="text-slate-800 font-bold">No Records Found</h3>
+                                            <p class="text-slate-500 text-sm mt-1">Try adjusting your filters to find who
+                                                you're looking for.</p>
+                                            <button onclick="toggleFilters()"
+                                                class="mt-4 text-emerald-600 text-sm font-bold hover:underline">Adjust
+                                                Filters</button>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
@@ -135,122 +232,32 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
                 @if ($paginatedUsers->hasPages())
-                    <div class="card-footer bg-light py-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="small text-muted">
-                                Showing {{ $paginatedUsers->firstItem() }} to {{ $paginatedUsers->lastItem() }} of
-                                {{ $paginatedUsers->total() }} entries
-                            </div>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination pagination-sm mb-0">
-                                    {{-- Previous Page Link --}}
-                                    @if ($paginatedUsers->onFirstPage())
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&laquo;</span>
-                                        </li>
-                                    @else
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $paginatedUsers->previousPageUrl() }}"
-                                                rel="prev">&laquo;</a>
-                                        </li>
-                                    @endif
-
-                                    {{-- Pagination Elements --}}
-                                    @foreach ($paginatedUsers->getUrlRange(1, $paginatedUsers->lastPage()) as $page => $url)
-                                        @if ($page == $paginatedUsers->currentPage())
-                                            <li class="page-item active">
-                                                <span class="page-link">{{ $page }}</span>
-                                            </li>
-                                        @else
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                            </li>
-                                        @endif
-                                    @endforeach
-
-                                    {{-- Next Page Link --}}
-                                    @if ($paginatedUsers->hasMorePages())
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $paginatedUsers->nextPageUrl() }}"
-                                                rel="next">&raquo;</a>
-                                        </li>
-                                    @else
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&raquo;</span>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </nav>
-                        </div>
+                    <div class="px-6 py-3 bg-white border-t border-slate-100">
+                        {{ $paginatedUsers->appends(request()->query())->links('pagination::tailwind') }}
                     </div>
                 @endif
             </div>
         </div>
     </div>
 
-    <style>
-        .table-sm td,
-        .table-sm th {
-            padding: 0.7rem;
-        }
+    <script>
+        function toggleFilters() {
+            const body = document.getElementById('filterBody');
+            const icon = document.getElementById('filterIcon');
 
-        .table-hover tbody tr:hover {
-            background-color: rgba(13, 110, 253, 0.05);
-        }
-
-        .card-header {
-            border-radius: 0.375rem 0.375rem 0 0 !important;
-        }
-
-        .table th {
-            white-space: nowrap;
-            font-weight: 600;
-            font-size: 0.65rem;
-            letter-spacing: 0.5px;
-        }
-
-        .badge.rounded-pill {
-            min-width: 50px;
-            font-size: 0.7rem;
-            padding: 5px 8px;
-        }
-
-        .small {
-            font-size: 0.85rem;
-        }
-
-        h4 {
-            font-size: 1.25rem;
-        }
-
-        h6 {
-            font-size: 0.9rem;
-        }
-
-        .container {
-            max-width: 99%;
-        }
-
-        .pagination-sm .page-link {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-        }
-
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .badge.rounded-pill {
-                min-width: 50px;
-            }
-
-            .card-body .row>div {
-                margin-bottom: 1rem;
+            if (body.classList.contains('hidden')) {
+                // Open
+                body.classList.remove('hidden');
+                // Animate Icon
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                // Close
+                body.classList.add('hidden');
+                // Reset Icon
+                icon.style.transform = 'rotate(0deg)';
             }
         }
-    </style>
+    </script>
+
 @endsection

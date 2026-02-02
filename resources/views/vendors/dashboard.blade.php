@@ -1,7 +1,7 @@
 @extends('vendorlayouts.layout')
 @section('title', 'Vendor Dashboard')
 
-@section('content')
+@section('container')
     <div class="container-fluid py-4" style="background-color: #f8fafc; min-height: 100vh;">
 
 
@@ -35,7 +35,7 @@
                         </span>
 
                         <label class="relative inline-flex items-center cursor-pointer">
-                          
+
                             <input type="hidden" name="status" value="0">
 
                             {{-- Checkbox --}}

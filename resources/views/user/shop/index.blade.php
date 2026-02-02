@@ -1,4 +1,4 @@
-@extends('userlayouts.layouts')
+@extends(Auth::user()->is_vendor === 1 ? 'vendorlayouts.layout' : 'userlayouts.layouts')
 @section('title', 'Shop Products')
 
 @section('container')

@@ -41,44 +41,45 @@ class ContactController extends Controller
 
         $authUser = Auth::user();
 
-        // Get all downline users (flat array)
-        $downlineUsers = $this->getDownlineUsers($authUser->ulid);
+        // 1. Get flat list of users with levels calculated during recursion
+        // Passing 1 as the starting level relative to the current user
+        $downlineUsers = $this->getDownlineUsers($authUser->ulid, 1);
 
-        // Add level and purchase status to each user
-        foreach ($downlineUsers as $user) {
-            $user->level = $this->calculateLevel($authUser->ulid, $user->ulid);
+        // 2. Enrich data (Purchases & Status)
+        foreach ($downlineUsers as $key => $user) {
+            // Check if user has purchases
+            // Optimization: You could eager load this in the recursive function if using relationships, 
+            // // but for raw SQL/recursion, this is acceptable for now.
+            // $totalPurchase = ProductPackagePurchase::where('user_id', $user->id)->sum('final_price');
 
-            // Check if user has purchases (paid/unpaid status)
-            $hasPurchases = ProductPackagePurchase::where('user_id', $user->id)
-                ->exists();
-            $user->purchase_status = $hasPurchases ? 'paid' : 'unpaid';
-
-            // Calculate total purchases if user has any
-            if ($hasPurchases) {
-                $user->total_purchases = ProductPackagePurchase::where('user_id', $user->id)
-                    ->sum('final_price');
-            } else {
-                $user->total_purchases = 0;
-            }
+            // $user->purchase_status = $totalPurchase > 0 ? 'paid' : 'unpaid';
+            // $user->total_purchases = $totalPurchase;
         }
 
-        // Get available designations for filter
-        $designations = DB::table('royalty_level_rewards')
-            ->pluck('level')
-            ->toArray();
-
-        // Apply filters if requested
+        // 3. Apply Filters
         if ($request->hasAny(['designation', 'status', 'purchase_status', 'start_date', 'end_date'])) {
             $downlineUsers = $this->applyFilters($downlineUsers, $request);
         }
 
-        // Paginate results (15 per page)
+        // 4. SORTING BY LEVEL (Level 1 -> Level 2 -> Level 3)
+        // We convert array to collection to use sortBy easily
+        $downlineCollection = collect($downlineUsers)->sortBy([
+            ['level', 'asc'],
+            ['created_at', 'desc'],
+        ]);
+
+        // 5. Pagination
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 15;
-        $currentItems = array_slice($downlineUsers, ($currentPage - 1) * $perPage, $perPage);
-        $paginatedUsers = new LengthAwarePaginator($currentItems, count($downlineUsers), $perPage, $currentPage, [
-            'path' => LengthAwarePaginator::resolveCurrentPath()
+        $currentItems = $downlineCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+        $paginatedUsers = new LengthAwarePaginator($currentItems, $downlineCollection->count(), $perPage, $currentPage, [
+            'path' => LengthAwarePaginator::resolveCurrentPath(),
+            'query' => $request->query(), // Important: Persists search filters across pages
         ]);
+
+        // Get designations for filter
+        $designations = DB::table('percentage_rewards')->pluck('rank')->toArray();
 
         return view('user.network.summary', compact('paginatedUsers', 'designations', 'breadcrumbs'));
     }
@@ -115,17 +116,23 @@ class ContactController extends Controller
             });
         }
 
-        return array_values($users); // Reset array keys
+        return array_values($users);
     }
 
     // Recursively get all users below a given ULID.
-    private function getDownlineUsers($ulid, &$results = [])
+    // Optimized Recursive Function
+    private function getDownlineUsers($sponsorId, $currentLevel, &$results = [])
     {
-        $users = User::where('sponsor_id', $ulid)->get();
+        // Fetch direct children
+        $children = User::where('sponsor_id', $sponsorId)->get();
 
-        foreach ($users as $user) {
-            $results[] = $user; // Add current user
-            $this->getDownlineUsers($user->ulid, $results); // Add children
+        foreach ($children as $child) {
+            // Assign the calculated level immediately
+            $child->level = $currentLevel;
+            $results[] = $child;
+
+            // Recurse for the next level
+            $this->getDownlineUsers($child->ulid, $currentLevel + 1, $results);
         }
 
         return $results;

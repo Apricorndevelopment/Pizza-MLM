@@ -1,437 +1,576 @@
-@extends('userlayouts.layouts')
-@section('title', 'Network Explorer')
+@extends(Auth::user()->is_vendor === 1 ? 'vendorlayouts.layout' : 'userlayouts.layouts')
+@section('title', 'Manage Wallet')
 @section('container')
 
-<div class="container pt-2 pb-4">
-    <!-- Welcome Card -->
-    <div class="card mb-3 border-0 shadow-sm">
-        <div class="card-body p-4 bg-gradient-primary text-white rounded-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="fs-3 mb-1">Welcome back, {{ Auth::user()->name }}</h5>
-                    <p class="mb-0">Track your points and loyalty rewards</p>
+    <div class="min-h-screen bg-slate-50 pb-8 font-sans text-slate-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden mb-6 relative">
+                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-50">
                 </div>
-                <div class="icon-shape bg-white bg-opacity-25 rounded-circle p-3">
-                    <i class="fas fa-wallet fs-2"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    <!-- Tab Navigation -->
-    <ul class="nav nav-tabs nav-fill mb-3" id="walletTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active d-flex align-items-center justify-content-center" id="points-tab" data-bs-toggle="tab" data-bs-target="#points" type="button" role="tab">
-                <i class="fas fa-coins me-2"></i> Wallet1 Wallet
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link d-flex align-items-center justify-content-center" id="loyalty-tab" data-bs-toggle="tab" data-bs-target="#loyalty" type="button" role="tab">
-                <i class="fas fa-gem me-2"></i> Wallet2 Wallet
-            </button>
-        </li>
-    </ul>
-
-    <!-- Tab Content -->
-    <div class="tab-content" id="walletTabContent">
-        <!-- Wallet1 Tab -->
-        <div class="tab-pane fade show active" id="points" role="tabpanel">
-            <!-- Balance Card -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card border-success border-2 h-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="card-title text-muted mb-2">Wallet1 Balance</h6>
-                                    <h2 class="mb-0 fw-bold text-success">{{ number_format($points) }}</h2>
-                                </div>
-                                <div class="bg-success bg-opacity-10 p-3 rounded-circle">
-                                    <i class="fas fa-coins fs-3 text-success"></i>
-                                </div>
-                            </div>
-                        </div>
+                <div class="p-4 sm:p-6 relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-emerald-900 mb-2">My Wallet</h1>
+                        <p class="text-slate-500">Manage your earnings, track transaction history, and withdraw funds
+                            securely.</p>
+                    </div>
+                    <div
+                        class="hidden md:flex bg-emerald-50 p-4 rounded-full text-emerald-600 shadow-sm border border-emerald-100">
+                        <i class="fas fa-wallet text-3xl"></i>
                     </div>
                 </div>
-                
-                <!-- Withdraw Button -->
-                <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center justify-content-end">
-                    <button class="btn btn-primary px-4 py-2" data-bs-toggle="modal" data-bs-target="#withdrawModal">
-                        <i class="fas fa-money-bill-wave me-2"></i> Withdraw Wallet1
+            </div>
+
+            @if (session('success'))
+                <div class="mb-6 rounded-xl bg-emerald-50 border border-emerald-200 p-4 flex items-center shadow-sm"
+                    role="alert">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-emerald-500 text-xl"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-emerald-800">{{ session('success') }}</p>
+                    </div>
+                    <button type="button" class="ml-auto pl-3 text-emerald-500 hover:text-emerald-800 transition"
+                        onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            @endif
+
+            <div class="flex justify-center mb-6">
+                <div class="bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 inline-flex">
+                    <button onclick="switchTab('wallet1')" id="tab-btn-wallet1"
+                        class="px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2 bg-emerald-50 text-emerald-700 shadow-sm ring-1 ring-emerald-200">
+                        <i class="fas fa-coins"></i> Main Wallet
+                    </button>
+                    <button onclick="switchTab('wallet2')" id="tab-btn-wallet2"
+                        class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-800 transition-all duration-200 flex items-center gap-2">
+                        <i class="fas fa-shopping-bag"></i> Second Wallet
                     </button>
                 </div>
             </div>
 
-            <!-- Withdrawal Modal -->
-            <div class="modal fade" id="withdrawModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header border-0">
-                            <h5 class="modal-title fw-bold">Withdraw Wallet1</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div id="wallet-content">
+
+                <div id="wallet1-pane" class="block animate-fade-in">
+
+                    <div class="flex justify-center w-full gap-6 mb-6 flex-col lg:flex-row">
+                        <div
+                            class="lg:col-span-2 w-full bg-white rounded-2xl shadow-sm border border-slate-200 px-4 py-3 flex flex-col justify-center">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Available
+                                        Balance</p>
+                                    <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">
+                                        {{ number_format($wallet1) }} <span
+                                            class="text-2xl text-slate-400 font-medium">INR</span>
+                                    </h2>
+                                </div>
+                                <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
+                                    <i class="fas fa-university text-2xl"></i>
+                                </div>
+                            </div>
                         </div>
-                        <form id="withdrawForm" action="{{ route('user.withdraw.points') }}" method="POST">
-                            @csrf
-                            <div class="modal-body">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i> Minimum withdrawal: 500 points
+
+                        <div
+                            class="bg-gradient-to-br  w-full from-[#ECFDF5] to-emerald-100 rounded-2xl shadow-sm border border-emerald-200 px-4 py-3 flex flex-col justify-center text-center">
+                            <h3 class="text-lg font-bold text-emerald-900 mb-1">Ready to payout?</h3>
+                            <p class="text-sm text-emerald-700/80 mb-4">Transfer funds to your linked bank/UPI account
+                                instantly.</p>
+                            <button onclick="toggleModal('withdrawModal')"
+                                class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-lg shadow-emerald-200 transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fas fa-paper-plane"></i> Withdraw Money
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div
+                            class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
+                            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-history text-slate-400"></i> Withdrawal Requests
+                            </h3>
+                            <span
+                                class="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-500">
+                                {{ $withdrawals->total() }} Records
+                            </span>
+                        </div>
+
+                        @if ($withdrawals->count() > 0)
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr
+                                            class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-slate-200">
+                                            <th class="px-6 py-4">Date</th>
+                                            <th class="px-6 py-4">Amount</th>
+                                            <th class="px-6 py-4">Net Payout</th>
+                                            <th class="px-6 py-4">Method</th>
+                                            <th class="px-6 py-4 text-center">Status</th>
+                                            <th class="px-6 py-4"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        @foreach ($withdrawals as $withdrawal)
+                                            <tr class="hover:bg-slate-50 transition-colors group">
+                                                <td class="px-6 py-4 text-sm font-medium text-slate-600">
+                                                    {{ $withdrawal->created_at->format('d M Y') }}
+                                                </td>
+                                                <td class="px-6 py-4 text-sm font-bold text-slate-800">
+                                                    ₹{{ number_format($withdrawal->total_amount, 2) }}
+                                                </td>
+                                                <td class="px-6 py-4 text-sm font-bold text-emerald-600">
+                                                    ₹{{ number_format($withdrawal->credited_amount, 2) }}
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <span
+                                                        class="px-2 py-1 bg-slate-100 border border-slate-200 rounded text-xs font-bold text-slate-600 uppercase">
+                                                        {{ ucfirst($withdrawal->payment_method) }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 text-center">
+                                                    @if ($withdrawal->status === 'pending')
+                                                        <span
+                                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-200">
+                                                            <i class="fas fa-clock"></i> Pending
+                                                        </span>
+                                                    @elseif($withdrawal->status === 'approved')
+                                                        <span
+                                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                                                            <i class="fas fa-check-circle"></i> Approved
+                                                        </span>
+                                                    @else
+                                                        <span
+                                                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-200">
+                                                            <i class="fas fa-times-circle"></i> Rejected
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-6 py-4 text-right">
+                                                    <button onclick="toggleDetails('details-{{ $withdrawal->id }}')"
+                                                        class="text-slate-400 hover:text-emerald-600 transition">
+                                                        <i class="fas fa-chevron-down"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr id="details-{{ $withdrawal->id }}"
+                                                class="hidden bg-slate-50 border-b border-slate-200">
+                                                <td colspan="6" class="px-6 py-4">
+                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                                        <div class="col-span-3">
+                                                            <h6
+                                                                class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
+                                                                Transaction Details</h6>
+                                                        </div>
+                                                        @if ($withdrawal->payment_method === 'bank')
+                                                            <div><span class="text-slate-500 block text-xs">Bank
+                                                                    Name</span><span
+                                                                    class="font-bold text-slate-700">{{ $withdrawal->user->bank_name }}</span>
+                                                            </div>
+                                                            <div><span class="text-slate-500 block text-xs">Account
+                                                                    No</span><span
+                                                                    class="font-bold text-slate-700 font-mono">{{ $withdrawal->user->account_no }}</span>
+                                                            </div>
+                                                            <div><span class="text-slate-500 block text-xs">IFSC
+                                                                    Code</span><span
+                                                                    class="font-bold text-slate-700 font-mono">{{ $withdrawal->user->ifsc_code }}</span>
+                                                            </div>
+                                                        @else
+                                                            <div class="col-span-3"><span
+                                                                    class="text-slate-500 block text-xs">UPI ID</span><span
+                                                                    class="font-bold text-slate-700 font-mono">{{ $withdrawal->user->upi_id }}</span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="px-6 py-4 border-t border-slate-100">
+                                {{ $withdrawals->withQueryString()->onEachSide(1)->links('pagination::tailwind') }}
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-8">
+                        <div class="px-6 py-5 border-b border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-800">Main Wallet Transactions</h3>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 border-b border-slate-200">
+                            <form method="GET" action="{{ route('user.viewwallet') }}"
+                                class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Type</label>
+                                    <select name="wallet1_type"
+                                        class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 p-2">
+                                        <option value="">All Types</option>
+                                        <option value="credit"
+                                            {{ request('wallet1_type') == 'credit' ? 'selected' : '' }}>Credit (+)</option>
+                                        <option value="debit" {{ request('wallet1_type') == 'debit' ? 'selected' : '' }}>
+                                            Debit (-)</option>
+                                    </select>
                                 </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Available Wallet1</label>
-                                    <input type="text" class="form-control-plaintext" value="{{ number_format($points) }}" readonly>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">From Date</label>
+                                    <input type="date" name="wallet1_start_date"
+                                        value="{{ request('wallet1_start_date') }}"
+                                        class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 p-2">
                                 </div>
-                                
-                                <div class="mb-3">
-                                    <label for="withdrawAmount" class="form-label fw-bold">Amount to Withdraw</label>
-                                    <input type="number" class="form-control" name="amount" id="withdrawAmount" 
-                                           placeholder="Enter points amount" required>
-                                    <div class="form-text">1 point = ₹1</div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">To Date</label>
+                                    <input type="date" name="wallet1_end_date"
+                                        value="{{ request('wallet1_end_date') }}"
+                                        class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 p-2">
+                                </div>
+                                <div class="flex items-end gap-2">
+                                    <button type="submit"
+                                        class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg text-sm font-bold transition">Apply</button>
+                                    <a href="{{ route('user.viewwallet') }}"
+                                        class="px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-500 hover:bg-slate-100 transition"><i
+                                            class="fas fa-times"></i></a>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            @if ($wallet1Transactions->count() > 0)
+                                <table class="w-full text-left border-collapse">
+                                    <thead
+                                        class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-6 py-4">Date</th>
+                                            <th class="px-6 py-4">Description</th>
+                                            <th class="px-6 py-4 text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        @foreach ($wallet1Transactions as $transaction)
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="px-6 py-4 text-sm text-slate-500">
+                                                    {{ $transaction->created_at->format('d M Y') }}</td>
+                                                <td class="px-6 py-4 text-sm font-medium text-slate-700">
+                                                    {{ $transaction->notes ?? 'Transaction' }}</td>
+                                                <td class="px-6 py-4 text-right">
+                                                    <span
+                                                        class="text-sm font-bold {{ $transaction->wallet1 >= 0 ? 'text-emerald-600' : 'text-red-500' }}">
+                                                        {{ $transaction->wallet1 >= 0 ? '+' : '' }}{{ $transaction->wallet1 }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <div class="px-6 py-4 border-t border-slate-100">
+                                    {{ $wallet1Transactions->withQueryString()->onEachSide(1)->links('pagination::tailwind') }}
+                                </div>
+                            @else
+                                <div class="py-10 text-center text-slate-400">
+                                    <i class="fas fa-exchange-alt text-4xl mb-3 opacity-30"></i>
+                                    <p>No transactions found matching your filters.</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wallet2-pane" class="hidden animate-fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div
+                            class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-sky-200 p-6 flex flex-col justify-center relative overflow-hidden">
+                            <div class="absolute right-0 top-0 w-32 h-32 bg-sky-50 rounded-full -mr-8 -mt-8 z-0"></div>
+                            <div class="relative z-10 flex justify-between items-center">
+                                <div>
+                                    <p class="text-xs font-bold text-sky-500 uppercase tracking-wider mb-1">Shopping
+                                        Credits</p>
+                                    <h2 class="text-4xl font-extrabold text-slate-800">{{ number_format($wallet2) }}</h2>
+                                </div>
+                                <div class="p-3 bg-sky-50 rounded-xl text-sky-500">
+                                    <i class="fas fa-gem text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-sky-50 rounded-2xl border border-sky-100 p-6 flex items-center">
+                            <div>
+                                <div class="flex items-center gap-2 text-sky-700 font-bold mb-2">
+                                    <i class="fas fa-info-circle"></i> Usage Info
+                                </div>
+                                <p class="text-sm text-sky-800 leading-relaxed">This wallet balance can be used exclusively
+                                    for purchasing products on the platform.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="px-6 py-5 border-b border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-800">Second Wallet History</h3>
+                        </div>
+                        @if ($wallet2Transactions->count() > 0)
+                            <table class="w-full text-left border-collapse">
+                                <thead
+                                    class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-6 py-4">Date</th>
+                                        <th class="px-6 py-4">Description</th>
+                                        <th class="px-6 py-4 text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    @foreach ($wallet2Transactions as $transaction)
+                                        <tr class="hover:bg-slate-50 transition">
+                                            <td class="px-6 py-4 text-sm text-slate-500">
+                                                {{ $transaction->created_at->format('d M Y') }}</td>
+                                            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+                                                {{ $transaction->notes ?? 'N/A' }}</td>
+                                            <td class="px-6 py-4 text-right">
+                                                <span
+                                                    class="text-sm font-bold {{ $transaction->wallet2 >= 0 ? 'text-emerald-600' : 'text-red-500' }}">
+                                                    {{ $transaction->wallet2 >= 0 ? '+' : '' }}{{ $transaction->wallet2 }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <div class="py-10 text-center text-slate-400">
+                                <i class="fas fa-ghost text-4xl mb-3 opacity-30"></i>
+                                <p>No wallet transactions found.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="withdrawModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+                onclick="toggleModal('withdrawModal')"></div>
+
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+
+                    <div
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100">
+
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <div class="flex justify-between items-center mb-5">
+                                <h3 class="text-xl font-bold text-slate-800" id="modal-title">Withdraw Funds</h3>
+                                <button type="button" class="text-slate-400 hover:text-slate-600 transition"
+                                    onclick="toggleModal('withdrawModal')">
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+
+                            <form id="withdrawForm" action="{{ route('user.withdraw.wallet1') }}" method="POST">
+                                @csrf
+
+                                <div class="bg-[#ECFDF5] border border-emerald-100 rounded-xl p-4 text-center mb-6">
+                                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Available
+                                        Balance</span>
+                                    <div class="text-3xl font-extrabold text-emerald-800 mt-1">
+                                        ₹{{ number_format($wallet1) }}</div>
                                 </div>
 
-                                @php
-                                    $user = Auth::user();
-                                @endphp  
-                                
-                                <div class="mb-3">
-                                    <label for="paymentMethod" class="form-label fw-bold">Payment Method</label>
-                                    <select class="form-select" name="payment_method" id="paymentMethod" required>
-                                        <option value="">Select Payment Method</option>
+                                <div class="mb-5">
+                                    <label for="withdrawAmount"
+                                        class="block text-xs font-bold text-slate-500 uppercase mb-2">Enter Amount</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <span class="text-slate-500 sm:text-sm font-bold">₹</span>
+                                        </div>
+                                        <input type="number" name="amount" id="withdrawAmount"
+                                            class="block w-full rounded-xl border-slate-300 pl-8 py-3 text-slate-900 placeholder-slate-300 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-bold"
+                                            placeholder="Min 500" required>
+                                    </div>
+                                </div>
+
+                                @php $user = Auth::user(); @endphp
+
+                                <div class="mb-6">
+                                    <label for="paymentMethod"
+                                        class="block text-xs font-bold text-slate-500 uppercase mb-2">Receiving
+                                        Account</label>
+                                    <select id="paymentMethod" name="payment_method" required
+                                        class="block w-full rounded-xl border-slate-300 py-3 text-slate-700 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+                                        <option value="">Select Method</option>
                                         @if ($user->account_no && $user->ifsc_code)
-                                            <option value="bank">Bank Transfer</option>
+                                            <option value="bank">Bank Transfer (Ending in
+                                                {{ substr($user->account_no, -4) }})</option>
                                         @endif
                                         @if ($user->upi_id)
-                                            <option value="upi">UPI Transfer</option>
+                                            <option value="upi">UPI Transfer ({{ $user->upi_id }})</option>
                                         @endif
                                     </select>
+
                                     @if (!$user->account_no && !$user->upi_id)
-                                        <div class="alert alert-danger mt-2">
-                                            <i class="fas fa-exclamation-circle me-2"></i> Please add payment details in your profile
+                                        <div
+                                            class="mt-2 flex items-center p-3 text-sm text-red-700 bg-red-50 rounded-lg border border-red-100">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            <span>Please update payment details in your profile first.</span>
                                         </div>
                                     @endif
                                 </div>
-                                
-                                <div class="alert alert-warning mt-4">
-                                    <h6 class="fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Important Note</h6>
-                                    <ul class="mb-0 ps-3">
-                                        <li>Withdrawal requests are processed within 7 business days</li>
-                                        <li>Tax deduction of 5% Admin Charge will be applied</li>
-                                        <li>Tax deduction of 5% TDS Charge will be applied</li>
+
+                                <div class="bg-slate-50 rounded-xl p-4 mb-2 border border-slate-100">
+                                    <ul class="space-y-2 text-xs text-slate-500 font-medium">
+                                        <li class="flex items-center"><i
+                                                class="fas fa-info-circle w-5 text-emerald-500"></i> Min. Withdrawal: ₹500
+                                        </li>
+                                        <li class="flex items-center"><i
+                                                class="fas fa-percentage w-5 text-emerald-500"></i> 5% Admin Charge</li>
+                                        <li class="flex items-center"><i
+                                                class="fas fa-file-invoice-dollar w-5 text-emerald-500"></i> 5% TDS
+                                            Deduction</li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="modal-footer border-0">
-                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" onclick="return confirm('Are you sure you want to withdraw points')" class="btn btn-primary" id="submitWithdraw" 
-                                    @if (!$user->account_no && !$user->upi_id) disabled @endif>
-                                    <i class="fas fa-paper-plane me-2"></i> Submit Request
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Withdrawal History -->
-            @if ($withdrawals->count() > 0)
-                <div class="card mb-4 border-0 shadow-sm">
-                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="fas fa-history me-2 text-primary"></i> Withdrawal History
-                        </h5>
-                        <div class="d-flex align-items-center">
-                            <span class="badge bg-light text-dark me-2">{{ $withdrawals->total() }} records</span>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="ps-4">Date</th>
-                                        <th>Amount</th>
-                                        <th>After Tax</th>
-                                        <th>Method</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($withdrawals as $withdrawal)
-                                        <tr>
-                                            <td class="ps-4">{{ $withdrawal->created_at->format('d M Y') }}</td>
-                                            <td class="fw-bold">₹{{ number_format($withdrawal->total_amount, 2) }}</td>
-                                            <td>₹{{ number_format($withdrawal->credited_amount, 2) }}</td>
-                                            <td>
-                                                <span class="badge bg-light text-dark">
-                                                    {{ ucfirst($withdrawal->payment_method) }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @if ($withdrawal->status === 'pending')
-                                                    <span class="badge bg-warning">
-                                                        <i class="fas fa-clock me-1"></i> Pending
-                                                    </span>
-                                                @elseif($withdrawal->status === 'approved')
-                                                    <span class="badge bg-success">
-                                                        <i class="fas fa-check-circle me-1"></i> Approved
-                                                    </span>
-                                                @else
-                                                    <span class="badge bg-danger">
-                                                        <i class="fas fa-times-circle me-1"></i> Rejected
-                                                    </span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr class="collapse" id="details-{{ $withdrawal->id }}">
-                                            <td colspan="6" class="bg-light">
-                                                <div class="p-3">
-                                                    <h6 class="fw-bold mb-3">Payment Details</h6>
-                                                    @if ($withdrawal->payment_method === 'bank')
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <p class="mb-1"><strong>Account Number:</strong></p>
-                                                                <p>{{ $withdrawal->user->account_no }}</p>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <p class="mb-1"><strong>IFSC Code:</strong></p>
-                                                                <p>{{ $withdrawal->user->ifsc_code }}</p>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <p class="mb-1"><strong>Bank Name:</strong></p>
-                                                                <p>{{ $withdrawal->user->bank_name }}</p>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <p class="mb-1"><strong>UPI ID:</strong></p>
-                                                        <p>{{ $withdrawal->user->upi_id }}</p>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Withdrawals Pagination -->
-                        <div class="d-flex justify-content-between align-items-center p-3">
-                            <div class="text-muted">
-                                Showing {{ $withdrawals->firstItem() }} to {{ $withdrawals->lastItem() }} of {{ $withdrawals->total() }} entries
-                            </div>
-                            <nav aria-label="Withdrawals pagination">
-                                <ul class="pagination mb-0">
-                                    {{ $withdrawals->withQueryString()->onEachSide(1)->links('pagination::bootstrap-4') }}
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            <!-- Wallet1 Transactions -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-2">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
-                        <h5 class="mb-0 fw-bold">
-                            <i class="fas fa-exchange-alt me-2 text-primary"></i> Wallet1 Transactions
-                        </h5>
-
-                    </div>
-                    
-                    <!-- Filters Form -->
-                    <div class="mt-3">
-                        <form method="GET" action="{{ route('user.viewwallet') }}">
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <label for="points_type" class="form-label small fw-bold">Transaction Type</label>
-                                    <select class="form-select form-select-sm" name="points_type" id="points_type">
-                                        <option value="">All Transactions</option>
-                                        <option value="credit" {{ request('points_type') == 'credit' ? 'selected' : '' }}>Credits</option>
-                                        <option value="debit" {{ request('points_type') == 'debit' ? 'selected' : '' }}>Debits</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="points_start_date" class="form-label small fw-bold">Start Date</label>
-                                    <input type="date" class="form-control form-control-sm" name="points_start_date" 
-                                           id="points_start_date" value="{{ request('points_start_date') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="points_end_date" class="form-label small fw-bold">End Date</label>
-                                    <input type="date" class="form-control form-control-sm" name="points_end_date" 
-                                           id="points_end_date" value="{{ request('points_end_date') }}">
-                                </div>
-                                <div class="col-md-3 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary btn-sm me-2">
-                                        <i class="fas fa-search me-1"></i> Apply
+                                <div class="mt-6 flex gap-3">
+                                    <button type="button"
+                                        class="flex-1 py-3 px-4 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition"
+                                        onclick="toggleModal('withdrawModal')">Cancel</button>
+                                    <button type="submit" id="submitWithdraw"
+                                        class="flex-1 py-3 px-4 bg-emerald-600 border border-transparent rounded-xl text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition"
+                                        onclick="return confirm('Are you sure you want to withdraw wallet1?')"
+                                        @if (!$user->account_no && !$user->upi_id) disabled @endif>
+                                        Confirm Withdrawal
                                     </button>
-                                    <a href="{{ route('user.viewwallet') }}" class="btn btn-outline-secondary btn-sm">
-                                        <i class="fas fa-times me-1"></i> Clear
-                                    </a>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-0">
-                    @if ($pointsTransactions->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="ps-4">Date</th>
-                                        <th>Description</th>
-                                        <th class="text-end pe-4">Wallet1</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($pointsTransactions as $transaction)
-                                        <tr>
-                                            <td class="ps-4">{{ $transaction->created_at->format('d M Y') }}</td>
-                                            <td>{{ $transaction->notes ?? 'N/A' }}</td>
-                                            <td class="text-end pe-4">
-                                                <span class="fw-bold {{ $transaction->points >= 0 ? 'text-success' : 'text-danger' }}">
-                                                    {{ $transaction->points >= 0 ? '+' : '' }}{{ $transaction->points }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Wallet1 Transactions Pagination -->
-                        <div class="d-flex justify-content-between align-items-center p-3">
-                            <div class="text-muted">
-                                Showing {{ $pointsTransactions->firstItem() }} to {{ $pointsTransactions->lastItem() }} of {{ $pointsTransactions->total() }} entries
-                            </div>
-                            <nav aria-label="Wallet1 transactions pagination">
-                                <ul class="pagination mb-0">
-                                    {{ $pointsTransactions->withQueryString()->onEachSide(1)->links('pagination::bootstrap-4') }}
-                                </ul>
-                            </nav>
-                        </div>
-                    @else
-                        <div class="text-center py-5">
-                            <div class="mb-3">
-                                <i class="fas fa-exchange-alt fa-3x text-muted"></i>
-                            </div>
-                            <h5 class="fw-bold text-muted">No transactions found</h5>
-                            <p class="text-muted">Try adjusting your filters</p>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
 
-        <!-- Wallet2 Tab -->
-        <div class="tab-pane fade" id="loyalty" role="tabpanel">
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card border-info border-2 h-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="card-title text-muted mb-2">Wallet2 Balance</h6>
-                                    <h2 class="mb-0 fw-bold text-info">{{ number_format($loyalty) }}</h2>
-                                </div>
-                                <div class="bg-info bg-opacity-10 p-3 rounded-circle">
-                                    <i class="fas fa-gem fs-3 text-info"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 mt-3 mt-md-0 d-flex align-items-center">
-                    <div class="alert alert-info mb-0 w-100">
-                        <i class="fas fa-info-circle me-2"></i> Wallet2 points can be redeemed for exclusive rewards
-                    </div>
-                </div>
-            </div>
-
-            <!-- Wallet2 Transactions -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="fas fa-exchange-alt me-2 text-primary"></i> Wallet2 Transactions
-                    </h5>
-                </div>
-                <div class="card-body p-0">
-                    @if ($loyaltyTransactions->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="ps-4">Date</th>
-                                        <th>Description</th>
-                                        <th class="text-end pe-4">Wallet1</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($loyaltyTransactions as $transaction)
-                                        <tr>
-                                            <td class="ps-4">{{ $transaction->created_at->format('d M Y') }}</td>
-                                            <td>{{ $transaction->notes ?? 'N/A' }}</td>
-                                            <td class="text-end pe-4">
-                                                <span class="fw-bold {{ $transaction->loyalty >= 0 ? 'text-success' : 'text-danger' }}">
-                                                    {{ $transaction->loyalty >= 0 ? '+' : '' }}{{ $transaction->loyalty }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="text-center py-5">
-                            <div class="mb-3">
-                                <i class="fas fa-gem fa-3x text-muted"></i>
-                            </div>
-                            <h5 class="fw-bold text-muted">No loyalty transactions yet</h5>
-                            <p class="text-muted">Your loyalty transactions will appear here</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const withdrawForm = document.getElementById('withdrawForm');
-        const withdrawAmount = document.getElementById('withdrawAmount');
-        const submitBtn = document.getElementById('submitWithdraw');
-        const pointsBalance = {{ $points }};
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            // Hide all panes
+            document.getElementById('wallet1-pane').classList.add('hidden');
+            document.getElementById('wallet2-pane').classList.add('hidden');
 
-        withdrawAmount.addEventListener('input', function() {
-            const amount = parseFloat(this.value);
-            const errorElement = document.getElementById('amountError');
-            
-            if (isNaN(amount) || amount < 500 || amount > pointsBalance) {
-                if (!errorElement) {
-                    const div = document.createElement('div');
-                    div.id = 'amountError';
-                    div.className = 'invalid-feedback d-block';
-                    div.textContent = amount < 500 ? 
-                        'Minimum withdrawal is 500 points' : 
-                        'Amount exceeds your available balance';
-                    this.parentNode.appendChild(div);
-                }
-                this.classList.add('is-invalid');
-                submitBtn.disabled = true;
+            // Show selected pane
+            document.getElementById(tabName + '-pane').classList.remove('hidden');
+
+            // Update Button Styles
+            const btn1 = document.getElementById('tab-btn-wallet1');
+            const btn2 = document.getElementById('tab-btn-wallet2');
+
+            const activeClasses = ['bg-emerald-50', 'text-emerald-700', 'shadow-sm', 'ring-1', 'ring-emerald-200'];
+            const inactiveClasses = ['text-slate-500', 'hover:text-slate-800'];
+
+            if (tabName === 'wallet1') {
+                btn1.classList.add(...activeClasses);
+                btn1.classList.remove(...inactiveClasses);
+                btn2.classList.remove(...activeClasses);
+                btn2.classList.add(...inactiveClasses);
             } else {
-                if (errorElement) errorElement.remove();
-                this.classList.remove('is-invalid');
-                submitBtn.disabled = false;
+                btn2.classList.add(...activeClasses);
+                btn2.classList.remove(...inactiveClasses);
+                btn1.classList.remove(...activeClasses);
+                btn1.classList.add(...inactiveClasses);
             }
+        }
+
+        // Modal Logic
+        function toggleModal(modalID) {
+            const modal = document.getElementById(modalID);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Toggle Table Details Row
+        function toggleDetails(id) {
+            const row = document.getElementById(id);
+            if (row.classList.contains('hidden')) {
+                row.classList.remove('hidden');
+            } else {
+                row.classList.add('hidden');
+            }
+        }
+
+        // Original Validation Logic (Preserved)
+        document.addEventListener('DOMContentLoaded', function() {
+            const withdrawForm = document.getElementById('withdrawForm');
+            const withdrawAmount = document.getElementById('withdrawAmount');
+            const submitBtn = document.getElementById('submitWithdraw');
+            const wallet1Balance = {{ $wallet1 }};
+
+            withdrawAmount.addEventListener('input', function() {
+                const amount = parseFloat(this.value);
+                // We use 'parentNode.parentNode' because HTML structure is: 
+                // <div> -> <div class="relative"> -> <input>
+                // We want to append error to the outer <div>
+                const targetContainer = this.parentNode.parentNode;
+
+                // Check if error already exists
+                let errorElement = document.getElementById('amountError');
+
+                if (isNaN(amount) || amount < 500 || amount > wallet1Balance) {
+                    if (!errorElement) {
+                        const div = document.createElement('div');
+                        div.id = 'amountError';
+                        // Tailwind error classes
+                        div.className = 'mt-2 text-sm text-red-600 font-bold flex items-center';
+                        div.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (amount < 500 ?
+                            'Minimum withdrawal is 500 wallet1' :
+                            'Amount exceeds your available balance');
+
+                        targetContainer.appendChild(div);
+                    } else {
+                        // Update text if element exists
+                        errorElement.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (
+                            amount < 500 ?
+                            'Minimum withdrawal is 500 wallet1' :
+                            'Amount exceeds your available balance');
+                    }
+
+                    this.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+                    this.classList.remove('border-slate-300', 'focus:border-emerald-500',
+                        'focus:ring-emerald-500');
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    if (errorElement) errorElement.remove();
+
+                    this.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+                    this.classList.add('border-slate-300', 'focus:border-emerald-500',
+                        'focus:ring-emerald-500');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
         });
-    });
-</script>
+    </script>
+
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 
 @endsection

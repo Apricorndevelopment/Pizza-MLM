@@ -1,7 +1,7 @@
 @extends('vendorlayouts.layout')
 @section('title', 'All Orders')
 
-@section('content')
+@section('container')
     <div class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
 
         {{-- Alerts --}}

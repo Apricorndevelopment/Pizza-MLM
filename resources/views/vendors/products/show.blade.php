@@ -1,6 +1,6 @@
 @extends('vendorlayouts.layout')
 @section('title', 'Product Details')
-@section('content')
+@section('container')
 
     <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
 
@@ -86,8 +86,7 @@
                             <div class="flex items-center space-x-4">
                                 <span
                                     class="text-3xl font-bold text-green-600">₹{{ number_format($product->price, 2) }}</span>
-                                <span
-                                    class="text-lg text-gray-400">₹{{ number_format($product->mrp, 2) }}</span>
+                                <span class="text-lg text-gray-400">₹{{ number_format($product->mrp, 2) }}</span>
                             </div>
                         </div>
 

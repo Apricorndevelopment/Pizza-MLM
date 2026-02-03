@@ -3,31 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BonusIncome;
-use App\Models\DirectIncome;
-use App\Models\LevelIncome;
 use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\OrderRejection;
-use App\Models\PercentageIncome;
-use App\Models\PercentageLevelIncome;
-use App\Models\ProductPackage;
-use App\Models\RepurchaseIncome;
-use App\Models\User;
-use App\Models\Wallet1Transaction;
-use App\Models\Wallet2Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Order;
+use App\Models\OrderRejection;
+use App\Models\Wallet1Transaction;
+use App\Models\Wallet2Transaction;
+use App\Models\ProductPackage;
+use App\Models\User;
+use App\Models\PercentageIncome;
+use App\Models\PercentageLevelIncome;
+use App\Models\DirectIncome;
+use App\Models\LevelIncome;
+use App\Models\RepurchaseIncome;
+use App\Models\BonusIncome;
+use App\Models\PercentageReward;
 
 class AdminOrderController extends Controller
 {
-    /**
-     * 1. Display a listing of orders (The Missing Method).
-     */
     public function index(Request $request)
     {
-        // Fetch Orders containing Admin products
         $query = Order::whereHas('items', function ($q) {
             $q->where('product_type', 'admin');
         })
@@ -35,7 +32,6 @@ class AdminOrderController extends Controller
                 $q->where('product_type', 'admin');
             }]);
 
-        // Search Filter
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -48,12 +44,11 @@ class AdminOrderController extends Controller
         }
 
         $orders = $query->latest()->paginate(10);
-
         return view('admin.orders.index', compact('orders'));
     }
 
     /**
-     * 2. Update order status and handle refunds on rejection.
+     * Main Method: Handles Status Updates safely.
      */
     public function updateStatus(Request $request)
     {
@@ -81,7 +76,7 @@ class AdminOrderController extends Controller
                 $this->processOrderRejection($order, $user, $adminId, $request->reason);
             }
 
-            // 2. Handle Delivery (Income Distribution)
+            // 2. Handle Delivery (Income Distribution + Upline Growth)
             if ($request->status === 'delivered') {
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
@@ -101,7 +96,7 @@ class AdminOrderController extends Controller
             // Something went wrong? Rollback everything!
             DB::rollBack();
 
-            // Log the error for debugging
+            // Keep Error Log for debugging crashes
             Log::error("Order Update Failed: " . $e->getMessage());
 
             return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
@@ -112,12 +107,8 @@ class AdminOrderController extends Controller
     // MODULAR FUNCTIONS (PRIVATE)
     // =========================================================================
 
-    /**
-     * Handle the logic for Rejecting an order (Refunds).
-     */
     private function processOrderRejection($order, $user, $adminId, $reason)
     {
-        // Log Rejection
         OrderRejection::create([
             'order_id' => $order->id,
             'user_id'  => $adminId,
@@ -156,15 +147,11 @@ class AdminOrderController extends Controller
         }
     }
 
-    /**
-     * Handle the logic for Delivering an order (Income Calculations).
-     */
     private function processOrderDelivery($order, $user)
     {
         // 1. Calculate Total PV
         $totalPV = $this->calculateTotalPV($order);
 
-        // 2. Fetch Global Settings
         $settings = PercentageIncome::first();
         if (!$settings) {
             throw new \Exception("Percentage Income Settings not configured in Admin.");
@@ -176,12 +163,12 @@ class AdminOrderController extends Controller
             } else {
                 $this->handleUserRepurchase($user, $order, $totalPV, $settings);
             }
+
+            // NEW TASK: Process Upline Business Growth & Rewards
+            $this->processUplineGrowth($user, $totalPV, $settings);
         }
     }
 
-    /**
-     * Calculate Total PV from Order Items
-     */
     private function calculateTotalPV($order)
     {
         $totalPV = 0;
@@ -194,9 +181,6 @@ class AdminOrderController extends Controller
         return $totalPV;
     }
 
-    /**
-     * Scenario A: First Purchase (Activation) Logic
-     */
     private function handleUserActivation($user, $order, $totalPV, $settings)
     {
         // 1. Direct Income
@@ -214,9 +198,6 @@ class AdminOrderController extends Controller
         $user->save();
     }
 
-    /**
-     * Scenario B: Repurchase Logic
-     */
     private function handleUserRepurchase($user, $order, $totalPV, $settings)
     {
         // 1. Repurchase Income
@@ -226,9 +207,73 @@ class AdminOrderController extends Controller
         $this->distributeBonusIncome($user, $totalPV, $order->total_amount, $settings);
     }
 
-    /**
-     * Distribute Direct Income to Sponsor
-     */
+    // -------------------------------------------------------------------------
+    // NEW: UPLINE BUSINESS & REWARD LOGIC
+    // -------------------------------------------------------------------------
+
+    private function processUplineGrowth($startUser, $pv, $settings)
+    {
+        $currentUplineUlid = $startUser->sponsor_id;
+
+        // Optimization: Fetch all milestones sorted by achievement ASC
+        $milestones = PercentageReward::orderBy('achievement', 'asc')->get();
+
+        while ($currentUplineUlid) {
+            $upline = User::where('ulid', $currentUplineUlid)->first();
+
+            // Chain breaks? Stop.
+            if (!$upline) break;
+
+            // 1. Update Total Business
+            $upline->total_business += $pv;
+            $upline->save();
+
+            // 2. Check for Rewards
+            $this->checkAndDistributeRewards($upline, $milestones, $settings);
+
+            // Move Up
+            $currentUplineUlid = $upline->sponsor_id;
+        }
+    }
+
+    private function checkAndDistributeRewards($user, $milestones, $settings)
+    {
+        // Fetch IDs of rewards ALREADY received by this user
+        $receivedRewardIds = DB::table('rewards_incomes')
+            ->where('user_id', $user->id)
+            ->pluck('reward_id')
+            ->toArray();
+
+        foreach ($milestones as $reward) {
+            // Logic: If Business crosses achievement AND reward not received yet
+            if ($user->total_business >= $reward->achievement && !in_array($reward->id, $receivedRewardIds)) {
+
+                // A. Distribute Reward Amount (Split Logic)
+                $this->distributeToWallets($user, $reward->reward, $settings, "Reward Achieved: {$reward->rank}");
+
+                // B. Update Rank (Last loop will set the highest rank)
+                $user->current_rank = $reward->rank;
+                $user->save();
+
+                // C. Log History in `rewards_incomes` table
+                DB::table('rewards_incomes')->insert([
+                    'user_id'            => $user->id,
+                    'user_ulid'          => $user->ulid,
+                    'rank_name'          => $reward->rank,
+                    'reward_id'          => $reward->id,
+                    'reward_amount'      => $reward->reward,
+                    'reward_achivements' => $reward->achievement,
+                    'created_at'         => now(),
+                    'updated_at'         => now(),
+                ]);
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // EXISTING DISTRIBUTOR HELPERS
+    // -------------------------------------------------------------------------
+
     private function distributeDirectIncome($user, $purchaseAmount, $totalPV, $settings)
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
@@ -236,10 +281,8 @@ class AdminOrderController extends Controller
         if ($sponsor) {
             $incomeAmount = $totalPV * ($settings->direct_income / 100);
 
-            // Credit Wallets
             $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Direct Income from User: {$user->ulid}");
 
-            // Log Record
             DirectIncome::create([
                 'user_id'         => $sponsor->id,
                 'user_ulid'       => $sponsor->ulid,
@@ -253,17 +296,12 @@ class AdminOrderController extends Controller
         }
     }
 
-    /**
-     * Distribute Bonus Income to Self
-     */
     private function distributeBonusIncome($user, $totalPV, $purchaseAmount, $settings)
     {
         $incomeAmount = $totalPV * ($settings->bonus_income / 100);
 
-        // Credit Wallets
         $this->distributeToWallets($user, $incomeAmount, $settings, "Bonus Income from Order #{$user->id}");
 
-        // Log Record
         BonusIncome::create([
             'user_id'         => $user->id,
             'user_ulid'       => $user->ulid,
@@ -274,35 +312,22 @@ class AdminOrderController extends Controller
         ]);
     }
 
-    /**
-     * Distribute Level / Repurchase Income to Upline
-     */
     private function distributeLevelIncome($fromUser, $totalPV, $purchaseAmount, $settings, $tableType)
     {
         $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
-
-        if ($levelSettings->isEmpty()) {
-            // Optional: Throw error if level settings are missing?
-            // throw new \Exception("Percentage Level Income settings missing."); 
-            return;
-        }
-
         $currentUplineUlid = $fromUser->sponsor_id;
 
         foreach ($levelSettings as $levelSetting) {
             $uplineUser = User::where('ulid', $currentUplineUlid)->first();
-
-            if (!$uplineUser) break; // Stop if no upline found
+            if (!$uplineUser) break;
 
             $incomeAmount = $totalPV * ($levelSetting->percentage / 100);
             $note = ($tableType == 'level_incomes')
                 ? "Level {$levelSetting->level} Income from {$fromUser->ulid}"
                 : "Repurchase Level {$levelSetting->level} Income from {$fromUser->ulid}";
 
-            // Credit Wallets
             $this->distributeToWallets($uplineUser, $incomeAmount, $settings, $note);
 
-            // Log Record based on type
             if ($tableType == 'level_incomes') {
                 LevelIncome::create([
                     'user_id'         => $uplineUser->id,
@@ -317,7 +342,7 @@ class AdminOrderController extends Controller
                 ]);
             } else {
                 RepurchaseIncome::create([
-                    'user_id'         => $uplineUser->ulid, // Schema uses varchar user_id here? Check DB.
+                    'user_id'         => $uplineUser->ulid,
                     'from_ulid'       => $fromUser->ulid,
                     'from_name'       => $fromUser->name,
                     'purchase_amount' => $purchaseAmount,
@@ -326,15 +351,10 @@ class AdminOrderController extends Controller
                     'level'           => $levelSetting->level,
                 ]);
             }
-
-            // Move Up
             $currentUplineUlid = $uplineUser->sponsor_id;
         }
     }
 
-    /**
-     * Helper to Split Money into Wallets based on PercentageIncome settings
-     */
     private function distributeToWallets($user, $amount, $settings, $note)
     {
         if ($amount <= 0) return;
@@ -342,11 +362,28 @@ class AdminOrderController extends Controller
         $wallet1Amount = $amount * ($settings->personal_wallet / 100);
         $wallet2Amount = $amount * ($settings->second_wallet / 100);
 
-        // Update User Model (Memory)
         $user->wallet1_balance += $wallet1Amount;
         $user->wallet2_balance += $wallet2Amount;
-        $user->save(); // Save to DB
+        $user->save();
 
+        if ($wallet1Amount > 0) {
+            Wallet1Transaction::create([
+                'user_id'   => $user->id,
+                'user_ulid' => $user->ulid,
+                'wallet1'   => $wallet1Amount,
+                'notes'     => $note . ' (W1)',
+                'balance'   => $user->wallet1_balance,
+            ]);
+        }
 
+        if ($wallet2Amount > 0) {
+            Wallet2Transaction::create([
+                'user_id'   => $user->id,
+                'user_ulid' => $user->ulid,
+                'wallet2'   => $wallet2Amount,
+                'notes'     => $note . ' (W2)',
+                'balance'   => $user->wallet2_balance,
+            ]);
+        }
     }
 }

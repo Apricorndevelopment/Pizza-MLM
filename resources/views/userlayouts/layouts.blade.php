@@ -297,7 +297,7 @@
                     <a href="{{ route('user.complaints.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
-                        <span class="font-medium">Complaints</span>
+                        <span class="font-medium">Need Help?</span>
                     </a>
 
 

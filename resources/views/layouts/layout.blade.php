@@ -165,7 +165,138 @@
                     <a href="{{ route('admin.orders.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
                         <i class="bi bi-cart-check mr-3 text-lg text-gray-500"></i>
-                        <span class="font-medium">Vendor Orders</span>
+                        <span class="font-medium">View Orders</span>
+                    </a>
+
+                    @php
+                        $adminId = Auth::guard('admin')->id();
+                    @endphp
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-diagram-3 mr-3 text-lg"></i>
+                                <span class="font-medium">Admin Network</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-4 mt-1 space-y-1">
+                            <a href="{{ route('admin.user.tree', $adminId) }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-tree mr-1.5"></i> User Tree
+                            </a>
+                            <a href="{{ route('admin.network.summary') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-grid-3x3 mr-1.5"></i> Network Summary
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-wallet2 mr-3 text-lg"></i>
+                                <span class="font-medium">Wallet Management</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-4 mt-1 space-y-1">
+                            <a href="{{ route('admin.wallet') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-arrow-left-right mr-1.5"></i> Transfer Money
+                            </a>
+                            <a href="{{ route('admin.withdrawls.index') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-cash-stack mr-1.5"></i> Withdrawal Requests
+                            </a>
+                            <a href="{{ route('admin.wallet-transactions') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-list-check mr-1.5"></i> All Transactions
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-gift mr-3 text-lg"></i>
+                                <span class="font-medium">Package Management</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-4 mt-1 space-y-1">
+                            <a href="{{ route('admin.package') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-eye mr-1.5"></i> View Packages
+                            </a>
+                            <a href="{{ route('admin.packages.assign') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-person-plus mr-1.5"></i> Assign Package
+                            </a>
+                            <a href="{{ route('admin.package-purchases') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-bag-check mr-1.5"></i> View User Packages
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-graph-up-arrow mr-3 text-lg"></i>
+                                <span class="font-medium">Profit Distribution</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-4 mt-1 space-y-1">
+                            <a href="{{ route('admin.profit.distribution') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-cash-coin mr-1.5"></i> Distribute Profit
+                            </a>
+                            <a href="{{ route('admin.view.monthlyDistribution') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-calendar-month mr-1.5"></i> Monthly Records
+                            </a>
+                            <a href="{{ route('admin.view.distribution') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-calendar-check mr-1.5"></i> Yearly Records
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-boxes mr-3 text-lg"></i>
+                                <span class="font-medium">Manage Stock</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-4 mt-1 space-y-1">
+                            <a href="{{ route('admin.stock.form') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-arrow-right-circle mr-1.5"></i> Transfer Stock
+                            </a>
+                            <a href="{{ route('admin.sales.stock') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-journal-text mr-1.5"></i> Record Sales Stock
+                            </a>
+                            <a href="{{ route('admin.viewStock') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-clipboard-data mr-1.5"></i> View User's Stock
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('admin.complaints.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-headset mr-3 text-lg text-gray-500"></i>
+                        <span class="font-medium">Complaints</span>
                     </a>
 
                     <a href="{{ route('admin.percentage.index') }}"
@@ -186,137 +317,6 @@
                         <span class="font-medium">Rewards</span>
                     </a>
 
-                    @php
-                        $adminId = Auth::guard('admin')->id();
-                    @endphp
-
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-diagram-3 mr-3 text-lg"></i>
-                                <span class="font-medium">Admin Network</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-11 mt-1 space-y-1">
-                            <a href="{{ route('admin.user.tree', $adminId) }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-tree mr-2"></i> User Tree
-                            </a>
-                            <a href="{{ route('admin.network.summary') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-grid-3x3 mr-2"></i> Network Summary
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-wallet2 mr-3 text-lg"></i>
-                                <span class="font-medium">Wallet Management</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-11 mt-1 space-y-1">
-                            <a href="{{ route('admin.wallet') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-arrow-left-right mr-2"></i> Transfer Money
-                            </a>
-                            <a href="{{ route('admin.withdrawls.index') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-cash-stack mr-2"></i> Withdrawal Requests
-                            </a>
-                            <a href="{{ route('admin.wallet-transactions') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-list-check mr-2"></i> All Transactions
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-gift mr-3 text-lg"></i>
-                                <span class="font-medium">Package Management</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-11 mt-1 space-y-1">
-                            <a href="{{ route('admin.package') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-eye mr-2"></i> View Packages
-                            </a>
-                            <a href="{{ route('admin.packages.assign') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-person-plus mr-2"></i> Assign Package
-                            </a>
-                            <a href="{{ route('admin.package-purchases') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-bag-check mr-2"></i> View User Packages
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-graph-up-arrow mr-3 text-lg"></i>
-                                <span class="font-medium">Profit Distribution</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-11 mt-1 space-y-1">
-                            <a href="{{ route('admin.profit.distribution') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-cash-coin mr-2"></i> Distribute Profit
-                            </a>
-                            <a href="{{ route('admin.view.monthlyDistribution') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-calendar-month mr-2"></i> Monthly Records
-                            </a>
-                            <a href="{{ route('admin.view.distribution') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-calendar-check mr-2"></i> Yearly Records
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-boxes mr-3 text-lg"></i>
-                                <span class="font-medium">Manage Stock</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-11 mt-1 space-y-1">
-                            <a href="{{ route('admin.stock.form') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-arrow-right-circle mr-2"></i> Transfer Stock
-                            </a>
-                            <a href="{{ route('admin.sales.stock') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-journal-text mr-2"></i> Record Sales Stock
-                            </a>
-                            <a href="{{ route('admin.viewStock') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-clipboard-data mr-2"></i> View User's Stock
-                            </a>
-                        </div>
-                    </div>
-
-
-                    <a href="{{ route('admin.complaints.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                        <i class="bi bi-trophy mr-3 text-lg text-gray-500"></i>
-                        <span class="font-medium">Complaints</span>
-                    </a>
                 </div>
             </nav>
 

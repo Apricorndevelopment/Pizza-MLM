@@ -585,7 +585,7 @@
                 </div>
 
                 <!-- Referral Bonus Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
+                {{-- <div class="col-md-6 col-lg-4 mb-4">
                     <div class="dashboard-card referral-card shadow-sm">
                         <div class="card-content">
                             <div class="card-icon">
@@ -597,10 +597,10 @@
                             <p class="card-description">Commissions from your referral users</p>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Network Bonus Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
+                {{-- <div class="col-md-6 col-lg-4 mb-4">
                     <div class="dashboard-card network-card shadow-sm">
                         <div class="card-content">
                             <div class="card-icon">
@@ -612,7 +612,7 @@
                             <p class="card-description">Commissions from your network users</p>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Monthly Income Card -->
                 <div class="col-md-6 col-lg-4 mb-4">

@@ -14,14 +14,9 @@ class LevelIncome extends Model
         'from_user_ulid',
         'from_user_name',
         'purchase_amount',
+        'purchase_pv',
         'level',
-        'rate',
-        'percentage',
         'amount',
-        'package_id',
-        'package_name',
-        'distribution_date',
-        'months_remaining',
     ];
     
     public function user()

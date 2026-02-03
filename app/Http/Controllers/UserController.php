@@ -31,13 +31,13 @@ class UserController extends Controller
             return redirect()->route('vendor.dashboard');
         }
         
-        $referralCommission = Commission::where('user_id', Auth::id())
-            ->where('level', 1)
-            ->sum('commission');
+        // $referralCommission = Commission::where('user_id', Auth::id())
+        //     ->where('level', 1)
+        //     ->sum('commission');
 
-        $networkCommission = Commission::where('user_id', Auth::id())
-            ->whereIn('level', [2, 3])
-            ->sum('commission');
+        // $networkCommission = Commission::where('user_id', Auth::id())
+        //     ->whereIn('level', [2, 3])
+        //     ->sum('commission');
 
         $monthlyIncome = PackageMonthlyDistribution::with(['user', 'packagePurchase'])
             ->where('user_id', Auth::id())
@@ -54,14 +54,14 @@ class UserController extends Controller
             })
             ->sum('wallet1');
 
-        $totalIncome = $referralCommission + $networkCommission + $monthlyIncome + $levelIncome + $rewardIncome + $royaltyRewards;
+        $totalIncome = $monthlyIncome + $levelIncome + $rewardIncome + $royaltyRewards;
 
         $breadcrumbs = [
             ['title' => 'Dashboard', 'url' => route('user.dashboard')]
         ];
 
         $packages = Package1::all();
-        return view('user.dashboard', compact('packages', 'breadcrumbs', 'referralCommission', 'networkCommission', 'monthlyIncome', 'levelIncome', 'rewardIncome', 'royaltyRewards', 'totalIncome'));
+        return view('user.dashboard', compact('packages', 'breadcrumbs', 'monthlyIncome', 'levelIncome', 'rewardIncome', 'royaltyRewards', 'totalIncome'));
     }
 
     private function getAllDownlineUlids($ulid)
@@ -970,54 +970,54 @@ class UserController extends Controller
         return view('user.viewwallet', compact('wallet1', 'wallet2', 'wallet1Transactions', 'wallet2Transactions', 'withdrawals', 'breadcrumbs'));
     }
 
-    public function level1Commissions(Request $request)
-    {
-        // Get filter parameters from request
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+    // public function level1Commissions(Request $request)
+    // {
+    //     // Get filter parameters from request
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
 
-        $commissions = Commission::where('user_id', Auth::id())
-            ->where('level', 1)
-            ->when($startDate, function ($query) use ($startDate) {
-                return $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query) use ($endDate) {
-                return $query->whereDate('created_at', '<=', $endDate);
-            })
-            ->latest()
-            ->paginate(10); // 
-        $breadcrumbs = [
-            ['title' => 'Incentives', 'url' => route('user.commissions.level1')],
-            ['title' => 'Direct Commissions', 'url' => route('user.commissions.level1')]
-        ];
+    //     $commissions = Commission::where('user_id', Auth::id())
+    //         ->where('level', 1)
+    //         ->when($startDate, function ($query) use ($startDate) {
+    //             return $query->whereDate('created_at', '>=', $startDate);
+    //         })
+    //         ->when($endDate, function ($query) use ($endDate) {
+    //             return $query->whereDate('created_at', '<=', $endDate);
+    //         })
+    //         ->latest()
+    //         ->paginate(10); // 
+    //     $breadcrumbs = [
+    //         ['title' => 'Incentives', 'url' => route('user.commissions.level1')],
+    //         ['title' => 'Direct Commissions', 'url' => route('user.commissions.level1')]
+    //     ];
 
-        return view('user.rewards.directcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
-    }
+    //     return view('user.rewards.directcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
+    // }
 
-    public function level2Commissions(Request $request)
-    {
-        // Get filter parameters from request
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+    // public function level2Commissions(Request $request)
+    // {
+    //     // Get filter parameters from request
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
 
-        $commissions = Commission::where('user_id', Auth::id())
-            ->whereIn('level', [2, 3])
-            ->when($startDate, function ($query) use ($startDate) {
-                return $query->whereDate('created_at', '>=', $startDate);
-            })
-            ->when($endDate, function ($query) use ($endDate) {
-                return $query->whereDate('created_at', '<=', $endDate);
-            })
-            ->latest()
-            ->paginate(10); // Changed from take(10) to paginate(10)
+    //     $commissions = Commission::where('user_id', Auth::id())
+    //         ->whereIn('level', [2, 3])
+    //         ->when($startDate, function ($query) use ($startDate) {
+    //             return $query->whereDate('created_at', '>=', $startDate);
+    //         })
+    //         ->when($endDate, function ($query) use ($endDate) {
+    //             return $query->whereDate('created_at', '<=', $endDate);
+    //         })
+    //         ->latest()
+    //         ->paginate(10); // Changed from take(10) to paginate(10)
 
-        $breadcrumbs = [
-            ['title' => 'Incentives', 'url' => route('user.commissions.level2')],
-            ['title' => 'Network Bonus', 'url' => route('user.commissions.level2')]
-        ];
+    //     $breadcrumbs = [
+    //         ['title' => 'Incentives', 'url' => route('user.commissions.level2')],
+    //         ['title' => 'Network Bonus', 'url' => route('user.commissions.level2')]
+    //     ];
 
-        return view('user.rewards.networkcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
-    }
+    //     return view('user.rewards.networkcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
+    // }
 
     public function levelIncomeReport(Request $request)
     {

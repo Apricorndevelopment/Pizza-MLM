@@ -2,20 +2,41 @@
 @section('title', 'Member Details')
 @section('container')
 
-    <div class="min-h-screen bg-gray-50/50 py-8 font-sans">
+    @php
+        if (!function_exists('formatLikeYouTube')) {
+            function formatLikeYouTube($n)
+            {
+                if ($n >= 1000000000) {
+                    return round($n / 1000000000, 2) . 'B';
+                }
+                if ($n >= 1000000) {
+                    return round($n / 1000000, 2) . 'M';
+                }
+                if ($n >= 1000) {
+                    return round($n / 1000, 2) . 'K';
+                }
+                return number_format($n);
+            }
+        }
+    @endphp
+
+    <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- Page Header & Actions --}}
+            {{-- 1. HEADER --}}
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                        <span class="p-2 bg-blue-100 rounded-lg text-blue-600">
-                            <i class="fas fa-user-circle text-xl"></i>
+                        <span class="p-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm">
+                            <i class="fas fa-id-card-alt text-xl"></i>
                         </span>
                         Member Profile
                     </h1>
-                    <p class="text-sm text-slate-500 mt-1 ml-1"> viewing details for <span
-                            class="font-semibold text-slate-700">{{ $member->name }}</span> ({{ $member->ulid }})</p>
+                    <p class="text-sm text-slate-500 mt-1 ml-1">
+                        Viewing details for <span class="font-bold text-slate-700">{{ $member->name }}</span>
+                        <span
+                            class="font-mono text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500 ml-2">#{{ $member->ulid }}</span>
+                    </p>
                 </div>
 
                 <a href="{{ route('admin.viewmember') }}"
@@ -30,74 +51,96 @@
                 <div class="space-y-6 lg:col-span-1">
 
                     {{-- Profile Summary Card --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="h-24 bg-[#EBF2FE]"></div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative group">
+                        <div class="h-28 bg-gradient-to-r from-blue-600 to-indigo-600 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-white/10 opacity-30 pattern-dots"></div>
+                        </div>
+
                         <div class="px-6 pb-6 relative">
-                            <div class="-mt-12 mb-4">
-                                @if ($member->profile_picture)
-                                    <img src="{{ asset('storage/' . $member->profile_picture) }}"
-                                        class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-md bg-white">
-                                @else
-                                    <div
-                                        class="w-24 h-24 rounded-2xl border-4 border-white shadow-md bg-slate-100 flex items-center justify-center text-slate-300 text-3xl">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                @endif
-                            </div>
+                            <div class="-mt-14 mb-4 flex justify-between items-end">
+                                <div class="relative">
+                                    @if ($member->profile_picture)
+                                        <img src="{{ asset('storage/' . $member->profile_picture) }}"
+                                            class="w-28 h-28 rounded-2xl object-cover border-4 border-white shadow-lg bg-white">
+                                    @else
+                                        <div
+                                            class="w-28 h-28 rounded-2xl border-4 border-white shadow-lg bg-slate-50 flex items-center justify-center text-slate-300 text-4xl">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    @endif
 
-                            <h2 class="text-lg font-bold text-slate-800">{{ $member->name }}</h2>
-                            <p class="text-sm text-slate-500 font-mono mb-4">{{ $member->email }}</p>
-
-                            <div class="flex flex-wrap gap-2 mb-6">
-                                <span
-                                    class="px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                                    ID: {{ $member->ulid }}
-                                </span>
-                                <span
-                                    class="px-2.5 py-1 rounded-md text-xs font-bold {{ $member->status == 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-slate-50 text-slate-600 border-slate-100' }}">
-                                    {{ ucfirst($member->status) }}
-                                </span>
-                            </div>
-
-                            <div class="space-y-3 pt-4 border-t border-slate-50">
-                                <div class="flex items-start gap-3">
-                                    <i class="fas fa-phone mt-1 text-slate-400 text-xs"></i>
-                                    <span class="text-sm text-slate-600 font-medium">{{ $member->phone }}</span>
                                 </div>
-                                <div class="flex items-start gap-3">
-                                    <i class="fas fa-map-marker-alt mt-1 text-slate-400 text-xs"></i>
-                                    <span class="text-sm text-slate-600">
-                                        {{ $member->address ?? 'No Address' }}
-                                        @if ($member->state)
-                                            <br><span class="text-slate-400 text-xs">{{ $member->state }}</span>
+
+                                <span
+                                    class="mb-1 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border {{ $member->status == 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200' }}">
+                                    {{ $member->status }}
+                                </span>
+                            </div>
+
+                            <h2 class="text-xl font-bold text-slate-800">{{ $member->name }}</h2>
+                            <p class="text-sm text-slate-500 font-mono mb-6 flex items-center gap-2">
+                                <i class="far fa-envelope text-slate-400"></i> {{ $member->email }}
+                            </p>
+
+                            <div class="space-y-4 pt-6 border-t border-slate-100">
+                                <div class="flex items-start gap-4 group/item">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0 group-hover/item:bg-blue-100 transition-colors">
+                                        <i class="fas fa-phone-alt text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-400 uppercase">Phone</p>
+                                        <p class="text-sm font-semibold text-slate-700">{{ $member->phone }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-4 group/item">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center flex-shrink-0 group-hover/item:bg-purple-100 transition-colors">
+                                        <i class="fas fa-map-marker-alt text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-400 uppercase">Location</p>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            {{ $member->address ?? 'Not Provided' }}</p>
+                                        @if ($member->city || $member->state)
+                                            <p class="text-xs text-slate-500 mt-0.5">
+                                                {{ $member->city }}{{ $member->city && $member->state ? ', ' : '' }}{{ $member->state }}
+                                            </p>
                                         @endif
-                                    </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Account Structure Card --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Network Structure</h3>
+                    {{-- Network Info Card --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <i class="fas fa-network-wired"></i> Network Details
+                        </h3>
 
-                        <div class="space-y-4">
-                            <div
-                                class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-xs font-semibold text-slate-500">Sponsor</span>
-                                <span class="text-sm font-bold text-blue-600 font-mono">{{ $member->sponsor_id }}</span>
-                            </div>
-                            <div
-                                class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-xs font-semibold text-slate-500">Parent Node</span>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-semibold text-slate-500">Sponsor ID</span>
                                 <span
-                                    class="text-sm font-bold text-slate-700 font-mono">{{ $member->parent_id ?? 'Root' }}</span>
+                                    class="text-sm font-bold text-blue-600 font-mono bg-blue-50 px-2 py-0.5 rounded">{{ $member->sponsor_id }}</span>
                             </div>
-                            <div class="pt-2">
-                                <div class="text-xs text-slate-400 mb-1">Activation Date</div>
-                                <div class="text-sm font-medium text-slate-700">{{ $member->user_doa ?? 'Not Activated' }}
-                                </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-semibold text-slate-500">Current Rank</span>
+                                <span
+                                    class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded uppercase">{{ $member->current_rank ?? 'N/A' }}</span>
                             </div>
+                        </div>
+
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500">Joined Date</span>
+                            <span class="font-medium text-slate-700">{{ $member->created_at->format('d M, Y') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm mt-2">
+                            <span class="text-slate-500">Activation Date</span>
+                            <span
+                                class="font-medium text-slate-700">{{ $member->user_doa ? \Carbon\Carbon::parse($member->user_doa)->format('d M, Y') : 'Pending' }}</span>
                         </div>
                     </div>
 
@@ -106,170 +149,176 @@
                 {{-- RIGHT COLUMN: Details --}}
                 <div class="space-y-6 lg:col-span-2">
 
-                    {{-- Financial Stats --}}
+                    {{-- 2. Financial Stats --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div
-                            class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Wallet 1</p>
-                                <p class="text-2xl font-bold text-slate-800 mt-1">₹{{ $member->wallet1_balance }}</p>
+                            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden group hover:border-blue-300 transition-colors">
+                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <i class="fas fa-wallet text-6xl text-blue-600"></i>
                             </div>
-                            <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                                <i class="fas fa-wallet"></i>
+                            <div class="relative z-10">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Personal Wallet
+                                </p>
+                                <div class="flex items-baseline gap-1">
+                                    <span
+                                        class="text-2xl font-black text-slate-800">₹{{ formatLikeYouTube($member->wallet1_balance) }}</span>
+                                    <span
+                                        class="text-xs font-medium text-green-500 bg-green-50 px-1.5 py-0.5 rounded">Active</span>
+                                </div>
                             </div>
                         </div>
+
                         <div
-                            class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Wallet 2</p>
-                                <p class="text-2xl font-bold text-emerald-600 mt-1">₹{{ $member->wallet2_balance }}</p>
+                            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden group hover:border-emerald-300 transition-colors">
+                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <i class="fas fa-coins text-6xl text-emerald-600"></i>
                             </div>
-                            <div
-                                class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                                <i class="fas fa-coins"></i>
+                            <div class="relative z-10">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Second Wallet</p>
+                                <div class="flex items-baseline gap-1">
+                                    <span
+                                        class="text-2xl font-black text-emerald-600">₹{{ formatLikeYouTube($member->wallet2_balance) }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Business & Bank Info --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="border-b border-slate-100">
-                            <nav class="flex space-x-6 px-6" aria-label="Tabs">
-                                <button class="border-b-2 border-blue-500 py-4 text-sm font-bold text-blue-600">
-                                    Business & Banking
-                                </button>
-                            </nav>
+                    {{-- 3. Business & Banking Tabs --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-briefcase text-slate-400"></i> Business & Banking Overview
+                            </h3>
                         </div>
 
                         <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {{-- Business --}}
-                            <div>
-                                <h4 class="text-xs font-bold text-slate-900 uppercase mb-4 flex items-center gap-2">
-                                    <i class="fas fa-chart-pie text-blue-500"></i> Business Volume
-                                </h4>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="text-slate-500">Left Business</span>
-                                        <span class="font-bold text-slate-700">{{ $member->left_business }}</span>
+                            {{-- Business Volume --}}
+                            <div class="relative">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-4">Total Business</h4>
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                                        <i class="fas fa-chart-pie"></i>
                                     </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-1.5">
-                                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 40%"></div>
-                                    </div>
-
-                                    <div class="flex justify-between items-center text-sm mt-4">
-                                        <span class="text-slate-500">Right Business</span>
-                                        <span class="font-bold text-slate-700">{{ $member->right_business }}</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-1.5">
-                                        <div class="bg-purple-500 h-1.5 rounded-full" style="width: 60%"></div>
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-slate-800">
+                                            {{ number_format($member->total_business) }} <span
+                                                class="text-sm text-slate-400 font-normal">PV</span></h2>
+                                        <p class="text-xs text-green-600 font-medium flex items-center gap-1">
+                                            <i class="fas fa-arrow-up"></i> Growing
+                                        </p>
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- Bank --}}
-                            <div class="bg-slate-50 rounded-xl p-5 border border-slate-100">
-                                <h4 class="text-xs font-bold text-slate-900 uppercase mb-4 flex items-center gap-2">
-                                    <i class="fas fa-university text-slate-500"></i> Bank Details
-                                </h4>
-                                <div class="space-y-3 text-sm">
-                                    <div class="flex justify-between">
+                            {{-- Bank Details --}}
+                            <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 relative">
+                                <div class="absolute top-3 right-3 text-slate-300">
+                                    <i class="fas fa-university text-4xl opacity-20"></i>
+                                </div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">Bank Information</h4>
+
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center text-sm">
                                         <span class="text-slate-500">Bank Name</span>
-                                        <span class="font-semibold text-slate-700">{{ $member->bank_name ?? '--' }}</span>
+                                        <span class="font-semibold text-slate-800">{{ $member->bank_name ?? '--' }}</span>
                                     </div>
-                                    <div class="flex justify-between">
+                                    <div class="flex justify-between items-center text-sm">
                                         <span class="text-slate-500">Account No</span>
                                         <span
-                                            class="font-mono font-semibold text-slate-700">{{ $member->account_no ?? '--' }}</span>
+                                            class="font-mono font-semibold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-100">{{ $member->account_no ?? '--' }}</span>
                                     </div>
-                                    <div class="flex justify-between">
+                                    <div class="flex justify-between items-center text-sm">
                                         <span class="text-slate-500">IFSC Code</span>
                                         <span
-                                            class="font-mono font-semibold text-slate-700">{{ $member->ifsc_code ?? '--' }}</span>
+                                            class="font-mono font-semibold text-slate-800">{{ $member->ifsc_code ?? '--' }}</span>
                                     </div>
-                                    <div class="flex justify-between pt-2 border-t border-slate-200 mt-2">
+                                    <div
+                                        class="pt-2 mt-2 border-t border-slate-200 flex justify-between items-center text-sm">
                                         <span class="text-slate-500">UPI ID</span>
-                                        <span class="font-semibold text-slate-700">{{ $member->upi_id ?? '--' }}</span>
+                                        <span class="font-semibold text-slate-800">{{ $member->upi_id ?? '--' }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Documents Grid --}}
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                    {{-- 4. KYC Documents --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                         <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-base font-bold text-slate-800">KYC Documents</h3>
-                            <div class="text-xs text-slate-500">
-                                <span class="font-semibold">ID Proofs:</span>
-                                Aadhar: {{ $member->adhar_no ?? 'N/A' }} | PAN: {{ $member->pan_no ?? 'N/A' }}
+                            <div>
+                                <h3 class="text-base font-bold text-slate-800">KYC Documents</h3>
+                                <p class="text-xs text-slate-500 mt-1">Verify user identification proofs.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="px-2 py-1 bg-slate-100 rounded text-[10px] font-mono text-slate-500">PAN:
+                                    {{ $member->pan_no ?? 'N/A' }}</span>
+                                <span class="px-2 py-1 bg-slate-100 rounded text-[10px] font-mono text-slate-500">AADHAR:
+                                    {{ $member->adhar_no ?? 'N/A' }}</span>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {{-- Passbook --}}
-                            <div
-                                class="group relative rounded-xl bg-slate-50 border border-slate-100 p-2 aspect-square flex flex-col items-center justify-center text-center hover:shadow-md transition-all cursor-pointer overflow-hidden">
-                                @if ($member->passbook_photo)
-                                    <img src="{{ asset('storage/' . $member->passbook_photo) }}"
-                                        class="absolute inset-0 w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            @php
+                                $docs = [
+                                    [
+                                        'title' => 'Passbook',
+                                        'file' => $member->passbook_photo,
+                                        'icon' => 'fa-file-invoice',
+                                    ],
+                                    ['title' => 'Aadhar Card', 'file' => $member->adhar_photo, 'icon' => 'fa-id-card'],
+                                    ['title' => 'PAN Card', 'file' => $member->pan_photo, 'icon' => 'fa-id-badge'],
+                                    [
+                                        'title' => 'Nominee',
+                                        'subtitle' => $member->nom_name ?? 'N/A',
+                                        'relation' => $member->nom_relation,
+                                        'type' => 'info',
+                                        'icon' => 'fa-users',
+                                    ],
+                                ];
+                            @endphp
+
+                            @foreach ($docs as $doc)
+                                @if (isset($doc['type']) && $doc['type'] == 'info')
+                                    {{-- Info Card (Nominee) --}}
                                     <div
-                                        class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <span
-                                            class="text-white text-xs font-bold border border-white/50 px-2 py-1 rounded">View</span>
+                                        class="rounded-xl bg-purple-50 border border-purple-100 p-4 flex flex-col items-center justify-center text-center h-32">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center mb-2">
+                                            <i class="fas {{ $doc['icon'] }} text-xs"></i>
+                                        </div>
+                                        <p class="text-xs font-bold text-purple-400 uppercase mb-1">{{ $doc['title'] }}
+                                        </p>
+                                        <p class="text-sm font-bold text-purple-900 line-clamp-1">{{ $doc['subtitle'] }}
+                                        </p>
+                                        <p class="text-[10px] text-purple-600">{{ $doc['relation'] ?? '' }}</p>
                                     </div>
                                 @else
-                                    <i class="fas fa-file-invoice text-slate-300 text-2xl mb-2"></i>
-                                    <span class="text-xs text-slate-400 font-medium">No Passbook</span>
-                                @endif
-                                <span
-                                    class="absolute bottom-2 left-2 bg-white/90 px-2 py-0.5 rounded text-[10px] font-bold text-slate-600 shadow-sm pointer-events-none">Passbook</span>
-                            </div>
-
-                            {{-- Aadhar --}}
-                            <div
-                                class="group relative rounded-xl bg-slate-50 border border-slate-100 p-2 aspect-square flex flex-col items-center justify-center text-center hover:shadow-md transition-all cursor-pointer overflow-hidden">
-                                @if ($member->adhar_photo)
-                                    <img src="{{ asset('storage/' . $member->adhar_photo) }}"
-                                        class="absolute inset-0 w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500">
+                                    {{-- Image Card --}}
                                     <div
-                                        class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <span
-                                            class="text-white text-xs font-bold border border-white/50 px-2 py-1 rounded">View</span>
+                                        class="group relative rounded-xl bg-slate-50 border border-slate-200 h-32 flex flex-col items-center justify-center text-center overflow-hidden hover:shadow-md transition-all">
+                                        @if ($doc['file'])
+                                            <img src="{{ asset('storage/' . $doc['file']) }}"
+                                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                            <div
+                                                class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                                <a href="{{ asset('storage/' . $doc['file']) }}" target="_blank"
+                                                    class="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold rounded-lg border border-white/40 backdrop-blur-sm transition-colors">
+                                                    View
+                                                </a>
+                                            </div>
+                                        @else
+                                            <i class="fas {{ $doc['icon'] }} text-slate-300 text-2xl mb-2"></i>
+                                            <span class="text-xs text-slate-400 font-medium">Not Uploaded</span>
+                                        @endif
+                                        <div
+                                            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900/80 to-transparent p-2">
+                                            <p class="text-[10px] font-bold text-white text-center shadow-sm">
+                                                {{ $doc['title'] }}</p>
+                                        </div>
                                     </div>
-                                @else
-                                    <i class="fas fa-id-card text-slate-300 text-2xl mb-2"></i>
-                                    <span class="text-xs text-slate-400 font-medium">No Aadhar</span>
                                 @endif
-                                <span
-                                    class="absolute bottom-2 left-2 bg-white/90 px-2 py-0.5 rounded text-[10px] font-bold text-slate-600 shadow-sm pointer-events-none">Aadhar</span>
-                            </div>
-
-                            {{-- PAN --}}
-                            <div
-                                class="group relative rounded-xl bg-slate-50 border border-slate-100 p-2 aspect-square flex flex-col items-center justify-center text-center hover:shadow-md transition-all cursor-pointer overflow-hidden">
-                                @if ($member->pan_photo)
-                                    <img src="{{ asset('storage/' . $member->pan_photo) }}"
-                                        class="absolute inset-0 w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500">
-                                    <div
-                                        class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <span
-                                            class="text-white text-xs font-bold border border-white/50 px-2 py-1 rounded">View</span>
-                                    </div>
-                                @else
-                                    <i class="fas fa-id-badge text-slate-300 text-2xl mb-2"></i>
-                                    <span class="text-xs text-slate-400 font-medium">No PAN</span>
-                                @endif
-                                <span
-                                    class="absolute bottom-2 left-2 bg-white/90 px-2 py-0.5 rounded text-[10px] font-bold text-slate-600 shadow-sm pointer-events-none">PAN
-                                    Card</span>
-                            </div>
-
-                            {{-- Nominee Info Box --}}
-                            <div class="rounded-xl bg-purple-50 border border-purple-100 p-4 flex flex-col justify-center">
-                                <h5 class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Nominee</h5>
-                                <p class="text-sm font-bold text-purple-900">{{ $member->nom_name ?? 'N/A' }}</p>
-                                <p class="text-xs text-purple-600 mt-1">{{ $member->nom_relation ?? 'Relation: N/A' }}</p>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
 

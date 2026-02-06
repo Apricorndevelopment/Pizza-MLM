@@ -38,12 +38,18 @@ class AdminOrderController extends Controller
                 $q->where('order_id', 'LIKE', "%{$search}%")
                     ->orWhere('status', 'LIKE', "%{$search}%")
                     ->orWhereHas('user', function ($u) use ($search) {
-                        $u->where('name', 'LIKE', "%{$search}%");
+                        $u->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('email', 'LIKE', "%{$search}%");
                     });
             });
         }
 
         $orders = $query->latest()->paginate(10);
+
+        if ($request->ajax()) {
+            return response()->json($orders);
+        }
+
         return view('admin.orders.index', compact('orders'));
     }
 
@@ -244,6 +250,7 @@ class AdminOrderController extends Controller
             ->pluck('reward_id')
             ->toArray();
 
+
         foreach ($milestones as $reward) {
             // Logic: If Business crosses achievement AND reward not received yet
             if ($user->total_business >= $reward->achievement && !in_array($reward->id, $receivedRewardIds)) {
@@ -342,7 +349,7 @@ class AdminOrderController extends Controller
                 ]);
             } else {
                 RepurchaseIncome::create([
-                    'user_id'         => $uplineUser->ulid,
+                    'user_id'         => $uplineUser->id,
                     'from_ulid'       => $fromUser->ulid,
                     'from_name'       => $fromUser->name,
                     'purchase_amount' => $purchaseAmount,

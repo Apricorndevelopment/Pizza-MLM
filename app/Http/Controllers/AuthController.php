@@ -403,8 +403,7 @@ class AuthController extends Controller
             'status'          => $user->status,
             'wallet1_balance' => $user->wallet1_balance,
             'wallet2_balance' => $user->wallet2_balance,
-            'left_business'   => $user->left_business,
-            'right_business'  => $user->right_business,
+            'total_business'  => $user->total_business,
             'level'           => $level,
         ]);
     }
@@ -428,8 +427,7 @@ class AuthController extends Controller
             'status'          => $user->status,
             'wallet1_balance' => $user->wallet1_balance,
             'wallet2_balance' => $user->wallet2_balance,
-            'left_business'   => $user->left_business,
-            'right_business'  => $user->right_business,
+            'total_business'   => $user->total_business,
         ]);
     }
 

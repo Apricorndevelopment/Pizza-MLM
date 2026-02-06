@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BonusIncome;
 use App\Models\Commission;
+use App\Models\DirectIncome;
 use App\Models\LevelIncome;
 use App\Models\Wallet2Transaction;
 use App\Models\MoneyWithdrawl;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +18,8 @@ use App\Models\ProductPackageDetails;
 use App\Models\ProductPackagePurchase;
 use App\Models\PackageMonthlyDistribution;
 use App\Models\PackageTransaction;
+use App\Models\RepurchaseIncome;
+use App\Models\RewardsIncome;
 use App\Models\Wallet1Transaction;
 use App\Models\RoyaltyRewardsIncome;
 use App\Models\User;
@@ -27,54 +32,46 @@ class UserController extends Controller
 {
     public function dashboard()
     {
-        if (Auth::user()->is_vendor == 1) {
-            return redirect()->route('vendor.dashboard');
-        }
-        
-        // $referralCommission = Commission::where('user_id', Auth::id())
-        //     ->where('level', 1)
-        //     ->sum('commission');
+        $user = Auth::user();
 
-        // $networkCommission = Commission::where('user_id', Auth::id())
-        //     ->whereIn('level', [2, 3])
-        //     ->sum('commission');
+        $directIncome = DirectIncome::where('user_id', $user->id)->sum('income_amount');
 
-        $monthlyIncome = PackageMonthlyDistribution::with(['user', 'packagePurchase'])
-            ->where('user_id', Auth::id())
-            ->sum('distributed_amount');
+        $repurchaseIncome = RepurchaseIncome::where('user_id', $user->id)->sum('commission');
 
-        $levelIncome = LevelIncome::where('user_id', Auth::id())->sum('amount');
+        $levelIncome = LevelIncome::where('user_id', $user->id)->sum('amount');
 
-        $rewardIncome = RoyaltyRewardsIncome::where('user_id', Auth::id())->sum('points');
+        $bonusIncome = BonusIncome::where('user_id', $user->id)->sum('income_amount');
 
-        $royaltyRewards = Wallet1Transaction::where('user_id', Auth::id())
-            ->where(function ($query) {
-                $query->where('notes', 'like', '%yearly package profit share%')
-                    ->orWhere('notes', 'like', '%yearly profit as%');
-            })
-            ->sum('wallet1');
+        $rewardIncome = RewardsIncome::where('user_id', $user->id)->sum('reward_amount');
 
-        $totalIncome = $monthlyIncome + $levelIncome + $rewardIncome + $royaltyRewards;
+        $totalIncome = $directIncome + $levelIncome + $bonusIncome + $rewardIncome + $repurchaseIncome;
 
         $breadcrumbs = [
             ['title' => 'Dashboard', 'url' => route('user.dashboard')]
         ];
 
-        $packages = Package1::all();
-        return view('user.dashboard', compact('packages', 'breadcrumbs', 'monthlyIncome', 'levelIncome', 'rewardIncome', 'royaltyRewards', 'totalIncome'));
+        return view('user.dashboard', compact('breadcrumbs', 'levelIncome', 'directIncome', 'repurchaseIncome', 'bonusIncome', 'rewardIncome', 'totalIncome'));
     }
 
-    private function getAllDownlineUlids($ulid)
+    /**
+     * Recursively get all downline User IDs (Integers) 
+     * Search Condition: sponsor_id matches the parent's ULID
+     */
+    private function getAllDownlineIds($currentUlid)
     {
-        $ulids = collect([$ulid]);
+        // 1. Fetch direct downlines
+        // We need 'id' to store in the list, and 'ulid' to continue the recursion
+        $downlines = User::where('sponsor_id', $currentUlid)->get(['id', 'ulid']);
 
-        $directDownlines = User::where('sponsor_id', $ulid)->pluck('ulid');
+        // 2. Start a collection with the IDs found at this level
+        $userIds = $downlines->pluck('id');
 
-        foreach ($directDownlines as $downlineUlid) {
-            $ulids = $ulids->merge($this->getAllDownlineUlids($downlineUlid));
+        // 3. Recurse: For each child, find their children using their ULID
+        foreach ($downlines as $user) {
+            $userIds = $userIds->merge($this->getAllDownlineIds($user->ulid));
         }
 
-        return $ulids;
+        return $userIds;
     }
 
     /**
@@ -82,13 +79,13 @@ class UserController extends Controller
      */
     private function getBusinessForUlids($ulids, $startDate = null, $endDate = null)
     {
-        $query = ProductPackagePurchase::whereIn('ulid', $ulids);
+        $query = Order::whereIn('user_id', $ulids);
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        return $query->sum('final_price');
+        return $query->sum('total_amount');
     }
 
     /**
@@ -97,13 +94,24 @@ class UserController extends Controller
     public function getSalesChartData(Request $request)
     {
         $user = Auth::user();
-        $filter = $request->get('filter', 'monthly'); // default filter = monthly
+        $filter = $request->get('filter', 'monthly'); 
 
         $labels = [];
         $data = [];
 
-        // Get all downline ULIDs including current user
-        $allUlids = $this->getAllDownlineUlids($user->ulid);
+        // ---------------------------------------------------------
+        // STEP 1: Get the entire tree's IDs
+        // ---------------------------------------------------------
+        
+        // Get all downline IDs using the recursive function
+        $teamIds = $this->getAllDownlineIds($user->ulid);
+        
+        // Add the current user's ID (Self Business) to the list
+        $teamIds->push($user->id);
+
+        // ---------------------------------------------------------
+        // STEP 2: Filter Logic (Same as before, using $teamIds)
+        // ---------------------------------------------------------
 
         switch ($filter) {
             case 'daily': // Last 15 days
@@ -114,7 +122,8 @@ class UserController extends Controller
                     $dayStart = $date->copy()->startOfDay();
                     $dayEnd = $date->copy()->endOfDay();
 
-                    $totalBusiness = $this->getBusinessForUlids($allUlids, $dayStart, $dayEnd);
+                    // Pass the collected IDs to the calculation function
+                    $totalBusiness = $this->getBusinessForUlids($teamIds, $dayStart, $dayEnd);
 
                     $labels[] = $date->format('d M');
                     $data[] = $totalBusiness;
@@ -128,9 +137,9 @@ class UserController extends Controller
                 for ($weekStart = $startDate->copy(); $weekStart <= $endDate; $weekStart->addWeek()) {
                     $weekEnd = $weekStart->copy()->endOfWeek();
 
-                    $totalBusiness = $this->getBusinessForUlids($allUlids, $weekStart, $weekEnd);
+                    $totalBusiness = $this->getBusinessForUlids($teamIds, $weekStart, $weekEnd);
 
-                    $labels[] = $weekStart->format('d M') . ' - ' . $weekEnd->format('d M'); // e.g., 01-07 Sep
+                    $labels[] = $weekStart->format('d M') . ' - ' . $weekEnd->format('d M');
                     $data[] = $totalBusiness;
                 }
                 break;
@@ -143,9 +152,9 @@ class UserController extends Controller
                     $monthStart = $month->copy()->startOfMonth();
                     $monthEnd = $month->copy()->endOfMonth();
 
-                    $totalBusiness = $this->getBusinessForUlids($allUlids, $monthStart, $monthEnd);
+                    $totalBusiness = $this->getBusinessForUlids($teamIds, $monthStart, $monthEnd);
 
-                    $labels[] = $month->format('M Y'); // e.g., Sep 2024
+                    $labels[] = $month->format('M Y');
                     $data[] = $totalBusiness;
                 }
                 break;
@@ -157,9 +166,9 @@ class UserController extends Controller
                     $yearStart = Carbon::create($year, 1, 1)->startOfYear();
                     $yearEnd = Carbon::create($year, 12, 31)->endOfYear();
 
-                    $totalBusiness = $this->getBusinessForUlids($allUlids, $yearStart, $yearEnd);
+                    $totalBusiness = $this->getBusinessForUlids($teamIds, $yearStart, $yearEnd);
 
-                    $labels[] = (string)$year; // e.g., 2024
+                    $labels[] = (string)$year;
                     $data[] = $totalBusiness;
                 }
                 break;

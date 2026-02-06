@@ -152,6 +152,12 @@
                         <span class="font-medium">Vendor Dashboard</span>
                     </a>
 
+                    <a href="{{ route('user.dashboard') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-speedometer2 mr-3 text-lg"></i>
+                        <span class="font-medium">User Dashboard</span>
+                    </a>
+
                     <a href="{{ route('vendor.products.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-box-seam mr-3 text-lg"></i> {{-- Used 'box-seam' for products --}}
@@ -161,7 +167,7 @@
                     <a href="{{ route('vendor.orders.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-bag-check mr-3 text-lg"></i> {{-- Used 'bag-check' for orders --}}
-                        <span class="font-medium">View Orders</span>
+                        <span class="font-medium">User Orders</span>
                     </a>
 
                     <a href="{{ route('user.profile') }}"
@@ -211,11 +217,6 @@
                                 <i class="bi bi-credit-card mr-2"></i> {{-- Icon for managing --}}
                                 Manage Wallet
                             </a>
-                            <a href="{{ route('user.transferWallet1Form') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-arrow-left-right mr-2"></i> {{-- Icon for transfer --}}
-                                Transfer Wallet
-                            </a>
                         </div>
                     </div>
 
@@ -246,11 +247,55 @@
                             </a>
                         </div>
                     </div>
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-cash-coin mr-3 text-lg"></i> {{-- Changed to cash-coin for incentives --}}
+                                <span class="font-medium">Incentives</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                            <a href="{{ route('user.income.direct') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-currency-dollar mr-2"></i> {{-- Icon for direct commission --}}
+                                Direct Income
+                            </a>
+                            <a href="{{ route('user.income.bonus') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-share mr-2"></i> {{-- Icon for network bonus --}}
+                                Bonus Income
+                            </a>
+                            <a href="{{ route('user.income.level') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-bar-chart-steps mr-2"></i> {{-- Icon for levels --}}
+                                Level Income
+                            </a>
+                            <a href="{{ route('user.income.reward') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-trophy mr-2"></i> {{-- Icon for rewards --}}
+                                Reward Income
+                            </a>
+                            <a href="{{ route('user.income.repurchase') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-calendar-check mr-2"></i> {{-- Icon for yearly --}}
+                                Repurchase Income
+                            </a>
+                        </div>
 
+
+                    </div>
                     <a href="{{ route('user.complaints.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
-                        <span class="font-medium">Complaints</span>
+                        <i class="bi bi-headset mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
+                        <span class="font-medium">Need Help?</span>
+                    </a>
+
+                    <a href="{{ route('logout') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-box-arrow-right mr-3 text-lg"></i> {{-- Changed to box-arrow-right for logout --}}
+                        <span class="font-medium">Logout</span>
                     </a>
 
                     {{-- <a href="#"

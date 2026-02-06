@@ -2,66 +2,106 @@
 @section('title', 'Wallet Management')
 @section('container')
 
-    <div class="container">
-        <!-- Pending Withdrawals Card -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-primary text-white">
-                <h3 class="h5 mb-0">Pending Withdrawal Requests</h3>
+    <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- Page Header --}}
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
+                        <span class="p-2 bg-indigo-100 rounded-lg text-indigo-600 shadow-sm">
+                            <i class="fas fa-wallet text-xl"></i>
+                        </span>
+                        Wallet Management
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-1 ml-1">Manage user withdrawal requests and history.</p>
+                </div>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
+
+            {{-- Pending Withdrawals Section --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <h2 class="font-bold  flex items-center gap-2">
+                        <i class="fas fa-clock" class="text-[#94A3B8]"></i> Pending Requests
+                    </h2>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border border-amber-200">
+                        Action Required
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500">
                             <tr>
-                                <th class="ps-4">User</th>
-                                <th>Amount</th>
-                                <th>Method</th>
-                                <th>Details</th>
-                                <th>Request Date</th>
-                                <th class="pe-4">Actions</th>
+                                <th class="px-6 py-4">User</th>
+                                <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4">Method</th>
+                                <th class="px-6 py-4">Details</th>
+                                <th class="px-6 py-4">Request Date</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-100">
                             @forelse ($withdrawals as $withdrawal)
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="fw-bold">{{ $withdrawal->user->name }}</div>
-                                        <small class="text-muted">{{ $withdrawal->user_ulid }}</small>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-col">
+                                            <span
+                                                class="font-bold text-slate-800 text-sm">{{ $withdrawal->user->name }}</span>
+                                            <span
+                                                class="text-xs font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded w-fit mt-1">{{ $withdrawal->user_ulid }}</span>
+                                        </div>
                                     </td>
-                                    <td class="fw-bold">₹{{ number_format($withdrawal->total_amount, 2) }}</td>
-                                    <td>
-                                        <span class="badge bg-info bg-opacity-10 text-info">
-                                            {{ ucfirst($withdrawal->payment_method) }}
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="font-black text-slate-800 text-base">₹{{ number_format($withdrawal->total_amount, 2) }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wide
+                                            {{ $withdrawal->payment_method === 'bank' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-purple-50 text-purple-600 border border-purple-100' }}">
+                                            {{ $withdrawal->payment_method }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">
                                         @if ($withdrawal->payment_method === 'bank')
-                                            <small class="d-block">A/C: {{ $withdrawal->user->account_no }}</small>
-                                            <small class="d-block">IFSC: {{ $withdrawal->user->ifsc_code }}</small>
-                                            <small class="d-block">Bank: {{ $withdrawal->user->bank_name }}</small>
+                                            <div class="space-y-0.5">
+                                                <p><span class="font-semibold text-slate-700">Bank:</span>
+                                                    {{ $withdrawal->user->bank_name }}</p>
+                                                <p><span class="font-semibold text-slate-700">A/C:</span> <span
+                                                        class="font-mono">{{ $withdrawal->user->account_no }}</span></p>
+                                                <p><span class="font-semibold text-slate-700">IFSC:</span> <span
+                                                        class="font-mono">{{ $withdrawal->user->ifsc_code }}</span></p>
+                                            </div>
                                         @else
-                                            <small class="d-block">UPI: {{ $withdrawal->user->upi_id }}</small>
+                                            <p><span class="font-semibold text-slate-700">UPI:</span>
+                                                {{ $withdrawal->user->upi_id }}</p>
                                         @endif
                                     </td>
-                                    <td>
-                                        {{ $withdrawal->created_at->format('d M Y') }}
-                                        <small
-                                            class="d-block text-muted">{{ $withdrawal->created_at->diffForHumans() }}</small>
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-col">
+                                            <span
+                                                class="text-sm font-semibold text-slate-700">{{ $withdrawal->created_at->format('d M, Y') }}</span>
+                                            <span
+                                                class="text-xs text-slate-400">{{ $withdrawal->created_at->diffForHumans() }}</span>
+                                        </div>
                                     </td>
-                                    <td class="pe-4">
-                                        <div class="d-flex gap-2">
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex items-center justify-end gap-2">
                                             <form action="{{ route('admin.withdrawls.approve', $withdrawal->id) }}"
-                                                method="POST">
+                                                method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-success">
-                                                    <i class="fa fa-check me-1"></i> Approve
+                                                <button type="submit"
+                                                    class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm shadow-emerald-200 transition-all active:scale-95 flex items-center gap-1">
+                                                    <i class="fas fa-check"></i> Approve
                                                 </button>
                                             </form>
                                             <form action="{{ route('admin.withdrawls.reject', $withdrawal->id) }}"
-                                                method="POST">
+                                                method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fa fa-times me-1"></i> Reject
+                                                <button type="submit"
+                                                    class="px-3 py-1.5 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-bold rounded-lg transition-all active:scale-95 flex items-center gap-1">
+                                                    <i class="fas fa-times"></i> Reject
                                                 </button>
                                             </form>
                                         </div>
@@ -69,9 +109,15 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-5">
-                                        <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
-                                        <h5 class="text-muted">No pending withdrawal requests</h5>
+                                    <td colspan="6" class="px-6 py-12 text-center">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <div
+                                                class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                                                <i class="fas fa-check-circle text-emerald-400 text-xl"></i>
+                                            </div>
+                                            <p class="text-slate-500 font-medium">No pending requests</p>
+                                            <p class="text-slate-400 text-xs">All caught up!</p>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
@@ -79,70 +125,87 @@
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- All Withdrawals Card -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-secondary text-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="h5 mb-0">All Withdrawal History</h3>
-                    <span class="badge bg-white text-secondary">
+            {{-- All History Section --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fas fa-history text-slate-400"></i> Withdrawal History
+                    </h2>
+                    <span
+                        class="px-2.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-500 text-xs font-bold shadow-sm">
                         Total: {{ $allWithdrawls->total() }}
                     </span>
                 </div>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500">
                             <tr>
-                                <th class="ps-4">User</th>
-                                <th>Amount</th>
-                                <th>Method</th>
-                                <th>Status</th>
-                                <th>Details</th>
-                                <th class="pe-4">Request Date</th>
+                                <th class="px-6 py-4">User</th>
+                                <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4">Method</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Details</th>
+                                <th class="px-6 py-4">Request Date</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-100">
                             @forelse ($allWithdrawls as $withdrawal)
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="fw-bold">{{ $withdrawal->user->name }} <span
-                                                class="text-muted">({{ $withdrawal->user_ulid }})</span></div>
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-col">
+                                            <span
+                                                class="font-bold text-slate-800 text-sm">{{ $withdrawal->user->name }}</span>
+                                            <span class="text-xs text-slate-400">#{{ $withdrawal->user_ulid }}</span>
+                                        </div>
                                     </td>
-                                    <td class="fw-bold">₹{{ number_format($withdrawal->total_amount, 2) }}</td>
-                                    <td>
-                                        <span class="badge bg-info bg-opacity-10 text-info">
-                                            {{ ucfirst($withdrawal->payment_method) }}
-                                        </span>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="font-bold text-slate-700">₹{{ number_format($withdrawal->total_amount, 2) }}</span>
                                     </td>
-                                    <td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="text-xs font-semibold text-slate-600 uppercase">{{ $withdrawal->payment_method }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
                                         @if ($withdrawal->status === 'approved')
-                                            <span class="badge bg-success">Approved</span>
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                                Approved
+                                            </span>
+                                        @elseif($withdrawal->status === 'rejected')
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-100">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span> Rejected
+                                            </span>
                                         @else
-                                            <span class="badge bg-danger">Rejected</span>
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span> Pending
+                                            </span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">
                                         @if ($withdrawal->payment_method === 'bank')
-                                            <small class="d-block">A/C: {{ $withdrawal->user->account_no }}</small>
-                                            <small class="d-block">IFSC: {{ $withdrawal->user->ifsc_code }}</small>
+                                            <span
+                                                class="font-mono text-slate-600">{{ $withdrawal->user->account_no }}</span>
+                                            <span class="text-slate-400 mx-1">|</span> {{ $withdrawal->user->bank_name }}
                                         @else
-                                            <small class="d-block">UPI: {{ $withdrawal->user->upi_id }}</small>
+                                            {{ $withdrawal->user->upi_id }}
                                         @endif
                                     </td>
-                                    <td class="pe-4">
-                                        {{ $withdrawal->created_at->format('d M Y') }}
-                                        <small
-                                            class="d-block text-muted">{{ $withdrawal->created_at->diffForHumans() }}</small>
+                                    <td class="px-6 py-4 text-xs text-slate-500">
+                                        {{ $withdrawal->created_at->format('d M, Y') }}
+                                        <span
+                                            class="text-slate-400 block text-[10px]">{{ $withdrawal->created_at->format('h:i A') }}</span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-5">
-                                        <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
-                                        <h5 class="text-muted">No withdrawal history found</h5>
+                                    <td colspan="6" class="px-6 py-12 text-center text-slate-400 text-sm">
+                                        No withdrawal history found.
                                     </td>
                                 </tr>
                             @endforelse
@@ -150,57 +213,15 @@
                     </table>
                 </div>
 
+                {{-- Pagination --}}
                 @if ($allWithdrawls->hasPages())
-                    <div class="card-footer bg-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="text-muted small">
-                                Showing {{ $allWithdrawls->firstItem() }} to {{ $allWithdrawls->lastItem() }} of
-                                {{ $allWithdrawls->total() }} entries
-                            </div>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination pagination-sm mb-0">
-                                    {{-- Previous Page Link --}}
-                                    @if ($allWithdrawls->onFirstPage())
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&laquo;</span>
-                                        </li>
-                                    @else
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $allWithdrawls->previousPageUrl() }}"
-                                                rel="prev">&laquo;</a>
-                                        </li>
-                                    @endif
-
-                                    {{-- Pagination Elements --}}
-                                    @foreach ($allWithdrawls->getUrlRange(1, $allWithdrawls->lastPage()) as $page => $url)
-                                        @if ($page == $allWithdrawls->currentPage())
-                                            <li class="page-item active" aria-current="page">
-                                                <span class="page-link">{{ $page }}</span>
-                                            </li>
-                                        @else
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                            </li>
-                                        @endif
-                                    @endforeach
-
-                                    {{-- Next Page Link --}}
-                                    @if ($allWithdrawls->hasMorePages())
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $allWithdrawls->nextPageUrl() }}"
-                                                rel="next">&raquo;</a>
-                                        </li>
-                                    @else
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&raquo;</span>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </nav>
-                        </div>
+                    <div class="px-6 py-4 border-t border-slate-100 bg-white">
+                        {{ $allWithdrawls->links('pagination::tailwind') }}
                     </div>
                 @endif
             </div>
+
         </div>
     </div>
+
 @endsection

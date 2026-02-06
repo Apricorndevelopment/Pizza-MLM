@@ -123,13 +123,15 @@
                                     </button>
                                 </div>
                             </div>
-
+                            
+                            @if($user->is_vendor === 0)
                             <div class="pt-4 border-t border-slate-100">
                                 <a href="{{ route('user.become_vendor') }}"
                                     class="block w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold uppercase tracking-wider text-center rounded-lg shadow-sm transition-transform active:scale-[0.98]">
                                     Become a Vendor
                                 </a>
                             </div>
+                            @endif
 
                         </div>
                     </div>

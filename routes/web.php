@@ -6,39 +6,28 @@ use App\Http\Controllers\Admin\PercentageIncomeController;
 use App\Http\Controllers\Admin\PercentageLevelController;
 use App\Http\Controllers\Admin\PercentageRewardController;
 use App\Models\User;
-use App\Models\Admin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\LoginActivityController;
-use App\Http\Controllers\PackageAssignmentController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
-use App\Http\Controllers\StockController;
 use App\Http\Controllers\user\ComplaintController;
+use App\Http\Controllers\User\UserIncomeController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\Vendor\VendorOrderController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorProductController;
-use App\Models\Gallery;
-use App\Models\News;
-use App\Models\ProductPackage;
-use App\Models\ProductPackageDetails;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\IsVendor;
 
 Route::get('/', function () {
-    $photos = Gallery::all();
-    $news = News::orderBy('created_at', 'desc')->get();
-    return view('welcome', compact('photos', 'news'));
+    return view('welcome');
 });
-
-Route::view('/about-us', 'aboutus')->name('aboutus');
 
 Route::get('/gallery/load-more', [AuthController::class, 'loadMore'])->name('gallery.load-more');
 Route::get('/news/load-more', [AuthController::class, 'loadMoreNews'])->name('news.load-more');
@@ -79,34 +68,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/profile/edit', [UserController::class, 'edit'])->name('user.profile.edit');
     Route::put('/user/profile/update', [UserController::class, 'update'])->name('user.profile.update');
 
-    Route::post('/purchase-package', [UserController::class, 'purchasePackage'])->name('user.purchase-package');
 
     Route::get('/package2-purchase', [UserController::class, 'showPurchaseForm'])->name('package2.purchase');
     Route::post('/package2-purchase', [UserController::class, 'processPurchase'])->name('package2.process-purchase');
-    Route::get('/user/my-packages', [PackageAssignmentController::class, 'viewUserPackage'])->name('user.packages');
-    Route::get('/user/maturity-packages', [PackageAssignmentController::class, 'viewUserMaturityPackage'])->name('user.maturity.packages');
-    Route::post('/maturity-packages/pay-deduction/{id}', [PackageAssignmentController::class, 'payDeduction'])->name('user.maturity.pay-deduction');
-    Route::get('/user/packages/invoice/{id}', [PackageAssignmentController::class, 'showInvoice'])->name('user.packages.invoice');
-    Route::get('/user/packages/monthly-invoice/{id}', [PackageAssignmentController::class, 'showMaturityInvoice'])->name('user.packages.maturity.invoice');
-    Route::get('/packages/endorse/{id}', [PackageAssignmentController::class, 'showEndorseForm'])->name('user.packages.endorse');
-    Route::post('/packages/process-endorsement', [PackageAssignmentController::class, 'processEndorsement'])->name('user.packages.process-endorsement');
-
-    Route::get('/user/activation-package', [PackageAssignmentController::class, 'viewActivationPackage'])->name('user.activation.package');
+    
     Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view.userTree');
     Route::get('/user/network-summary', [ContactController::class, 'networkSummary'])->name('user.network.summary');
     Route::get('/user/direct-team', [ContactController::class, 'directTeam'])->name('user.direct.team');
 
-    Route::get('/user/commissions/level1', [UserController::class, 'level1Commissions'])->name('user.commissions.level1');
-    Route::get('/user/commissions/level2', [UserController::class, 'level2Commissions'])->name('user.commissions.level2');
-    Route::get('/user/reports/level-income', [UserController::class, 'levelIncomeReport'])->name('user.reports.level-income');
-
-    Route::get('/user/user-rewards/{ulid}', [UserController::class, 'showUserRankRewards'])->name('user.rewards.rankRewards');
-    Route::post('/user/reward/claim/{id}', [UserController::class, 'claimReward'])->name('user.rank.claimReward');
-    Route::post('/user/reward/reject/{id}', [UserController::class, 'rejectReward'])->name('user.rank.rejectReward');
-
-    Route::get('/user/my-yearly-profits', [UserController::class, 'showUserYearlyProfits'])->name('user.yearly.profits');
-    Route::get('/user/my-monthly-profits', [UserController::class, 'showUserMonthlyProfits'])->name('user.monthly.profits');
-
+   
     Route::prefix('user')->group(function () {
         // Other routes...
         Route::get('/login-activity', [LoginActivityController::class, 'index'])->name('user.login-activity');
@@ -115,21 +85,15 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/complaints', [ComplaintController::class, 'index'])->name('user.complaints.index');
         Route::post('/complaints', [ComplaintController::class, 'store'])->name('user.complaints.store');
+
+        // Income Reports
+        Route::get('/income/direct', [UserIncomeController::class, 'directIncome'])->name('user.income.direct');
+        Route::get('/income/bonus', [UserIncomeController::class, 'bonusIncome'])->name('user.income.bonus');
+        Route::get('/income/level', [UserIncomeController::class, 'levelIncome'])->name('user.income.level');
+        Route::get('/income/reward', [UserIncomeController::class, 'rewardIncome'])->name('user.income.reward');
+        Route::get('/income/repurchase', [UserIncomeController::class, 'repurchaseIncome'])->name('user.income.repurchase');
     });
 
-    Route::get('/get-package-rates/{packageId}', function ($packageId) {
-        $rates = ProductPackageDetails::where('package2_id', $packageId)->get();
-        return response()->json($rates);
-    });
-    Route::get('/get-package-price/{packageId}', function ($packageId) {
-        $package = ProductPackage::findOrFail($packageId);
-        return response()->json([
-            'price' => $package->price,
-            'quantity_in_one_unit' => $package->package_quantity,
-            'description' => $package->description,
-            'user_balance' => Auth::check() ? Auth::user()->wallet1_balance : 0
-        ]);
-    });
 });
 
 
@@ -153,16 +117,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/user/search-downline', [WalletController::class, 'searchDownlineUser'])->name('user.search.downline');
     Route::post('/user/transfer-wallet1', [WalletController::class, 'transferWallet1'])->name('user.transfer.wallet1');
 
-    Route::get('/user/stock-transfer', [StockController::class, 'showUserTransferForm'])->name('user.stock.form');
-    Route::post('/user/stock-transfer/search-user', [StockController::class, 'searchUserInUserSide'])->name('user.stock.search-user');
-    Route::post('/user/stock-transfer', [StockController::class, 'transferStockUserPanel'])->name('user.stock.transfer');
-    Route::get('/user/stock/transfer-by-coupon', [StockController::class, 'showCouponTransferForm'])->name('user.stock.coupon-transfer');
-    Route::post('/user/stock/validate-coupon', [StockController::class, 'validateCoupon'])->name('user.stock.validate-coupon');
-    Route::post('/user/stock/transfer-by-coupon', [StockController::class, 'transferStockByCoupon'])->name('user.stock.transfer-by-coupon');
-
-    Route::get('/user/viewStock', [StockController::class, 'stockTransferHistory'])->name('user.viewStock');
-    Route::get('/user/allStocks', [StockController::class, 'viewUserStocks'])->name('user.allStocks');
-
+  
     Route::get('/my-orders', [UserOrderController::class, 'index'])->name('user.orders.index');
     Route::prefix('user/shop')->name('user.shop.')->group(function () {
         Route::get('/', [ShopController::class, 'index'])->name('index');
@@ -174,9 +129,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/get-user-details/{ulid}', [AuthController::class, 'getUserDetails']);
 Route::get('/admin/get-user-details/{ulid}', [AuthController::class, 'getUserDetailsAdmin']);
 
-Route::middleware(['auth'])->group(function () {
-    Route::post('/user/fetch-sub-users', [AuthController::class, 'fetchSubUsers'])->name('user.subusers');
-});
 
 Route::get('adminlogin', [AdminController::class, 'index'])->name('admin.login');
 Route::post('adminlogin', [AdminController::class, 'login'])->name('admin.login.post');
@@ -189,21 +141,7 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::get('/admin/profile/edit', [AdminController::class, 'edit'])->name('admin.profile.edit');
     Route::put('/admin/profile/update', [AdminController::class, 'update'])->name('admin.profile.update');
-    Route::get('/admin/pdf/edit', [AdminController::class, 'editPdf'])->name('admin.pdf.edit');
-    Route::post('/admin/pdf/update', [AdminController::class, 'updatePdf'])->name('admin.pdf.update');
 
-    Route::get('/admin/gallery', [AdminController::class, 'managePhoto'])->name('admin.photo.manage');
-    Route::post('/admin/gallery', [AdminController::class, 'addPhoto'])->name('admin.gallery.store');
-    Route::delete('/admin/gallery/{id}', [AdminController::class, 'deletePhoto'])->name('admin.gallery.delete');
-
-    Route::get('/admin/news', [AdminController::class, 'manageNews'])->name('admin.news.manage');
-    Route::post('/admin/news', [AdminController::class, 'addNews'])->name('admin.news.store');
-    Route::delete('/admin/news/{id}', [AdminController::class, 'deleteNews'])->name('admin.news.delete');
-
-    Route::get('/profit-distribution', [AdminController::class, 'showFormForProfitDistribution'])->name('admin.profit.distribution');
-    Route::post('/profit-distribution', [AdminController::class, 'distributeYearlyProfit'])->name('admin.profit.distribute');
-    Route::get('/admin/view-yearly-distribution', [AdminController::class, 'viewYearlyDistribution'])->name('admin.view.distribution');
-    Route::get('/admin/view-monthly-distribution', [AdminController::class, 'viewMonthlyDistributions'])->name('admin.view.monthlyDistribution');
 
     Route::get('/admin/viewmember', [AdminController::class, 'viewmemeber'])->name('admin.viewmember');
     Route::get('/admin/viewmember/{id}', [AdminController::class, 'viewMemberDetails'])->name('admin.viewmemberdetails');
@@ -228,12 +166,6 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('/add-wallet1', [WalletController::class, 'addWallet1'])->name('admin.addWallet1');
         Route::post('/add-wallet2', [WalletController::class, 'addWallet2'])->name('admin.addWallet2');
 
-        Route::get('/stock-transfer', [StockController::class, 'showTransferForm'])->name('admin.stock.form');
-        Route::post('/stock-transfer/search-user', [StockController::class, 'searchUser'])->name('admin.stock.search-user');
-        Route::post('/stock-transfer', [StockController::class, 'transferStock'])->name('admin.stock.transfer');
-        Route::get('/view-stock', [StockController::class, 'viewAdminStock'])->name('admin.viewStock');
-        Route::get('/sales-stock', [StockController::class, 'salesStock'])->name('admin.sales.stock');
-        Route::post('/sales-stock/save', [StockController::class, 'saveSalesStock'])->name('admin.sales.stock.save');
 
         Route::get('/withdrawals', [WalletController::class, 'viewWithdrawlRequest'])->name('admin.withdrawls.index');
         Route::post('/withdrawals/{id}/approve', [WalletController::class, 'approveWithdrawlRequest'])->name('admin.withdrawls.approve');
@@ -252,15 +184,6 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::get('/packages/package2/{id}/edit', [PackageController::class, 'editProductPackage'])->name('admin.package2.edit');
         Route::put('/packages/package2/{id}', [PackageController::class, 'updateProductPackage'])->name('admin.package2.update');
         Route::delete('/packages/package2/{id}', [PackageController::class, 'destroyProductPackage'])->name('admin.package2.destroy');
-
-        Route::get('/package-purchases', [PackageAssignmentController::class, 'viewUserPackagePurchases'])->name('admin.package-purchases');
-
-        Route::prefix('admin/packages')->name('admin.packages.')->group(function () {
-            Route::get('/assign', [PackageAssignmentController::class, 'index'])->name('assign');
-            Route::post('/search', [PackageAssignmentController::class, 'search'])->name('search');
-            Route::post('/assign', [PackageAssignmentController::class, 'assignPackage'])->name('assign.submit');
-        });
-
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
 

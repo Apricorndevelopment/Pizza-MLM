@@ -84,24 +84,12 @@
                                 <input type="text" id="detail_reg" class="form-control bg-light p-1"
                                     style="font-size: 0.72rem; height: 30px;" readonly>
                             </div>
-                            <div class="col-6 mb-1">
+                            {{-- <div class="col-6 mb-1">
                                 <label class="text-muted mb-0 small">Activation Date</label>
                                 <input type="text" id="detail_active" class="form-control bg-light p-1"
                                     style="font-size: 0.72rem; height: 30px;" readonly>
-                            </div>
+                            </div> --}}
 
-                            <!-- Row 3 -->
-                            <div class="col-6 mb-1">
-                                <label class="text-muted mb-0 small">Purchase Amount</label>
-                                <div class="input-group" style="height: 30px;">
-                                    <input type="text" id="detail_purchase" class="form-control bg-light p-1"
-                                        style="font-size: 0.72rem;" readonly>
-                                    <span class="input-group-text bg-success text-white px-2 py-0"
-                                        style="font-size: 0.7rem;">
-                                        <i class="fas fa-coins"></i>
-                                    </span>
-                                </div>
-                            </div>
                             <div class="col-6 mb-1">
                                 <label class="text-muted mb-0 small">Rank</label>
                                 <div class="input-group" style="height: 30px;">
@@ -183,17 +171,12 @@
                         return;
                     }
 
-                    let total_business = parseFloat(data.left_business) + parseFloat(data.right_business);
-                    total_business = (total_business).toFixed(2);
-
                     document.getElementById('detail_name').value = data.name;
                     document.getElementById('detail_ulid').value = data.ulid;
                     document.getElementById('detail_reg').value = data.registered_date;
-                    document.getElementById('detail_active').value = data.activation_date  || 'Not Active';
-                    document.getElementById('detail_purchase').value = data.purchase_amount;
                     document.getElementById('detail_rank').value = data.rank || 'N/A';
                     document.getElementById('detail_status').value = data.status;
-                    document.getElementById('detail_business').value = total_business;
+                    document.getElementById('detail_business').value = data.total_business;
                 });
         }
     </script>

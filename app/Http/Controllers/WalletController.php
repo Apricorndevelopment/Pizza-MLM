@@ -91,8 +91,10 @@ class WalletController extends Controller
                 $q->where('ulid', 'like', '%' . $search . '%');
             });
         }
-
         $wallet1Transactions = $query->paginate(15);
+        if ($request->ajax()) {
+            return response()->json($wallet1Transactions);
+        }
 
         return view('admin.wallet.allTransaction', compact('wallet1Transactions'));
     }

@@ -1,258 +1,391 @@
-@extends('userlayouts.layouts')
+@extends(Auth::user()->is_vendor === 1 ? 'vendorlayouts.layout' : 'userlayouts.layouts')
 @section('title', 'Dashboard')
+
 @section('container')
     <style>
         :root {
-            --power-leg-gradient: linear-gradient(135deg, #00c9ff, #92fe9d);
-            --weaker-leg-gradient: linear-gradient(135deg, #f093fb, #f5576c);
-            --referral-gradient: linear-gradient(135deg, #4facfe, #00f2fe);
-            --network-gradient: linear-gradient(135deg, #fa709a, #fee140);
-            --monthly-gradient: linear-gradient(135deg, #a8edea, #fed6e3);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-1: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            --card-2: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+            --card-3: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            --card-4: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            --card-5: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
         }
 
-        .card-tale {
-            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3);
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
         }
 
-        .card-dark-blue {
-            background: linear-gradient(135deg, #0984e3, #74b9ff);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(9, 132, 227, 0.3);
-        }
-
-        .fs-30 {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        .transparent {
-            background-color: transparent !important;
-        }
-
-        .shadow-inset {
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .avatar-lg {
-            height: 160px;
-            width: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            overflow: hidden;
-        }
-
-        .avatar-lg img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, #6c5ce7, #341f97) !important;
-        }
-
-        .bg-gradient-warning {
-            background: linear-gradient(135deg, #fdcb6e, #e17055) !important;
-        }
-
-        .rounded-pill {
-            border-radius: 50rem !important;
-        }
-
-        .badge {
-            font-size: 0.85rem;
-        }
-
-        select.form-select {
-            border-radius: 0.5rem;
-        }
-
-        .btn-lg {
-            font-size: 1.1rem;
-        }
-
-        .fw-medium {
-            font-weight: 500;
-        }
-
-        .custom-card {
-            border-radius: 16px;
-            color: white;
-            border: none;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        }
-
-        .custom-card hr {
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .custom-card .small {
-            opacity: 0.8;
-        }
-
-        .dashboard-card {
-            border: none;
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            color: #fff;
+        /* --- Header Section --- */
+        .welcome-banner {
+            background: var(--primary-gradient);
+            border-radius: 20px;
             position: relative;
-            height: 100%;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(102, 126, 234, 0.5);
         }
 
-        .dashboard-card::before {
+        .welcome-banner::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            transition: height 0.5s ease;
-            z-index: 1;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
         }
 
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        .welcome-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
         }
 
-        .dashboard-card:hover::before {
+        /* --- Dashboard Cards --- */
+        .stat-card {
+            border: none;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+            color: white;
             height: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        .card-content {
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .stat-card .card-body {
             position: relative;
             z-index: 2;
             padding: 1.5rem;
         }
 
-        .card-icon {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            opacity: 0.9;
+        .stat-card .icon-circle {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(4px);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
         }
 
-        .card-title {
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-card p {
             font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
+            opacity: 0.9;
+            font-weight: 500;
             text-transform: uppercase;
-        }
-
-        .card-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .card-divider {
-            height: 2px;
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            margin: 12px 0;
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-
-        .dashboard-card:hover .card-divider {
-            opacity: 1;
-            transform: scaleX(1.05);
-        }
-
-        .card-description {
-            font-size: 0.85rem;
-            opacity: 0.85;
+            letter-spacing: 1px;
             margin-bottom: 0;
         }
 
-        .weaker-leg-card {
-            background: var(--weaker-leg-gradient);
+        .stat-card .overlay-shape {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8rem;
+            opacity: 0.1;
+            transform: rotate(15deg);
+            z-index: 1;
         }
 
-        .referral-card {
-            background: var(--referral-gradient);
+        /* Specific Card Gradients */
+        .bg-purple-gradient { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+        .bg-blue-gradient { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .bg-green-gradient { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .bg-orange-gradient { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .bg-dark-gradient { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .bg-royal-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+
+        /* --- Chart Section --- */
+        .chart-card {
+            border: none;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
-        .network-card {
-            background: var(--network-gradient);
+        .form-select-custom {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 0.85rem;
+            padding: 0.4rem 2rem 0.4rem 0.8rem;
+            background-color: #f9fafb;
+        }
+        .form-select-custom:focus {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
         }
 
-        .monthly-card {
-            background: var(--monthly-gradient);
-            color: #333;
+        /* --- Animations --- */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
-        .monthly-card .card-divider {
-            background: rgba(0, 0, 0, 0.2);
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .monthly-card .card-description {
-            color: #444;
-        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
 
-        .dashboard-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .dashboard-title {
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .dashboard-subtitle {
-            color: #6c757d;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        #welcomeModal .modal-content {
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        #welcomeModal img {
-            border: 3px solid #007bff;
-            padding: 5px;
-            background: #fff;
-        }
-
-        #welcomeModal .modal-header {
-            border-bottom: none;
-        }
     </style>
+
+    <div class="container-fluid">
+
+        @if (session('welcome_popup'))
+            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                        <div class="modal-body text-center p-5">
+                            <div class="mb-4">
+                                <img src="/images/telegram.jpg" alt="Welcome" class="img-fluid rounded-circle shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                            </div>
+                            <h3 class="fw-bold text-gray-800">Welcome Back, {{ session('welcome_name') }}! 🎉</h3>
+                            <p class="text-muted mt-2">We're glad to see you again. Check your dashboard for the latest updates.</p>
+                            <button type="button" class="btn btn-primary rounded-pill px-4 py-2 mt-3 fw-bold shadow-sm" data-bs-dismiss="modal">
+                                Go to Dashboard <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <div class="row mb-4 fade-in-up">
+            <div class="col-12">
+                <div class="welcome-banner p-4 p-md-5 d-flex align-items-center justify-content-between">
+                    <div class="text-white position-relative z-10">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <h1 class="fw-bold mb-0">Dashboard</h1>
+                            <span class="badge bg-white/20 backdrop-blur-sm border border-white/30 rounded-pill px-3 py-1">
+                                <i class="fas fa-circle text-green-400 me-1" style="font-size: 8px;"></i> {{ ucfirst(Auth::user()->status) }}
+                            </span>
+                        </div>
+                        <p class="mb-0 opacity-90 fs-5">Hello, {{ Auth::user()->name }} ({{ Auth::user()->ulid }})</p>
+                        <p class="mb-0 opacity-75 small mt-1"><i class="fas fa-crown me-1 text-warning"></i> Rank: {{ Auth::user()->current_rank ?? 'N/A' }}</p>
+                    </div>
+                    <div class="d-none d-md-block position-relative z-10">
+                        <div class="bg-white/20 p-1 rounded-circle backdrop-blur-sm">
+                            <img src="{{ Auth::user()->profile_picture ? asset('storage/profile-pictures/' . basename(Auth::user()->profile_picture)) : asset('foodvendor-logo.png') }}" 
+                                 class="rounded-circle shadow-lg" width="80" height="80" alt="Profile" style="object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                @session('success')
+                    <div class="alert alert-success border-0 shadow-sm rounded-3 d-flex align-items-center" role="alert">
+                        <i class="fas fa-check-circle me-2 fs-5"></i>
+                        <div>{{ session('success') }} {{ session('coupon_code') ? ' | Coupon: ' . session('coupon_code') : '' }}</div>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endsession
+                @session('error')
+                    <div class="alert alert-danger border-0 shadow-sm rounded-3 d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2 fs-5"></i>
+                        <div>{{ session('error') }}</div>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endsession
+            </div>
+        </div>
+        @php
+            function formatInLakhsCrores($number) {
+                if ($number >= 1000000000000) return '₹' . number_format($number / 1000000000000, 2) . 'T';
+                if ($number >= 1000000000) return '₹' . number_format($number / 1000000000, 2) . 'B';
+                if ($number >= 10000000) return '₹' . number_format($number / 10000000, 2) . 'Cr';
+                if ($number >= 100000) return '₹' . number_format($number / 100000, 2) . 'L';
+                return '₹' . number_format($number, 2);
+            }
+        @endphp
+
+        <div class="row g-4">
+            
+            <div class="col-md-12 col-lg-4 fade-in-up delay-2">
+                <div class="stat-card bg-royal-gradient">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="icon-circle text-white">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <p>Total Business</p>
+                                <h3>{{ formatInLakhsCrores(Auth::user()->total_business) }}</h3>
+                            </div>
+                        </div>
+                        <i class="fas fa-chart-area overlay-shape"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 fade-in-up delay-3">
+                <div class="stat-card bg-blue-gradient">
+                    <div class="card-body">
+                        <div class="icon-circle text-white">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <p>Direct Income</p>
+                        <h3>{{ formatInLakhsCrores($directIncome) }}</h3>
+                        <i class="fas fa-hand-holding-usd overlay-shape"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 fade-in-up delay-4">
+                <div class="stat-card bg-purple-gradient">
+                    <div class="card-body">
+                        <div class="icon-circle text-white">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <p>Bonus Income</p>
+                        <h3>{{ formatInLakhsCrores($bonusIncome) }}</h3>
+                        <i class="fas fa-gift overlay-shape"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 fade-in-up delay-5">
+                <div class="stat-card bg-orange-gradient">
+                    <div class="card-body">
+                        <div class="icon-circle text-white">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <p>Rewards Income</p>
+                        <h3>{{ formatInLakhsCrores($rewardIncome) }}</h3>
+                        <i class="fas fa-trophy overlay-shape"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 fade-in-up delay-6">
+                <div class="stat-card bg-green-gradient">
+                    <div class="card-body">
+                        <div class="icon-circle text-white">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <p>Level Income</p>
+                        <h3>{{ formatInLakhsCrores($levelIncome) }}</h3>
+                        <i class="fas fa-layer-group overlay-shape"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 fade-in-up delay-6">
+                <div class="stat-card bg-dark-gradient">
+                    <div class="card-body">
+                        <div class="icon-circle text-white">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <p>Repurchase Income</p>
+                        <h3>{{ formatInLakhsCrores($repurchaseIncome) }}</h3>
+                        <i class="fas fa-shopping-cart overlay-shape"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row my-4 fade-in-up delay-1">
+            <div class="col-12">
+                <div class="chart-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h5 class="fw-bold text-gray-800 mb-1">Sales Performance</h5>
+                            <p class="text-muted small mb-0">Business growth analytics</p>
+                        </div>
+                        <select id="filter-select" class="form-select-custom">
+                            <option value="daily">Last 15 Days</option>
+                            <option value="weekly">Last 8 Weeks</option>
+                            <option value="monthly" selected>Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div style="height: 300px; width: 100%;">
+                        <canvas id="sales-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="col-12 fade-in-up delay-6">
+                <div class="stat-card" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="icon-circle text-white mb-0" style="width: 60px; height: 60px;">
+                                <i class="fas fa-rupee-sign fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-white-50">Total Earnings</p>
+                                <h2 class="mb-0 fw-bold">{{ formatInLakhsCrores($totalIncome) }}</h2>
+                            </div>
+                        </div>
+                        <div class="text-end d-none d-md-block">
+                            <span class="badge bg-white/20 border border-white/20 rounded-pill px-3 py-2">
+                                Lifetime
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Welcome Modal Logic
+            @if (session('welcome_popup'))
+                var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+                welcomeModal.show();
+            @endif
+
+            // Chart Logic
             const ctx = document.getElementById('sales-chart').getContext('2d');
             const filterSelect = document.getElementById('filter-select');
 
-            function formatInLakhsCrores(number) {
-                if (number >= 1000000000000) {
-                    return '₹' + (number / 1000000000000).toFixed(3) + 'T';
-                } else if (number >= 1000000000) {
-                    return '₹' + (number / 1000000000).toFixed(2) + 'B';
-                } else if (number >= 10000000) {
-                    return '₹' + (number / 10000000).toFixed(2) + 'Cr';
-                } else if (number >= 100000) {
-                    return '₹' + (number / 100000).toFixed(2) + 'L';
-                } else {
-                    return '₹' + number.toLocaleString();
-                }
+            // Format numbers logic for Chart Tooltips
+            function formatChartValue(value) {
+                if (value >= 10000000) return '₹' + (value / 10000000).toFixed(2) + 'Cr';
+                if (value >= 100000) return '₹' + (value / 100000).toFixed(2) + 'L';
+                return '₹' + value.toLocaleString();
             }
 
             let salesChart = new Chart(ctx, {
@@ -260,43 +393,61 @@
                 data: {
                     labels: [],
                     datasets: [{
-                        label: 'Business',
+                        label: 'Business Volume',
                         data: [],
-                        borderColor: '#4e73df',
-                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                        tension: 0.3,
+                        borderColor: '#6366f1',
+                        backgroundColor: (context) => {
+                            const ctx = context.chart.ctx;
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+                            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+                            return gradient;
+                        },
+                        tension: 0.4,
                         fill: true,
                         pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#4e73df',
+                        pointBorderColor: '#6366f1',
                         pointBorderWidth: 2,
                         pointRadius: 4,
                         pointHoverRadius: 6,
-                        borderWidth: 3
+                        borderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatInLakhsCrores(value);
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            padding: 12,
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 14, weight: 'bold' },
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + formatChartValue(context.raw);
                                 }
                             }
                         }
                     },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [2, 4], color: '#f3f4f6' },
+                            ticks: {
+                                font: { size: 11 },
+                                callback: function(value) { return formatChartValue(value); }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 } }
                         }
                     }
                 }
             });
 
-            // Fetch chart data
+            // Fetch Data
             function loadChartData(filter = 'monthly') {
                 fetch(`{{ route('dashboard.sales.data') }}?filter=${filter}`)
                     .then(response => response.json())
@@ -305,417 +456,16 @@
                         salesChart.data.datasets[0].data = data.data;
                         salesChart.update();
                     })
-                    .catch(error => console.error('Error fetching chart data:', error));
+                    .catch(error => console.error('Error:', error));
             }
 
-            // Initial load
+            // Init Load
             loadChartData('monthly');
 
-            // On filter change
+            // Event Listener
             filterSelect.addEventListener('change', function() {
                 loadChartData(this.value);
             });
         });
     </script>
-
-    <div class="container-fluid py-3">
-
-        @if (session('welcome_popup'))
-            <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="welcomeModalLabel">🎉 Welcome Back!</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <img src="/images/telegram.jpg" alt="Welcome" class="img-fluid mb-3" style="max-width: 200px;">
-                            <h4>Hello, <strong>{{ session('welcome_name') }}</strong> 👋</h4>
-                            <p class="mt-2">जियो क्रांति में आपका हार्दिक स्वागत है हम आपकी निरंतर सफलता की मंगल कामना करते हैं धन्यवाद।
-                            </p>
-                            <div>Join us on telegram for more updates </div>
-                            <div><a href="https://t.me/+6U8XYmLhNGthYjg1" target="_blank">https://t.me/+6U8XYmLhNGthYjg1</a></div>
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">
-                                Let's Go 🚀
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-        <!-- Header Section -->
-        <div class="row mb-2">
-            <div class="col-12">
-                <div class="card bg-gradient-primary shadow-inset border-0">
-                    <div class="card-body py-3 px-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="d-flex align-items-center gap-3">
-                                    <h2 class="fw-bold text-white mb-1 fs-3 fs-md-2">Welcome back, {{ Auth::user()->name }}!
-                                    </h2>
-                                    <span class="badge bg-white text-primary px-2 px-md-3 py-1 py-md-2 rounded-pill">
-                                        <i class="fas fa-circle me-1 small"></i>
-                                        <span class="fs-6 fs-md-5">{{ ucfirst(Auth::user()->status) }}</span>
-                                    </span>
-                                </div>
-                                <div class="d-flex flex-column mt-2 gap-2">
-                                    <span class="text-white fs-6 fs-md-5">
-                                        <i class="fas fa-user me-1"></i> User Name:
-                                        {{ Auth::user()->ulid }}
-                                    </span>
-                                    <span class="text-white fs-6 fs-md-5">
-                                        <i class="fas fa-trophy me-1"></i> Rank:
-                                        {{ Auth::user()->current_rank ?? 'N/A' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="avatar avatar-lg rounded-circle shadow d-none d-md-block">
-                                <img src="abcd.webp" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Alerts Section -->
-        <div class="row mb-2">
-            <div class="col-12">
-                @session('success')
-                    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        {{ session('success') }}
-                        {{ session('coupon_code') ? ' and You got a Coupon: ' . session('coupon_code') : '' }}
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endsession
-
-                @session('error')
-                    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        {{ session('error') }}
-                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endsession
-            </div>
-        </div>
-
-        @if (Auth::user()->status == 'inactive')
-            <!-- Activation Modal -->
-            <div class="modal fade" id="activationModal" tabindex="-1" aria-labelledby="activationModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header bg-gradient-primary text-white">
-                            <h5 class="modal-title" id="activationModalLabel">Activate Your Account</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            @if ($packages->isNotEmpty())
-                                @php $firstPackage = $packages->first(); @endphp
-                                <div class="card mb-3 border-primary">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ $firstPackage->package_name }}</h5>
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span class="fw-medium">Price:</span>
-                                            <span class="fw-bold">₹{{ $firstPackage->price }}</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <span class="fw-medium">Package Quantity:</span>
-                                            <span class="fw-bold">{{ $firstPackage->package_quantity }}</span>
-                                        </div>
-
-                                        <hr>
-                                        <p class="small text-muted">To activate your account, you need to purchase this
-                                            starter package.</p>
-                                    </div>
-                                </div>
-
-                                <form id="activationForm" action="{{ route('user.purchase-package') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="package_id" value="{{ $firstPackage->id }}">
-
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <span class="fw-medium">Your Balance:</span>
-                                        <span class="badge bg-success rounded-pill px-3">
-                                            ₹{{ Auth::user()->wallet1_balance }}
-                                        </span>
-                                    </div>
-
-                                    <div class="d-grid">
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to purchase package ?')"
-                                            class="btn btn-success btn-lg">
-                                            <i class="fas fa-shopping-cart me-2"></i> Purchase Package
-                                            (₹{{ $firstPackage->price }})
-                                        </button>
-                                    </div>
-                                </form>
-                            @else
-                                <div class="alert alert-warning">No packages available for activation</div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Original activation button (now triggers modal) -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-gradient-warning text-white border-0 py-3">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                <h5 class="mb-0 fw-semibold">Account Activation Required</h5>
-                            </div>
-                        </div>
-                        <div class="card-body p-4">
-                            <div class="text-center py-3">
-                                <button id="activateBtn" class="btn btn-primary btn-lg px-4 rounded-pill"
-                                    data-bs-toggle="modal" data-bs-target="#activationModal">
-                                    <i class="fas fa-bolt me-2"></i>Activate Account
-                                </button>
-                                <p class="text-muted mt-2">Activate your account to access all features</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        <div class="row">
-            <div class="col-md-12 grid-margin stretch-card">
-                <div class="card shadow-lg border-0">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <h5 class="card-title mb-0 text-primary">Sales Performance Report</h5>
-                                <p class="text-muted mb-0">Track your business growth over time</p>
-                            </div>
-                            <div>
-                                <select id="filter-select" class="form-select form-select-sm border-primary">
-                                    <option value="daily">Daily</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly" selected>Monthly</option>
-                                    <option value="yearly">Yearly</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center mb-2">
-                            <div class="bg-primary rounded p-2 me-2">
-                                <i class="bi bi-graph-up text-white"></i>
-                            </div>
-                            <p class="text-muted mb-0 flex-grow-1">
-                                Analyze your total business performance with interactive charts
-                            </p>
-                        </div>
-
-                        <div style="overflow-x: auto; position: relative; height: 200px;">
-                            <canvas id="sales-chart"></canvas>
-                        </div>
-
-                        <div class="mt-3 d-flex justify-content-end">
-                            <span class="badge bg-primary bg-opacity-10 text-primary px-2">
-                                <i class="bi bi-circle-fill text-primary me-1"></i> Business Revenue
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        @php
-            function formatInLakhsCrores($number)
-            {
-                if ($number >= 1000000000000) {
-                    return '₹' . number_format($number / 1000000000000, 3) . ' Trillion';
-                } elseif ($number >= 1000000000) {
-                    return '₹' . number_format($number / 1000000000, 2) . ' Billion';
-                } elseif ($number >= 10000000) {
-                    return '₹' . number_format($number / 10000000, 2) . ' Cr';
-                } elseif ($number >= 100000) {
-                    return '₹' . number_format($number / 100000, 2) . ' Lakh';
-                } else {
-                    return '₹' . number_format($number, 2);
-                }
-            }
-        @endphp
-
-        <div class="container">
-            <div class="dashboard-header">
-                <p class="dashboard-subtitle">Track your earnings, network growth, and business performance metrics</p>
-            </div>
-
-            <div class="row">
-                <!-- Power Leg Wallet1 Card -->
-                <div class="col-md-6 mb-4">
-                    <div class="dashboard-card power-leg-card shadow-sm"
-                        style="background: linear-gradient(135deg, #6a11cb, #2575fc);">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <p class="card-title">Power Leg Wallet1</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->left_business) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Your stronger leg's accumulated business volume</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Weaker Leg Wallet1 Card -->
-                <div class="col-md-6 mb-4">
-                    <div class="dashboard-card weaker-leg-card shadow-sm">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-chart-bar"></i>
-                            </div>
-                            <p class="card-title">Weaker Leg Wallet1</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores(Auth::user()->right_business) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Your weaker leg's total business volume</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Referral Bonus Card -->
-                {{-- <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card referral-card shadow-sm">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <p class="card-title">Referral Bonus</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores($referralCommission) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Commissions from your referral users</p>
-                        </div>
-                    </div>
-                </div> --}}
-
-                <!-- Network Bonus Card -->
-                {{-- <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card network-card shadow-sm">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <p class="card-title">Network Bonus</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores($networkCommission) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Commissions from your network users</p>
-                        </div>
-                    </div>
-                </div> --}}
-
-                <!-- Monthly Income Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card monthly-card shadow-sm">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <p class="card-title">Monthly Income</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores($monthlyIncome) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Monthly based income from purchased packages</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Level Income Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card network-card shadow-sm"
-                        style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <p class="card-title">Level Income</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores($levelIncome) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Monthly Incomes from the downline user's packages</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rewards Income Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card monthly-card shadow-sm"
-                        style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <p class="card-title">Rewards Income</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores($rewardIncome) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Total Income for attaining the ranks</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Royalty Rewards Card -->
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="dashboard-card monthly-card shadow-sm"
-                        style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <p class="card-title">Royalty Income</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores($royaltyRewards) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Income from yearly distribution of rewards</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Income -->
-                <div class="col-md-6 col-lg-4 mb-4 mx-auto">
-                    <div class="dashboard-card shadow-sm" style="background: linear-gradient(135deg, #6b6b83, #3b8d99);">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-rupee-sign"></i>
-                            </div>
-                            <p class="card-title">Total Income</p>
-                            <h2 class="card-value">{{ formatInLakhsCrores($totalIncome) }}</h2>
-                            <hr class="card-divider">
-                            <p class="card-description">Total incomes from all incomes</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            @if (session('welcome_popup'))
-                var welcomeModal = new bootstrap.Modal(document.getElementById('welcomeModal'));
-                welcomeModal.show();
-            @endif
-        });
-    </script>
-
-    <script>
-        document.getElementById('activationForm')?.addEventListener('submit', function(e) {
-            const balance = {{ Auth::user()->wallet1_balance }};
-            const packagePrice = {{ $packages->isNotEmpty() ? $packages->first()->price : 0 }};
-
-            if (balance < packagePrice) {
-                e.preventDefault();
-                alert('Insufficient balance to purchase this package');
-            }
-        });
-    </script>
-
 @endsection

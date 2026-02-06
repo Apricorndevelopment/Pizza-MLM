@@ -3,144 +3,204 @@
 @section('title', 'Network Summary - Admin')
 
 @section('container')
-    <div class="container pb-4 pt-3">
-        <h4 class="mb-3 text-primary">Network Summary - Admin</h4>
-        
-        <!-- Admin Info Card -->
-        <div class="card shadow-sm border-0 mb-3">
-            <div class="card-body bg-light py-2">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-0 fw-bold">{{ $admin->name }}</h6>
-                        <small class="text-muted">AUID: {{ $admin->auid }}</small>
+    <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Admin Network Overview</h1>
+                    <p class="text-sm text-slate-500 mt-1">
+                        Viewing network for <strong>{{ $admin->name }}</strong> (AUID: {{ $admin->auid }})
+                    </p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-1 pr-4 flex items-center gap-4 shadow-sm">
+                    <div class="bg-blue-50 text-blue-700 h-12 w-12 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-lg"></i>
                     </div>
-                    <span class="badge bg-info">{{ $paginatedUsers->total() }} Users in Network</span>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Network</p>
+                        <p class="text-xl font-bold text-slate-800 leading-none">{{ $paginatedUsers->total() }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Filters Section -->
-        <div class="card shadow-sm border-0 mb-3">
-            <div class="card-header bg-gradient-info text-white py-2 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0"><i class="fas fa-filter me-1"></i>Filters</h6>
-                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                    <i class="fas fa-chevron-down"></i>
-                </button>
-            </div>
-            <div class="collapse show" id="filterCollapse">
-                <div class="card-body p-3">
-                    <form method="GET" action="{{ route('admin.network.summary') }}">
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <label for="designation" class="form-label small fw-bold">Designation</label>
-                                <select class="form-select form-select-sm" id="designation" name="designation">
-                                    <option value="">All Designations</option>
-                                    @foreach ($designations as $designation)
-                                        <option value="{{ $designation }}"
-                                            {{ request('designation') == $designation ? 'selected' : '' }}>
-                                            {{ $designation }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="status" class="form-label small fw-bold">Status</label>
-                                <select class="form-select form-select-sm" id="status" name="status">
-                                    <option value="">All Status</option>
-                                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active
-                                    </option>
-                                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>
-                                        Inactive</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="purchase_status" class="form-label small fw-bold">Purchase Status</label>
-                                <select class="form-select form-select-sm" id="purchase_status" name="purchase_status">
-                                    <option value="">All Status</option>
-                                    <option value="paid" {{ request('purchase_status') == 'paid' ? 'selected' : '' }}>Paid
-                                    </option>
-                                    <option value="unpaid" {{ request('purchase_status') == 'unpaid' ? 'selected' : '' }}>
-                                        Unpaid</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="start_date" class="form-label small fw-bold">Start Date</label>
-                                <input type="date" class="form-control form-control-sm" id="start_date" name="start_date"
-                                    value="{{ request('start_date') }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="end_date" class="form-label small fw-bold">End Date</label>
-                                <input type="date" class="form-control form-control-sm" id="end_date" name="end_date"
-                                    value="{{ request('end_date') }}">
-                            </div>
-                            <div class="col-md-12 text-end mt-2">
-                                <a href="{{ route('admin.network.summary') }}"
-                                    class="btn btn-sm btn-outline-secondary me-2">Reset</a>
-                                <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
-                            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6 overflow-hidden transition-all duration-300"
+                id="filterContainer">
+
+                <div class="px-6 py-4 bg-white border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors"
+                    onclick="toggleFilters()">
+                    <div class="flex items-center gap-2 text-slate-700">
+                        <div class="bg-slate-100 p-1.5 rounded text-slate-500">
+                            <i class="fas fa-filter text-xs"></i>
                         </div>
-                    </form>
+                        <span class="text-sm font-bold uppercase tracking-wide">Search & Filters</span>
+                    </div>
+                    <div>
+                        <a href="{{ route('admin.network.summary') }}"
+                            class="text-sm font-bold text-slate-500 hover:text-slate-800 transition px-4 py-2">Reset</a>
+
+                        <i class="fas fa-chevron-down text-slate-400 text-xs transition-transform duration-300"
+                            id="filterIcon"></i>
+                    </div>
+                </div>
+
+                <div id="filterBody" class="hidden">
+                    <div class="p-6 bg-slate-50/50">
+                        <form method="GET" action="{{ route('admin.network.summary') }}">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+
+                                <div class="space-y-1.5">
+                                    <label
+                                        class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Designation</label>
+                                    <div class="relative">
+                                        <select name="designation"
+                                            class="w-full appearance-none rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-blue-500 focus:ring-blue-500 shadow-sm text-slate-600">
+                                            <option value="">All Ranks</option>
+                                            @foreach ($designations as $designation)
+                                                <option value="{{ $designation }}"
+                                                    {{ request('designation') == $designation ? 'selected' : '' }}>
+                                                    {{ $designation }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label
+                                        class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Status</label>
+                                    <div class="relative">
+                                        <select name="status"
+                                            class="w-full appearance-none rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-blue-500 focus:ring-blue-500 shadow-sm text-slate-600">
+                                            <option value="">All Status</option>
+                                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="inactive"
+                                                {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        </select>
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">From</label>
+                                    <input type="date" name="start_date" value="{{ request('start_date') }}"
+                                        class="w-full rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-blue-500 focus:ring-blue-500 shadow-sm text-slate-600">
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">To</label>
+                                    <input type="date" name="end_date" value="{{ request('end_date') }}"
+                                        class="w-full rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-blue-500 focus:ring-blue-500 shadow-sm text-slate-600">
+                                </div>
+
+                                <div class="flex items-end">
+                                    <button type="submit"
+                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-6 rounded-lg shadow-md shadow-blue-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                        <i class="fas fa-search"></i> Apply Filters
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Results Section -->
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-gradient-info text-white py-2 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0"><i class="fas fa-network-wired me-1"></i>Downline Team</h6>
-                <span class="badge bg-light text-dark">{{ $paginatedUsers->total() }} Users</span>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Sr. No</th>
-                                <th>Name/Ulid</th>
-                                <th class="text-center">Sponsor</th>
-                                <th class="text-center">Reg. Date/ Paid Date</th>
-                                <th class="text-center">Purchase Status</th>
-                                <th class="text-center">Total Purchased</th>
-                                <th class="text-center">Level</th>
-                                <th class="text-center">Designation</th>
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-slate-50 border-b border-slate-100 text-xs uppercase font-bold text-slate-500 tracking-wider">
+                                <th class="px-6 py-4 text-center w-16">#</th>
+                                <th class="px-6 py-4">User Profile</th>
+                                <th class="px-6 py-4 text-center">Sponsor</th>
+                                <th class="px-6 py-4 text-center">Dates</th>
+                                <th class="px-6 py-4 text-center">Level</th>
+                                <th class="px-6 py-4 text-center">Designation</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @php
-                                $index = ($paginatedUsers->currentPage() - 1) * $paginatedUsers->perPage() + 1;
-                            @endphp
+                        <tbody class="divide-y divide-slate-100">
+                            @php $index = ($paginatedUsers->currentPage() - 1) * $paginatedUsers->perPage() + 1; @endphp
                             @forelse($paginatedUsers as $user)
-                                <tr class="align-middle">
-                                    <td>{{ $index++ }}</td>
-                                    <td class="fw-medium">{{ $user->name }}({{ $user->ulid }})</td>
-                                    <td class="text-center"><span class="badge bg-secondary">{{ $user->sponsor_id }}</span>
+                                <tr class="group hover:bg-blue-50/50 transition-colors duration-200">
+                                    <td class="px-6 py-4 text-center text-slate-400 font-mono text-sm font-bold">
+                                        {{ $index++ }}
                                     </td>
-                                    <td class="text-center">{{ $user->created_at->format('d M Y') }} /
-                                        {{ $user->user_doa ?? 'Not Active' }}</td>
-                                    <td class="text-center">
-                                        <span
-                                            class="badge {{ $user->purchase_status == 'paid' ? 'bg-success' : 'bg-warning' }} rounded-pill text-capitalize">
-                                            {{ $user->purchase_status }}
+
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                                {{ substr($user->name, 0, 1) }}
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span
+                                                    class="text-sm font-bold text-slate-800 group-hover:text-blue-700 transition-colors">
+                                                    {{ $user->name }}
+                                                </span>
+                                                <span class="text-xs font-mono text-slate-400 flex items-center gap-1">
+                                                    <i class="fas fa-id-card text-[10px]"></i> {{ $user->ulid }}
+                                                </span>
+                                                <div class="flex items-center gap-1.5 mt-1">
+                                                    <div
+                                                        class="w-2 h-2 rounded-full {{ $user->status == 'active' ? 'bg-emerald-500' : 'bg-slate-300' }}">
+                                                    </div>
+                                                    <span
+                                                        class="text-[10px] font-bold uppercase text-slate-400">{{ $user->status }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-mono font-bold">
+                                            {{ $user->sponsor_id }}
                                         </span>
                                     </td>
-                                    <td
-                                        class="text-center fw-medium {{ $user->total_purchases > 0 ? 'text-success' : 'text-muted' }}">
-                                        ₹{{ number_format($user->total_purchases, 2) }}
+
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex flex-col">
+                                            <span class="text-xs font-bold text-slate-600">Reg: {{ $user->created_at->format('d M Y') }}</span>
+                                            <span class="text-[10px] text-slate-400">Act: {{ $user->user_doa ?? 'N/A' }}</span>
+                                        </div>
                                     </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-primary rounded-pill">{{ $user->level }}</span>
+
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 font-bold text-xs border border-blue-100">
+                                            {{ $user->level }}
+                                        </div>
                                     </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-success rounded-pill text-capitalize">
-                                            {{ $user->current_rank ?? 'N/A' }}
-                                        </span>
+
+                                    <td class="px-6 py-4 text-center">
+                                        @if ($user->current_rank)
+                                            <span class="inline-flex px-3 py-1 rounded-full bg-slate-800 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                                                {{ $user->current_rank }}
+                                            </span>
+                                        @else
+                                            <span class="text-slate-300 text-xs italic">--</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-3 text-muted small">
-                                        <i class="fas fa-users-slash fa-lg mb-1"></i><br>
-                                        No downline users found
+                                    <td colspan="6" class="px-6 py-16 text-center bg-slate-50/30">
+                                        <div class="flex flex-col items-center">
+                                            <div class="bg-white p-4 rounded-full shadow-sm mb-3">
+                                                <i class="fas fa-users-slash text-slate-300 text-2xl"></i>
+                                            </div>
+                                            <h3 class="text-slate-800 font-bold">No Records Found</h3>
+                                            <p class="text-slate-500 text-sm mt-1">Try adjusting your filters.</p>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforelse
@@ -148,122 +208,31 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
                 @if ($paginatedUsers->hasPages())
-                    <div class="card-footer bg-light py-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="small text-muted">
-                                Showing {{ $paginatedUsers->firstItem() }} to {{ $paginatedUsers->lastItem() }} of
-                                {{ $paginatedUsers->total() }} entries
-                            </div>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination pagination-sm mb-0">
-                                    {{-- Previous Page Link --}}
-                                    @if ($paginatedUsers->onFirstPage())
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&laquo;</span>
-                                        </li>
-                                    @else
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $paginatedUsers->previousPageUrl() }}"
-                                                rel="prev">&laquo;</a>
-                                        </li>
-                                    @endif
-
-                                    {{-- Pagination Elements --}}
-                                    @foreach ($paginatedUsers->getUrlRange(1, $paginatedUsers->lastPage()) as $page => $url)
-                                        @if ($page == $paginatedUsers->currentPage())
-                                            <li class="page-item active">
-                                                <span class="page-link">{{ $page }}</span>
-                                            </li>
-                                        @else
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                                            </li>
-                                        @endif
-                                    @endforeach
-
-                                    {{-- Next Page Link --}}
-                                    @if ($paginatedUsers->hasMorePages())
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ $paginatedUsers->nextPageUrl() }}"
-                                                rel="next">&raquo;</a>
-                                        </li>
-                                    @else
-                                        <li class="page-item disabled">
-                                            <span class="page-link">&raquo;</span>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </nav>
-                        </div>
+                    <div class="px-6 py-3 bg-white border-t border-slate-100">
+                        {{ $paginatedUsers->appends(request()->query())->links('pagination::tailwind') }}
                     </div>
                 @endif
             </div>
         </div>
     </div>
 
-    <style>
-        .table-sm td,
-        .table-sm th {
-            padding: 0.7rem;
-        }
+    <script>
+        function toggleFilters() {
+            const body = document.getElementById('filterBody');
+            const icon = document.getElementById('filterIcon');
 
-        .table-hover tbody tr:hover {
-            background-color: rgba(13, 110, 253, 0.05);
-        }
-
-        .card-header {
-            border-radius: 0.375rem 0.375rem 0 0 !important;
-        }
-
-        .table th {
-            white-space: nowrap;
-            font-weight: 600;
-            font-size: 0.65rem;
-            letter-spacing: 0.5px;
-        }
-
-        .badge.rounded-pill {
-            min-width: 50px;
-            font-size: 0.7rem;
-            padding: 5px 8px;
-        }
-
-        .small {
-            font-size: 0.85rem;
-        }
-
-        h4 {
-            font-size: 1.25rem;
-        }
-
-        h6 {
-            font-size: 0.9rem;
-        }
-
-        .container {
-            max-width: 99%;
-        }
-
-        .pagination-sm .page-link {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-        }
-
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .badge.rounded-pill {
-                min-width: 50px;
-            }
-
-            .card-body .row>div {
-                margin-bottom: 1rem;
+            if (body.classList.contains('hidden')) {
+                // Open
+                body.classList.remove('hidden');
+                // Animate Icon
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                // Close
+                body.classList.add('hidden');
+                // Reset Icon
+                icon.style.transform = 'rotate(0deg)';
             }
         }
-    </style>
+    </script>
 @endsection

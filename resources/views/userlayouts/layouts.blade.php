@@ -197,37 +197,13 @@
                                 <i class="bi bi-credit-card mr-2"></i> {{-- Icon for managing --}}
                                 Manage Wallet
                             </a>
-                            <a href="{{ route('user.transferWallet1Form') }}"
+                            {{-- <a href="{{ route('user.transferWallet1Form') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-arrow-left-right mr-2"></i> {{-- Icon for transfer --}}
+                                <i class="bi bi-arrow-left-right mr-2"></i>
                                 Transfer Wallet
-                            </a>
+                            </a> --}}
                         </div>
                     </div>
-
-                    <div class="menu-group">
-                        <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
-                            <div class="flex items-center">
-                                <i class="bi bi-box-seam mr-3 text-lg"></i> {{-- Changed to box-seam for packages --}}
-                                <span class="font-medium">Packages</span>
-                            </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
-                        </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
-                            <a href="{{ route('package2.purchase') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-bag-plus mr-2"></i> {{-- Icon for purchase --}}
-                                Purchase Package
-                            </a>
-                            <a href="{{ route('user.packages') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-receipt mr-2"></i> {{-- Icon for invoices --}}
-                                Invoices
-                            </a>
-                        </div>
-                    </div>
-
                     <div class="menu-group">
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
@@ -237,7 +213,7 @@
                             </div>
                             <i class="bi bi-chevron-down text-xs transition-transform"></i>
                         </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                        <div class="sidebar-submenu pl-6 mt-1 space-y-1">
                             <a href="{{ route('user.view.userTree') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                                 <i class="bi bi-tree mr-2"></i> {{-- Icon for tree --}}
@@ -265,48 +241,47 @@
                             </div>
                             <i class="bi bi-chevron-down text-xs transition-transform"></i>
                         </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
-                            <a href="{{ route('user.commissions.level1') }}"
+                        <div class="sidebar-submenu pl-6 mt-1 space-y-1">
+                            <a href="{{ route('user.income.direct') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                                 <i class="bi bi-currency-dollar mr-2"></i> {{-- Icon for direct commission --}}
-                                Direct Commissions
+                                Direct Income
                             </a>
-                            <a href="{{ route('user.commissions.level2') }}"
+                            <a href="{{ route('user.income.bonus') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                                 <i class="bi bi-share mr-2"></i> {{-- Icon for network bonus --}}
-                                Network Bonus
+                                Bonus Income
                             </a>
-                            <a href="{{ route('user.reports.level-income') }}"
+                            <a href="{{ route('user.income.level') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                                 <i class="bi bi-bar-chart-steps mr-2"></i> {{-- Icon for levels --}}
                                 Level Income
                             </a>
-                            <a href="{{ route('user.rewards.rankRewards', Auth::user()->ulid) }}"
+                            <a href="{{ route('user.income.reward') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                                 <i class="bi bi-trophy mr-2"></i> {{-- Icon for rewards --}}
                                 Reward Income
                             </a>
-                            <a href="{{ route('user.yearly.profits') }}"
+                            <a href="{{ route('user.income.repurchase') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                                 <i class="bi bi-calendar-check mr-2"></i> {{-- Icon for yearly --}}
-                                Yearly Profits
+                                Repurchase Income
                             </a>
                         </div>
+
+                        <a href="{{ route('user.complaints.index') }}"
+                            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                            <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
+                            <span class="font-medium">Need Help?</span>
+                        </a>
+
+
+                        <a href="{{ route('logout') }}"
+                            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                            <i class="bi bi-box-arrow-right mr-3 text-lg"></i> {{-- Changed to box-arrow-right for logout --}}
+                            <span class="font-medium">Logout</span>
+                        </a>
                     </div>
-
-                    <a href="{{ route('user.complaints.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
-                        <span class="font-medium">Need Help?</span>
-                    </a>
-
-
-                    <a href="{{ route('logout') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-box-arrow-right mr-3 text-lg"></i> {{-- Changed to box-arrow-right for logout --}}
-                        <span class="font-medium">Logout</span>
-                    </a>
-                </div>
             </nav>
 
             <!-- Footer -->

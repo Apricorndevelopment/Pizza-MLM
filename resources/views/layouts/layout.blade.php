@@ -232,18 +232,18 @@
                                 class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
                                 <i class="bi bi-eye mr-1.5"></i> View Packages
                             </a>
-                            <a href="{{ route('admin.packages.assign') }}"
+                            {{-- <a href="{{ route('admin.packages.assign') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
                                 <i class="bi bi-person-plus mr-1.5"></i> Assign Package
                             </a>
                             <a href="{{ route('admin.package-purchases') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
                                 <i class="bi bi-bag-check mr-1.5"></i> View User Packages
-                            </a>
+                            </a> --}}
                         </div>
                     </div>
 
-                    <div class="menu-group">
+                    {{-- <div class="menu-group">
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
                             <div class="flex items-center">
@@ -266,9 +266,9 @@
                                 <i class="bi bi-calendar-check mr-1.5"></i> Yearly Records
                             </a>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div class="menu-group">
+                    {{-- <div class="menu-group">
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
                             <div class="flex items-center">
@@ -291,30 +291,42 @@
                                 <i class="bi bi-clipboard-data mr-1.5"></i> View User's Stock
                             </a>
                         </div>
+                    </div> --}}
+
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                            <div class="flex items-center">
+                                <i class="bi bi-gear mr-3 text-lg"></i>
+                                <span class="font-medium">Configure Incomes</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-4 mt-1 space-y-1">
+                            <a href="{{ route('admin.percentage.index') }}"
+                                class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-bar-chart-steps mr-3 text-lg text-gray-500"></i>
+                                <span class="font-medium">Level Percentage</span>
+                            </a>
+
+                            <a href="{{ route('admin.income.index') }}"
+                                class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-percent mr-3 text-lg text-gray-500"></i>
+                                <span class="font-medium">Percentage Income</span>
+                            </a>
+
+                            <a href="{{ route('admin.rewards.index') }}"
+                                class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-trophy mr-3 text-lg text-gray-500"></i>
+                                <span class="font-medium">Rewards Percentage</span>
+                            </a>
+                        </div>
                     </div>
 
                     <a href="{{ route('admin.complaints.index') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
                         <i class="bi bi-headset mr-3 text-lg text-gray-500"></i>
                         <span class="font-medium">Complaints</span>
-                    </a>
-
-                    <a href="{{ route('admin.percentage.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                        <i class="bi bi-bar-chart-steps mr-3 text-lg text-gray-500"></i>
-                        <span class="font-medium">Levels</span>
-                    </a>
-
-                    <a href="{{ route('admin.income.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                        <i class="bi bi-percent mr-3 text-lg text-gray-500"></i>
-                        <span class="font-medium">Percentage Income</span>
-                    </a>
-
-                    <a href="{{ route('admin.rewards.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                        <i class="bi bi-trophy mr-3 text-lg text-gray-500"></i>
-                        <span class="font-medium">Rewards</span>
                     </a>
 
                 </div>
@@ -485,7 +497,7 @@
             menuHeaders.forEach(header => {
                 header.addEventListener('click', () => {
                     const submenu = header.nextElementSibling;
-                    const icon = header.querySelector('.fa-chevron-down');
+                    const icon = header.querySelector('.bi-chevron-down');
 
                     submenu.classList.toggle('active');
                     icon.classList.toggle('rotate-180');
@@ -494,7 +506,7 @@
                     menuHeaders.forEach(otherHeader => {
                         if (otherHeader !== header) {
                             const otherSubmenu = otherHeader.nextElementSibling;
-                            const otherIcon = otherHeader.querySelector('.fa-chevron-down');
+                            const otherIcon = otherHeader.querySelector('.bi-chevron-down');
 
                             if (otherSubmenu.classList.contains('active')) {
                                 otherSubmenu.classList.remove('active');

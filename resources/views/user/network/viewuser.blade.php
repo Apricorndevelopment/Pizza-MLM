@@ -80,9 +80,9 @@
         }
     </style>
 
-    <div class="container mx-auto px-4 py-6">
+    <div class="container mx-auto px-4">
 
-        <div class="flex items-center mb-8">
+        <div class="flex items-center mb-6">
             <div class="bg-[#ECFDF5] p-3 rounded-xl mr-4 text-emerald-600 border border-emerald-100 shadow-sm">
                 <i class="fa fa-network-wired fa-lg"></i>
             </div>
@@ -148,7 +148,7 @@
                             <table class="w-full text-left border-collapse">
                                 <tbody class="divide-y divide-slate-100">
                                     <tr class="hover:bg-[#ECFDF5]/50 transition-colors group">
-                                        <td class="p-4 text-slate-500 font-medium text-sm w-5/12">
+                                        <td class="p-3 text-slate-500 font-medium text-sm">
                                             <div class="flex items-center gap-3">
                                                 <div
                                                     class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center">
@@ -157,12 +157,12 @@
                                                 Registered
                                             </div>
                                         </td>
-                                        <td class="p-4 text-slate-700 font-bold text-sm text-right" id="detail_registered">-
+                                        <td class="p-3 text-slate-700 font-bold text-sm text-right" id="detail_registered">-
                                         </td>
                                     </tr>
 
                                     <tr class="hover:bg-[#ECFDF5]/50 transition-colors group">
-                                        <td class="p-4 text-slate-500 font-medium text-sm">
+                                        <td class="p-3 text-slate-500 font-medium text-sm">
                                             <div class="flex items-center gap-3">
                                                 <div
                                                     class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center">
@@ -171,11 +171,11 @@
                                                 Activated
                                             </div>
                                         </td>
-                                        <td class="p-4 text-slate-700 font-bold text-sm text-right" id="detail_doa">-</td>
+                                        <td class="p-3 text-slate-700 font-bold text-sm text-right" id="detail_doa">-</td>
                                     </tr>
 
                                     <tr class="hover:bg-[#ECFDF5]/50 transition-colors group">
-                                        <td class="p-4 text-slate-500 font-medium text-sm">
+                                        <td class="p-3 text-slate-500 font-medium text-sm">
                                             <div class="flex items-center gap-3">
                                                 <div
                                                     class="w-8 h-8 rounded-lg bg-violet-50 text-violet-500 flex items-center justify-center">
@@ -184,11 +184,11 @@
                                                 Level
                                             </div>
                                         </td>
-                                        <td class="p-4 text-slate-700 font-bold text-sm text-right" id="detail_level">-</td>
+                                        <td class="p-3 text-slate-700 font-bold text-sm text-right" id="detail_level">-</td>
                                     </tr>
 
                                     <tr class="hover:bg-[#ECFDF5]/50 transition-colors group">
-                                        <td class="p-4 text-slate-500 font-medium text-sm">
+                                        <td class="p-3 text-slate-500 font-medium text-sm">
                                             <div class="flex items-center gap-3">
                                                 <div
                                                     class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center">
@@ -197,20 +197,20 @@
                                                 Designation
                                             </div>
                                         </td>
-                                        <td class="p-4 text-right">
+                                        <td class="p-3 text-right">
                                             <span id="detail_rank"
                                                 class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-md border border-slate-200 uppercase tracking-wide">N/A</span>
                                         </td>
                                     </tr>
 
                                     <tr class="bg-slate-50">
-                                        <td class="p-4 text-slate-500 font-bold text-sm">
-                                            <div class="flex items-center gap-2">
+                                        <td class="p-3 text-slate-500 font-bold text-sm">
+                                            <div class="flex items-center gap-3">
                                                 <i class="fas fa-chart-line text-emerald-500"></i>
                                                 Total Team Business
                                             </div>
                                         </td>
-                                        <td class="p-4 text-emerald-700 font-black text-lg text-right" id="detail_business">
+                                        <td class="p-3 text-emerald-700 font-black text-lg text-right" id="detail_business">
                                             -</td>
                                     </tr>
                                 </tbody>
@@ -284,10 +284,9 @@
                     document.getElementById('detail_registered').textContent = data.registered_date || '-';
                     document.getElementById('detail_doa').textContent = data.activation_date || 'Not Active';
                     document.getElementById('detail_level').textContent = data.level !== null ? data.level : '-';
-                    document.getElementById('detail_rank').textContent = data.rank || 'Associate';
+                    document.getElementById('detail_rank').textContent = data.rank || 'N/A';
 
-                    let total_business = parseFloat(data.left_business || 0) + parseFloat(data.right_business || 0);
-                    document.getElementById('detail_business').textContent = '₹' + total_business.toFixed(2);
+                    document.getElementById('detail_business').textContent = data.total_business;
 
                     // E. Dynamic Header Styling (Active vs Inactive)
                     const header = document.getElementById('detail_header');

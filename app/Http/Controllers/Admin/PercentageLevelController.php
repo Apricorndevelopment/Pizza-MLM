@@ -27,7 +27,7 @@ class PercentageLevelController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'level'      => 'required|string|max:50|unique:percentage_level_incomes,level',
+            'level'      => 'required|numerix|unique:percentage_level_incomes,level',
             'percentage' => 'required|numeric|min:0|max:100',
         ]);
 
@@ -53,7 +53,7 @@ class PercentageLevelController extends Controller
 
         $request->validate([
             // 'unique' rule ignores the current ID so you can save without changing the name
-            'level'      => 'required|string|max:50|unique:percentage_level_incomes,level,' . $level->id,
+            'level'      => 'required|numeric|unique:percentage_level_incomes,level,' . $level->id,
             'percentage' => 'required|numeric|min:0|max:100',
         ]);
 

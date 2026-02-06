@@ -64,19 +64,19 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-100">
-                            <th class="px-6 py-4 font-semibold w-20">ID</th>
-                            <th class="px-6 py-4 font-semibold">Level Name</th>
-                            <th class="px-6 py-4 font-semibold">Percentage</th>
-                            <th class="px-6 py-4 font-semibold">Created Date</th>
-                            <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            <th class="px-3 py-3 font-semibold w-20">Sr No.</th>
+                            <th class="px-3 py-3 font-semibold text-center">Level No.</th>
+                            <th class="px-3 py-3 font-semibold">Percentage</th>
+                            <th class="px-3 py-3 font-semibold">Created Date</th>
+                            <th class="px-3 py-3 font-semibold text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($levels as $item)
                             <tr class="hover:bg-slate-50 transition-colors group">
-                                <td class="px-6 py-4 text-slate-500 font-mono text-sm">#{{ $item->id }}</td>
-                                <td class="px-6 py-4 font-bold text-slate-700">{{ $item->level }}</td>
-                                <td class="px-6 py-4">
+                                <td class="px-3 py-3 text-slate-500 font-mono text-sm">{{ $loop->iteration }}</td>
+                                <td class="px-3 py-3 font-bold text-center text-slate-700">{{ $item->level }}</td>
+                                <td class="px-3 py-3">
 
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-bold bg-green-100 text-green-800">
@@ -86,10 +86,10 @@
                                     </span>
 
                                 </td>
-                                <td class="px-6 py-4 text-slate-500 text-sm">
+                                <td class="px-3 py-3 text-slate-500 text-sm">
                                     {{ \Carbon\Carbon::parse($item->created_at)->format('M d, Y') }}
                                 </td>
-                                <td class="px-6 py-4 text-right flex justify-end gap-2">
+                                <td class="px-3 py-3 text-right flex justify-end gap-2">
 
                                     {{-- Edit Button (Triggers JS) --}}
                                     <button onclick='openModal("edit", @json($item))'
@@ -167,10 +167,10 @@
                     <div class="space-y-5">
                         {{-- Level Input --}}
                         <div>
-                            <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level Name</label>
-                            <input type="text" name="level" id="level"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                                placeholder="e.g. Level 1" required>
+                            <label for="level" class="block text-sm font-medium text-gray-700 mb-1">Level No.</label>
+                            <input type="number" name="level" id="level"
+                                class="w-full pl-4 pr-1 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                                placeholder="Enter Level No." required>
                         </div>
 
                         {{-- Percentage Input --}}

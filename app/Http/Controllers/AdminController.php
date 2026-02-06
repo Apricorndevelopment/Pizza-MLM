@@ -384,7 +384,6 @@ class AdminController extends Controller
 
             // Update downline members to take on the sponsor of the deleted member
             User::where('sponsor_id', $member->ulid)->update(['sponsor_id' => $sponsorIdOfDeletedMember]);
-            User::where('parent_id', $member->ulid)->update(['parent_id' => $sponsorIdOfDeletedMember]);
 
             // Finally delete the user
             $member->forceDelete();
@@ -415,36 +414,29 @@ class AdminController extends Controller
         // Add level and purchase status to each user
         foreach ($downlineUsers as $user) {
             $user->level = $this->calculateLevelFromAdmin($admin->auid, $user->ulid);
-
-            // Check if user has purchases (paid/unpaid status)
-            $hasPurchases = ProductPackagePurchase::where('user_id', $user->id)
-                ->exists();
-            $user->purchase_status = $hasPurchases ? 'paid' : 'unpaid';
-
-            // Calculate total purchases if user has any
-            if ($hasPurchases) {
-                $user->total_purchases = ProductPackagePurchase::where('user_id', $user->id)
-                    ->sum('final_price');
-            } else {
-                $user->total_purchases = 0;
-            }
         }
 
         // Get available designations for filter
-        $designations = DB::table('royalty_level_rewards')
-            ->pluck('level')
+        $designations = DB::table('percentage_rewards')
+            ->pluck('rank')
             ->toArray();
 
         // Apply filters if requested
-        if ($request->hasAny(['designation', 'status', 'purchase_status', 'start_date', 'end_date'])) {
+        if ($request->hasAny(['designation', 'status', 'start_date', 'end_date'])) {
             $downlineUsers = $this->applyFilters($downlineUsers, $request);
         }
+
+        $downlineCollection = collect($downlineUsers)->sortBy([
+            ['level', 'asc'],
+            ['created_at', 'desc'],
+        ]);
 
         // Paginate results (15 per page)
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $perPage = 15;
-        $currentItems = array_slice($downlineUsers, ($currentPage - 1) * $perPage, $perPage);
-        $paginatedUsers = new LengthAwarePaginator($currentItems, count($downlineUsers), $perPage, $currentPage, [
+        $currentItems = $downlineCollection->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+        $paginatedUsers = new LengthAwarePaginator($currentItems, $downlineCollection->count(), $perPage, $currentPage, [
             'path' => LengthAwarePaginator::resolveCurrentPath(),
             'pageName' => 'page'
         ]);

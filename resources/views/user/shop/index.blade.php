@@ -86,7 +86,7 @@
         }
     </style>
 
-    <div class="container py-4">
+    <div class="container py-2">
         @if (session('success'))
             <div id="alert-success" class="mb-4 alert alert-success d-flex justify-content-between align-items-center">
                 <div><i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}</div>
@@ -101,12 +101,11 @@
         @endif
 
         <div
-            class="sticky top-6 z-10 mb-4">
+            class="sticky z-10 mb-4">
             <div class="container mx-auto max-w-3xl px-4">
                 <div class="relative">
 
-                    <div
-                        class="group bg-white rounded-full flex items-center p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 transition-all duration-300 focus-within:-translate-y-0.5 focus-within:shadow-[0_8px_25px_rgba(0,0,0,0.12)] focus-within:border-gray-200">
+                    <div class="group bg-white rounded-full flex items-center p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 transition-all duration-300 focus-within:-translate-y-0.5 focus-within:shadow-[0_8px_25px_rgba(0,0,0,0.12)] focus-within:border-gray-200">
 
                         <div class="pl-5 pr-2 text-gray-400 text-lg flex items-center justify-center">
                             <i class="bi bi-search"></i>

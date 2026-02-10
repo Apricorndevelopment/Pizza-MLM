@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Mail\UserRegisteredMail;
@@ -14,6 +15,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
@@ -124,15 +126,17 @@ class AuthController extends Controller
         ]);
 
         DB::beginTransaction();
+
         try {
-
+            // Generate ULID
             $customUlid = 'AH' . rand(1000000, 9999999);
-
             while (User::where('ulid', $customUlid)->exists()) {
                 $customUlid = 'AH' . rand(1000000, 9999999);
             }
+
+            // Create User
             $plainPassword = $request->password;
-            $user          = User::create([
+            $user = User::create([
                 'name'            => $request->full_name,
                 'email'           => $request->email,
                 'phone'           => $request->phone,
@@ -145,17 +149,16 @@ class AuthController extends Controller
                 'wallet2_balance' => 50,
             ]);
 
-            $sponsor = User::where('ulid', $request->sponsor_id)->first();
-
+            // Create User Coupons
             UserCoupon::create([
                 'user_id'         => $user->id,
                 'user_ulid'       => $customUlid,
                 'coupon_quantity' => 10,
-                'coupon_value'    => 10.00, // Fixed value ₹10
+                'coupon_value'    => 10.00,
             ]);
 
+            // Handle Sponsor Coupons
             $sponsor = User::where('ulid', $request->sponsor_id)->first();
-
             if ($sponsor) {
                 $coupon = UserCoupon::where('user_id', $sponsor->id)->first();
 
@@ -171,14 +174,18 @@ class AuthController extends Controller
                 }
             }
 
+            // Send Mail (Inside Transaction)
+            Mail::to($user->email)->send(new UserRegisteredMail($user, $plainPassword));
+
+            // Commit Database Changes
+            DB::commit();
+
+            return view('Auth.congratulations', compact('user'));
         } catch (\Exception $e) {
+            // Rollback on Failure
             DB::rollBack();
-            return back()->with('error', 'Registration failed. Please try again. Error:' . $e->getMessage());
+            return back()->with('error', 'Registration failed. Please try again. Error: ' . $e->getMessage());
         }
-
-        Mail::to($user->email)->send(new UserRegisteredMail($user, $plainPassword));
-
-        return view('Auth.congratulations', compact('user'));
     }
 
     public function login()

@@ -292,6 +292,12 @@
                         <span class="font-medium">Need Help?</span>
                     </a>
 
+                    <a href="{{ route('user.coupons.purchase') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-person-circle mr-3 text-lg"></i>
+                        <span class="font-medium">Purchase Coupons</span>
+                    </a>
+
                     <a href="{{ route('logout') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-box-arrow-right mr-3 text-lg"></i> {{-- Changed to box-arrow-right for logout --}}

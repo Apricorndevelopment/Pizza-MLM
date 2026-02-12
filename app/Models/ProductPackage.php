@@ -7,13 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 class ProductPackage extends Model
 {
     protected $table = 'product-package';
-    protected $fillable = ['product_name', 'product_image', 'description','max_coupon_usage', 'mrp', 'gst', 'dp', 'pv','percentage','isVeg' ];
+    
+    // 'manage_stock' aur 'stock_quantity' add kiya
+    protected $fillable = [
+        'product_name', 'product_image', 'description', 'max_coupon_usage', 
+        'mrp', 'gst', 'dp', 'pv', 'profit', 'isVeg', 'is_package_product', 
+        'capping', 'manage_stock', 'stock_quantity'
+    ];
 
-    // public $timestamps = false;
-
-    // public function details()
-    // {
-    //     return $this->hasMany(ProductPackageDetails::class, 'package2_id');
-    // }    
-
+    // Check if product is in stock
+    public function getIsInStockAttribute()
+    {
+        if (!$this->manage_stock) {
+            return true;
+        }
+        return $this->stock_quantity > 0;
+    }
 }

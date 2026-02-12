@@ -49,25 +49,11 @@ class User extends Authenticatable
         'right_business',
     ];
 
-    public function packageTransactions()
-    {
-        return $this->hasMany(PackageTransaction::class);
-    }
-
     public function pointsTransactions()
     {
         return $this->hasMany(Wallet1Transaction::class);
     }
 
-    public function packageInventories()
-    {
-        return $this->hasMany(UserPackageInventory::class, 'user_ulid', 'ulid');
-    }
-
-    public function maturityMonthlyDeductions()
-    {
-        return $this->hasMany(MaturityMonthlyDeduction::class);
-    }
 
     /**
      * The attributes that should be hidden for serialization.

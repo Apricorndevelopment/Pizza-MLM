@@ -79,45 +79,6 @@
                             @enderror
                         </div>
 
-                        <!-- Price -->
-                        <div class="space-y-2">
-                            <label for="price" class="block text-sm font-medium text-gray-700">
-                                Selling Price <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
-                                <input type="number" step="0.01" name="price" id="price"
-                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                                          @error('price') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                    placeholder="0.00" value="{{ old('price') }}" required>
-                            </div>
-                            @error('price')
-                                <p class="text-sm text-red-600 mt-1 flex items-center">
-                                    <i class="bi bi-exclamation-circle mr-1"></i>
-                                    {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-
-                        <!-- GST -->
-                        <div class="space-y-2">
-                            <label for="gst" class="block text-sm font-medium text-gray-700">
-                                GST (%) <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
-                                <input type="number" step="0.01" name="gst" id="gst"
-                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                                          @error('gst') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                    placeholder="18" value="{{ old('gst', 18) }}" required>
-                            </div>
-                            @error('gst')
-                                <p class="text-sm text-red-600 mt-1 flex items-center">
-                                    <i class="bi bi-exclamation-circle mr-1"></i>
-                                    {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
 
                         <!-- DP -->
                         <div class="space-y-2">
@@ -132,6 +93,45 @@
                                     placeholder="0.00" value="{{ old('dp') }}" required>
                             </div>
                             @error('dp')
+                                <p class="text-sm text-red-600 mt-1 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <!-- Price -->
+                        <div class="space-y-2">
+                            <label for="profit" class="block text-sm font-medium text-gray-700">
+                                Profit <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
+                                <input type="number" step="0.01" name="profit" id="price"
+                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                                          @error('price') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
+                                    placeholder="0.00" value="{{ old('price') }}" required>
+                            </div>
+                            @error('price')
+                                <p class="text-sm text-red-600 mt-1 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+                        <!-- GST -->
+                        <div class="space-y-2">
+                            <label for="gst" class="block text-sm font-medium text-gray-700">
+                                GST (%)
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+                                <input type="number" step="0.01" name="gst" id="gst"
+                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                                          @error('gst') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
+                                    placeholder="18" value="{{ old('gst', 18) }}">
+                            </div>
+                            @error('gst')
                                 <p class="text-sm text-red-600 mt-1 flex items-center">
                                     <i class="bi bi-exclamation-circle mr-1"></i>
                                     {{ $message }}

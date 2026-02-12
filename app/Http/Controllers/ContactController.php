@@ -56,8 +56,12 @@ class ContactController extends Controller
             // $user->total_purchases = $totalPurchase;
         }
 
+        // NEW: Get all available levels for the filter dropdown (before filtering)
+        $levels = collect($downlineUsers)->pluck('level')->unique()->sort()->values()->toArray();
+
         // 3. Apply Filters
-        if ($request->hasAny(['designation', 'status', 'purchase_status', 'start_date', 'end_date'])) {
+        // Added 'level' to the check list
+        if ($request->hasAny(['designation', 'status', 'purchase_status', 'start_date', 'end_date', 'level'])) {
             $downlineUsers = $this->applyFilters($downlineUsers, $request);
         }
 
@@ -81,7 +85,7 @@ class ContactController extends Controller
         // Get designations for filter
         $designations = DB::table('percentage_rewards')->pluck('rank')->toArray();
 
-        return view('user.network.summary', compact('paginatedUsers', 'designations', 'breadcrumbs'));
+        return view('user.network.summary', compact('paginatedUsers', 'designations', 'breadcrumbs','levels'));
     }
 
     // Apply filters to user collection
@@ -105,6 +109,13 @@ class ContactController extends Controller
         if ($request->filled('purchase_status')) {
             $users = array_filter($users, function ($user) use ($request) {
                 return $user->purchase_status == $request->purchase_status;
+            });
+        }
+
+        // NEW: Filter by Level
+        if ($request->filled('level')) {
+            $users = array_filter($users, function ($user) use ($request) {
+                return $user->level == $request->level;
             });
         }
 

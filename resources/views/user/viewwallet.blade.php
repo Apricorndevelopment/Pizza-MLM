@@ -3,23 +3,7 @@
 @section('container')
 
     <div class="min-h-screen bg-slate-50 pb-8 font-sans text-slate-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 overflow-hidden mb-6 relative">
-                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-50">
-                </div>
-                <div class="p-4 sm:p-6 relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div>
-                        <h1 class="text-2xl font-bold text-emerald-900 mb-2">My Wallet</h1>
-                        <p class="text-slate-500">Manage your earnings, track transaction history, and withdraw funds
-                            securely.</p>
-                    </div>
-                    <div
-                        class="hidden md:flex bg-emerald-50 p-4 rounded-full text-emerald-600 shadow-sm border border-emerald-100">
-                        <i class="fas fa-wallet text-3xl"></i>
-                    </div>
-                </div>
-            </div>
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
 
             @if (session('success'))
                 <div class="mb-6 rounded-xl bg-emerald-50 border border-emerald-200 p-4 flex items-center shadow-sm"
@@ -207,8 +191,8 @@
                                     <select name="wallet1_type"
                                         class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 p-2">
                                         <option value="">All Types</option>
-                                        <option value="credit"
-                                            {{ request('wallet1_type') == 'credit' ? 'selected' : '' }}>Credit (+)</option>
+                                        <option value="credit" {{ request('wallet1_type') == 'credit' ? 'selected' : '' }}>
+                                            Credit (+)</option>
                                         <option value="debit" {{ request('wallet1_type') == 'debit' ? 'selected' : '' }}>
                                             Debit (-)</option>
                                     </select>

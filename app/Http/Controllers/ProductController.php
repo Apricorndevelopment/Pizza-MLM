@@ -61,7 +61,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'product_name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'profit' => 'required|numeric|min:0',
             'mrp' => 'required|numeric|min:0',
             'gst' => 'required|numeric|min:0',
             'dp' => 'required|numeric|min:0',

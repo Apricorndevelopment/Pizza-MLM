@@ -13,9 +13,6 @@ class ProcessPayment
 
         // Wallet 2 Logic
         if ($wallet2Request > 0) {
-            if ($wallet2Request % 50 !== 0) {
-                throw new \Exception('Wallet 2 amount must be a multiple of 50.');
-            }
             if ($wallet2Request > $context->user->wallet2_balance) {
                 throw new \Exception('Insufficient Wallet 2 balance.');
             }

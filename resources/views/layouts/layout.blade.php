@@ -230,7 +230,11 @@
                         <div class="sidebar-submenu pl-4 mt-1 space-y-1">
                             <a href="{{ route('admin.package') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                <i class="bi bi-eye mr-1.5"></i> View Packages
+                                <i class="bi bi-eye mr-1.5"></i> Vendor Package
+                            </a>
+                            <a href="{{ route('admin.product-package') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                                <i class="bi bi-eye mr-1.5"></i> Admin Products
                             </a>
                             {{-- <a href="{{ route('admin.packages.assign') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
@@ -328,7 +332,21 @@
                         <i class="bi bi-headset mr-3 text-lg text-gray-500"></i>
                         <span class="font-medium">Complaints</span>
                     </a>
-
+                    <a href="{{ route('admin.coupons.process_transfer') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-arrow-left-right mr-3 text-lg text-gray-500"></i>
+                        <span class="font-medium">Coupon Transfer</span>
+                    </a>
+                    <a href="{{ route('admin.coupons.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-arrow-left-right mr-3 text-lg text-gray-500"></i>
+                        <span class="font-medium">Coupon Transfer</span>
+                    </a>
+                    <a href="{{ route('admin.payment.settings') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                        <i class="bi bi-arrow-left-right mr-3 text-lg text-gray-500"></i>
+                        <span class="font-medium">Add Payment Method</span>
+                    </a>
                 </div>
             </nav>
 

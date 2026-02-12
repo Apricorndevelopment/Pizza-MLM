@@ -5,6 +5,7 @@ namespace App\Services\Checkout\Pipes;
 use App\Services\Checkout\CheckoutContext;
 use App\Models\Wallet1Transaction;
 use App\Models\Wallet2Transaction;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Closure;
@@ -13,9 +14,14 @@ class PersistOrder
 {
     public function handle(CheckoutContext $context, Closure $next)
     {
-        // 1. Deduct Wallet 1
+        // ====================================================
+        // 1. RECORD TRANSACTIONS (Global Deduction)
+        // ====================================================
+        
+        // Deduct Wallet 1
         if ($context->wallet1Deduction > 0) {
-            $context->user->wallet1_balance -= $context->wallet1Deduction;
+            $context->user->decrement('wallet1_balance', $context->wallet1Deduction);
+            
             Wallet1Transaction::create([
                 'user_id' => $context->user->id,
                 'user_ulid' => $context->user->ulid,
@@ -25,9 +31,10 @@ class PersistOrder
             ]);
         }
 
-        // 2. Deduct Wallet 2
+        // Deduct Wallet 2
         if ($context->wallet2Deduction > 0) {
-            $context->user->wallet2_balance -= $context->wallet2Deduction;
+            $context->user->decrement('wallet2_balance', $context->wallet2Deduction);
+
             Wallet2Transaction::create([
                 'user_id' => $context->user->id,
                 'user_ulid' => $context->user->ulid,
@@ -37,44 +44,120 @@ class PersistOrder
             ]);
         }
 
-        // 3. Deduct Coupons
+        // Deduct Coupons
         if ($context->couponsUsed > 0) {
             DB::table('user_coupons')
                 ->where('user_id', $context->user->id)
                 ->decrement('coupon_quantity', $context->couponsUsed);
         }
 
-        $context->user->save();
+        // ====================================================
+        // 2. PREPARE ITEMS (Identify Vendors & Grouping)
+        // ====================================================
+        
+        $cartItems = $context->cartItems;
+        $itemsWithVendor = [];
+        $totalCartValue = 0;
 
-        // 4. Create Order
-        $orderId = 'ORD-' . strtoupper(Str::random(8));
-        $orderID_DB = DB::table('orders')->insertGetId([
-            'user_id' => $context->user->id,
-            'order_id' => $orderId,
-            'total_amount' => $context->totalDp,
-            'wallet1_deducted' => $context->wallet1Deduction,
-            'wallet2_deducted' => $context->wallet2Deduction,
-            // You might need to add a 'coupon_discount' column to your orders table
-            // 'coupon_discount' => $context->discountAmount,
-            'coupons_used' => $context->couponsUsed,
-            'status' => 'placed',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        foreach ($cartItems as $item) {
+            $vendorId = null; // Default to Admin (null)
 
-        // 5. Save Items
-        foreach ($context->cartItems as $item) {
-            // Remove the 'max_coupon_usage' key as it's not in the DB table
-            unset($item['max_coupon_usage']); 
+            // Identify Vendor ID
+            if (isset($item['product_type']) && $item['product_type'] === 'vendor') {
+                $product = Product::find($item['product_id']);
+                if ($product) {
+                    $vendorId = $product->vendor_id;
+                }
+            }
+
+            $item['vendor_id'] = $vendorId;
+            // Use 'quantity' as standardized in CalculateCartTotal
+            $item['line_total'] = $item['price'] * $item['quantity'];
             
-            $item['order_id'] = $orderID_DB;
-            $item['created_at'] = now();
-            $item['updated_at'] = now();
-            DB::table('order_items')->insert($item);
+            $itemsWithVendor[] = $item;
+            $totalCartValue += $item['line_total'];
         }
 
-        // Pass the Order ID to the controller response
-        $context->requestData['created_order_id'] = $orderId;
+        // Group items by Vendor ID
+        $groupedItems = collect($itemsWithVendor)->groupBy('vendor_id');
+        $createdOrderIds = [];
+
+        // ====================================================
+        // 3. CREATE SPLIT ORDERS (Per Vendor)
+        // ====================================================
+
+        foreach ($groupedItems as $vendorId => $items) {
+            
+            // FIX: PHP array keys cast NULL to "", so we must convert it back to NULL
+            // This prevents "Incorrect integer value: '' for column 'vendor_id'"
+            if ($vendorId === "") {
+                $vendorId = null;
+            }
+
+            // A. Calculate Proportions
+            $orderSubtotal = $items->sum('line_total');
+            $ratio = ($totalCartValue > 0) ? ($orderSubtotal / $totalCartValue) : 0;
+
+            $orderWallet1 = round($context->wallet1Deduction * $ratio, 2);
+            $orderWallet2 = round($context->wallet2Deduction * $ratio, 2);
+            
+            // B. Generate Unique ID
+            $orderStringId = null;
+            do {
+                // Example: ORD-20231025-ABCD12
+                $orderStringId = 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+            } while (DB::table('orders')->where('order_id', $orderStringId)->exists());
+
+            // C. Create Order Record
+            $orderIdDb = DB::table('orders')->insertGetId([
+                'user_id' => $context->user->id,
+                'order_id' => $orderStringId,
+                'vendor_id' => $vendorId, // Null for Admin, ID for Vendors
+                
+                'total_amount' => $orderSubtotal,
+                'wallet1_deducted' => $orderWallet1,
+                'wallet2_deducted' => $orderWallet2,
+                'coupons_used' => 0, // Proportional logic excluded for simplicity
+                
+                'status' => 'placed',
+                
+                // Contact Details from Request
+                'phone_number' => $context->requestData['phone_number'] ?? null,
+                'address'      => $context->requestData['address'] ?? null,
+                'location'     => $context->requestData['location'] ?? null,
+                
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $createdOrderIds[] = $orderStringId;
+
+            // D. Save Items for this Order
+            foreach ($items as $item) {
+                DB::table('order_items')->insert([
+                    'order_id' => $orderIdDb,
+                    'product_id' => $item['product_id'],
+                    'product_name' => $item['product_name'],
+                    
+                    // Added Missing Columns
+                    'product_image' => $item['product_image'] ?? null, 
+                    'vendor_id' => $vendorId, 
+                    'product_type' => $item['product_type'],
+                    
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'subtotal' => $item['line_total'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        // ====================================================
+        // 4. FINALIZE
+        // ====================================================
+
+        $context->requestData['created_order_id'] = implode(', ', $createdOrderIds);
 
         return $next($context);
     }

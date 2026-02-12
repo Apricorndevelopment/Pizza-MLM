@@ -78,23 +78,13 @@
                                     required>
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    PV (Point Value) <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                            class="fas fa-star"></i></span>
-                                    <input type="number" name="pv" value="{{ old('pv', $product->pv) }}"
-                                        class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
-                                        required>
-                                </div>
-                            </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Max Coupons Allowed <span class="text-danger">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Max Coupons Allowed <span
+                                        class="text-danger">*</span></label>
                                 <div>
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="bi bi-ticket-perforated"></i></span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                            class="bi bi-ticket-perforated"></i></span>
                                     <input type="number"
                                         class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
                                         name="max_coupon_usage"
@@ -156,30 +146,28 @@
                         </div>
                     </div>
 
-                      <!-- Is Veg or Non Veg -->
-                        <div class="space-y-2">
-                            <label for="isVeg" class="block text-sm font-medium text-gray-700">
-                                Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
-                            </label>
+                    <div class="space-y-2">
+                        <label for="isVeg" class="block text-sm font-medium text-gray-700">
+                            Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
+                        </label>
 
-                            <select name="isVeg" id="isVeg" class="form-select">
-                                <option value="veg" {{ old('isVeg', $product->isVeg) === 'veg' ? 'selected' : '' }}>
-                                    Veg
-                                </option>
+                        <select name="isVeg" id="isVeg" class="form-select">
+                            <option value="veg" {{ old('isVeg', $product->isVeg) === 'veg' ? 'selected' : '' }}>
+                                Veg
+                            </option>
 
-                                <option value="non-veg"
-                                    {{ old('isVeg', $product->isVeg) === 'non-veg' ? 'selected' : '' }}>
-                                    Non Veg
-                                </option>
-                            </select>
+                            <option value="non-veg" {{ old('isVeg', $product->isVeg) === 'non-veg' ? 'selected' : '' }}>
+                                Non Veg
+                            </option>
+                        </select>
 
-                            @error('isVeg')
-                                <p class="text-sm text-red-600 mt-1 flex items-center">
-                                    <i class="bi bi-exclamation-circle mr-1"></i>
-                                    {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
+                        @error('isVeg')
+                            <p class="text-sm text-red-600 mt-1 flex items-center">
+                                <i class="bi bi-exclamation-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
                     <hr class="border-gray-100 my-8">
 
                     {{-- Section 2: Pricing --}}
@@ -232,22 +220,71 @@
                                 </div>
                             </div>
 
+                            {{-- PROFIT FIELD WITH RECOMMENDATION LABEL --}}
                             <div class="group">
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Profit %
-                                    <span class="text-red-500">*</span></label>
+                                    <span class="text-red-500">*</span>
+                                </label>
+
+                                {{-- Placeholder for Recommended PV --}}
+                                <label class="block text-xs mb-1 text-blue-600 font-bold" id="recomend"></label>
+
                                 <div class="relative">
-                                    <input type="number" step="0.01" name="percentage"
-                                        value="{{ old('percentage', $product->percentage) }}"
-                                        class="w-full pl-4 pr-8 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-green-600"
-                                        required>
                                     <span
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">%</span>
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                                    <input type="number" step="0.1" name="profit" id="profit"
+                                        value="{{ old('profit', $product->profit) }}"
+                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-green-600"
+                                        required>
                                 </div>
                             </div>
-                            
+                        </div>
+                    </div>
+
+                    {{-- New Section for Capping & PV --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+                        {{-- REFACTORED PV FIELD: Value only --}}
+                        <div>
+                            <label for="pv" class="block text-sm font-semibold text-gray-700 mb-2">
+                                PV (Point Value) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="number" name="pv" id="pv"
+                                    value="{{ old('pv', $product->pv) }}"
+                                    placeholder="Enter total Points Value (e.g. 50)"
+                                    class="w-full pl-4 pr-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                                    required>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Enter the direct point value for this product.</p>
                         </div>
 
-            
+                        {{-- CAPPING FIELD WITH TOGGLE CHECKBOX --}}
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            {{-- 1. Checkbox to Enable --}}
+                            <div class="flex items-center mb-3">
+                                {{-- FIX: Removed name="is_package_product" to prevent conflict --}}
+                                <input type="checkbox" id="toggle-capping"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
+                                <label for="toggle-capping"
+                                    class="ml-2 text-sm font-bold text-gray-700 cursor-pointer select-none">
+                                    Set Capping Limit?
+                                </label>
+                            </div>
+
+                            {{-- 2. Hidden Input Container --}}
+                            <div id="capping-section" class="hidden transition-all duration-300">
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                        <i class="fas fa-chart-line"></i>
+                                    </span>
+                                    <input type="number" name="capping" id="capping-input"
+                                        value="{{ old('capping', $product->capping) }}" placeholder="Enter limit amount"
+                                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm">
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Maximum earning limit from this package.</p>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Actions --}}
@@ -269,6 +306,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ==========================================
+            // 1. FILE UPLOAD LOGIC
+            // ==========================================
             const fileInput = document.getElementById('product_image');
             const dropZone = document.getElementById('drop-zone');
             const previewArea = document.getElementById('preview-area');
@@ -276,10 +316,8 @@
             const fileStatus = document.getElementById('file-status');
             const removeBtn = document.getElementById('remove-btn');
 
-            // Logic to trigger hidden input
             dropZone.addEventListener('click', () => fileInput.click());
 
-            // Handle Change
             fileInput.addEventListener('change', function(e) {
                 if (this.files && this.files[0]) {
                     const file = this.files[0];
@@ -288,7 +326,6 @@
                         previewImg.src = e.target.result;
                         fileStatus.textContent = "New Image Selected";
                         fileStatus.classList.add('text-green-600');
-
                         dropZone.classList.add('hidden');
                         previewArea.classList.remove('hidden');
                     }
@@ -296,30 +333,66 @@
                 }
             });
 
-            // "Change Image" button logic
             removeBtn.addEventListener('click', function() {
-                // If we are already in preview mode (showing new image), this acts as a reset/select again
-                // Or we can just trigger the file input immediately
                 fileInput.click();
             });
 
-            // Drag over effects for Edit page
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('border-blue-500', 'bg-blue-50');
-            });
-
-            dropZone.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+            ['dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    if (eventName === 'dragover') dropZone.classList.add('border-blue-500',
+                        'bg-blue-50');
+                    else dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+                });
             });
 
             dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('border-blue-500', 'bg-blue-50');
                 if (e.dataTransfer.files.length) {
                     fileInput.files = e.dataTransfer.files;
                     fileInput.dispatchEvent(new Event('change'));
+                }
+            });
+
+            // ==========================================
+            // 2. PROFIT -> RECOMMENDED PV LOGIC (ADDED)
+            // ==========================================
+            const profitInput = document.getElementById('profit');
+            const recomendLabel = document.getElementById('recomend');
+
+            // Define calculation function
+            const calculatePv = () => {
+                if (profitInput.value && profitInput.value > 0) {
+                    const recommended = (parseFloat(profitInput.value) * 30) / 100;
+                    recomendLabel.textContent = `Recommended PV: ${Math.round(recommended)}`;
+                } else {
+                    recomendLabel.textContent = '';
+                }
+            };
+
+            // Run on input change
+            profitInput.addEventListener('input', calculatePv);
+
+            // Run immediately on page load (for Edit mode)
+            calculatePv();
+
+            // ==========================================
+            // 3. CAPPING TOGGLE LOGIC
+            // ==========================================
+            const toggleCapping = document.getElementById('toggle-capping');
+            const cappingSection = document.getElementById('capping-section');
+            const cappingInput = document.getElementById('capping-input');
+
+            if (cappingInput.value && parseFloat(cappingInput.value) > 0) {
+                toggleCapping.checked = true;
+                cappingSection.classList.remove('hidden');
+            }
+
+            toggleCapping.addEventListener('change', function() {
+                if (this.checked) {
+                    cappingSection.classList.remove('hidden');
+                } else {
+                    cappingSection.classList.add('hidden');
+                    cappingInput.value = '';
                 }
             });
         });

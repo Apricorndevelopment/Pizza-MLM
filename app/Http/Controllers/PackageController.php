@@ -6,14 +6,21 @@ use App\Models\Package1;
 use App\Models\ProductPackage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PackageController extends Controller
 {
     public function package()
     {
         $package1 = Package1::all();
+        return view('admin.manage-package.package', compact('package1'));
+    }
+
+    public function productPackage()
+    {
         $product_package = ProductPackage::all();
-        return view('admin.manage-package.package', compact('package1', 'product_package'));
+        return view('admin.manage-package.product-package', compact('product_package'));
     }
 
     public function createPackage1()
@@ -45,46 +52,78 @@ class PackageController extends Controller
 
     public function storeProductPackage(Request $request)
     {
-        $request->validate([
-            'product_name' => 'required|string|max:255',
-            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'description' => 'nullable|string',
-            'mrp' => 'required|numeric|min:0',
-            'gst' => 'required|numeric|min:0|max:100',
-            'dp' => 'required|numeric|min:0',
-            'pv' => 'required|numeric|min:0',
-            'max_coupon_usage' => 'required|integer|min:1',
-            'percentage' => 'required|numeric|min:0|max:100',
-            'isVeg'=>'required|string|in:veg,non-veg',
-        ]);
+        try {
+            // 1. Merge defaults to ensure logic holds if JS fails
+            $request->merge([
+                'capping' => $request->capping ?? 0,
+            ]);
 
-        $imagePath = null;
-        if ($request->hasFile('product_image')) {
-            $file = $request->file('product_image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            
-            // Move file directly to public/products
-            $file->move(public_path('products'), $filename);
-            
-            // Store relative path
-            $imagePath = 'products/' . $filename;
+            // 2. Validate
+            $validated = $request->validate([
+                'product_name'       => 'required|string|max:255',
+                'product_image'      => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+                'description'        => 'nullable|string',
+                'mrp'                => 'required|numeric|min:0',
+                'gst'                => 'required|numeric|min:0|max:100',
+                'dp'                 => 'required|numeric|min:0',
+                'pv'                 => 'required|numeric|min:0',
+                'max_coupon_usage'   => 'required|integer|min:1',
+                'capping'            => 'required|numeric|min:0',
+                'profit'             => 'required|numeric|min:0',
+
+                // FIX: Use 'in:0,1' instead of 'boolean' to accept the string "1" from your dump
+                'is_package_product' => 'required|in:0,1',
+                'isVeg'              => 'required|in:veg,non-veg',
+            ]);
+
+            DB::beginTransaction();
+
+            // 3. Handle Image Upload
+            $imagePath = null;
+            if ($request->hasFile('product_image')) {
+                $file = $request->file('product_image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('products'), $filename);
+                $imagePath = 'products/' . $filename;
+            }
+
+            // 4. Create Product
+            ProductPackage::create([
+                'product_name'       => $validated['product_name'],
+                'product_image'      => $imagePath,
+                'description'        => $validated['description'] ?? null,
+                'mrp'                => $validated['mrp'],
+                'gst'                => $validated['gst'],
+                'dp'                 => $validated['dp'],
+                'pv'                 => $validated['pv'],
+                'profit'             => $validated['profit'],
+                'max_coupon_usage'   => $validated['max_coupon_usage'],
+
+                // Cast to integer to match tinyint(1) database column
+                'is_package_product' => (int) $validated['is_package_product'],
+                'capping'            => $validated['capping'],
+                'isVeg'              => $validated['isVeg'],
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.product-package')
+                ->with('success', 'Product Package created successfully!');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            Log::error('Product Package Store Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Something went wrong: ' . $e->getMessage());
         }
-
-        ProductPackage::create([
-            'product_name' => $request->product_name,
-            'product_image' => $imagePath,
-            'description' => $request->description,
-            'mrp' => $request->mrp,
-            'gst' => $request->gst,
-            'dp' => $request->dp,
-            'pv' => $request->pv,
-            'max_coupon_usage' => $request->max_coupon_usage,
-            'percentage' => $request->percentage,
-            'isVeg' => $request->isVeg,
-        ]);
-
-        return redirect()->route('admin.package')->with('success', 'Product Package created successfully!');
     }
+
 
     public function editPackage1($id)
     {
@@ -136,7 +175,7 @@ class PackageController extends Controller
             'pv' => 'required|numeric|min:0',
             'max_coupon_usage' => 'required|integer|min:1',
             'percentage' => 'required|numeric|min:0|max:100',
-            'isVeg'=>'required|string|in:veg,non-veg',
+            'isVeg' => 'required|string|in:veg,non-veg',
         ]);
 
         $product = ProductPackage::findOrFail($id);
@@ -147,13 +186,13 @@ class PackageController extends Controller
             if ($product->product_image && File::exists(public_path($product->product_image))) {
                 File::delete(public_path($product->product_image));
             }
-            
+
             $file = $request->file('product_image');
             $filename = time() . '_' . $file->getClientOriginalName();
-            
+
             // Move file directly to public/products
             $file->move(public_path('products'), $filename);
-            
+
             $imagePath = 'products/' . $filename;
         }
 
@@ -170,7 +209,7 @@ class PackageController extends Controller
             'isVeg' => $request->isVeg
         ]);
 
-        return redirect()->route('admin.package')->with('success', 'Product updated successfully!');
+        return redirect()->route('admin.product-package')->with('success', 'Product updated successfully!');
     }
 
     public function destroyProductPackage($id)
@@ -183,6 +222,25 @@ class PackageController extends Controller
 
         $package->delete();
 
-        return redirect()->route('admin.package')->with('success', 'Product Package deleted successfully');
+        return redirect()->route('admin.product-package')->with('success', 'Product Package deleted successfully');
+    }
+
+    public function updateStock(Request $request, $id)
+    {
+        $product = ProductPackage::findOrFail($id);
+
+        $request->validate([
+            'manage_stock' => 'required|boolean',
+            'stock_quantity' => 'required_if:manage_stock,true|integer|min:0',
+        ]);
+
+        // Update stock logic
+        $product->update([
+            'manage_stock' => $request->manage_stock,
+            // Agar stock manage karna hai to quantity update karo, varna 0 rakho
+            'stock_quantity' => $request->manage_stock ? $request->stock_quantity : 0,
+        ]);
+
+        return back()->with('success', 'Stock updated successfully!');
     }
 }

@@ -36,11 +36,11 @@
             @endsession
 
             <div class="mb-6">
-                <h1 class="text-3xl font-bold text-gray-900">Packages Management</h1>
-                <p class="mt-2 text-sm text-gray-600">Manage your subscription packages and products.</p>
+                <h1 class="text-3xl font-bold text-gray-900">Package Management</h1>
+                <p class="mt-2 text-sm text-gray-600">Manage your packages.</p>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 mb-8">
+            <div class="mb-8">
                 <div
                     class="bg-white overflow-hidden shadow-sm rounded-xl border border-blue-100 hover:shadow-md transition-shadow duration-200">
                     <div class="p-6">
@@ -52,8 +52,8 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h2 class="text-lg font-semibold text-gray-900">Package Type 1</h2>
-                                <p class="text-sm text-gray-500">Basic packages with essential features</p>
+                                <h2 class="text-lg font-semibold text-gray-900">Vendor Package</h2>
+                                <p class="text-sm text-gray-500">Basic package</p>
                             </div>
                         </div>
                         <div class="mt-6">
@@ -63,45 +63,18 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                 </svg>
-                                Add Package 1
+                                Add Package
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <div
-                    class="bg-white overflow-hidden shadow-sm rounded-xl border border-cyan-100 hover:shadow-md transition-shadow duration-200">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 bg-cyan-100 rounded-md p-3">
-                                <svg class="h-6 w-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                </svg>
-                            </div>
-                            <div class="ml-4">
-                                <h2 class="text-lg font-semibold text-gray-900">Product Packages</h2>
-                                <p class="text-sm text-gray-500">Products to Purchase for the Users</p>
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <a href="{{ route('admin.package2.create') }}"
-                                class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 w-full sm:w-auto transition-colors">
-                                <svg class="mr-2 -ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                                Add Product Package
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="space-y-6">
                 <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
                     <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
-                        <h3 class="text-lg font-medium text-gray-900">Package Type 1 List</h3>
+                        <h3 class="text-lg font-medium text-gray-900">Package 1 List</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -155,125 +128,6 @@
                                                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                                 </svg>
                                                 <p>No Package 1 items found</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
-                    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
-                        <h3 class="text-lg font-medium text-gray-900">Product Package List</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col"
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Product</th>
-                                    <th scope="col"
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        MRP</th>
-                                    <th scope="col"
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        DP</th>
-                                    <th scope="col"
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        PV</th>
-                                    <th scope="col"
-                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Profit %</th>
-                                    <th scope="col"
-                                        class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($product_package as $package)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-3 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="h-20 w-20 flex-shrink-0">
-                                                    @if ($package->product_image)
-                                                        <div class="h-20 w-20 overflow-hidden relative">
-                                                            <img class="h-full w-full rounded-lg object-cover border border-gray-200"
-                                                                src="{{ asset($package->product_image) }}"
-                                                                alt="{{ $package->product_name }}">
-                                                            <div class="h-3 w-3 absolute right-1 top-1 rounded-full">
-                                                                @if ($package->isVeg === 'veg')
-                                                                    <!-- VEG SVG -->
-                                                                    <svg viewBox="0 0 100 100" width="100%"
-                                                                        height="100%" xmlns="http://www.w3.org/2000/svg">
-                                                                        <rect x="5" y="5" width="90" height="90"
-                                                                            rx="12" ry="12" fill="none"
-                                                                            stroke="#16a34a" stroke-width="8" />
-                                                                        <circle cx="50" cy="50" r="18"
-                                                                            fill="#16a34a" />
-                                                                    </svg>
-                                                                @else
-                                                                    <!-- NON-VEG SVG -->
-                                                                    <svg viewBox="0 0 100 100" width="100%"
-                                                                        height="100%" xmlns="http://www.w3.org/2000/svg">
-                                                                        <rect x="5" y="5" width="90" height="90"
-                                                                            rx="12" ry="12" fill="none"
-                                                                            stroke="#dc2626" stroke-width="8" />
-                                                                        <polygon points="50,30 70,70 30,70"
-                                                                            fill="#dc2626" />
-                                                                    </svg>
-                                                                @endif
-                                                            </div>
-
-                                                        </div>
-                                                    @else
-                                                        <div
-                                                            class="h-20 w-20 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600 font-bold">
-                                                            {{ substr($package->product_name, 0, 1) }}
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">
-                                                        {{ $package->product_name }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">₹{{ $package->mrp }}
-                                        </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">₹{{ $package->dp }}
-                                        </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ $package->pv }}
-                                        </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $package->percentage }}%</td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                                            <div class="flex justify-end space-x-2">
-                                                <a href="{{ route('admin.package2.edit', $package->id) }}"
-                                                    class="text-cyan-600 hover:text-cyan-900 bg-cyan-50 hover:bg-cyan-100 px-3 py-1 rounded-md transition-colors">Edit</a>
-                                                <form action="{{ route('admin.package2.destroy', $package->id) }}"
-                                                    method="POST" class="inline">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit"
-                                                        class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors"
-                                                        onclick="return confirm('Are you sure you want to delete this package?')">Delete</button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6"
-                                            class="px-6 py-10 text-center text-sm text-gray-500 bg-gray-50">
-                                            <div class="flex flex-col items-center">
-                                                <svg class="h-10 w-10 text-gray-400 mb-2" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                                                </svg>
-                                                <p>No Product Packages found</p>
                                             </div>
                                         </td>
                                     </tr>

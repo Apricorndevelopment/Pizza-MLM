@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\ComplaintController as AdminComplaintController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\PercentageIncomeController;
 use App\Http\Controllers\Admin\PercentageLevelController;
 use App\Http\Controllers\Admin\PercentageRewardController;
@@ -11,18 +12,20 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\FundRequestController;
 use App\Http\Controllers\LoginActivityController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
-use App\Http\Controllers\user\ComplaintController;
+use App\Http\Controllers\User\ComplaintController;
+use App\Http\Controllers\User\CouponPurchaseController;
 use App\Http\Controllers\User\UserIncomeController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\Vendor\VendorOrderController;
-use App\Http\Controllers\VendorController;
-use App\Http\Controllers\VendorProductController;
+use App\Http\Controllers\Vendor\VendorController;
+use App\Http\Controllers\Vendor\VendorProductController;
 use App\Http\Middleware\IsVendor;
 
 Route::get('/', function () {
@@ -71,12 +74,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/package2-purchase', [UserController::class, 'showPurchaseForm'])->name('package2.purchase');
     Route::post('/package2-purchase', [UserController::class, 'processPurchase'])->name('package2.process-purchase');
-    
+
     Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view.userTree');
     Route::get('/user/network-summary', [ContactController::class, 'networkSummary'])->name('user.network.summary');
     Route::get('/user/direct-team', [ContactController::class, 'directTeam'])->name('user.direct.team');
 
-   
+
     Route::prefix('user')->group(function () {
         // Other routes...
         Route::get('/login-activity', [LoginActivityController::class, 'index'])->name('user.login-activity');
@@ -93,7 +96,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/income/reward', [UserIncomeController::class, 'rewardIncome'])->name('user.income.reward');
         Route::get('/income/repurchase', [UserIncomeController::class, 'repurchaseIncome'])->name('user.income.repurchase');
     });
-
 });
 
 
@@ -104,6 +106,7 @@ Route::middleware(['auth', IsVendor::class])->group(function () {
 
     Route::prefix('vendor')->name('vendor.')->group(function () {
         Route::resource('products', VendorProductController::class);
+        Route::put('/products/{id}/stock', [VendorProductController::class, 'updateStock'])->name('product.stock.update');
     });
 
     Route::get('/orders', [VendorOrderController::class, 'index'])->name('vendor.orders.index');
@@ -117,7 +120,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/user/search-downline', [WalletController::class, 'searchDownlineUser'])->name('user.search.downline');
     Route::post('/user/transfer-wallet1', [WalletController::class, 'transferWallet1'])->name('user.transfer.wallet1');
 
-  
+
     Route::get('/my-orders', [UserOrderController::class, 'index'])->name('user.orders.index');
     Route::prefix('user/shop')->name('user.shop.')->group(function () {
         Route::get('/', [ShopController::class, 'index'])->name('index');
@@ -172,6 +175,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('/withdrawals/{id}/reject', [WalletController::class, 'rejectWithdrawlRequest'])->name('admin.withdrawls.reject');
 
         Route::get('/package', [PackageController::class, 'package'])->name('admin.package');
+        Route::get('/product-package', [PackageController::class, 'productPackage'])->name('admin.product-package');
         Route::get('/packages/package1/create', [PackageController::class, 'createPackage1'])->name('admin.package1.create');
         Route::get('/packages/package2/create', [PackageController::class, 'createProductPackage'])->name('admin.package2.create');
         Route::post('/packages/package1', [PackageController::class, 'storePackage1'])->name('admin.package1.store');
@@ -184,6 +188,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::get('/packages/package2/{id}/edit', [PackageController::class, 'editProductPackage'])->name('admin.package2.edit');
         Route::put('/packages/package2/{id}', [PackageController::class, 'updateProductPackage'])->name('admin.package2.update');
         Route::delete('/packages/package2/{id}', [PackageController::class, 'destroyProductPackage'])->name('admin.package2.destroy');
+        Route::put('/product-package/{id}/stock', [PackageController::class, 'updateStock'])->name('admin.product_package.stock.update');
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
 
@@ -231,12 +236,36 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('admin/complaints', [AdminComplaintController::class, 'index'])->name('admin.complaints.index');
     // Update Complaint (Reply & Status Change)
     Route::put('admin/complaints/{id}', [AdminComplaintController::class, 'update'])->name('admin.complaints.store');
+
+    // Transfer Coupons Routes
+    Route::get('/admin/transfer-coupons', [AdminController::class, 'showTransferCouponsForm'])->name('admin.coupons.transfer');
+    Route::post('/admin/transfer-coupons', [AdminController::class, 'transferCoupons'])->name('admin.coupons.process_transfer');
+
+    // Coupons Management (One Page)
+    Route::get('/admin/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
+    Route::post('/admin/coupons/store', [CouponController::class, 'store'])->name('admin.coupons.store');
+    Route::put('/admin/coupons/update/{id}', [CouponController::class, 'update'])->name('admin.coupons.update');
+    Route::delete('/admin/coupons/delete/{id}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
+
+    // Payment Settings Routes
+    Route::get('/admin/payment-settings', [AdminController::class, 'paymentSettings'])->name('admin.payment.settings');
+    Route::post('/admin/payment-settings', [AdminController::class, 'updatePaymentSettings'])->name('admin.payment.update');
+
+    Route::get('/admin/fund-requests', [FundRequestController::class, 'listRequests'])->name('admin.funds.index');
+    Route::post('/admin/fund-requests/{id}', [FundRequestController::class, 'updateStatus'])->name('admin.funds.update');
 });
 
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/viewwallet', [UserController::class, 'viewWallet'])->name('user.viewwallet');
     Route::post('/user/withdraw/wallet1', [WalletController::class, 'withdrawWallet1'])->name('user.withdraw.wallet1');
+
+    // Coupon Purchase Routes
+    Route::get('/user/buy-coupons', [CouponPurchaseController::class, 'index'])->name('user.coupons.purchase');
+    Route::post('/user/buy-coupons', [CouponPurchaseController::class, 'purchase'])->name('user.coupons.process');
+
+    Route::get('/user/add-money', [FundRequestController::class, 'showAddMoneyForm'])->name('user.funds.create');
+    Route::post('/user/add-money', [FundRequestController::class, 'storeFundRequest'])->name('user.funds.store');
 });
 
 Route::get('/check-sponsor/{id}', function ($id) {

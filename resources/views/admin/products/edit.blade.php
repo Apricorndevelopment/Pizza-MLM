@@ -175,47 +175,6 @@
                                     </p>
                                 @enderror
                             </div>
-
-                            <!-- Price -->
-                            <div class="space-y-2">
-                                <label for="price" class="block text-sm font-medium text-gray-700">
-                                    Price <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
-                                    <input type="number" step="0.01" name="price" id="price"
-                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                                              @error('price') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                        value="{{ old('price', $product->price) }}" required>
-                                </div>
-                                @error('price')
-                                    <p class="text-sm text-red-600 mt-1 flex items-center">
-                                        <i class="bi bi-exclamation-circle mr-1"></i>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
-
-                            <!-- GST - ADDED THIS FIELD -->
-                            <div class="space-y-2">
-                                <label for="gst" class="block text-sm font-medium text-gray-700">
-                                    GST (%) <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
-                                    <input type="number" step="0.01" name="gst" id="gst"
-                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                                              @error('gst') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                        value="{{ old('gst', $product->gst) }}" required>
-                                </div>
-                                @error('gst')
-                                    <p class="text-sm text-red-600 mt-1 flex items-center">
-                                        <i class="bi bi-exclamation-circle mr-1"></i>
-                                        {{ $message }}
-                                    </p>
-                                @enderror
-                            </div>
-
                             <!-- DP - ADDED THIS FIELD -->
                             <div class="space-y-2">
                                 <label for="dp" class="block text-sm font-medium text-gray-700">
@@ -235,6 +194,50 @@
                                     </p>
                                 @enderror
                             </div>
+                            <div class="space-y-2">
+                                <label for="price" class="block text-sm font-medium text-gray-700">
+                                    Profit <span class="text-red-500">*</span>
+                                </label>
+
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
+
+                                    {{-- FIX: Changed name="Profit" to name="price" to match @error('price') --}}
+                                    <input type="number" step="0.01" name="profit" id="price"
+                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+            @error('price') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
+                                        value="{{ old('price', $product->price ?? '') }}" required>
+                                </div>
+
+                                @error('price')
+                                    <p class="text-sm text-red-600 mt-1 flex items-center">
+                                        <i class="bi bi-exclamation-circle mr-1"></i>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            <!-- GST - ADDED THIS FIELD -->
+                            <div class="space-y-2">
+                                <label for="gst" class="block text-sm font-medium text-gray-700">
+                                    GST (%)
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">%</span>
+                                    <input type="number" step="0.01" name="gst" id="gst"
+                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                                              @error('gst') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
+                                        value="{{ old('gst', $product->gst) }}">
+                                </div>
+                                @error('gst')
+                                    <p class="text-sm text-red-600 mt-1 flex items-center">
+                                        <i class="bi bi-exclamation-circle mr-1"></i>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+
                         </div>
 
                         <!-- Description -->
@@ -295,6 +298,9 @@
                                     <label for="pv" class="block text-sm font-medium text-gray-700">
                                         <span class="text-purple-600 font-semibold">PV (Point Value)</span>
                                     </label>
+                                    <div> {{-- Fixed height to prevent layout jump --}}
+                                        <span class="text-xs font-bold text-red-600" id="recomendedPv"></span>
+                                    </div>
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500">
                                             <i class="bi bi-star"></i>
@@ -313,26 +319,6 @@
                                     @enderror
                                 </div>
 
-                                <!-- Percentage -->
-                                <div class="space-y-2">
-                                    <label for="percentage" class="block text-sm font-medium text-gray-700">
-                                        <span class="text-purple-600 font-semibold">Commission (%)</span>
-                                    </label>
-                                    <div class="relative">
-                                        <span
-                                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500">%</span>
-                                        <input type="number" step="0.01" name="percentage" id="percentage"
-                                            class="w-full pl-10 pr-4 py-2.5 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 
-                                                  @error('percentage') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                            value="{{ old('percentage', $product->percentage ?? 0) }}">
-                                    </div>
-                                    @error('percentage')
-                                        <p class="text-sm text-red-600 mt-1 flex items-center">
-                                            <i class="bi bi-exclamation-circle mr-1"></i>
-                                            {{ $message }}
-                                        </p>
-                                    @enderror
-                                </div>
 
                                 <!-- Max Coupons -->
                                 <div class="space-y-2">
@@ -414,6 +400,22 @@
     </div>
 
     <script>
+        const recomendedPv = document.getElementById('recomendedPv');
+        const price = document.getElementById('price');
+
+        if (price) { // Safety check to ensure element exists
+            price.addEventListener('input', function() {
+                console.log("running");
+                if (this.value) {
+                    const recommendedPvValue = (this.value * 30) / 100;
+                    // FIX: Changed Math.rounded to Math.round
+                    recomendedPv.textContent = `Recommended PV: ${Math.round(recommendedPvValue)}`;
+                } else {
+                    recomendedPv.textContent = '';
+                }
+            });
+        }
+
         function dismissAlert(alertId) {
             const element = document.getElementById(alertId);
             if (element) {

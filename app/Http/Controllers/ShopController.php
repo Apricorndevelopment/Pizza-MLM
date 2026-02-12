@@ -6,6 +6,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Models\ProductPackage;
 use App\Models\Product;
+use App\Models\Vendor;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pipeline\Pipeline; // Import Pipeline
@@ -21,22 +22,36 @@ class ShopController extends Controller
 {
     public function index(Request $request)
     {
-        $query = $request->input('search');
+       $query = $request->input('search');
+        $user = Auth::user();
+
+        // 1. Check if current user is a vendor to exclude their ID
+        $currentVendorId = null;
+        if ($user->is_vendor == 1) {
+            $vendor = Vendor::where('user_id', $user->id)->first();
+            $currentVendorId = $vendor ? $vendor->id : null;
+        }
 
         $admin = Admin::first();
-        // Admin Products
+        
+        // Admin Products (unchanged)
         $adminProducts = ProductPackage::query();
         if ($query) {
             $adminProducts->where('product_name', 'LIKE', "%{$query}%");
         }
         $adminProducts = $adminProducts->get();
 
-        // Vendor Products (ONLY if vendor shop is open)
+        // 2. Vendor Products (Modified Query)
         $vendorProducts = Product::with('vendor')
             ->where('status', 'approved')
             ->whereHas('vendor', function ($q) {
                 $q->where('isShopOpen', 1);
             });
+
+        // EXCLUDE CURRENT USER'S PRODUCTS
+        if ($currentVendorId) {
+            $vendorProducts->where('vendor_id', '!=', $currentVendorId);
+        }
 
         if ($query) {
             $vendorProducts->where('product_name', 'LIKE', "%{$query}%");
@@ -69,8 +84,14 @@ class ShopController extends Controller
     {
         $request->validate([
             'cart' => 'required|json',
-            'wallet2_usage' => 'required|numeric|min:0',
-            'coupons_used' => 'nullable|integer|min:0'
+            'cart' => 'required|json',
+            'wallet2_usage' => 'required|numeric|min:0|max:' . Auth::user()->wallet2_balance,
+            'coupons_used' => 'nullable|integer|min:0',
+            // New Fields
+            'phone_number' => 'required|string|max:15',
+            'address'      => 'required|string|max:255',
+            'location'     => 'required|string|max:100',
+            'location'     => 'required|string|max:100',
         ]);
 
         try {

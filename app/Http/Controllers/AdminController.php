@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use App\Models\Gallery;
 use App\Models\News;
+use App\Models\Order;
 use App\Models\Package1;
 use App\Models\ProductPackage;
 use App\Models\ProductPackagePurchase;
 use App\Models\PackageMonthlyDistribution;
 use App\Models\Wallet1Transaction;
 use App\Models\User;
+use App\Models\UserCoupon;
 use App\Models\Wallet;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,12 +49,34 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        // $package1Count = Package1::count();
-        // $package2Count = ProductPackage::count();
-        // $userCount = User::count();
-        // $businessCount = ProductPackagePurchase::sum('final_price');
+        // 1. User Statistics
+        $totalUsers = User::count();
+        $todayJoined = User::whereDate('created_at', Carbon::today())->count();
+        $yesterdayJoined = User::whereDate('created_at', Carbon::yesterday())->count();
+        $monthlyJoined = User::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+        $inactiveUsers = User::where('status', 'inactive')->count();
 
-        return view('admin.dashboard');
+        // 2. Order Statistics
+        $newPlacedOrders = Order::where('status', 'placed')->count();
+
+        // Calculate Total Sales (Excluding cancelled orders)
+        $totalSales = Order::where('status', '!=', 'rejected')->sum('total_amount');
+
+        // 3. Recent Orders Table (Latest 6)
+        $recentOrders = Order::with('user')->latest()->take(6)->get();
+
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'todayJoined',
+            'yesterdayJoined',
+            'monthlyJoined',
+            'inactiveUsers',
+            'newPlacedOrders',
+            'totalSales',
+            'recentOrders'
+        ));
     }
 
     public function toggleShopStatus(Request $request)
@@ -491,6 +516,45 @@ class AdminController extends Controller
         return $this->calculateLevelFromAdmin($adminAuid, $targetUser->sponsor_id, $level + 1);
     }
 
+    public function showTransferCouponsForm()
+    {
+        return view('admin.transfer-coupons');
+    }
+
+    public function transferCoupons(Request $request)
+    {
+        $request->validate([
+            'coupon_quantity' => 'required|integer|min:1',
+        ]);
+
+        $quantity = $request->input('coupon_quantity');
+        $count = 0;
+
+        // Use chunk() to process users in groups of 200 to prevent memory errors
+        User::chunk(200, function ($users) use ($quantity, &$count) {
+            foreach ($users as $user) {
+                // Check if user already has a coupon record
+                $userCoupon = UserCoupon::where('user_id', $user->id)->first();
+
+                if ($userCoupon) {
+                    // Add to existing balance
+                    $userCoupon->increment('coupon_quantity', $quantity);
+                } else {
+                    // Create new record
+                    UserCoupon::create([
+                        'user_id' => $user->id,
+                        'user_ulid' => $user->ulid,
+                        'coupon_quantity' => $quantity,
+                        'coupon_value' => 10.00
+                    ]);
+                }
+                $count++;
+            }
+        });
+
+        return back()->with('success', "Successfully transferred $quantity coupons to all $count users!");
+    }
+
     // Apply filters to user collection (same as user panel)
     private function applyFilters($users, $request)
     {
@@ -669,5 +733,56 @@ class AdminController extends Controller
             ->paginate(20);
 
         return view('admin.view-monthly-distribution', compact('distributions'));
+    }
+
+    public function paymentSettings()
+    {
+        $admin = Auth::guard('admin')->user();
+        return view('admin.payment-settings', compact('admin'));
+    }
+
+    public function updatePaymentSettings(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        // Validation
+        $request->validate([
+            'upi_id' => 'required|max:255', // Treating as string generally, though your DB is int(50) currently
+            'upi_qr' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
+        ]);
+
+        // Update UPI ID
+        $admin->upi_id = $request->upi_id;
+
+        // Handle QR Code Upload
+        if ($request->hasFile('upi_qr')) {
+            // Delete old QR code if it exists
+            if ($admin->upi_qr) {
+                $oldPath = public_path('storage/' . $admin->upi_qr);
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+            }
+
+            // Create directory if not exists
+            $directory = 'storage/upi-qr';
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Upload new file
+            $file = $request->file('upi_qr');
+            $extension = $file->getClientOriginalExtension();
+            $filename = 'upi_qr_' . uniqid() . '.' . $extension;
+
+            $file->move($directory, $filename);
+
+            // Save relative path to DB
+            $admin->upi_qr = 'upi-qr/' . $filename;
+        }
+
+        $admin->save();
+
+        return redirect()->route('admin.payment.settings')->with('success', 'Payment details updated successfully!');
     }
 }

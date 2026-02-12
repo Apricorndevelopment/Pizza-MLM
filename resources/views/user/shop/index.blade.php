@@ -100,16 +100,16 @@
             </div>
         @endif
 
-        <div
-            class="sticky z-10 mb-4">
+        <div class="sticky z-10 mb-4">
             <div class="container mx-auto max-w-3xl px-4">
                 <div class="relative">
 
-                    <div class="group bg-white rounded-full flex items-center p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 transition-all duration-300 focus-within:-translate-y-0.5 focus-within:shadow-[0_8px_25px_rgba(0,0,0,0.12)] focus-within:border-gray-200">
+                    <div
+                        class="group bg-white rounded-full flex items-center p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] border border-gray-100 transition-all duration-300 focus-within:-translate-y-0.5 focus-within:shadow-[0_8px_25px_rgba(0,0,0,0.12)] focus-within:border-gray-200">
 
                         <div class="pl-5 pr-2 text-gray-400 text-lg flex items-center justify-center">
                             <i class="bi bi-search"></i>
-                        </div>  
+                        </div>
 
                         <input type="text" id="searchInput"
                             class="w-full bg-transparent border-none focus:ring-0 text-gray-700 placeholder-gray-400 text-base h-full outline-none py-2"
@@ -188,20 +188,49 @@
 
                         {{-- RIGHT COLUMN: Payment Summary --}}
                         <div class="col-lg-5 bg-light border-start">
-                            <div class="p-4 h-100 d-flex flex-column justify-content-between">
-
+                            <div class="p-4 h-100 d-flex flex-column justify-content-between overflow-y-auto">
                                 <div>
-                                    {{-- 1. COUPON SECTION --}}
-                                    {{-- 1. COUPON SECTION --}}
-                                    <div class="mb-4">
+                                    {{-- 1. CONTACT DETAILS (NEW) --}}
+                                    <div class="mb-3">
+                                        <h6 class="text-muted text-uppercase small fw-bold mb-2 tracking-wide">
+                                            <i class="bi bi-geo-alt me-1"></i> Delivery Details
+                                        </h6>
+                                        <div class="bg-white p-3 rounded-3 shadow-sm border">
+                                            <div class="mb-2">
+                                                <label class="text-xs text-muted">Phone Number</label>
+                                                <input type="text" name="phone_number" form="checkoutForm"
+                                                    class="form-control form-control-sm bg-light" required
+                                                    placeholder="Enter Phone">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="text-xs text-muted">Location (City/Area)</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" name="location" id="locationInput"
+                                                        form="checkoutForm" class="form-control bg-light" required
+                                                        placeholder="Enter Location">
+                                                    <button class="btn btn-outline-secondary" type="button"
+                                                        onclick="getLocation()" title="Get Current Location">
+                                                        <i class="bi bi-geo-alt-fill"></i>
+                                                    </button>
+                                                </div>
+                                                <small id="locationStatus" class="text-xs text-muted"></small>
+                                            </div>
+                                            <div class="mb-0">
+                                                <label class="text-xs text-muted">Full Address</label>
+                                                <textarea name="address" form="checkoutForm" class="form-control form-control-sm bg-light" rows="2" required
+                                                    placeholder="House No, Street..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- 2. COUPON SECTION (Kept same logic, just minor layout tweak if needed) --}}
+                                    <div class="mb-3">
                                         <h6 class="text-muted text-uppercase small fw-bold mb-2 tracking-wide">
                                             <i class="bi bi-ticket-perforated me-1"></i> Apply Coupons
                                         </h6>
-
                                         <div
-                                            class="card border border-warning border-opacity-50 shadow-sm bg-warning bg-opacity-10 mb-2">
+                                            class="card border border-warning border-opacity-50 shadow-sm bg-warning bg-opacity-10">
                                             <div class="card-body p-2">
-                                                {{-- Header: Available Balance --}}
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <span class="small fw-bold text-dark">Your Balance</span>
                                                     <span
@@ -210,45 +239,33 @@
                                                             id="userCouponDisplay">{{ $userCouponCount }}</span>
                                                     </span>
                                                 </div>
-
-                                                {{-- Stepper Control --}}
                                                 <div
                                                     class="d-flex align-items-center justify-content-between bg-white rounded-3 p-1 border shadow-sm">
-
-                                                    {{-- Minus Button --}}
                                                     <button class="btn btn-sm btn-light text-warning fw-bold border-0 px-3"
-                                                        onclick="updateCouponQty(-1)" type="button">
-                                                        <i class="bi bi-dash-lg"></i>
-                                                    </button>
-
-                                                    {{-- Input Field (Read Only) --}}
+                                                        onclick="updateCouponQty(-1)" type="button"><i
+                                                            class="bi bi-dash-lg"></i></button>
                                                     <input type="text" id="couponSelect" value="0"
                                                         class="form-control form-control-sm border-0 text-center fw-bold bg-transparent text-dark shadow-none"
                                                         style="width: 50px;" readonly>
-
-                                                    {{-- Plus Button --}}
                                                     <button class="btn btn-sm btn-light text-warning fw-bold border-0 px-3"
-                                                        onclick="updateCouponQty(1)" type="button">
-                                                        <i class="bi bi-plus-lg"></i>
-                                                    </button>
+                                                        onclick="updateCouponQty(1)" type="button"><i
+                                                            class="bi bi-plus-lg"></i></button>
                                                 </div>
-
-                                                {{-- Info / Limits --}}
                                                 <div class="d-flex justify-content-between mt-2 text-xs text-muted">
                                                     <span>1 Coupon = ₹10 OFF</span>
-                                                    <span class="fw-bold text-warning-emphasis" id="maxCouponMessage">Max
-                                                        allowed: 0</span>
+                                                    <span class="fw-bold text-warning-emphasis" id="maxCouponMessage">Max:
+                                                        0</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {{-- 2. WALLET SECTION --}}
-                                    <div class="mb-2">
+                                    {{-- 3. WALLET 2 (UPDATED to Input) --}}
+                                    <div class="mb-3">
                                         <h6 class="text-muted text-uppercase small fw-bold mb-2 tracking-wide">
                                             <i class="bi bi-wallet2 me-1"></i> Bonus Wallet
                                         </h6>
-                                        <div class="card border-0 shadow-sm mb-3">
+                                        <div class="card border-0 shadow-sm">
                                             <div class="card-body p-3">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <span class="small fw-bold text-secondary">Wallet 2</span>
@@ -256,17 +273,21 @@
                                                         Bal: ₹{{ number_format(Auth::user()->wallet2_balance, 2) }}
                                                     </span>
                                                 </div>
-                                                <select
-                                                    class="form-select form-select-sm border-0 bg-light fw-medium shadow-none"
-                                                    id="wallet2Select" onchange="calculateFinalTotal()">
-                                                    <option value="0">Do not use Bonus</option>
-                                                </select>
-                                                <div class="text-xs text-muted mt-1 ms-1">Multiples of ₹50 only</div>
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text bg-white border-end-0">₹</span>
+                                                    <input type="number" id="wallet2InputRaw"
+                                                        class="form-control bg-white border-start-0 shadow-none"
+                                                        placeholder="Enter amount" min="0"
+                                                        max="{{ Auth::user()->wallet2_balance }}"
+                                                        oninput="calculateFinalTotal()">
+                                                </div>
+                                                <div class="text-xs text-muted mt-1 ms-1">Enter amount to redeem (Max:
+                                                    ₹{{ number_format(Auth::user()->wallet2_balance, 2) }})</div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {{-- 3. BILL SUMMARY --}}
+                                    {{-- 4. BILL SUMMARY --}}
                                     <div class="vstack gap-2 border-bottom pb-3 mb-2">
                                         <div class="d-flex justify-content-between text-sm">
                                             <span class="text-secondary">Subtotal (DP)</span>
@@ -283,7 +304,7 @@
                                     </div>
                                 </div>
 
-                                {{-- 4. FINAL PAY --}}
+                                {{-- 5. FINAL PAY --}}
                                 <div>
                                     <div class="d-flex justify-content-between align-items-end mb-1">
                                         <span class="small text-muted fw-bold">PAYABLE AMOUNT</span>
@@ -309,7 +330,6 @@
                                         </button>
                                     </form>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -332,7 +352,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 document.querySelectorAll('[id^="alert-"]').forEach(el => dismissAlert(el.id));
-            }, 5000);
+            }, 50000);
         });
 
         // ==========================================
@@ -446,8 +466,6 @@
                 if (currentMaxCoupons === 0) inputEl.value = 0;
             }
 
-            // Refresh Wallet Options & Final Totals
-            populateWallet2Options(total);
             calculateFinalTotal();
         }
 
@@ -469,63 +487,72 @@
             calculateFinalTotal();
         }
 
-        // 5. CALCULATE FINALS
+        // 5. CALCULATE FINALS (Updated for flexible Wallet 2)
         function calculateFinalTotal() {
             const modalTotalEl = document.getElementById('modalTotal');
             if (!modalTotalEl) return;
 
             let total = parseFloat(modalTotalEl.innerText);
 
-            // Get Coupons from Input
+            // 1. Coupon Logic
             let coupons = parseInt(document.getElementById('couponSelect').value) || 0;
             let couponDiscount = coupons * 10;
 
-            // Safety: Discount cannot exceed total
             if (couponDiscount > total) {
                 couponDiscount = total;
                 coupons = Math.floor(total / 10);
                 document.getElementById('couponSelect').value = coupons;
             }
 
-            let afterCouponTotal = total - couponDiscount;
+            let remainingAfterCoupon = total - couponDiscount;
 
-            // Wallet 2
-            let w2Select = document.getElementById('wallet2Select');
-            let w2 = parseInt(w2Select.value) || 0;
+            // 2. Wallet 2 Logic (Flexible Input)
+            const wallet2InputEl = document.getElementById('wallet2InputRaw');
+            let w2Entered = parseFloat(wallet2InputEl.value) || 0;
 
-            if (w2 > afterCouponTotal) {
-                w2 = 0;
-                w2Select.value = 0;
+            // Constraints for Wallet 2
+            // A. Cannot exceed user balance
+            if (w2Entered > userWallet2) {
+                w2Entered = userWallet2;
+                wallet2InputEl.value = w2Entered.toFixed(2);
+            }
+            // B. Cannot exceed remaining total after coupons
+            if (w2Entered > remainingAfterCoupon) {
+                w2Entered = remainingAfterCoupon;
+                wallet2InputEl.value = w2Entered.toFixed(2);
             }
 
-            let w1 = afterCouponTotal - w2;
+            // 3. Wallet 1 Logic (Remainder)
+            let w1 = remainingAfterCoupon - w2Entered;
 
-            // Update Display
+            // Update UI
             document.getElementById('modalCouponDisc').innerText = couponDiscount.toFixed(2);
-            document.getElementById('modalW2').innerText = w2.toFixed(2);
+            document.getElementById('modalW2').innerText = w2Entered.toFixed(2);
             document.getElementById('modalW1').innerText = w1.toFixed(2);
 
-            // Update Hidden Form Inputs
+            // Update Form Inputs
             document.getElementById('cartInput').value = JSON.stringify(Object.values(cart));
-            document.getElementById('wallet2Input').value = w2;
+            document.getElementById('wallet2Input').value = w2Entered;
             document.getElementById('couponInput').value = coupons;
         }
 
+        // REMOVE the function 'populateWallet2Options' calls from 'updateUI', it is no longer needed.
+
         // 6. WALLET 2 DROPDOWN
-        function populateWallet2Options(total) {
-            let select = document.getElementById('wallet2Select');
-            if (!select) return;
-            let currentSelection = parseInt(select.value) || 0;
-            select.innerHTML = '<option value="0">Do not use Bonus</option>';
-            let maxRedeem = Math.min(userWallet2, total);
-            for (let i = 50; i <= maxRedeem; i += 50) {
-                let option = document.createElement('option');
-                option.value = i;
-                option.text = `Use ₹${i}`;
-                if (i === currentSelection) option.selected = true;
-                select.appendChild(option);
-            }
-        }
+        // function populateWallet2Options(total) {
+        //     let select = document.getElementById('wallet2Select');
+        //     if (!select) return;
+        //     let currentSelection = parseInt(select.value) || 0;
+        //     select.innerHTML = '<option value="0">Do not use Bonus</option>';
+        //     let maxRedeem = Math.min(userWallet2, total);
+        //     for (let i = 50; i <= maxRedeem; i += 50) {
+        //         let option = document.createElement('option');
+        //         option.value = i;
+        //         option.text = `Use ₹${i}`;
+        //         if (i === currentSelection) option.selected = true;
+        //         select.appendChild(option);
+        //     }
+        // }
 
         // 7. RENDER CART LIST
         function renderCartModal() {
@@ -556,6 +583,58 @@
                 </div>`;
                 container.insertAdjacentHTML('beforeend', html);
             }
+        }
+
+
+        // ==========================================
+        // 8. GEOLOCATION LOGIC
+        // ==========================================
+        function getLocation() {
+            const status = document.getElementById('locationStatus');
+            const input = document.getElementById('locationInput');
+
+            if (!navigator.geolocation) {
+                status.innerText = "Geolocation is not supported by your browser";
+                status.className = "text-xs text-danger";
+                return;
+            }
+
+            status.innerText = "Locating...";
+            status.className = "text-xs text-info";
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // Use OpenStreetMap Nominatim API (Free)
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Try to find the most relevant city/area name
+                            const address = data.address;
+                            const city = address.city || address.town || address.village || address.suburb || '';
+                            const state = address.state || '';
+
+                            // Format: City, State (or just City if state is missing)
+                            let locationString = city;
+                            if (city && state) locationString += `, ${state}`;
+                            else if (!city && state) locationString = state;
+                            else if (!city && !state) locationString = "Location Found";
+
+                            input.value = locationString;
+                            status.innerText = "";
+                        })
+                        .catch(() => {
+                            status.innerText = "Unable to retrieve address.";
+                            status.className = "text-xs text-danger";
+                        });
+                },
+                () => {
+                    status.innerText = "Unable to retrieve your location.";
+                    status.className = "text-xs text-danger";
+                }
+            );
         }
     </script>
 @endsection

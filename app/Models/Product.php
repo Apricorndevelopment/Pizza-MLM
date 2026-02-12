@@ -12,7 +12,7 @@ class Product extends Model
         'product_name',
         'product_image',
         'description',
-        'price',
+        'profit',
         'mrp',
         'gst',
         'dp',
@@ -20,14 +20,18 @@ class Product extends Model
         'percentage',  // Admin Only
         'status',
         'isVeg',
-        'max_coupon_usage' // From previous step
+        'max_coupon_usage',
+        'manage_stock',
+        'stock_quantity',
     ];
-   
-    public function inventories()
-    {
-        return $this->hasMany(UserPackageInventory::class, 'product_id');
-    }
 
+    public function getIsInStockAttribute()
+    {
+        if (!$this->manage_stock) {
+            return true; // Always in stock if management is disabled
+        }
+        return $this->stock_quantity > 0;
+    }
     // Relation to Vendor
     public function vendor()
     {

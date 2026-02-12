@@ -20,6 +20,7 @@ use App\Models\LevelIncome;
 use App\Models\RepurchaseIncome;
 use App\Models\BonusIncome;
 use App\Models\PercentageReward;
+use Carbon\Carbon;
 
 class AdminOrderController extends Controller
 {
@@ -66,7 +67,6 @@ class AdminOrderController extends Controller
 
         $adminId = Auth::id();
 
-        // Start Transaction
         DB::beginTransaction();
 
         try {
@@ -82,7 +82,7 @@ class AdminOrderController extends Controller
                 $this->processOrderRejection($order, $user, $adminId, $request->reason);
             }
 
-            // 2. Handle Delivery (Income Distribution + Upline Growth)
+            // 2. Handle Delivery
             if ($request->status === 'delivered') {
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
@@ -94,17 +94,12 @@ class AdminOrderController extends Controller
             $order->status = $request->status;
             $order->save();
 
-            // All Good? Commit!
             DB::commit();
 
             return redirect()->back()->with('success', 'Order status updated successfully!');
         } catch (\Exception $e) {
-            // Something went wrong? Rollback everything!
             DB::rollBack();
-
-            // Keep Error Log for debugging crashes
             Log::error("Order Update Failed: " . $e->getMessage());
-
             return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
         }
     }
@@ -155,7 +150,22 @@ class AdminOrderController extends Controller
 
     private function processOrderDelivery($order, $user)
     {
-        // 1. Calculate Total PV
+        // --- STEP 1: Reduce Stock Quantity ---
+        // This decreases the product stock based on the order quantity
+        $this->reduceProductStock($order);
+
+        // --- STEP 2: Check for Capping/Package Product ---
+        foreach ($order->items as $item) {
+            $product = ProductPackage::find($item->product_id);
+
+            if ($product && $product->is_package_product == 1) {
+                $user->capping_limit = $product->capping;
+                $user->is_capping_enabled = 1;
+                $user->save();
+            }
+        }
+
+        // --- STEP 3: Calculate Total PV ---
         $totalPV = $this->calculateTotalPV($order);
 
         $settings = PercentageIncome::first();
@@ -170,8 +180,33 @@ class AdminOrderController extends Controller
                 $this->handleUserRepurchase($user, $order, $totalPV, $settings);
             }
 
-            // NEW TASK: Process Upline Business Growth & Rewards
             $this->processUplineGrowth($user, $totalPV, $settings);
+        }
+    }
+
+    /**
+     * NEW FUNCTION: Reduces stock for products in the order
+     */
+    private function reduceProductStock($order)
+    {
+        foreach ($order->items as $item) {
+            // Find the product package
+            $product = ProductPackage::find($item->product_id);
+
+            // Check if product exists and stock management is enabled
+            if ($product && $product->manage_stock == 1) {
+
+                // Ensure stock doesn't go below zero (optional check, but decrement handles logic)
+                if ($product->stock_quantity >= $item->quantity) {
+                    $product->decrement('stock_quantity', $item->quantity);
+                } else {
+                    // Logic if stock is insufficient (Optional: Force 0 or throw error)
+                    // For now, we allow it to go to 0 or negative if needed, 
+                    // or you can set it to 0 specifically.
+                    // $product->update(['stock_quantity' => 0]); 
+                    $product->decrement('stock_quantity', $item->quantity);
+                }
+            }
         }
     }
 
@@ -326,38 +361,88 @@ class AdminOrderController extends Controller
 
         foreach ($levelSettings as $levelSetting) {
             $uplineUser = User::where('ulid', $currentUplineUlid)->first();
+
+            // Break if no upline or chain ends
             if (!$uplineUser) break;
 
-            $incomeAmount = $totalPV * ($levelSetting->percentage / 100);
-            $note = ($tableType == 'level_incomes')
-                ? "Level {$levelSetting->level} Income from {$fromUser->ulid}"
-                : "Repurchase Level {$levelSetting->level} Income from {$fromUser->ulid}";
+            // --- CAPPING CHECK START ---
 
-            $this->distributeToWallets($uplineUser, $incomeAmount, $settings, $note);
-
-            if ($tableType == 'level_incomes') {
-                LevelIncome::create([
-                    'user_id'         => $uplineUser->id,
-                    'user_ulid'       => $uplineUser->ulid,
-                    'from_user_id'    => $fromUser->id,
-                    'from_user_ulid'  => $fromUser->ulid,
-                    'from_user_name'  => $fromUser->name,
-                    'purchase_amount' => $purchaseAmount,
-                    'purchase_pv'     => $totalPV,
-                    'level'           => $levelSetting->level,
-                    'amount'          => $incomeAmount,
-                ]);
-            } else {
-                RepurchaseIncome::create([
-                    'user_id'         => $uplineUser->id,
-                    'from_ulid'       => $fromUser->ulid,
-                    'from_name'       => $fromUser->name,
-                    'purchase_amount' => $purchaseAmount,
-                    'purchase_pv'     => $totalPV,
-                    'commission'      => $incomeAmount,
-                    'level'           => $levelSetting->level,
-                ]);
+            // 1. Check if Upline has purchased a package (Is Capping Enabled?)
+            // If they haven't bought a package, they get NO income.
+            if ($uplineUser->is_capping_enabled == 0) {
+                // Move to next upline without paying this one
+                $currentUplineUlid = $uplineUser->sponsor_id;
+                continue;
             }
+
+            // 2. Calculate Potential Income
+            $calculatedIncome = $totalPV * ($levelSetting->percentage / 100);
+
+            // 3. Check Daily Limit
+            $dailyLimit = $uplineUser->capping_limit;
+
+            // Get total income earned TODAY from Level + Repurchase
+            $todayLevelIncome = LevelIncome::where('user_id', $uplineUser->id)
+                ->whereDate('created_at', Carbon::today())
+                ->sum('amount');
+
+            $todayRepurchaseIncome = RepurchaseIncome::where('user_id', $uplineUser->id)
+                ->whereDate('created_at', Carbon::today())
+                ->sum('commission');
+
+            $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome;
+
+            // 4. Determine Payable Amount
+            $payableAmount = 0;
+
+            if ($totalEarnedToday >= $dailyLimit) {
+                // Limit already reached, pay 0
+                $payableAmount = 0;
+            } elseif (($totalEarnedToday + $calculatedIncome) > $dailyLimit) {
+                // If adding new income exceeds limit, pay only the difference
+                $payableAmount = $dailyLimit - $totalEarnedToday;
+            } else {
+                // Within limit, pay full amount
+                $payableAmount = $calculatedIncome;
+            }
+
+            // --- CAPPING CHECK END ---
+
+            // Only distribute if payable amount is greater than 0
+            if ($payableAmount > 0) {
+                $note = ($tableType == 'level_incomes')
+                    ? "Level {$levelSetting->level} Income from {$fromUser->ulid}"
+                    : "Repurchase Level {$levelSetting->level} Income from {$fromUser->ulid}";
+
+                $this->distributeToWallets($uplineUser, $payableAmount, $settings, $note);
+
+                // Record the Transaction
+                if ($tableType == 'level_incomes') {
+                    LevelIncome::create([
+                        'user_id'         => $uplineUser->id,
+                        'user_ulid'       => $uplineUser->ulid,
+                        'from_user_id'    => $fromUser->id,
+                        'from_user_ulid'  => $fromUser->ulid,
+                        'from_user_name'  => $fromUser->name,
+                        'purchase_amount' => $purchaseAmount,
+                        'purchase_pv'     => $totalPV,
+                        'level'           => $levelSetting->level,
+                        'amount'          => $payableAmount, // Log the capped amount
+                    ]);
+                } else {
+                    RepurchaseIncome::create([
+                        'user_id'         => $uplineUser->id,
+                        'from_ulid'       => $fromUser->ulid,
+                        'from_name'       => $fromUser->name,
+                        'purchase_amount' => $purchaseAmount,
+                        'purchase_pv'     => $totalPV,
+                        'commission'      => $payableAmount, // Log the capped amount
+                        'level'           => $levelSetting->level,
+                    ]);
+                }
+            }
+
+            // Move to next upline
             $currentUplineUlid = $uplineUser->sponsor_id;
         }
     }

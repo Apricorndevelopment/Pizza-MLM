@@ -29,6 +29,11 @@ class Order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class, 'vendor_id');
+    }
+
     /**
      * Relationship: Get the Admin associated with the order.
      * Assumes 'admin_id' exists in the orders table.

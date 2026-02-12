@@ -99,12 +99,12 @@ class VendorOrderController extends Controller
                 $this->processOrderRejection($order, $user, $vendorId, $request->reason);
             }
 
-            // 4. Handle Delivery (Income Distribution + Upline Growth)
+            // 4. Handle Delivery (Income Distribution + Stock Reduction)
             if ($request->status === 'delivered') {
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
                 }
-                // Process Income Distribution
+                // Process Income Distribution & Stock Updates
                 $this->processOrderDelivery($order, $user);
             }
 
@@ -168,7 +168,11 @@ class VendorOrderController extends Controller
 
     private function processOrderDelivery($order, $user)
     {
-        // 1. Calculate Total PV (Using Product Model)
+        // --- STEP 1: Reduce Stock Quantity ---
+        // This decreases the product stock from the 'products' table
+        $this->reduceProductStock($order);
+
+        // --- STEP 2: Calculate Total PV (Using Product Model) ---
         $totalPV = $this->calculateTotalPV($order);
 
         $settings = PercentageIncome::first();
@@ -185,6 +189,28 @@ class VendorOrderController extends Controller
 
             // Process Upline Business Growth & Rewards
             $this->processUplineGrowth($user, $totalPV, $settings);
+        }
+    }
+
+    private function reduceProductStock($order)
+    {
+        foreach ($order->items as $item) {
+            // Using App\Models\Product as this is the Vendor Controller
+            $product = Product::find($item->product_id);
+
+            // Check if product exists and stock management is enabled
+            if ($product && $product->manage_stock == 1) {
+
+                // Decrement Stock
+                // Ensure we don't go below zero (optional validation logic can be added here)
+                if ($product->stock_quantity >= $item->quantity) {
+                    $product->decrement('stock_quantity', $item->quantity);
+                } else {
+                    // Force set to 0 or allow negative depending on business logic. 
+                    // Using decrement allows negative which can help track overselling.
+                    $product->decrement('stock_quantity', $item->quantity);
+                }
+            }
         }
     }
 

@@ -3,7 +3,7 @@
 @section('title', 'Network Summary')
 
 @section('container')
-    <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
+    <div class="min-h-screen bg-slate-50 font-sans text-slate-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -29,7 +29,7 @@
                 <div class="px-6 py-4 bg-white border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors"
                     onclick="toggleFilters()">
                     <div class="flex items-center gap-2 text-slate-700">
-                        <div class="bg-slate-100 p-1.5 rounded text-slate-500">
+                        <div class="bg-slate-100 px-2 py-1 rounded text-slate-500">
                             <i class="fas fa-filter text-xs"></i>
                         </div>
                         <span class="text-sm font-bold uppercase tracking-wide">Search & Filters</span>
@@ -47,7 +47,29 @@
                 <div id="filterBody" class="hidden">
                     <div class="p-6 bg-slate-50/50">
                         <form method="GET" action="{{ route('user.network.summary') }}">
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+                            {{-- Changed grid columns to accommodate the extra field --}}
+                            <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-3">
+
+                                {{-- Level Filter --}}
+                                <div class="space-y-1.5">
+                                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Level</label>
+                                    <div class="relative">
+                                        <select name="level"
+                                            class="w-full appearance-none rounded-lg border-slate-200 bg-white py-2.5 px-3 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 shadow-sm">
+                                            <option value="">All Levels</option>
+                                            @foreach ($levels as $lvl)
+                                                <option value="{{ $lvl }}"
+                                                    {{ request('level') == $lvl ? 'selected' : '' }}>
+                                                    Level {{ $lvl }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="space-y-1.5">
                                     <label
@@ -174,22 +196,8 @@
                                                 <span
                                                     class="text-[10px] font-bold uppercase text-slate-500">{{ $user->status }}</span>
                                             </div>
-                                            {{-- @if ($user->purchase_status == 'paid')
-                                                <span
-                                                    class="text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Paid</span>
-                                            @else
-                                                <span
-                                                    class="text-[9px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Unpaid</span>
-                                            @endif --}}
                                         </div>
                                     </td>
-
-                                    {{-- <td class="px-3 py-3 text-center">
-                                        <span
-                                            class="text-md font-bold font-mono {{ $user->total_purchases > 0 ? 'text-slate-700' : 'text-slate-300' }}">
-                                            ₹{{ number_format($user->total_purchases, 2) }}
-                                        </span>
-                                    </td> --}}
 
                                     <td class="px-3 py-3 text-center">
                                         @if ($user->current_rank)
@@ -259,5 +267,4 @@
             }
         }
     </script>
-
 @endsection

@@ -197,6 +197,11 @@
                                 <i class="bi bi-credit-card mr-2"></i> {{-- Icon for managing --}}
                                 Manage Wallet
                             </a>
+                            <a href="{{ route('user.funds.create') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-credit-card mr-2"></i> {{-- Icon for managing --}}
+                                Add Money
+                            </a>
                             {{-- <a href="{{ route('user.transferWallet1Form') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                                 <i class="bi bi-arrow-left-right mr-2"></i>
@@ -273,6 +278,12 @@
                             class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                             <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
                             <span class="font-medium">Need Help?</span>
+                        </a>
+
+                        <a href="{{ route('user.coupons.purchase') }}"
+                            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                            <i class="bi bi-person-circle mr-3 text-lg"></i>
+                            <span class="font-medium">Purchase Coupons</span>
                         </a>
 
 

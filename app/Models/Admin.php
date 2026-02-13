@@ -6,5 +6,5 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
-    protected $fillable = ['name', 'email', 'password', 'upi_id', 'upi_qr', 'isShopOpen'];
+    protected $fillable = ['name', 'email', 'password', 'upi_id', 'upi_qr', 'isShopOpen', 'is_withdrawal_open'];
 }

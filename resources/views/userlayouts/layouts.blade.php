@@ -137,7 +137,7 @@
                     <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center">
                         <i class="bi bi-shop text-white text-xl"></i>
                     </div>
-                    <span class="text-xl font-bold text-gray-800">FoodVendor</span>
+                    <span class="text-xl font-bold text-gray-800"></span>
                 </div>
             </div>
 
@@ -303,7 +303,7 @@
                             <img src="{{ asset('storage/profile-pictures/' . basename(Auth::user()->profile_picture)) }}"
                                 alt="Profile">
                         @else
-                            <img src="{{ asset('foodvendor-logo.png') }}" alt="Profile">
+                            <img src="{{ asset('images/ziddizone.jpeg') }}" alt="Profile">
                         @endif
                         <span class="online-status"></span>
                     </div>
@@ -340,7 +340,7 @@
                                     <img src="{{ asset('storage/profile-pictures/' . basename(Auth::user()->profile_picture)) }}"
                                         alt="Profile">
                                 @else
-                                    <img src="{{ asset('foodvendor-logo.png') }}" alt="profile" />
+                                    <img src="{{ asset('images/ziddizone.jpeg') }}" alt="profile" />
                                 @endif
                                 <span class="online-status"></span>
                             </div>

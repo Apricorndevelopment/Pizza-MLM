@@ -5,7 +5,7 @@
     <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- Page Header --}}
+            {{-- Page Header & Toggle --}}
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
@@ -16,8 +16,25 @@
                     </h1>
                     <p class="text-sm text-slate-500 mt-1 ml-1">Manage user withdrawal requests and history.</p>
                 </div>
-            </div>
 
+                {{-- GLOBAL WITHDRAWAL TOGGLE --}}
+                <div class="bg-white px-5 py-2.5 rounded-full shadow-sm border border-slate-200 flex items-center gap-4">
+                    <span id="withdrawalLabel"
+                        class="text-sm font-bold {{ Auth::guard('admin')->user()->is_withdrawal_open ? 'text-emerald-600' : 'text-slate-500' }} flex items-center gap-2">
+                        <span
+                            class="w-2 h-2 rounded-full {{ Auth::guard('admin')->user()->is_withdrawal_open ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
+                        {{ Auth::guard('admin')->user()->is_withdrawal_open ? 'Withdrawals Enabled' : 'Withdrawals Disabled' }}
+                    </span>
+
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="withdrawalToggle" class="sr-only peer"
+                            {{ Auth::guard('admin')->user()->is_withdrawal_open ? 'checked' : '' }}>
+                        <div
+                            class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500">
+                        </div>
+                    </label>
+                </div>
+            </div>
             {{-- Pending Withdrawals Section --}}
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
@@ -223,5 +240,63 @@
 
         </div>
     </div>
+
+    <script>
+        document.getElementById('withdrawalToggle').addEventListener('change', function(e) {
+            const checkbox = this;
+            const isChecked = checkbox.checked;
+            const label = document.getElementById('withdrawalLabel');
+            const status = isChecked ? 1 : 0;
+
+            // 1. Ask for Confirmation
+            const userConfirmed = confirm("Are you sure you want to " + (isChecked ? "ENABLE" : "DISABLE") +
+                " withdrawals?");
+
+            if (!userConfirmed) {
+                // Revert state if cancelled
+                checkbox.checked = !isChecked;
+                return;
+            }
+
+            // 2. Optimistic UI Update (Only if confirmed)
+            if (isChecked) {
+                label.innerHTML =
+                    '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Withdrawals Enabled';
+                label.classList.replace('text-slate-500', 'text-emerald-600');
+            } else {
+                label.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-400"></span> Withdrawals Disabled';
+                label.classList.replace('text-emerald-600', 'text-slate-500');
+            }
+
+            // 3. Send Request
+            fetch("{{ route('admin.withdrawal.toggle') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        status: status
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.message);
+                        // Optional: Show a success toast here
+                    } else {
+                        // Revert on server error
+                        checkbox.checked = !isChecked;
+                        alert('Server Error: Failed to update status.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Revert on network error
+                    checkbox.checked = !isChecked;
+                    alert('Network Error: Failed to update status.');
+                });
+        });
+    </script>
 
 @endsection

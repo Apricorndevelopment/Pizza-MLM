@@ -61,10 +61,17 @@
                             <h3 class="text-lg font-bold text-emerald-900 mb-1">Ready to payout?</h3>
                             <p class="text-sm text-emerald-700/80 mb-4">Transfer funds to your linked bank/UPI account
                                 instantly.</p>
-                            <button onclick="toggleModal('withdrawModal')"
-                                class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-lg shadow-emerald-200 transition-all transform active:scale-95 flex items-center justify-center gap-2">
-                                <i class="fas fa-paper-plane"></i> Withdraw Money
-                            </button>
+                            @if ($withdrawalStatus)
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#withdrawModal"
+                                    class="btn btn-primary">
+                                    <i class="fas fa-money-bill-wave me-2"></i> Withdraw Money
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-secondary" disabled
+                                    title="Withdrawals are currently disabled by Admin">
+                                    <i class="fas fa-lock me-2"></i> Withdrawals Paused
+                                </button>
+                            @endif
                         </div>
                     </div>
 
@@ -191,7 +198,8 @@
                                     <select name="wallet1_type"
                                         class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 p-2">
                                         <option value="">All Types</option>
-                                        <option value="credit" {{ request('wallet1_type') == 'credit' ? 'selected' : '' }}>
+                                        <option value="credit"
+                                            {{ request('wallet1_type') == 'credit' ? 'selected' : '' }}>
                                             Credit (+)</option>
                                         <option value="debit" {{ request('wallet1_type') == 'debit' ? 'selected' : '' }}>
                                             Debit (-)</option>

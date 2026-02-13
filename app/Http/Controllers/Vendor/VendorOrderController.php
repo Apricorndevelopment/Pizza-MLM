@@ -106,6 +106,9 @@ class VendorOrderController extends Controller
                 }
                 // Process Income Distribution & Stock Updates
                 $this->processOrderDelivery($order, $user);
+
+                // B. Pay the Vendor (NEW ADDITION)
+                $this->payVendorForOrder($order, $vendorId);
             }
 
             // 5. Update Order Status
@@ -162,6 +165,38 @@ class VendorOrderController extends Controller
                         'updated_at' => now(),
                     ]);
                 }
+            }
+        }
+    }
+
+    // =========================================================================
+    // NEW METHOD: Pay Vendor
+    // =========================================================================
+    private function payVendorForOrder($order, $vendorId)
+    {
+        // Calculate total amount for this specific vendor from the order items
+        // We calculate (Price * Quantity) for items belonging to THIS vendor only.
+        $vendorEarnings = $order->items()
+            ->where('vendor_id', $vendorId)
+            ->sum(DB::raw('price * quantity')); // Assuming 'price' is the selling price
+
+        if ($vendorEarnings > 0) {
+            // 1. Find Vendor User
+            $vendorUser = User::find($vendorId);
+
+            if ($vendorUser) {
+                // 2. Add to Vendor's Wallet 1 (or whichever wallet holds real money)
+                $vendorUser->wallet1_balance += $vendorEarnings;
+                $vendorUser->save();
+
+                // 3. Log Transaction
+                Wallet1Transaction::create([
+                    'user_id'   => $vendorUser->id,
+                    'user_ulid' => $vendorUser->ulid,
+                    'wallet1'   => $vendorEarnings,
+                    'notes'     => "Payment received for Order #{$order->order_id}",
+                    'balance'   => $vendorUser->wallet1_balance,
+                ]);
             }
         }
     }

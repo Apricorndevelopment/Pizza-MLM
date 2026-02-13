@@ -1,11 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ComplaintController as AdminComplaintController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\HomeStatisticController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PercentageIncomeController;
 use App\Http\Controllers\Admin\PercentageLevelController;
 use App\Http\Controllers\Admin\PercentageRewardController;
+use App\Http\Controllers\Admin\SliderUserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -28,9 +32,7 @@ use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Vendor\VendorProductController;
 use App\Http\Middleware\IsVendor;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [AuthController::class, 'home'])->name('home');
 
 Route::get('/gallery/load-more', [AuthController::class, 'loadMore'])->name('gallery.load-more');
 Route::get('/news/load-more', [AuthController::class, 'loadMoreNews'])->name('news.load-more');
@@ -171,6 +173,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
 
         Route::get('/withdrawals', [WalletController::class, 'viewWithdrawlRequest'])->name('admin.withdrawls.index');
+        Route::post('/withdrawal/toggle', [WalletController::class, 'toggleWithdrawalStatus'])->name('admin.withdrawal.toggle');
         Route::post('/withdrawals/{id}/approve', [WalletController::class, 'approveWithdrawlRequest'])->name('admin.withdrawls.approve');
         Route::post('/withdrawals/{id}/reject', [WalletController::class, 'rejectWithdrawlRequest'])->name('admin.withdrawls.reject');
 
@@ -229,7 +232,36 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::put('/percentage-rewards/update/{id}', [PercentageRewardController::class, 'update'])->name('admin.rewards.update');
         Route::delete('/percentage-rewards/delete/{id}', [PercentageRewardController::class, 'destroy'])->name('admin.rewards.destroy');
 
+        Route::get('/slider-users', [SliderUserController::class, 'index'])->name('admin.slider.index');
+        Route::post('/slider-users/store', [SliderUserController::class, 'store'])->name('admin.slider.store');
+        Route::put('/slider-users/update/{id}', [SliderUserController::class, 'update'])->name('admin.slider.update');
+        Route::delete('/slider-users/delete/{id}', [SliderUserController::class, 'destroy'])->name('admin.slider.destroy');
+
         Route::post('/admin/toggle-shop', [AdminController::class, 'toggleShopStatus'])->name('admin.shop.toggle');
+    });
+    Route::prefix('admin')->name('admin.')->group(function () {
+
+        // Vendor Banners
+        Route::get('/vendor-banners', [BannerController::class, 'vendorIndex'])->name('vendor.banners');
+        Route::post('/vendor-banners/store', [BannerController::class, 'vendorStore'])->name('vendor.banners.store');
+        Route::put('/vendor-banners/update/{id}', [BannerController::class, 'vendorUpdate'])->name('vendor.banners.update');
+        Route::delete('/vendor-banners/delete/{id}', [BannerController::class, 'vendorDestroy'])->name('vendor.banners.destroy');
+
+        // Product Banners
+        Route::get('/product-banners', [BannerController::class, 'productIndex'])->name('product.banners');
+        Route::post('/product-banners/store', [BannerController::class, 'productStore'])->name('product.banners.store');
+        Route::put('/product-banners/update/{id}', [BannerController::class, 'productUpdate'])->name('product.banners.update');
+        Route::delete('/product-banners/delete/{id}', [BannerController::class, 'productDestroy'])->name('product.banners.destroy');
+
+        Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+        Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');
+        Route::delete('/media/delete/{id}', [MediaController::class, 'destroy'])->name('media.destroy');
+
+        // Home Statistics Routes
+        Route::get('/home-statistics', [HomeStatisticController::class, 'index'])->name('stats.index');
+        Route::post('/home-statistics/store', [HomeStatisticController::class, 'store'])->name('stats.store');
+        Route::put('/home-statistics/update/{id}', [HomeStatisticController::class, 'update'])->name('stats.update');
+        Route::delete('/home-statistics/delete/{id}', [HomeStatisticController::class, 'destroy'])->name('stats.destroy');
     });
 
     // Admin Complaints Routes

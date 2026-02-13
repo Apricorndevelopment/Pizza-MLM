@@ -4,17 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - FoodVendor Healthy Food Network</title>
-    
+    <title>Login - Healthy Food Network</title>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
             --primary: #FF6B35;
@@ -23,18 +25,23 @@
             --dark: #2A4365;
             --light: #FFF9F0;
         }
-        
+
         * {
             font-family: 'Inter', sans-serif;
         }
-        
-        h1, h2, h3, h4, h5, .font-poppins {
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        .font-poppins {
             font-family: 'Poppins', sans-serif;
         }
-        
+
         body {
             min-height: 100vh;
-            background: 
+            background:
                 linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
                 url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
             background-size: cover;
@@ -46,7 +53,7 @@
             padding: 20px;
             position: relative;
         }
-        
+
         /* Animated Gradient Background */
         body::before {
             content: '';
@@ -55,43 +62,65 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(76, 175, 80, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255, 209, 102, 0.1) 0%, transparent 50%);
             z-index: -1;
         }
-        
+
         /* Floating Animation */
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
-        
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
         }
-        
+
         @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
-        
+
         .animate-float {
             animation: float 3s ease-in-out infinite;
         }
-        
+
         .animate-pulse-slow {
             animation: pulse 2s ease-in-out infinite;
         }
-        
+
         .card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 24px;
-            box-shadow: 
+            box-shadow:
                 0 20px 60px rgba(0, 0, 0, 0.3),
                 0 0 0 1px rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -99,7 +128,7 @@
             overflow: hidden;
             width: 100%;
         }
-        
+
         .card::before {
             content: '';
             position: absolute;
@@ -110,7 +139,7 @@
             background: linear-gradient(90deg, #FF6B35, #FFD166, #4CAF50);
             border-radius: 24px 24px 0 0;
         }
-        
+
         .card::after {
             content: '';
             position: absolute;
@@ -123,12 +152,12 @@
             z-index: 0;
             pointer-events: none;
         }
-        
-        .card > * {
+
+        .card>* {
             position: relative;
             z-index: 1;
         }
-        
+
         .form-input {
             border: 2px solid rgba(229, 231, 235, 0.8);
             border-radius: 14px;
@@ -139,7 +168,7 @@
             font-size: 16px;
             color: #374151;
         }
-        
+
         .form-input:focus {
             border-color: #FF6B35;
             box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
@@ -147,19 +176,19 @@
             background: white;
             transform: translateY(-2px);
         }
-        
+
         .form-input::placeholder {
             color: #9CA3AF;
         }
-        
+
         .input-with-icon {
             position: relative;
         }
-        
+
         .input-with-icon input {
             padding-left: 56px;
         }
-        
+
         .form-icon {
             position: absolute;
             left: 20px;
@@ -169,7 +198,7 @@
             z-index: 10;
             font-size: 1.2rem;
         }
-        
+
         .toggle-password {
             position: absolute;
             right: 20px;
@@ -183,12 +212,12 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        
+
         .toggle-password:hover {
             background: rgba(255, 107, 53, 0.1);
             color: #FF6B35;
         }
-        
+
         .btn-login {
             background: linear-gradient(135deg, #FF6B35, #4CAF50);
             color: white;
@@ -204,7 +233,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn-login::before {
             content: '';
             position: absolute;
@@ -215,20 +244,20 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s ease;
         }
-        
+
         .btn-login:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
         }
-        
+
         .btn-login:hover::before {
             left: 100%;
         }
-        
+
         .btn-login:active {
             transform: translateY(-1px);
         }
-        
+
         .logo-container {
             display: flex;
             align-items: center;
@@ -236,7 +265,7 @@
             gap: 14px;
             margin-bottom: 14px;
         }
-        
+
         .logo {
             width: 70px;
             height: 70px;
@@ -248,12 +277,12 @@
             border: 3px solid white;
             box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
         }
-        
+
         .logo img {
             object-fit: contain;
             border-radius: 50%;
         }
-        
+
         .brand-name {
             font-size: 2.5rem;
             font-weight: 800;
@@ -262,7 +291,7 @@
             -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
         }
-        
+
         .food-badge {
             display: inline-block;
             background: linear-gradient(135deg, #FF6B35, #FFD166);
@@ -275,7 +304,7 @@
             box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
             margin-bottom: 14px;
         }
-        
+
         .success-badge {
             background: linear-gradient(135deg, #10B981, #34D399);
             color: white;
@@ -287,7 +316,7 @@
             gap: 10px;
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
         }
-        
+
         .error-badge {
             background: linear-gradient(135deg, #EF4444, #F87171);
             color: white;
@@ -299,7 +328,7 @@
             gap: 10px;
             box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2);
         }
-        
+
         .form-label {
             color: #374151;
             font-weight: 600;
@@ -307,7 +336,7 @@
             display: block;
             font-size: 1rem;
         }
-        
+
         /* Checkbox Styling */
         .form-checkbox {
             width: 20px;
@@ -317,16 +346,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .form-checkbox:checked {
             background-color: #FF6B35;
             border-color: #FF6B35;
         }
-        
+
         .form-checkbox:focus {
             box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
         }
-        
+
         /* Floating Elements */
         .floating-element {
             position: absolute;
@@ -334,7 +363,7 @@
             opacity: 0.1;
             filter: blur(40px);
         }
-        
+
         .floating-1 {
             width: 200px;
             height: 200px;
@@ -343,7 +372,7 @@
             left: 10%;
             animation: float 8s ease-in-out infinite;
         }
-        
+
         .floating-2 {
             width: 150px;
             height: 150px;
@@ -352,7 +381,7 @@
             right: 10%;
             animation: float 10s ease-in-out infinite reverse;
         }
-        
+
         .floating-3 {
             width: 100px;
             height: 100px;
@@ -361,48 +390,48 @@
             right: 20%;
             animation: float 12s ease-in-out infinite;
         }
-        
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .card {
                 padding: 30px 25px;
             }
-            
+
             .logo-container {
                 gap: 12px;
             }
-            
+
             .logo {
                 width: 60px;
                 height: 60px;
             }
-            
+
             .brand-name {
                 font-size: 2rem;
             }
-            
+
             .form-input {
                 padding: 14px 18px;
             }
-            
+
             .btn-login {
                 padding: 16px;
             }
         }
-        
+
         @media (max-width: 480px) {
             body {
                 padding: 15px;
             }
-            
+
             .card {
                 padding: 25px 20px;
             }
-            
+
             .brand-name {
                 font-size: 1.8rem;
             }
-            
+
             .food-badge {
                 padding: 8px 20px;
                 font-size: 1rem;
@@ -416,7 +445,7 @@
     <div class="floating-element floating-1"></div>
     <div class="floating-element floating-2"></div>
     <div class="floating-element floating-3"></div>
-    
+
     <div class="container max-w-xl mx-auto animate-float">
         <div class="card px-6 sm:px-8 py-5 sm:py-6">
             <!-- Header -->
@@ -424,21 +453,22 @@
                 <div class="logo-container">
                     <div class="logo">
                         <a href="/">
-                            <img src="{{ asset('foodvendor-logo.png') }}" alt="FoodVendor">
+                            <img src="{{ asset('images/ziddizone.jpeg') }}" alt="">
                         </a>
                     </div>
                     <div class="brand-name font-poppins">
-                        Food<span style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Vendor</span>
+                        Ziddi<span
+                            style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Zone</span>
                     </div>
                 </div>
-                
+
                 <div class="mb-2">
                     <span class="food-badge">
                         <i class="bi bi-heart-fill mr-2"></i>
                         Healthy Food Network
                     </span>
                 </div>
-                
+
                 <h2 class="text-3xl font-bold text-gray-800 mb-2 font-poppins">
                     Welcome Back
                 </h2>
@@ -446,55 +476,47 @@
                     Nice to see you again. Sign in to continue to your account
                 </p>
             </div>
-            
+
             <!-- Messages -->
             @if (session('success'))
-            <div class="mb-8 success-badge">
-                <i class="bi bi-check-circle-fill text-xl"></i>
-                <span>{{ session('success') }}</span>
-            </div>
+                <div class="mb-8 success-badge">
+                    <i class="bi bi-check-circle-fill text-xl"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
             @endif
 
             @if (session('error'))
-            <div class="mb-8 error-badge">
-                <i class="bi bi-x-circle-fill text-xl"></i>
-                <span>{{ session('error') }}</span>
-            </div>
+                <div class="mb-8 error-badge">
+                    <i class="bi bi-x-circle-fill text-xl"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
             @endif
-            
+
             <!-- Login Form -->
             <form action="{{ route('auth.login') }}" method="POST">
                 @csrf
-                
+
                 <div class="space-y-5">
                     <!-- Email -->
                     <div>
                         <label class="form-label">Email Address</label>
                         <div class="input-with-icon">
                             <i class="form-icon bi bi-envelope-fill"></i>
-                            <input type="text" 
-                                   name="email" 
-                                   class="form-input" 
-                                   placeholder="your@email.com"
-                                   value="{{ old('email') }}" 
-                                   required>
+                            <input type="text" name="email" class="form-input" placeholder="your@email.com"
+                                value="{{ old('email') }}" required>
                         </div>
                         @error('email')
                             <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
                         @enderror
                     </div>
-                    
+
                     <!-- Password -->
                     <div>
                         <label class="form-label">Password</label>
                         <div class="input-with-icon">
                             <i class="form-icon bi bi-lock-fill"></i>
-                            <input type="password" 
-                                   name="password" 
-                                   id="password" 
-                                   class="form-input"
-                                   placeholder="Enter your password" 
-                                   required>
+                            <input type="password" name="password" id="password" class="form-input"
+                                placeholder="Enter your password" required>
                             <span class="toggle-password" data-target="#password">
                                 <i class="bi bi-eye"></i>
                             </span>
@@ -503,62 +525,60 @@
                             <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
                         @enderror
                     </div>
-                    
+
                     <!-- Remember Me & Forgot Password -->
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                            <input type="checkbox" 
-                                   id="rememberMe" 
-                                   name="remember"
-                                   class="form-checkbox">
+                            <input type="checkbox" id="rememberMe" name="remember" class="form-checkbox">
                             <label for="rememberMe" class="text-gray-700 cursor-pointer select-none">
                                 Remember me
                             </label>
                         </div>
-                        <a href="{{ route('password.request') }}" 
-                           class="text-orange-500 hover:text-orange-600 font-semibold text-sm hover:underline transition-colors">
+                        <a href="{{ route('password.request') }}"
+                            class="text-orange-500 hover:text-orange-600 font-semibold text-sm hover:underline transition-colors">
                             Forgot password?
                         </a>
                     </div>
-                    
+
                     <!-- Submit Button -->
-                    <button type="submit" 
-                            onclick="return confirm('Are you sure you want to login to FoodVendor?')" 
-                            class="btn-login">
+                    <button type="submit" onclick="return confirm('Are you sure you want to login to ?')"
+                        class="btn-login">
                         <i class="bi bi-box-arrow-in-right mr-3"></i>
                         Sign In to Your Account
                     </button>
                 </div>
             </form>
-            
+
             <!-- Registration Link -->
             <div class="text-center mt-6 pt-4 border-t border-gray-200">
                 <p class="text-gray-600 text-lg">
                     Don't have an account?
-                    <a href="{{ route('auth.register') }}" 
-                       class="text-orange-500 font-semibold hover:text-orange-600 hover:underline transition-colors">
+                    <a href="{{ route('auth.register') }}"
+                        class="text-orange-500 font-semibold hover:text-orange-600 hover:underline transition-colors">
                         Create Account
                     </a>
                 </p>
             </div>
         </div>
-        
+
         <!-- Support Information -->
         <div class="text-center mt-6 pt-4 border-t border-gray-200/50">
             <p class="text-gray-300 mb-2 text-lg">Need help with login?</p>
             <div class="flex items-center justify-center space-x-6 text-sm">
-                <a href="tel:+919876543210" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                <a href="tel:+919876543210"
+                    class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
                     <i class="bi bi-telephone-fill mr-2 text-lg"></i>
                     <span class="text-lg">+91 98765 xxxxx</span>
                 </a>
-                <a href="mailto:support@foodvendor.com" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                <a href="mailto:support@foodvendor.com"
+                    class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
                     <i class="bi bi-envelope-fill mr-2 text-lg"></i>
                     <span class="text-lg">support@foodvendor.com</span>
                 </a>
             </div>
         </div>
     </div>
-    
+
     <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -568,7 +588,7 @@
                 const target = $(this).data('target');
                 const input = $(target);
                 const icon = $(this).find('i');
-                
+
                 if (input.attr('type') === 'password') {
                     input.attr('type', 'text');
                     icon.removeClass('bi-eye').addClass('bi-eye-slash');
@@ -577,9 +597,9 @@
                     icon.removeClass('bi-eye-slash').addClass('bi-eye');
                 }
             });
-            
+
             // Auto-focus email field if there's an error
-            @if($errors->has('email') || $errors->has('password'))
+            @if ($errors->has('email') || $errors->has('password'))
                 setTimeout(() => {
                     $('input[name="email"]').focus();
                 }, 100);
@@ -587,4 +607,5 @@
         });
     </script>
 </body>
+
 </html>

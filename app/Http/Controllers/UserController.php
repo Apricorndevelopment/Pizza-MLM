@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\BonusIncome;
 use App\Models\Commission;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
+use App\Models\MediaLibrary;
 use App\Models\Wallet2Transaction;
 use App\Models\MoneyWithdrawl;
 use App\Models\Order;
@@ -23,6 +25,7 @@ use App\Models\RewardsIncome;
 use App\Models\Wallet1Transaction;
 use App\Models\RoyaltyRewardsIncome;
 use App\Models\User;
+use App\Models\UserCoupon;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -34,23 +37,41 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
+        // 1. Calculate Incomes
         $directIncome = DirectIncome::where('user_id', $user->id)->sum('income_amount');
-
         $repurchaseIncome = RepurchaseIncome::where('user_id', $user->id)->sum('commission');
-
         $levelIncome = LevelIncome::where('user_id', $user->id)->sum('amount');
-
         $bonusIncome = BonusIncome::where('user_id', $user->id)->sum('income_amount');
-
         $rewardIncome = RewardsIncome::where('user_id', $user->id)->sum('reward_amount');
 
         $totalIncome = $directIncome + $levelIncome + $bonusIncome + $rewardIncome + $repurchaseIncome;
+
+        // 2. Fetch Media (Audio & Video)
+        $audios = MediaLibrary::where('type', 'audio')->latest()->get();
+        $videos = MediaLibrary::where('type', 'video')->latest()->get();
+
+        // 3. Fetch Coupon Quantity
+        // Assuming user_coupons table has a 'coupon_quantity' column and one row per user, 
+        // or multiple rows we sum up.
+        $totalCoupons = UserCoupon::where('user_id', $user->id)->sum('coupon_quantity');
 
         $breadcrumbs = [
             ['title' => 'Dashboard', 'url' => route('user.dashboard')]
         ];
 
-        return view('user.dashboard', compact('breadcrumbs', 'levelIncome', 'directIncome', 'repurchaseIncome', 'bonusIncome', 'rewardIncome', 'totalIncome'));
+        return view('user.dashboard', compact(
+            'breadcrumbs', 
+            'levelIncome', 
+            'directIncome', 
+            'repurchaseIncome', 
+            'bonusIncome', 
+            'rewardIncome', 
+            'totalIncome',
+            'audios',
+            'videos',
+            'totalCoupons',
+            'user'
+        ));
     }
 
     /**
@@ -976,7 +997,9 @@ class UserController extends Controller
             ['title' => 'Manage Wallet', 'url' => route('user.viewwallet')]
         ];
 
-        return view('user.viewwallet', compact('wallet1', 'wallet2', 'wallet1Transactions', 'wallet2Transactions', 'withdrawals', 'breadcrumbs'));
+        $withdrawalStatus = Admin::first()->is_withdrawal_open;
+
+        return view('user.viewwallet', compact('wallet1', 'wallet2', 'wallet1Transactions', 'wallet2Transactions', 'withdrawals', 'breadcrumbs', 'withdrawalStatus'));
     }
 
     // public function level1Commissions(Request $request)

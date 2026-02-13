@@ -231,6 +231,21 @@ class WalletController extends Controller
         return view('admin.wallet.withdrawl', compact('withdrawals', 'allWithdrawls'));
     }
 
+    public function toggleWithdrawalStatus(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        // Toggle the status
+        $admin->is_withdrawal_open = $request->status;
+        $admin->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Withdrawal status updated successfully.',
+            'isOpen' => $admin->is_withdrawal_open
+        ]);
+    }
+
     public function approveWithdrawlRequest($id)
     {
         $withdrawal = MoneyWithdrawl::findOrFail($id);
@@ -255,6 +270,4 @@ class WalletController extends Controller
 
         return back()->with('success', 'Withdrawal rejected');
     }
-
-    
 }

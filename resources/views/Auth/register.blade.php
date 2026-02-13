@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join FoodVendor - Healthy Food Network</title>
+    <title>Join - Healthy Food Network</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -41,7 +41,7 @@
 
         body {
             min-height: 100vh;
-            background: 
+            background:
                 linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
                 url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
             background-size: cover;
@@ -62,7 +62,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(76, 175, 80, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255, 209, 102, 0.1) 0%, transparent 50%);
@@ -71,19 +71,41 @@
 
         /* Floating Animation */
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
         }
 
         @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .animate-float {
@@ -104,7 +126,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 24px;
-            box-shadow: 
+            box-shadow:
                 0 20px 60px rgba(0, 0, 0, 0.3),
                 0 0 0 1px rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -136,7 +158,7 @@
             pointer-events: none;
         }
 
-        .card > * {
+        .card>* {
             position: relative;
             z-index: 1;
         }
@@ -450,10 +472,11 @@
             <div class="text-center mb-6">
                 <div class="logo-container">
                     <div class="logo">
-                        <img src="{{ asset('foodvendor-logo.png') }}" alt="FoodVendor">
+                        <img src="{{ asset('images/ziddizone.jpeg') }}" alt="">
                     </div>
                     <div class="brand-name font-poppins">
-                        Food<span style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Vendor</span>
+                        Ziddi<span
+                            style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Zone</span>
                     </div>
                 </div>
 
@@ -467,7 +490,7 @@
                 <h2 class="text-3xl font-bold text-gray-800 mb-2 font-poppins">
                     Start Your Food Journey
                 </h2>
-            
+
             </div>
 
             <!-- Messages -->
@@ -505,7 +528,8 @@
 
                     <!-- Sponsor ID -->
                     <div>
-                        <label class="form-label">Sponsor ID <span class="text-gray-500 font-normal">(Required)</span></label>
+                        <label class="form-label">Sponsor ID <span
+                                class="text-gray-500 font-normal">(Required)</span></label>
                         <div class="input-with-icon">
                             <i class="form-icon bi bi-person-plus-fill"></i>
                             <input type="text" name="sponsor_id"
@@ -594,9 +618,13 @@
                                 style="width: 20px; height: 20px;" required>
                             <label for="privacy_policy" class="text-gray-700">
                                 I agree to the
-                                <a href="#" class="text-orange-500 hover:text-orange-600 font-semibold hover:underline transition-colors">Terms of Service</a>
+                                <a href="#"
+                                    class="text-orange-500 hover:text-orange-600 font-semibold hover:underline transition-colors">Terms
+                                    of Service</a>
                                 and
-                                <a href="#" class="text-orange-500 hover:text-orange-600 font-semibold hover:underline transition-colors">Privacy Policy</a>.
+                                <a href="#"
+                                    class="text-orange-500 hover:text-orange-600 font-semibold hover:underline transition-colors">Privacy
+                                    Policy</a>.
                                 I understand this is a network marketing opportunity.
                             </label>
                         </div>
@@ -606,8 +634,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit"
-                        onclick="return confirm('Are you sure you want to register with FoodVendor?')"
+                    <button type="submit" onclick="return confirm('Are you sure you want to register with ?')"
                         class="btn-register mt-8">
                         <i class="bi bi-person-plus-fill mr-3"></i>
                         Create Account & Start Earning
@@ -619,8 +646,8 @@
             <div class="text-center mt-6 pt-4 border-t border-gray-200">
                 <p class="text-gray-600 text-lg">
                     Already have an account?
-                    <a href="{{ route('auth.login') }}" 
-                       class="text-orange-500 font-semibold hover:text-orange-600 hover:underline transition-colors">
+                    <a href="{{ route('auth.login') }}"
+                        class="text-orange-500 font-semibold hover:text-orange-600 hover:underline transition-colors">
                         Sign In Here
                     </a>
                 </p>
@@ -631,11 +658,13 @@
         <div class="text-center mt-6 pt-4 border-t border-gray-200/50">
             <p class="text-gray-300 mb-2 text-lg">Need help with registration?</p>
             <div class="flex items-center justify-center space-x-6 text-sm">
-                <a href="tel:+919876543210" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                <a href="tel:+919876543210"
+                    class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
                     <i class="bi bi-telephone-fill mr-2 text-lg"></i>
                     <span class="text-lg">+91 98765 xxxxx</span>
                 </a>
-                <a href="mailto:support@foodvendor.com" class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
+                <a href="mailto:support@foodvendor.com"
+                    class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
                     <i class="bi bi-envelope-fill mr-2 text-lg"></i>
                     <span class="text-lg">support@foodvendor.com</span>
                 </a>
@@ -672,7 +701,9 @@
                         url: '/check-sponsor/' + sponsorId,
                         type: 'GET',
                         beforeSend: function() {
-                            messageDiv.html('<span class="text-blue-500 animate-pulse">Checking sponsor...</span>');
+                            messageDiv.html(
+                                '<span class="text-blue-500 animate-pulse">Checking sponsor...</span>'
+                            );
                         },
                         success: function(response) {
                             if (response.exists) {
@@ -692,7 +723,8 @@
                             }
                         },
                         error: function() {
-                            messageDiv.html('<span class="text-red-500">Error checking sponsor</span>');
+                            messageDiv.html(
+                                '<span class="text-red-500">Error checking sponsor</span>');
                         }
                     });
                 }
@@ -712,7 +744,9 @@
                             email: email
                         },
                         beforeSend: function() {
-                            messageDiv.html('<span class="text-blue-500 animate-pulse">Checking email...</span>');
+                            messageDiv.html(
+                                '<span class="text-blue-500 animate-pulse">Checking email...</span>'
+                            );
                         },
                         success: function(response) {
                             if (response.exists) {
@@ -732,7 +766,8 @@
                             }
                         },
                         error: function() {
-                            messageDiv.html('<span class="text-red-500">Error checking email</span>');
+                            messageDiv.html(
+                                '<span class="text-red-500">Error checking email</span>');
                         }
                     });
                 } else if (email) {
@@ -764,4 +799,5 @@
         });
     </script>
 </body>
+
 </html>

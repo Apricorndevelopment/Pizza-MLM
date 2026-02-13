@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Mail\UserRegisteredMail;
 use App\Models\Admin;
 use App\Models\Gallery;
+use App\Models\HomeStatistic;
 use App\Models\News;
 use App\Models\PasswordOtp;
+use App\Models\ProductBanner;
 use App\Models\ProductPackagePurchase;
+use App\Models\SliderUser;
 use App\Models\User;
 use App\Models\UserCoupon;
+use App\Models\VendorBanner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +25,23 @@ use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
+    public function home()
+    {
+        // 1. Fetch Vendor Banners
+        $vendorBanners = VendorBanner::latest()->get();
+
+        // 2. Fetch Product Banners
+        $productBanners = ProductBanner::latest()->get();
+
+        // 3. Fetch Achievers (Slider Users)
+        $achievers = SliderUser::latest()->get();
+
+        // 4. Fetch Home Statistics (Ordered by sort_order)
+        $stats = HomeStatistic::orderBy('sort_order', 'asc')->get();
+
+        return view('welcome', compact('vendorBanners', 'productBanners', 'achievers', 'stats'));
+    }
+
     public function auth()
     {
         return view('Auth.register');

@@ -137,7 +137,7 @@
                     <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center">
                         <i class="bi bi-shop text-white text-xl"></i>
                     </div>
-                    <span class="text-xl font-bold text-gray-800"></span>
+                    <span class="text-xl font-bold text-gray-800">ZiddiZone</span>
                 </div>
             </div>
 

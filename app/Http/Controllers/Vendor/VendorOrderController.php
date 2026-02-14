@@ -19,10 +19,11 @@ use App\Models\Wallet2Transaction;
 // Income Models
 use App\Models\PercentageIncome;
 use App\Models\PercentageLevelIncome;
+use App\Models\BonusIncome;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
 use App\Models\RepurchaseIncome;
-use App\Models\BonusIncome;
+use App\Models\CashbackIncome;
 use App\Models\PercentageReward;
 
 class VendorOrderController extends Controller
@@ -268,11 +269,13 @@ class VendorOrderController extends Controller
         // 1. Direct Income
         $this->distributeDirectIncome($user, $order->total_amount, $totalPV, $settings);
 
+        $this->distributeBonusIncome($user, $order->total_amount, $totalPV, $settings);
+
         // 2. Level Income
         $this->distributeLevelIncome($user, $totalPV, $order->total_amount, $settings, 'level_incomes');
 
-        // 3. Bonus Income
-        $this->distributeBonusIncome($user, $totalPV, $order->total_amount, $settings);
+        // 3. Cashback Income
+        $this->distributeCashbackIncome($user, $totalPV, $order->total_amount, $settings);
 
         // 4. Activate User
         $user->status = 'active';
@@ -285,8 +288,8 @@ class VendorOrderController extends Controller
         // 1. Repurchase Income
         $this->distributeLevelIncome($user, $totalPV, $order->total_amount, $settings, 'repurchase_incomes');
 
-        // 2. Bonus Income
-        $this->distributeBonusIncome($user, $totalPV, $order->total_amount, $settings);
+        // 2. Cashback Income
+        $this->distributeCashbackIncome($user, $totalPV, $order->total_amount, $settings);
     }
 
     // -------------------------------------------------------------------------
@@ -374,18 +377,40 @@ class VendorOrderController extends Controller
         }
     }
 
-    private function distributeBonusIncome($user, $totalPV, $purchaseAmount, $settings)
+    private function distributeBonusIncome($user, $purchaseAmount, $totalPV, $settings)
     {
-        $incomeAmount = $totalPV * ($settings->bonus_income / 100);
+        $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
-        $this->distributeToWallets($user, $incomeAmount, $settings, "Bonus Income from Order #{$user->id}");
+        if ($sponsor) {
+            $incomeAmount = $totalPV * ($settings->bonus_income / 100);
 
-        BonusIncome::create([
+            $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Bonus Income from User: {$user->ulid}");
+
+            BonusIncome::create([
+                'user_id'         => $sponsor->id,
+                'user_ulid'       => $sponsor->ulid,
+                'from_name'       => $user->name,
+                'from_ulid'       => $user->ulid,
+                'purchase_amount' => $purchaseAmount,
+                'purchase_pv'     => $totalPV,
+                'income_amount'   => $incomeAmount,
+                'percentage'      => $settings->bonus_income,
+            ]);
+        }
+    }
+
+    private function distributeCashbackIncome($user, $totalPV, $purchaseAmount, $settings)
+    {
+        $incomeAmount = $totalPV * ($settings->cashback_income / 100);
+
+        $this->distributeToWallets($user, $incomeAmount, $settings, "Cashback Income from Order #{$user->id}");
+
+        CashbackIncome::create([
             'user_id'         => $user->id,
             'user_ulid'       => $user->ulid,
             'purchase_amount' => $purchaseAmount,
             'purchase_pv'     => $totalPV,
-            'percentage'      => $settings->bonus_income,
+            'percentage'      => $settings->cashback_income,
             'income_amount'   => $incomeAmount,
         ]);
     }

@@ -94,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
         // Income Reports
         Route::get('/income/direct', [UserIncomeController::class, 'directIncome'])->name('user.income.direct');
         Route::get('/income/bonus', [UserIncomeController::class, 'bonusIncome'])->name('user.income.bonus');
+        Route::get('/income/cashback', [UserIncomeController::class, 'cashbackIncome'])->name('user.income.cashback');
         Route::get('/income/level', [UserIncomeController::class, 'levelIncome'])->name('user.income.level');
         Route::get('/income/reward', [UserIncomeController::class, 'rewardIncome'])->name('user.income.reward');
         Route::get('/income/repurchase', [UserIncomeController::class, 'repurchaseIncome'])->name('user.income.repurchase');

@@ -198,7 +198,7 @@
                             </a>
                         </div>
                     </div>
-                    
+
                     <div class="menu-group">
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
@@ -244,8 +244,13 @@
                             </a>
                             <a href="{{ route('user.income.bonus') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-gift mr-2"></i>
+                                <i class="bi bi-person-check mr-2"></i>
                                 Bonus Income
+                            </a>
+                            <a href="{{ route('user.income.cashback') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-gift mr-2"></i>
+                                Cashback Income
                             </a>
                             <a href="{{ route('user.income.level') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
@@ -388,7 +393,7 @@
             // Toggle profile dropdown
             const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
             const profileDropdownMenu = document.getElementById('profile-dropdown-menu');
-            const profileArrow = document.getElementById('profile-arrow'); 
+            const profileArrow = document.getElementById('profile-arrow');
 
             if (profileDropdownToggle) {
                 profileDropdownToggle.addEventListener('click', (e) => {
@@ -403,7 +408,7 @@
                 if (profileDropdownToggle && !profileDropdownToggle.contains(e.target) && !
                     profileDropdownMenu.contains(e.target)) {
                     profileDropdownMenu.classList.add('hidden');
-                    profileArrow.classList.remove('rotate-180'); 
+                    profileArrow.classList.remove('rotate-180');
                 }
             });
 

@@ -111,7 +111,7 @@
                                 <div class="flex flex-col text-[10px] mt-0.5">
                                     <span class="text-slate-500">Main: ₹{{ $order->wallet1_deducted }}</span>
                                     @if ($order->wallet2_deducted > 0)
-                                        <span class="text-emerald-600">Bonus: ₹{{ $order->wallet2_deducted }}</span>
+                                        <span class="text-emerald-600">Cashback: ₹{{ $order->wallet2_deducted }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -432,7 +432,7 @@
                         <div class="flex flex-col md:flex-row gap-6 md:items-center">
                             <div class="w-full md:w-2/12"><div class="flex items-center gap-2 mb-2"><span class="inline-flex items-center px-2.5 py-1 rounded-lg text-sm font-semibold bg-[#ECFDF5] text-[#065F46] border border-emerald-100/50">#${order.order_id}</span></div><div class="text-xs text-slate-500 font-medium flex items-center"><i class="mdi mdi-calendar-clock mr-1.5"></i> ${date}</div></div>
                             <div class="w-full md:w-3/12 md:border-l md:border-slate-100 md:pl-6"><p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Customer</p><div class="flex items-center gap-3"><div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">${initial}</div><div><p class="text-sm font-bold text-slate-800">${userName}</p><p class="text-[10px] text-slate-400">${userEmail}</p></div></div></div>
-                            <div class="w-full md:w-2/12 md:border-l md:border-slate-100 md:pl-6"><p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-0.5">Total Amount</p><p class="text-xl font-bold text-[#064E3B]">₹${parseFloat(order.total_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</p><div class="flex flex-col text-[10px] mt-0.5"><span class="text-slate-500">Main: ₹${order.wallet1_deducted}</span>${order.wallet2_deducted > 0 ? `<span class="text-emerald-600">Bonus: ₹${order.wallet2_deducted}</span>` : ''}</div></div>
+                            <div class="w-full md:w-2/12 md:border-l md:border-slate-100 md:pl-6"><p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-0.5">Total Amount</p><p class="text-xl font-bold text-[#064E3B]">₹${parseFloat(order.total_amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</p><div class="flex flex-col text-[10px] mt-0.5"><span class="text-slate-500">Main: ₹${order.wallet1_deducted}</span>${order.wallet2_deducted > 0 ? `<span class="text-emerald-600">Cashback: ₹${order.wallet2_deducted}</span>` : ''}</div></div>
                             <div class="w-full md:w-5/12 flex flex-col sm:flex-row items-center md:justify-end gap-3 md:pl-6">${statusHtml}<button type="button" onclick="toggleDetails('details-${order.id}')" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-[#ECFDF5] hover:bg-emerald-100 text-[#059669] text-xs font-bold rounded-lg border border-[#10B981] transition-colors duration-200 gap-1 whitespace-nowrap"><span>Details</span><i id="icon-details-${order.id}" class="mdi mdi-chevron-down transition-transform duration-300"></i></button></div>
                         </div>
                     </div>

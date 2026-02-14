@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DirectIncome;
 use App\Models\BonusIncome;
+use App\Models\CashbackIncome;
 use App\Models\LevelIncome;
 use App\Models\PercentageReward;
 use App\Models\RewardsIncome;
@@ -26,9 +27,6 @@ class UserIncomeController extends Controller
         return view('user.incomes.direct', compact('incomes'));
     }
 
-    /**
-     * 2. Bonus Income Report
-     */
     public function bonusIncome()
     {
         $incomes = BonusIncome::where('user_id', Auth::id())
@@ -36,6 +34,18 @@ class UserIncomeController extends Controller
             ->paginate(10);
 
         return view('user.incomes.bonus', compact('incomes'));
+    }
+
+    /**
+     * 2. Cashback Income Report
+     */
+    public function cashbackIncome()
+    {
+        $incomes = CashbackIncome::where('user_id', Auth::id())
+            ->latest()
+            ->paginate(10);
+
+        return view('user.incomes.cashback', compact('incomes'));
     }
 
     /**

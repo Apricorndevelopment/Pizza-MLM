@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('order_id')->unique(); // e.g., ORD-2024001
             $table->decimal('total_amount', 10, 2); // Total DP Value
             $table->decimal('wallet1_deducted', 10, 2); // Main Balance
-            $table->decimal('wallet2_deducted', 10, 2); // Bonus Balance (Multiples of 50)
+            $table->decimal('wallet2_deducted', 10, 2); // Cashback Balance (Multiples of 50)
             $table->string('status')->default('placed'); // placed, shipped, delivered
             $table->timestamps();
         });
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->decimal('subtotal', 10, 2);
             $table->unsignedBigInteger('vendor_id')->nullable(); // Null if Admin Product
             $table->timestamps();
-            
+
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
     }

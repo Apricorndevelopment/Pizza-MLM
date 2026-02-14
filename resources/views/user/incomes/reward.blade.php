@@ -72,7 +72,7 @@
 
                         <div
                             class="py-2 px-3 rounded-lg {{ $isUnlocked ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-50 text-gray-400' }} mb-4">
-                            <p class="text-[10px] uppercase tracking-wide font-semibold">Bonus</p>
+                            <p class="text-[10px] uppercase tracking-wide font-semibold">Cashback</p>
                             <p class="text-xl font-bold">₹{{ number_format($reward->reward) }}</p>
                         </div>
 

@@ -14,6 +14,7 @@ class PercentageIncome extends Model
     protected $fillable = [
         'direct_income',
         'bonus_income',
+        'cashback_income',
         'personal_wallet',
         'second_wallet',
     ];

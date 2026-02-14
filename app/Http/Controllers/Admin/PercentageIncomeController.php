@@ -25,16 +25,18 @@ class PercentageIncomeController extends Controller
     {
         $request->validate([
             'direct_income'   => 'required|integer|min:0',
-            'bonus_income'    => 'required|integer|min:0',
+            'bonus_income'   => 'required|integer|min:0',
+            'cashback_income'    => 'required|integer|min:0',
             'personal_wallet' => 'required|integer|min:0',
             'second_wallet'   => 'required|integer|min:0',
         ]);
 
         $income = PercentageIncome::findOrFail($id);
-        
+
         $income->update([
             'direct_income'   => $request->direct_income,
-            'bonus_income'    => $request->bonus_income,
+            'bonus_income'   => $request->bonus_income,
+            'cashback_income'    => $request->cashback_income,
             'personal_wallet' => $request->personal_wallet,
             'second_wallet'   => $request->second_wallet,
         ]);

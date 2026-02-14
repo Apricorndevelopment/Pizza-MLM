@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
-use App\Models\BonusIncome;
+use App\Models\CashbackIncome;
 use App\Models\Commission;
+use App\Models\BonusIncome;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
 use App\Models\MediaLibrary;
@@ -39,12 +40,13 @@ class UserController extends Controller
 
         // 1. Calculate Incomes
         $directIncome = DirectIncome::where('user_id', $user->id)->sum('income_amount');
+        $bonusIncome = BonusIncome::where('user_id', $user->id)->sum('income_amount');
         $repurchaseIncome = RepurchaseIncome::where('user_id', $user->id)->sum('commission');
         $levelIncome = LevelIncome::where('user_id', $user->id)->sum('amount');
-        $bonusIncome = BonusIncome::where('user_id', $user->id)->sum('income_amount');
+        $cashbackIncome = CashbackIncome::where('user_id', $user->id)->sum('income_amount');
         $rewardIncome = RewardsIncome::where('user_id', $user->id)->sum('reward_amount');
 
-        $totalIncome = $directIncome + $levelIncome + $bonusIncome + $rewardIncome + $repurchaseIncome;
+        $totalIncome = $directIncome + $bonusIncome + $levelIncome + $cashbackIncome + $rewardIncome + $repurchaseIncome;
 
         // 2. Fetch Media (Audio & Video)
         $audios = MediaLibrary::where('type', 'audio')->latest()->get();
@@ -60,12 +62,13 @@ class UserController extends Controller
         ];
 
         return view('user.dashboard', compact(
-            'breadcrumbs', 
-            'levelIncome', 
-            'directIncome', 
-            'repurchaseIncome', 
-            'bonusIncome', 
-            'rewardIncome', 
+            'breadcrumbs',
+            'levelIncome',
+            'bonusIncome',
+            'directIncome',
+            'repurchaseIncome',
+            'cashbackIncome',
+            'rewardIncome',
             'totalIncome',
             'audios',
             'videos',
@@ -115,7 +118,7 @@ class UserController extends Controller
     public function getSalesChartData(Request $request)
     {
         $user = Auth::user();
-        $filter = $request->get('filter', 'monthly'); 
+        $filter = $request->get('filter', 'monthly');
 
         $labels = [];
         $data = [];
@@ -123,10 +126,10 @@ class UserController extends Controller
         // ---------------------------------------------------------
         // STEP 1: Get the entire tree's IDs
         // ---------------------------------------------------------
-        
+
         // Get all downline IDs using the recursive function
         $teamIds = $this->getAllDownlineIds($user->ulid);
-        
+
         // Add the current user's ID (Self Business) to the list
         $teamIds->push($user->id);
 
@@ -1045,7 +1048,7 @@ class UserController extends Controller
 
     //     $breadcrumbs = [
     //         ['title' => 'Incentives', 'url' => route('user.commissions.level2')],
-    //         ['title' => 'Network Bonus', 'url' => route('user.commissions.level2')]
+    //         ['title' => 'Network Cashback', 'url' => route('user.commissions.level2')]
     //     ];
 
     //     return view('user.rewards.networkcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));

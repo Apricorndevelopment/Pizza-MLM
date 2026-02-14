@@ -6,36 +6,45 @@ use Illuminate\Database\Eloquent\Model;
 
 class BonusIncome extends Model
 {
-    // Table name (change if different)
+    // Table name (change if needed)
     protected $table = 'bonus_income';
 
-    // If created_at is INT, Laravel timestamps still work
     public $timestamps = true;
 
     // Mass assignable fields
     protected $fillable = [
         'user_id',
         'user_ulid',
+        'from_name',
+        'from_ulid',
         'purchase_amount',
         'purchase_pv',
-        'percentage',
         'income_amount',
+        'percentage',
     ];
 
-    // Cast columns to proper data types
+    // Cast fields to correct types
     protected $casts = [
-        'user_id'         => 'integer',
+        'user_id'          => 'integer',
         'purchase_amount' => 'decimal:2',
-        'purchase_pv'     => 'integer',
-        'percentage'      => 'decimal:2',
+        'purchase_pv'      => 'integer',
         'income_amount'   => 'decimal:2',
+        'percentage'       => 'decimal:2',
     ];
 
     /**
-     * Relationship: Income belongs to a User
+     * Income belongs to User
      */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Income generated from another user (by ULID)
+     */
+    public function fromUser()
+    {
+        return $this->belongsTo(User::class, 'from_ulid', 'ulid');
     }
 }

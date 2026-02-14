@@ -275,7 +275,7 @@
                                     {{-- 3. WALLET 2 (UPDATED to Input) --}}
                                     <div class="mb-3">
                                         <h6 class="text-muted text-uppercase small fw-bold mb-2 tracking-wide">
-                                            <i class="bi bi-wallet2 me-1"></i> Bonus Wallet
+                                            <i class="bi bi-wallet2 me-1"></i> Cashback Wallet
                                         </h6>
                                         <div class="card border-0 shadow-sm">
                                             <div class="card-body p-3">
@@ -310,7 +310,7 @@
                                             <span class="fw-bold">- ₹<span id="modalCouponDisc">0.00</span></span>
                                         </div>
                                         <div class="d-flex justify-content-between text-sm text-success">
-                                            <span><i class="bi bi-dash-circle me-1"></i> Bonus Applied</span>
+                                            <span><i class="bi bi-dash-circle me-1"></i> Cashback Applied</span>
                                             <span class="fw-bold">- ₹<span id="modalW2">0.00</span></span>
                                         </div>
                                     </div>
@@ -573,7 +573,7 @@
         //     let select = document.getElementById('wallet2Select');
         //     if (!select) return;
         //     let currentSelection = parseInt(select.value) || 0;
-        //     select.innerHTML = '<option value="0">Do not use Bonus</option>';
+        //     select.innerHTML = '<option value="0">Do not use Cashback</option>';
         //     let maxRedeem = Math.min(userWallet2, total);
         //     for (let i = 50; i <= maxRedeem; i += 50) {
         //         let option = document.createElement('option');

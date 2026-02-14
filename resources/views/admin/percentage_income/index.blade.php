@@ -58,6 +58,7 @@
                             <th class="px-6 py-4 font-semibold">ID</th>
                             <th class="px-6 py-4 font-semibold">Direct Income</th>
                             <th class="px-6 py-4 font-semibold">Bonus Income</th>
+                            <th class="px-6 py-4 font-semibold">Cashback Income</th>
                             <th class="px-6 py-4 font-semibold">Personal Wallet</th>
                             <th class="px-6 py-4 font-semibold">Second Wallet</th>
                             <th class="px-6 py-4 font-semibold text-right">Actions</th>
@@ -71,6 +72,7 @@
                                 {{-- Data Columns --}}
                                 <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->direct_income }}%</td>
                                 <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->bonus_income }}%</td>
+                                <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->cashback_income }}%</td>
                                 <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->personal_wallet }}%</td>
                                 <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->second_wallet }}%</td>
 
@@ -136,12 +138,21 @@
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
                         </div>
-
                         {{-- Bonus Income --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Bonus Income</label>
                             <div class="relative">
                                 <input type="number" name="bonus_income" id="bonus_income" required
+                                    class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                                <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
+                            </div>
+                        </div>
+
+                        {{-- Cashback Income --}}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cashback Income</label>
+                            <div class="relative">
+                                <input type="number" name="cashback_income" id="cashback_income" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -195,6 +206,7 @@
             // Fill inputs
             document.getElementById('direct_income').value = data.direct_income;
             document.getElementById('bonus_income').value = data.bonus_income;
+            document.getElementById('cashback_income').value = data.cashback_income;
             document.getElementById('personal_wallet').value = data.personal_wallet;
             document.getElementById('second_wallet').value = data.second_wallet;
 

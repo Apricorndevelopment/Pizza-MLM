@@ -6,7 +6,8 @@
 
         {{-- Alerts --}}
         @session('success')
-            <div class="mb-4 alert rounded-md bg-green-50 p-4 border border-green-200 transition-opacity duration-500 ease-in-out">
+            <div
+                class="mb-4 alert rounded-md bg-green-50 p-4 border border-green-200 transition-opacity duration-500 ease-in-out">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -107,7 +108,7 @@
                                     <div class="flex flex-col text-[10px] mt-0.5">
                                         <span class="text-slate-500">Main: ₹{{ $order->wallet1_deducted }}</span>
                                         @if ($order->wallet2_deducted > 0)
-                                            <span class="text-emerald-600">Bonus: ₹{{ $order->wallet2_deducted }}</span>
+                                            <span class="text-emerald-600">Cashback: ₹{{ $order->wallet2_deducted }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -216,7 +217,8 @@
                                                                 @else
                                                                     <div
                                                                         class="h-full w-full flex items-center justify-center text-slate-300">
-                                                                        <i class="mdi mdi-image"></i></div>
+                                                                        <i class="mdi mdi-image"></i>
+                                                                    </div>
                                                                 @endif
                                                             </div>
                                                             <span

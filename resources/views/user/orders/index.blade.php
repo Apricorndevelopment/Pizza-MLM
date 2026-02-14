@@ -62,18 +62,15 @@
                                 class="absolute top-0 left-0 w-1 h-full bg-[#ECFDF5] group-hover:bg-teal-400 transition-all duration-300">
                             </div>
 
-                            <div class="p-4 lg:p-6">
+                            <div class="p-3 lg:p-4">
                                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
 
                                     {{-- Section 1: ID & Status --}}
                                     <div class="lg:col-span-4">
-                                        <div class="flex items-center gap-1 mb-2">
+                                        <div class="mb-2">
                                             <span
                                                 class="bg-[#ECFDF5] text-teal-800 font-semibold px-3 py-1.5 rounded-lg text-sm tracking-wide border border-teal-100/50">
                                                 #{{ $order->order_id }}
-                                            </span>
-                                            <span class="text-gray-400 text-xs font-medium flex items-center gap-1">
-                                                <i class="bi bi-clock"></i> {{ $order->created_at->format('M d • h:i A') }}
                                             </span>
                                         </div>
 
@@ -111,10 +108,13 @@
                                                 ],
                                             };
                                         @endphp
-                                        <div class="mt-3">
+                                        <div class="mt-3 flex items-center gap-1">
                                             <span
                                                 class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border {{ $statusConfig['bg'] }} {{ $statusConfig['text'] }} {{ $statusConfig['border'] }} uppercase tracking-wider">
                                                 <i class="bi {{ $statusConfig['icon'] }}"></i> {{ $order->status }}
+                                            </span>
+                                             <span class="text-gray-400 text-xs font-medium flex items-center gap-1">
+                                                <i class="bi bi-clock"></i> {{ $order->created_at->format('M d • h:i A') }}
                                             </span>
                                         </div>
                                     </div>
@@ -138,7 +138,7 @@
                                             @if ($order->wallet2_deducted > 0)
                                                 <span
                                                     class="inline-flex items-center px-2 py-1 rounded bg-[#ECFDF5] border border-teal-100 text-[10px] text-teal-700 font-semibold">
-                                                    Second Wallet: -₹{{ $order->wallet2_deducted }}
+                                                    Wallet 2: -₹{{ $order->wallet2_deducted }}
                                                 </span>
                                             @endif
                                         </div>
@@ -150,7 +150,7 @@
                                         {{-- INVOICE BUTTON (Visible only if status is 'delivered') --}}
                                         @if ($order->status == 'delivered')
                                             <button onclick="openInvoiceModal('{{ $order->id }}')"
-                                                class="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold rounded-xl border border-indigo-100 transition-all duration-200">
+                                                class="w-full lg:w-auto flex items-center justify-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold rounded-xl border border-indigo-100 transition-all duration-200">
                                                 <i class="bi bi-receipt text-xs"></i> <span class="text-sm">Invoice</span>
                                             </button>
                                         @endif
@@ -215,9 +215,9 @@
                                     {{-- Invoice Header --}}
                                     <div class="flex justify-between items-start mb-8 pb-8 border-b border-gray-200">
                                         <div>
-                                            <h2 class="text-2xl font-bold text-gray-800 uppercase tracking-wide">Invoice
+                                            <h2 class="text-2xl font-bold text-gray-800 uppercase tracking-wide">Bill
                                             </h2>
-                                            <p class="text-sm text-gray-500 mt-1">Order #{{ $order->order_id }}</p>
+                                            <p class="text-sm text-gray-500 mt-1">#{{ $order->order_id }}</p>
                                         </div>
 
                                         {{-- SELLER INFORMATION LOGIC --}}
@@ -241,7 +241,7 @@
                                                     @endif
                                                 @else
                                                     {{-- CASE 2: Admin Order (vendor_id is null) --}}
-                                                    {{ config('app.name') }}
+                                                    Ziddi Group
                                                     <span class="text-xs text-gray-500">(Official Store)</span>
                                                 @endif
                                             </h3>
@@ -539,7 +539,7 @@
 
                 {{-- Pagination --}}
                 <div class="mt-10" id="paginationContainer">
-                    {{ $orders->appends(request()->query())->links('pagination::tailwind') }}
+                    {{ $orders->appends(request()->query())->links('pagination::bootstrap-5') }}
                 </div>
             @else
                 {{-- Empty State (Server Side) --}}

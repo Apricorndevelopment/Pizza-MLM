@@ -3,7 +3,7 @@
     <div class="mb-4">
         <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
             <i class="bi bi-patch-check-fill text-primary"></i>
-            <span>Premium Packages <span class="text-muted text-sm fw-normal">(Admin)</span></span>
+            <span>Admin Products</span>
         </h5>
 
         @if (isset($admin) && $admin->isShopOpen)
@@ -25,11 +25,18 @@
                                     <div>
                                         <p
                                             class="text-gray-300 text-[10px] font-medium uppercase tracking-wider mb-0 leading-none">
-                                            DP Price</p>
-                                        <span
-                                            class="text-[#DBF5EC] font-extrabold text-lg md:text-xl tracking-tighter shadow-black drop-shadow-md">
-                                            ₹{{ number_format($prod->dp) }}
-                                        </span>
+                                            Best Price</p>
+                                        <div class="flex items-baseline gap-1">
+                                            <span
+                                                class="text-[#DBF5EC] font-extrabold text-lg md:text-xl tracking-tighter shadow-black drop-shadow-md">
+                                                ₹{{ number_format($prod->dp) }}
+                                            </span>
+                                            {{-- Added MRP with line-through for Admin --}}
+                                            <span
+                                                class="text-gray-400 text-[10px] md:text-xs line-through decoration-red-400">
+                                                ₹{{ number_format($prod->mrp) }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -41,10 +48,16 @@
                                         title="{{ $prod->product_name }}">
                                         {{ $prod->product_name }}
                                     </h3>
-                                    <div class="flex items-center gap-1 mt-1">
-                                        <i class="bi bi-star-fill text-yellow-400 text-[10px]"></i>
-                                        <span class="text-[10px] md:text-xs text-gray-500 font-medium">Verified
-                                            Admin</span>
+                                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                        <div class="flex items-center gap-1">
+                                            <i class="bi bi-star-fill text-yellow-400 text-[10px]"></i>
+                                            <span class="text-[10px] md:text-xs text-gray-500 font-medium">Verified
+                                                Admin</span>
+                                        </div>
+                                        {{-- Added PV Badge --}}
+                                        <span class="bg-blue-50 text-blue-700 border border-blue-100 px-1.5 py-0.5 rounded text-[9px] md:text-[10px] font-bold">
+                                            PV: {{ $prod->pv ?? 0 }}
+                                        </span>
                                     </div>
                                 </div>
 
@@ -117,10 +130,16 @@
                                     title="{{ $prod->product_name }}">
                                     {{ $prod->product_name }}
                                 </h3>
-                                <div class="flex items-center gap-1 mt-1">
-                                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                    <span class="text-[10px] md:text-xs text-gray-500 font-medium">Vendor
-                                        Verified</span>
+                                <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                                    <div class="flex items-center gap-1">
+                                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                        <span class="text-[10px] md:text-xs text-gray-500 font-medium">Vendor
+                                            Verified</span>
+                                    </div>
+                                    {{-- Added PV Badge --}}
+                                    <span class="bg-blue-50 text-blue-700 border border-blue-100 px-1.5 py-0.5 rounded text-[9px] md:text-[10px] font-bold">
+                                        PV: {{ $prod->pv ?? 0 }}
+                                    </span>
                                 </div>
                             </div>
 

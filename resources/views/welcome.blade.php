@@ -164,14 +164,14 @@
 
         .banner-img {
             width: 100%;
-            height: 350px;
+            height: 450px;
             object-fit: cover;
             border-radius: 15px;
         }
 
         @media (max-width: 768px) {
             .banner-img {
-                height: 200px;
+                height: 250px;
             }
         }
 
@@ -429,7 +429,7 @@
                 <div class="swiper-wrapper">
                     @forelse($productBanners as $pBanner)
                         <div class="swiper-slide">
-                            <div class="rounded-xl overflow-hidden shadow-lg relative group h-[400px] md:h-[500px]">
+                            <div class="rounded-xl overflow-hidden shadow-lg relative group h-[350px] md:h-[450px]">
                                 <img src="{{ asset($pBanner->banner_image) }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     alt="{{ $pBanner->title }}">

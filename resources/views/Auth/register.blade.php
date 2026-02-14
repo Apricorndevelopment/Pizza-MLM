@@ -284,9 +284,8 @@
         }
 
         .logo img {
-            width: 80%;
-            height: 80%;
             object-fit: contain;
+            border-radius: 50%;
         }
 
         .brand-name {
@@ -634,7 +633,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" onclick="return confirm('Are you sure you want to register with ?')"
+                    <button type="submit" onclick="return confirm('Are you sure you want to register with ZiddiZone?')"
                         class="btn-register mt-8">
                         <i class="bi bi-person-plus-fill mr-3"></i>
                         Create Account & Start Earning

@@ -541,7 +541,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" onclick="return confirm('Are you sure you want to login to ?')"
+                    <button type="submit" onclick="return confirm('Are you sure you want to login to ZiddiZone?')"
                         class="btn-login">
                         <i class="bi bi-box-arrow-in-right mr-3"></i>
                         Sign In to Your Account

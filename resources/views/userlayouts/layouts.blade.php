@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>User Dashboard </title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -124,14 +122,11 @@
 
 <body class="bg-gray-50">
 
-    <!-- Mobile overlay -->
     <div id="sidebar-overlay" class="lg:hidden"></div>
 
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar - Green Theme -->
         <aside id="sidebar"
             class="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0 transition-transform duration-300 lg:translate-x-0">
-            <!-- Logo -->
             <div class="h-16 flex items-center px-4 border-b border-gray-200 bg-emerald-50">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center">
@@ -141,7 +136,6 @@
                 </div>
             </div>
 
-            <!-- Menu -->
             <nav class="flex-1 overflow-y-auto no-scrollbar py-4 scroll-smooth">
                 <div class="px-3 space-y-1">
 
@@ -153,7 +147,7 @@
 
                     <a href="{{ route('user.profile') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
+                        <i class="bi bi-person-circle mr-3 text-lg"></i>
                         <span class="font-medium">My Profile</span>
                     </a>
 
@@ -162,7 +156,7 @@
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
                             <div class="flex items-center">
-                                <i class="bi bi-bag-check mr-3 text-lg"></i> {{-- Changed to bag-check for generic orders --}}
+                                <i class="bi bi-bag-check mr-3 text-lg"></i>
                                 <span class="font-medium">Orders</span>
                             </div>
                             <i class="bi bi-chevron-down text-xs transition-transform"></i>
@@ -170,13 +164,13 @@
                         <div class="sidebar-submenu pl-8 mt-1 space-y-1">
                             <a href="{{ route('user.shop.index') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-cart-plus mr-2"></i> {{-- Icon for ordering --}}
+                                <i class="bi bi-cart-plus mr-2"></i>
                                 Order Products
                             </a>
 
                             <a href="{{ route('user.orders.index') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-list-ul mr-2"></i> {{-- Icon for viewing list --}}
+                                <i class="bi bi-card-list mr-2"></i>
                                 View Orders
                             </a>
                         </div>
@@ -194,21 +188,17 @@
                         <div class="sidebar-submenu pl-8 mt-1 space-y-1">
                             <a href="{{ route('user.viewwallet') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-credit-card mr-2"></i> {{-- Icon for managing --}}
+                                <i class="bi bi-cash-stack mr-2"></i>
                                 Manage Wallet
                             </a>
                             <a href="{{ route('user.funds.create') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-credit-card mr-2"></i> {{-- Icon for managing --}}
+                                <i class="bi bi-plus-circle mr-2"></i>
                                 Add Money
                             </a>
-                            {{-- <a href="{{ route('user.transferWallet1Form') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-arrow-left-right mr-2"></i>
-                                Transfer Wallet
-                            </a> --}}
                         </div>
                     </div>
+                    
                     <div class="menu-group">
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
@@ -221,17 +211,17 @@
                         <div class="sidebar-submenu pl-6 mt-1 space-y-1">
                             <a href="{{ route('user.view.userTree') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-tree mr-2"></i> {{-- Icon for tree --}}
+                                <i class="bi bi-tree mr-2"></i>
                                 Network Tree
                             </a>
                             <a href="{{ route('user.network.summary') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-grid-3x3-gap mr-2"></i> {{-- Icon for summary --}}
+                                <i class="bi bi-clipboard-data mr-2"></i>
                                 Network Summary
                             </a>
                             <a href="{{ route('user.direct.team') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-people mr-2"></i> {{-- Icon for team --}}
+                                <i class="bi bi-people mr-2"></i>
                                 Direct Team
                             </a>
                         </div>
@@ -241,7 +231,7 @@
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
                             <div class="flex items-center">
-                                <i class="bi bi-cash-coin mr-3 text-lg"></i> {{-- Changed to cash-coin for incentives --}}
+                                <i class="bi bi-cash-coin mr-3 text-lg"></i>
                                 <span class="font-medium">Incentives</span>
                             </div>
                             <i class="bi bi-chevron-down text-xs transition-transform"></i>
@@ -249,53 +239,52 @@
                         <div class="sidebar-submenu pl-6 mt-1 space-y-1">
                             <a href="{{ route('user.income.direct') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-currency-dollar mr-2"></i> {{-- Icon for direct commission --}}
+                                <i class="bi bi-person-check mr-2"></i>
                                 Direct Income
                             </a>
                             <a href="{{ route('user.income.bonus') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-share mr-2"></i> {{-- Icon for network bonus --}}
+                                <i class="bi bi-gift mr-2"></i>
                                 Bonus Income
                             </a>
                             <a href="{{ route('user.income.level') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-bar-chart-steps mr-2"></i> {{-- Icon for levels --}}
+                                <i class="bi bi-bar-chart-steps mr-2"></i>
                                 Level Income
                             </a>
                             <a href="{{ route('user.income.reward') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-trophy mr-2"></i> {{-- Icon for rewards --}}
+                                <i class="bi bi-trophy mr-2"></i>
                                 Reward Income
                             </a>
                             <a href="{{ route('user.income.repurchase') }}"
                                 class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-calendar-check mr-2"></i> {{-- Icon for yearly --}}
+                                <i class="bi bi-arrow-repeat mr-2"></i>
                                 Repurchase Income
                             </a>
                         </div>
-
-                        <a href="{{ route('user.complaints.index') }}"
-                            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                            <i class="bi bi-person-circle mr-3 text-lg"></i> {{-- Changed to person-circle for profile --}}
-                            <span class="font-medium">Need Help?</span>
-                        </a>
-
-                        <a href="{{ route('user.coupons.purchase') }}"
-                            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                            <i class="bi bi-person-circle mr-3 text-lg"></i>
-                            <span class="font-medium">Purchase Coupons</span>
-                        </a>
-
-
-                        <a href="{{ route('logout') }}"
-                            class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                            <i class="bi bi-box-arrow-right mr-3 text-lg"></i> {{-- Changed to box-arrow-right for logout --}}
-                            <span class="font-medium">Logout</span>
-                        </a>
                     </div>
+
+                    <a href="{{ route('user.complaints.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-headset mr-3 text-lg"></i>
+                        <span class="font-medium">Need Help?</span>
+                    </a>
+
+                    <a href="{{ route('user.coupons.purchase') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-ticket-perforated mr-3 text-lg"></i>
+                        <span class="font-medium">Purchase Coupons</span>
+                    </a>
+
+                    <a href="{{ route('logout') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-box-arrow-right mr-3 text-lg"></i>
+                        <span class="font-medium">Logout</span>
+                    </a>
+                </div>
             </nav>
 
-            <!-- Footer -->
             <div class="p-3 border-t border-gray-200">
                 <div class="flex items-center">
                     <div class="profile-pic-wrapper">
@@ -316,12 +305,9 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Header -->
             <header
                 class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0">
-                <!-- Left side -->
                 <div class="flex items-center">
                     <button id="sidebar-toggle" class="lg:hidden text-gray-500 hover:text-gray-700 mr-4">
                         <i class="bi bi-list text-xl"></i>
@@ -329,10 +315,8 @@
                     <h1 class="text-lg font-semibold text-gray-800" id="page-title">Dashboard</h1>
                 </div>
 
-                <!-- Right side -->
                 <div class="flex items-center space-x-4">
 
-                    <!-- Profile Dropdown -->
                     <div class="relative">
                         <button id="profile-dropdown-toggle" class="flex items-center space-x-3 focus:outline-none">
                             <div class="profile-pic-wrapper">
@@ -349,10 +333,9 @@
                                 <p class="text-sm text-gray-500">Member</p>
                             </div>
                             <i id="profile-arrow"
-                                class="bi bi-chevron-down text-gray-500 hidden md:block transition-transfrom duration-300"></i>
+                                class="bi bi-chevron-down text-gray-500 hidden md:block transition-transform duration-300"></i>
                         </button>
 
-                        <!-- Dropdown Menu -->
                         <div id="profile-dropdown-menu"
                             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 hidden">
                             <a href="{{ route('user.profile') }}"
@@ -376,7 +359,6 @@
                 </div>
             </header>
 
-            <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto bg-gray-50">
                 @section('container')
                 @show
@@ -406,14 +388,12 @@
             // Toggle profile dropdown
             const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
             const profileDropdownMenu = document.getElementById('profile-dropdown-menu');
-            const profileArrow = document.getElementById('profile-arrow'); // Arrow ko select kiya
+            const profileArrow = document.getElementById('profile-arrow'); 
 
             if (profileDropdownToggle) {
                 profileDropdownToggle.addEventListener('click', (e) => {
                     e.stopPropagation();
                     profileDropdownMenu.classList.toggle('hidden');
-
-                    // Arrow ko rotate karne ke liye ye line add karein
                     profileArrow.classList.toggle('rotate-180');
                 });
             }
@@ -423,8 +403,7 @@
                 if (profileDropdownToggle && !profileDropdownToggle.contains(e.target) && !
                     profileDropdownMenu.contains(e.target)) {
                     profileDropdownMenu.classList.add('hidden');
-                    profileArrow.classList.remove(
-                        'rotate-180'); // Bahar click ho to arrow wapas seedha ho jaye
+                    profileArrow.classList.remove('rotate-180'); 
                 }
             });
 
@@ -527,7 +506,6 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    {{-- Ye line MISSING thi, ise add karein: --}}
     @stack('scripts')
 </body>
 

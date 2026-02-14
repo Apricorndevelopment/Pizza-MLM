@@ -84,6 +84,18 @@
         #cartItemsList::-webkit-scrollbar-track {
             background-color: transparent;
         }
+
+        /* Remove arrows/spinners from number input */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+            /* Firefox */
+        }
     </style>
 
     <div class="container py-2">
@@ -244,9 +256,9 @@
                                                     <button class="btn btn-sm btn-light text-warning fw-bold border-0 px-3"
                                                         onclick="updateCouponQty(-1)" type="button"><i
                                                             class="bi bi-dash-lg"></i></button>
-                                                    <input type="text" id="couponSelect" value="0"
+                                                    <input type="number" id="couponSelect" value="0"
                                                         class="form-control form-control-sm border-0 text-center fw-bold bg-transparent text-dark shadow-none"
-                                                        style="width: 50px;" readonly>
+                                                        style="width: 50px;" oninput="validateCouponInput(this)">
                                                     <button class="btn btn-sm btn-light text-warning fw-bold border-0 px-3"
                                                         onclick="updateCouponQty(1)" type="button"><i
                                                             class="bi bi-plus-lg"></i></button>
@@ -534,6 +546,24 @@
             document.getElementById('cartInput').value = JSON.stringify(Object.values(cart));
             document.getElementById('wallet2Input').value = w2Entered;
             document.getElementById('couponInput').value = coupons;
+        }
+
+        // Validate manual typing in Coupon Input
+        function validateCouponInput(input) {
+            let val = parseInt(input.value) || 0;
+
+            // Cannot be less than 0
+            if (val < 0) {
+                input.value = 0;
+            }
+
+            // Cannot be more than the dynamically calculated max coupons
+            if (val > currentMaxCoupons) {
+                input.value = currentMaxCoupons;
+            }
+
+            // Update the totals
+            calculateFinalTotal();
         }
 
         // REMOVE the function 'populateWallet2Options' calls from 'updateUI', it is no longer needed.

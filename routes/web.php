@@ -173,6 +173,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('/add-wallet2', [WalletController::class, 'addWallet2'])->name('admin.addWallet2');
 
 
+        Route::get('/all-user-incomes', [AdminController::class, 'allIncomes'])->name('admin.incomes.all');
         Route::get('/withdrawals', [WalletController::class, 'viewWithdrawlRequest'])->name('admin.withdrawls.index');
         Route::post('/withdrawal/toggle', [WalletController::class, 'toggleWithdrawalStatus'])->name('admin.withdrawal.toggle');
         Route::post('/withdrawals/{id}/approve', [WalletController::class, 'approveWithdrawlRequest'])->name('admin.withdrawls.approve');

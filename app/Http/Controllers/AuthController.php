@@ -107,9 +107,9 @@ class AuthController extends Controller
 
         try {
             // Generate ULID
-            $customUlid = 'AH' . rand(1000000, 9999999);
+            $customUlid = 'SS' . rand(1000000, 9999999);
             while (User::where('ulid', $customUlid)->exists()) {
-                $customUlid = 'AH' . rand(1000000, 9999999);
+                $customUlid = 'SS' . rand(1000000, 9999999);
             }
 
             // Create User

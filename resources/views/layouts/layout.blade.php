@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Smart Save24 Vendor Admin Dashboard</title>
+    <title>Smart Save24 Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -239,6 +239,10 @@
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Withdrawal Requests
                             </a>
+                            <a href="{{ route('admin.incomes.all') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                All User Incomes
+                            </a>
                             <a href="{{ route('admin.wallet-transactions') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Transactions Log
@@ -283,13 +287,13 @@
                             <i class="bi bi-chevron-down text-xs transition-transform duration-200"></i>
                         </div>
                         <div class="sidebar-submenu pl-10 mt-1 space-y-1">
-                            <a href="{{ route('admin.percentage.index') }}"
-                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
-                                Level Percentage
-                            </a>
                             <a href="{{ route('admin.income.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Income Distribution
+                            </a>
+                            <a href="{{ route('admin.percentage.index') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Level Percentage
                             </a>
                             <a href="{{ route('admin.rewards.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">

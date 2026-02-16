@@ -2,7 +2,7 @@
 @section('title', 'Manage Rewards')
 
 @section('container')
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4">
 
         {{-- Page Header --}}
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -263,13 +263,13 @@
 
         function formatNumberShort(num) {
         if (num >= 1_000_000_000) {
-            return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+            return (num / 1_000_000_000).toFixed(2).replace(/\.0$/, '') + 'B';
         }
         if (num >= 1_000_000) {
-            return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+            return (num / 1_000_000).toFixed(2).replace(/\.0$/, '') + 'M';
         }
         if (num >= 1_000) {
-            return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+            return (num / 1_000).toFixed(2).replace(/\.0$/, '') + 'K';
         }
         return num;
     }

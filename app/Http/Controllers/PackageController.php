@@ -174,7 +174,7 @@ class PackageController extends Controller
             'dp' => 'required|numeric|min:0',
             'pv' => 'required|numeric|min:0',
             'max_coupon_usage' => 'required|integer|min:0',
-            'percentage' => 'required|numeric|min:0|max:100',
+            'profit' => 'required|numeric|min:0|max:100',
             'isVeg' => 'required|string|in:veg,non-veg',
         ]);
 
@@ -204,7 +204,7 @@ class PackageController extends Controller
             'gst' => $request->gst,
             'dp' => $request->dp,
             'pv' => $request->pv,
-            'percentage' => $request->percentage,
+            'profit' => $request->profit,
             'max_coupon_usage' => $request->max_coupon_usage,
             'isVeg' => $request->isVeg
         ]);

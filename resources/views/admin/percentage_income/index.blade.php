@@ -55,29 +55,31 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-100">
-                            <th class="px-6 py-4 font-semibold">ID</th>
-                            <th class="px-6 py-4 font-semibold">Direct Income</th>
-                            <th class="px-6 py-4 font-semibold">Bonus Income</th>
-                            <th class="px-6 py-4 font-semibold">Cashback Income</th>
-                            <th class="px-6 py-4 font-semibold">Personal Wallet</th>
-                            <th class="px-6 py-4 font-semibold">Second Wallet</th>
-                            <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            <th class="p-3 font-semibold">ID</th>
+                            <th class="p-3 font-semibold">Direct Income</th>
+                            <th class="p-3 font-semibold">Bonus Income</th>
+                            <th class="p-3 font-semibold">Vendor Income</th>
+                            <th class="p-3 font-semibold">Cashback Income</th>
+                            <th class="p-3 font-semibold">Personal Wallet</th>
+                            <th class="p-3 font-semibold">Second Wallet</th>
+                            <th class="p-3 font-semibold text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($incomes as $item)
                             <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 text-slate-500 font-mono text-sm">#{{ $item->id }}</td>
+                                <td class="p-3 text-slate-500 font-mono text-sm">#{{ $item->id }}</td>
 
                                 {{-- Data Columns --}}
-                                <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->direct_income }}%</td>
-                                <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->bonus_income }}%</td>
-                                <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->cashback_income }}%</td>
-                                <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->personal_wallet }}%</td>
-                                <td class="px-6 py-4 text-slate-700 font-bold">{{ $item->second_wallet }}%</td>
+                                <td class="p-3 text-slate-700 font-bold">{{ $item->direct_income }}%</td>
+                                <td class="p-3 text-slate-700 font-bold">{{ $item->bonus_income }}%</td>
+                                <td class="p-3 text-slate-700 font-bold">{{ $item->vendor_income }}%</td>
+                                <td class="p-3 text-slate-700 font-bold">{{ $item->cashback_income }}%</td>
+                                <td class="p-3 text-slate-700 font-bold">{{ $item->personal_wallet }}%</td>
+                                <td class="p-3 text-slate-700 font-bold">{{ $item->second_wallet }}%</td>
 
                                 {{-- Actions (Only Edit) --}}
-                                <td class="px-6 py-4 text-right">
+                                <td class="p-3 text-right">
                                     <button onclick='openEditModal(@json($item))'
                                         class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md text-sm font-medium transition-colors">
                                         <i class="fas fa-edit mr-1.5"></i> Edit
@@ -147,6 +149,15 @@
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
                         </div>
+                        {{-- Vendor Income --}}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Vendor Income</label>
+                            <div class="relative">
+                                <input type="number" name="vendor_income" id="vendor_income" required
+                                    class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                                <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
+                            </div>
+                        </div>
 
                         {{-- Cashback Income --}}
                         <div>
@@ -206,6 +217,7 @@
             // Fill inputs
             document.getElementById('direct_income').value = data.direct_income;
             document.getElementById('bonus_income').value = data.bonus_income;
+            document.getElementById('vendor_income').value = data.vendor_income;
             document.getElementById('cashback_income').value = data.cashback_income;
             document.getElementById('personal_wallet').value = data.personal_wallet;
             document.getElementById('second_wallet').value = data.second_wallet;

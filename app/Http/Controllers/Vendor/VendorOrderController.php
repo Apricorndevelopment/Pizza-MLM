@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-// Models
 use App\Models\Order;
 use App\Models\OrderRejection;
 use App\Models\Product;
@@ -16,7 +15,6 @@ use App\Models\User;
 use App\Models\Wallet1Transaction;
 use App\Models\Wallet2Transaction;
 
-// Income Models
 use App\Models\PercentageIncome;
 use App\Models\PercentageLevelIncome;
 use App\Models\BonusIncome;
@@ -25,6 +23,7 @@ use App\Models\LevelIncome;
 use App\Models\RepurchaseIncome;
 use App\Models\CashbackIncome;
 use App\Models\PercentageReward;
+use App\Models\VendorIncome;
 
 class VendorOrderController extends Controller
 {
@@ -106,9 +105,9 @@ class VendorOrderController extends Controller
                     throw new \Exception("User not found for this order.");
                 }
                 // Process Income Distribution & Stock Updates
-                $this->processOrderDelivery($order, $user);
+                $this->processOrderDelivery($order, $user, $vendorId);
 
-                // B. Pay the Vendor (NEW ADDITION)
+                // B. Pay the Vendor
                 $this->payVendorForOrder($order, $vendorId);
             }
 
@@ -170,27 +169,20 @@ class VendorOrderController extends Controller
         }
     }
 
-    // =========================================================================
-    // NEW METHOD: Pay Vendor
-    // =========================================================================
     private function payVendorForOrder($order, $vendorId)
     {
         // Calculate total amount for this specific vendor from the order items
-        // We calculate (Price * Quantity) for items belonging to THIS vendor only.
         $vendorEarnings = $order->items()
             ->where('vendor_id', $vendorId)
-            ->sum(DB::raw('price * quantity')); // Assuming 'price' is the selling price
+            ->sum(DB::raw('price * quantity')); 
 
         if ($vendorEarnings > 0) {
-            // 1. Find Vendor User
             $vendorUser = User::find($vendorId);
 
             if ($vendorUser) {
-                // 2. Add to Vendor's Wallet 1 (or whichever wallet holds real money)
                 $vendorUser->wallet1_balance += $vendorEarnings;
                 $vendorUser->save();
 
-                // 3. Log Transaction
                 Wallet1Transaction::create([
                     'user_id'   => $vendorUser->id,
                     'user_ulid' => $vendorUser->ulid,
@@ -202,13 +194,12 @@ class VendorOrderController extends Controller
         }
     }
 
-    private function processOrderDelivery($order, $user)
+    private function processOrderDelivery($order, $user, $vendorId)
     {
         // --- STEP 1: Reduce Stock Quantity ---
-        // This decreases the product stock from the 'products' table
         $this->reduceProductStock($order);
 
-        // --- STEP 2: Calculate Total PV (Using Product Model) ---
+        // --- STEP 2: Calculate Total PV ---
         $totalPV = $this->calculateTotalPV($order);
 
         $settings = PercentageIncome::first();
@@ -225,25 +216,51 @@ class VendorOrderController extends Controller
 
             // Process Upline Business Growth & Rewards
             $this->processUplineGrowth($user, $totalPV, $settings);
+
+            // --- STEP 3: DISTRIBUTE VENDOR INCOME ---
+            $this->distributeVendorIncome($vendorId, $totalPV, $order->total_amount, $settings);
+        }
+    }
+
+    private function distributeVendorIncome($vendorId, $totalPV, $purchaseAmount, $settings)
+    {
+        $vendorUser = User::find($vendorId);
+        
+        if (!$vendorUser || !$vendorUser->sponsor_id) {
+            return; 
+        }
+
+        $vendorSponsor = User::where('ulid', $vendorUser->sponsor_id)->first();
+
+        // RULES APPLIED: Sponsor must be 'active' to receive Vendor Income
+        if ($vendorSponsor && $vendorSponsor->status === 'active' && $settings->vendor_income > 0) {
+            
+            $incomeAmount = $totalPV * ($settings->vendor_income / 100);
+
+            $this->distributeToWallets($vendorSponsor, $incomeAmount, $settings, "Vendor Income from Vendor ID: {$vendorUser->ulid}");
+
+            VendorIncome::create([
+                'user_id'          => $vendorSponsor->id,
+                'user_ulid'        => $vendorSponsor->ulid,
+                'from_vendor_name' => $vendorUser->name,
+                'from_vendor_ulid' => $vendorUser->ulid,
+                'purchase_amount'  => $purchaseAmount,
+                'purchase_pv'      => $totalPV,
+                'income_amount'    => $incomeAmount,
+                'percentage'       => $settings->vendor_income,
+            ]);
         }
     }
 
     private function reduceProductStock($order)
     {
         foreach ($order->items as $item) {
-            // Using App\Models\Product as this is the Vendor Controller
             $product = Product::find($item->product_id);
 
-            // Check if product exists and stock management is enabled
             if ($product && $product->manage_stock == 1) {
-
-                // Decrement Stock
-                // Ensure we don't go below zero (optional validation logic can be added here)
                 if ($product->stock_quantity >= $item->quantity) {
                     $product->decrement('stock_quantity', $item->quantity);
                 } else {
-                    // Force set to 0 or allow negative depending on business logic. 
-                    // Using decrement allows negative which can help track overselling.
                     $product->decrement('stock_quantity', $item->quantity);
                 }
             }
@@ -254,9 +271,7 @@ class VendorOrderController extends Controller
     {
         $totalPV = 0;
         foreach ($order->items as $item) {
-            // CHANGE: Using App\Models\Product instead of ProductPackage
             $product = Product::find($item->product_id);
-
             if ($product) {
                 $totalPV += ($product->pv * $item->quantity);
             }
@@ -268,14 +283,14 @@ class VendorOrderController extends Controller
     {
         // 1. Direct Income
         $this->distributeDirectIncome($user, $order->total_amount, $totalPV, $settings);
-
+        
+        // 2. Bonus Income (To Wallet 2 only)
         $this->distributeBonusIncome($user, $order->total_amount, $totalPV, $settings);
 
-        // 2. Level Income
+        // 3. Level Income
         $this->distributeLevelIncome($user, $totalPV, $order->total_amount, $settings, 'level_incomes');
 
-        // 3. Cashback Income
-        $this->distributeCashbackIncome($user, $totalPV, $order->total_amount, $settings);
+        // RULES APPLIED: Cashback is removed from Activation (Only given on Repurchase)
 
         // 4. Activate User
         $user->status = 'active';
@@ -299,28 +314,28 @@ class VendorOrderController extends Controller
     private function processUplineGrowth($startUser, $pv, $settings)
     {
         $currentUplineUlid = $startUser->sponsor_id;
-
         $milestones = PercentageReward::orderBy('achievement', 'asc')->get();
 
         while ($currentUplineUlid) {
             $upline = User::where('ulid', $currentUplineUlid)->first();
-
             if (!$upline) break;
 
-            // 1. Update Total Business
             $upline->total_business += $pv;
             $upline->save();
 
-            // 2. Check for Rewards
             $this->checkAndDistributeRewards($upline, $milestones, $settings);
 
-            // Move Up
             $currentUplineUlid = $upline->sponsor_id;
         }
     }
 
     private function checkAndDistributeRewards($user, $milestones, $settings)
     {
+        // RULES APPLIED: Only active users receive reward income
+        if ($user->status !== 'active') {
+            return;
+        }
+
         $receivedRewardIds = DB::table('rewards_incomes')
             ->where('user_id', $user->id)
             ->pluck('reward_id')
@@ -329,14 +344,11 @@ class VendorOrderController extends Controller
         foreach ($milestones as $reward) {
             if ($user->total_business >= $reward->achievement && !in_array($reward->id, $receivedRewardIds)) {
 
-                // A. Distribute Reward Amount
                 $this->distributeToWallets($user, $reward->reward, $settings, "Reward Achieved: {$reward->rank}");
 
-                // B. Update Rank
                 $user->current_rank = $reward->rank;
                 $user->save();
 
-                // C. Log History
                 DB::table('rewards_incomes')->insert([
                     'user_id'            => $user->id,
                     'user_ulid'          => $user->ulid,
@@ -359,7 +371,8 @@ class VendorOrderController extends Controller
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
-        if ($sponsor) {
+        // RULES APPLIED: Check if sponsor is active
+        if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->direct_income / 100);
 
             $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Direct Income from User: {$user->ulid}");
@@ -381,10 +394,21 @@ class VendorOrderController extends Controller
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
-        if ($sponsor) {
+        // RULES APPLIED: Check if sponsor is active
+        if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->bonus_income / 100);
 
-            $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Bonus Income from User: {$user->ulid}");
+            // RULES APPLIED: 100% to Wallet 2 ONLY. No split distribution.
+            $sponsor->wallet2_balance += $incomeAmount;
+            $sponsor->save();
+
+            Wallet2Transaction::create([
+                'user_id'   => $sponsor->id,
+                'user_ulid' => $sponsor->ulid,
+                'wallet2'   => $incomeAmount,
+                'notes'     => "Bonus Income from User: {$user->ulid} (100% Bonus Wallet)",
+                'balance'   => $sponsor->wallet2_balance,
+            ]);
 
             BonusIncome::create([
                 'user_id'         => $sponsor->id,
@@ -423,6 +447,12 @@ class VendorOrderController extends Controller
         foreach ($levelSettings as $levelSetting) {
             $uplineUser = User::where('ulid', $currentUplineUlid)->first();
             if (!$uplineUser) break;
+
+            // RULES APPLIED: Skip if upline is inactive
+            if ($uplineUser->status !== 'active') {
+                $currentUplineUlid = $uplineUser->sponsor_id;
+                continue; // Move to the next upline
+            }
 
             $incomeAmount = $totalPV * ($levelSetting->percentage / 100);
             $note = ($tableType == 'level_incomes')
@@ -468,6 +498,17 @@ class VendorOrderController extends Controller
         $user->wallet1_balance += $wallet1Amount;
         $user->wallet2_balance += $wallet2Amount;
         $user->save();
+
+        // FIX: Added missing Wallet 1 Transaction
+        if ($wallet1Amount > 0) {
+            Wallet1Transaction::create([
+                'user_id'   => $user->id,
+                'user_ulid' => $user->ulid,
+                'wallet1'   => $wallet1Amount,
+                'notes'     => $note . ' (W1)',
+                'balance'   => $user->wallet1_balance,
+            ]);
+        }
 
         if ($wallet2Amount > 0) {
             Wallet2Transaction::create([

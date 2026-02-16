@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal - </title>
+    <title>Admin Portal - SmartSave24 </title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -135,7 +135,7 @@
                         </div>
                     </a>
                     <div class="text-left">
-                        <h1 class="text-2xl font-bold text-white"></h1>
+                        <h1 class="text-2xl font-bold text-white">SamrtSave24</h1>
                         <p class="text-slate-400 text-sm">Administration System</p>
                     </div>
                 </div>

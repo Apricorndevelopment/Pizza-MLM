@@ -275,59 +275,6 @@ class AdminController extends Controller
         return redirect()->route('admin.photo.manage')->with('success', 'Photo deleted successfully!');
     }
 
-    public function manageNews()
-    {
-        $news_pics = News::orderBy('created_at', 'desc')->paginate(10);
-
-        return view('admin.addNews', compact('news_pics'));
-    }
-
-    public function addNews(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'news_pic' => 'required|mimes:jpeg,png,jpg,webp|max:5120'
-        ]);
-
-        if ($request->hasFile('news_pic')) {
-            $file = $request->file('news_pic');
-            $extension = $file->getClientOriginalExtension();
-            $filename = uniqid() . '.' . $extension;
-            $directory = 'storage/news_pics';
-
-            if (!File::exists($directory)) {
-                File::makeDirectory($directory, 0755, true);
-            }
-
-            $file->move($directory, $filename);
-
-            News::create([
-                'title' => $request->input('title'),
-                'news_pic' =>  $filename
-            ]);
-
-            return redirect()->route('admin.news.manage')->with('success', 'Photo uploaded successfully!');
-        } else {
-            return redirect()->back()->withErrors(['news_pic' => 'Photo upload failed. Please try again.']);
-        }
-    }
-
-    public function deleteNews($id)
-    {
-        $news_pic = News::findOrFail($id);
-
-        // Delete the news_pic file from storage
-        $filePath = 'storage/news_pics/' . $news_pic->news_pic;
-        if (File::exists($filePath)) {
-            File::delete($filePath);
-        }
-
-        // Delete the database record
-        $news_pic->delete();
-
-        return redirect()->route('admin.news.manage')->with('success', 'News deleted successfully!');
-    }
-
     public function viewmemeber(Request $request)
     {
         $status = $request->input('status', 'all');
@@ -590,149 +537,65 @@ class AdminController extends Controller
         return array_values($users); // Reset array keys
     }
 
-
-    public function showFormForProfitDistribution()
+    public function allIncomes(Request $request)
     {
-        $royaltyLevels = DB::table('royalty_level_rewards')
-            ->whereNotNull('profit')
-            ->orderBy('sr_no')
-            ->get();
-        return view('admin.profit-distribution', compact('royaltyLevels'));
-    }
+        // 1. Direct Income Query
+        $direct = DB::table('direct_income')
+            ->join('users', 'direct_income.user_id', '=', 'users.id')
+            ->select('users.name as user_name', 'users.ulid as user_ulid', 'direct_income.income_amount as amount', DB::raw("'Direct Income' as type"), 'direct_income.created_at');
 
-    public function distributeYearlyProfit(Request $request)
-    {
-        $validated = $request->validate([
-            'profit' => 'required|numeric|min:0',
-            'expenditure' => 'required|numeric|min:0',
-            'profit_share' => 'required|numeric|min:0|max:100', // Only for package buyers
-        ]);
+        // 2. Level Income Query
+        $level = DB::table('level_incomes')
+            ->join('users', 'level_incomes.user_id', '=', 'users.id')
+            ->select('users.name as user_name', 'users.ulid as user_ulid', 'level_incomes.amount as amount', DB::raw("'Level Income' as type"), 'level_incomes.created_at');
 
-        // Calculate final profit
-        $finalProfit = $validated['profit'] - $validated['expenditure'];
-        $year = now()->year;
+        // 3. Bonus Income Query
+        $bonus = DB::table('bonus_income')
+            ->join('users', 'bonus_income.user_id', '=', 'users.id')
+            ->select('users.name as user_name', 'users.ulid as user_ulid', 'bonus_income.income_amount as amount', DB::raw("'Bonus Income' as type"), 'bonus_income.created_at');
 
-        // Process royalty level rewards distribution (using their own percentages)
-        $this->distributeToRoyaltyLevels($finalProfit, $year);
+        // 4. Rewards Income Query
+        $reward = DB::table('rewards_incomes')
+            ->join('users', 'rewards_incomes.user_id', '=', 'users.id')
+            ->select('users.name as user_name', 'users.ulid as user_ulid', 'rewards_incomes.reward_amount as amount', DB::raw("'Reward Income' as type"), 'rewards_incomes.created_at');
 
-        // Process package buyers distribution (using form's profit_share)
-        $this->distributeToPackageBuyers($finalProfit, $validated['profit_share'], $year);
+        // 5. Repurchase Income Query
+        $repurchase = DB::table('repurchase_incomes')
+            ->join('users', 'repurchase_incomes.user_id', '=', 'users.id')
+            ->select('users.name as user_name', 'users.ulid as user_ulid', 'repurchase_incomes.commission as amount', DB::raw("'Repurchase Income' as type"), 'repurchase_incomes.created_at');
 
-        DB::table('yearly_royalty_distribution')->insert([
-            'profit' => $validated['profit'],
-            'expenditure' => $validated['expenditure'],
-            'final_profit' => $finalProfit,
-            'year' => $year,
-            'profit_share' => $validated['profit_share'],
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+        // 6. Cashback Income Query
+        $cashback = DB::table('cashback_income')
+            ->join('users', 'cashback_income.user_id', '=', 'users.id')
+            ->select('users.name as user_name', 'users.ulid as user_ulid', 'cashback_income.income_amount as amount', DB::raw("'Cashback Income' as type"), 'cashback_income.created_at');
 
-        return redirect()->back()->with('success', 'Profit distributed successfully!');
-    }
+        // Combine all queries using UNION ALL inside a parent query
+        $query = DB::table(DB::raw("({$direct->toSql()} UNION ALL {$level->toSql()} UNION ALL {$bonus->toSql()} UNION ALL {$reward->toSql()} UNION ALL {$repurchase->toSql()} UNION ALL {$cashback->toSql()}) as combined_incomes"))
+            ->mergeBindings($direct)
+            ->mergeBindings($level)
+            ->mergeBindings($bonus)
+            ->mergeBindings($reward)
+            ->mergeBindings($repurchase)
+            ->mergeBindings($cashback);
 
-    protected function distributeToRoyaltyLevels($finalProfit, $year)
-    {
-        $royaltyLevels = DB::table('royalty_level_rewards')
-            ->whereNotNull('profit')
-            ->orderBy('sr_no')
-            ->get();
-
-        foreach ($royaltyLevels as $levels) {
-            if (empty($levels->level) || empty($levels->profit)) {
-                continue;
-            }
-
-            // Calculate amount using level's own profit percentage
-            $levelAmount = $finalProfit * ($levels->profit / 100);
-
-            $users = User::where('current_rank', $levels->level)->get();
-            $userCount = $users->count();
-
-            if ($userCount > 0) {
-                $perUserAmount = $levelAmount / $userCount;
-
-                foreach ($users as $user) {
-                    $user->increment('wallet1_balance', $perUserAmount);
-
-                    Wallet1Transaction::create([
-                        'user_id' => $user->id,
-                        'user_ulid' => $user->ulid,
-                        'points' => $perUserAmount,
-                        'notes' => "₹$perUserAmount received for $year yearly profit as $levels->level",
-                        'admin_id' => Auth::id()
-                    ]);
-                }
-            }
-        }
-    }
-
-    protected function distributeToPackageBuyers($finalProfit, $profitSharePercentage, $year)
-    {
-        $packageBuyers = ProductPackagePurchase::where('profit_share', 1)
-            ->with('user')
-            ->get();
-
-        $totalAmount = $finalProfit * ($profitSharePercentage / 100);
-
-        // Calculate weighted amounts based on package price and duration
-        $totalWeight = 0;
-        $buyersData = [];
-
-        $currentDate = now();
-        $totalMonths = 12;
-
-        foreach ($packageBuyers as $purchase) {
-            // Calculate duration factor (months since purchase)
-            $monthsSincePurchase = $purchase->created_at->diffInMonths($currentDate);
-            $durationRatio = min(1, $monthsSincePurchase / $totalMonths);
-
-            $weight = $purchase->final_price * $durationRatio;
-            $totalWeight += $weight;
-
-            $buyersData[] = [
-                'user' => $purchase->user,
-                'weight' => $weight,
-                'purchase' => $purchase,
-            ];
+        // Search functionality (Search by Name or ULID)
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('user_ulid', 'like', "%{$search}%")
+                    ->orWhere('user_name', 'like', "%{$search}%");
+            });
         }
 
-        if ($totalWeight > 0) {
-            foreach ($buyersData as $buyer) {
-                $userAmount = ($buyer['weight'] / $totalWeight) * $totalAmount;
-
-                if ($userAmount > 0) {
-                    $user = $buyer['user'];
-                    $user->increment('wallet1_balance', $userAmount);
-
-                    Wallet1Transaction::create([
-                        'user_id' => $user->id,
-                        'user_ulid' => $user->ulid,
-                        'points' => $userAmount,
-                        'notes' => "₹$userAmount received for $year yearly package profit share",
-                        'admin_id' => Auth::id()
-                    ]);
-                }
-            }
+        // Filter by Income Type
+        if ($request->has('type') && !empty($request->type)) {
+            $query->where('type', $request->type);
         }
-    }
 
-    public function viewYearlyDistribution()
-    {
-        $distributions = DB::table('yearly_royalty_distribution')
-            ->orderBy('year', 'desc')
-            ->paginate(10);
+        // Sort by Date (Latest first) and Paginate
+        $incomes = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        return view('admin.view-yearly-distribution', compact('distributions'));
-    }
-
-    public function viewMonthlyDistributions()
-    {
-        $distributions = PackageMonthlyDistribution::with(['user', 'packagePurchase'])
-            ->orderBy('distribution_date', 'desc')
-            ->paginate(20);
-
-        return view('admin.view-monthly-distribution', compact('distributions'));
+        return view('admin.incomes.all-incomes', compact('incomes'));
     }
 
     public function paymentSettings()

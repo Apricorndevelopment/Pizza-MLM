@@ -2,7 +2,7 @@
 @section('title', 'All Orders')
 
 @section('container')
-    <div class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-slate-50 px-2 sm:px-3 lg:px-6">
 
         {{-- Alerts --}}
         <div id="alertContainer">
@@ -70,7 +70,7 @@
                     class="order-card bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow duration-300 animate-fade-in">
 
                     {{-- Main Card Body --}}
-                    <div class="px-4 md:p-4">
+                    <div class="p-3">
                         <div class="flex flex-col md:flex-row gap-6 md:items-center">
 
                             {{-- Col 1: Order Info --}}

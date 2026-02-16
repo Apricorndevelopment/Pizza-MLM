@@ -217,7 +217,7 @@
                         </div>
                     </a>
                     <a href="/" class="font-poppins text-xl font-bold text-white">
-                        Smart<span class="text-orange-400">Save24</span>
+                        Smart<span class="text-amber-400">Save24</span>
                     </a>
                 </div>
 
@@ -269,19 +269,29 @@
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="animate__animated animate__fadeInLeft">
                     <span
+                        class="text-6xl font-extrabold 
+bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 
+bg-clip-text text-transparent 
+flex items-center justify-center 
+tracking-wide drop-shadow-lg">
+                        Welcome
+                    </span>
+
+                    {{-- <span
                         class="bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold mb-4 inline-block">
                         <i class="bi bi-star-fill mr-1"></i> Premium Quality
-                    </span>
+                    </span> --}}
                     <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                        Healthy Food,<br>
-                        <span class="text-orange-300">Healthy Income</span>
+                        {{-- Healthy Food,<br>
+                        <span class="text-orange-300">Healthy Income</span> --}}
+                        <img src="{{ asset('images/smartsave1.png') }}" class="w-84" alt="">
                     </h1>
                     <p class="text-lg mb-8 text-gray-200">
                         Join India's fastest growing food network. Earn while promoting organic, healthy food products.
                         Build your network and create sustainable income with SmartSave24.
                     </p>
                 </div>
-                <div class="relative animate__animated animate__fadeInRight">
+                {{-- <div class="relative animate__animated animate__fadeInRight">
                     <div class="relative z-10 h-[500px]">
                         <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                             alt="Organic Food" class="rounded-3xl shadow-2xl object-cover h-full w-full">
@@ -289,7 +299,7 @@
                     <div
                         class="absolute -bottom-6 -left-6 w-64 h-64 bg-linear-to-r from-green-400 to-orange-400 rounded-full opacity-20 blur-3xl">
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
@@ -336,9 +346,9 @@
                     style="color: var(--primary);">
                     "ज़िद है तो जीत है"
                 </h2>
-                <p class="text-xl md:text-2xl text-gray-600 font-medium hindi-font mt-3">
+                {{-- <p class="text-xl md:text-2xl text-gray-600 font-medium hindi-font mt-3">
                     "अब खाना और खरीदना ही एक इन्वेस्टमेंट है"
-                </p>
+                </p> --}}
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -399,7 +409,7 @@
 
                 <div class="bg-white p-8 rounded-2xl shadow-lg card-hover text-center">
                     <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="bi bi-currency-dollar text-3xl text-orange-600"></i>
+                        <i class="bi bi-currency-rupee text-3xl text-orange-600"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-4">Earn Unlimited</h3>
                     <p class="text-gray-600">Build your network and earn commissions on every sale. Multiple income
@@ -642,14 +652,14 @@
                             <i class="bi bi-geo-alt text-2xl text-orange-500 mr-4 mt-1"></i>
                             <div>
                                 <h4 class="font-bold mb-1">Head Office</h4>
-                                <p class="text-gray-600">123 Food Plaza, Green City<br>New Delhi - 110001</p>
+                                <p class="text-gray-600">Main GT Road, V.P.O Rai <br>Sonipat</p>
                             </div>
                         </div>
                         <div class="flex items-start">
                             <i class="bi bi-telephone text-2xl text-green-500 mr-4 mt-1"></i>
                             <div>
                                 <h4 class="font-bold mb-1">Phone Numbers</h4>
-                                <p class="text-gray-600">+91 98765 xxxxx<br>+91 91234 xxxxx</p>
+                                <p class="text-gray-600">+91 827827 3737<br>+91 91234 xxxxx</p>
                             </div>
                         </div>
                         <div class="flex items-start">

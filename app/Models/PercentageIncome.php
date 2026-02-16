@@ -15,6 +15,7 @@ class PercentageIncome extends Model
         'direct_income',
         'bonus_income',
         'cashback_income',
+        'vendor_income',
         'personal_wallet',
         'second_wallet',
     ];

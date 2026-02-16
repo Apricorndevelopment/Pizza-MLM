@@ -100,6 +100,7 @@ class AdminOrderController extends Controller
             return redirect()->back()->with('success', 'Order status updated successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
+            dd('Error: ' . $e->getMessage(), 'Line: ' . $e->getLine());
             Log::error("Order Update Failed: " . $e->getMessage());
             return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
         }
@@ -225,18 +226,11 @@ class AdminOrderController extends Controller
 
     private function handleUserActivation($user, $order, $totalPV, $settings)
     {
-        // 1. Direct Income
+        // RULES APPLIED: Cashback removed from Activation (First Purchase)
         $this->distributeDirectIncome($user, $order->total_amount, $totalPV, $settings);
-
         $this->distributeBonusIncome($user, $order->total_amount, $totalPV, $settings);
-
-        // 2. Level Income
         $this->distributeLevelIncome($user, $totalPV, $order->total_amount, $settings, 'level_incomes');
 
-        // 3. Cashback Income
-        $this->distributeCashbackIncome($user, $totalPV, $order->total_amount, $settings);
-
-        // 4. Activate User
         $user->status = 'active';
         $user->user_doa = now();
         $user->save();
@@ -282,25 +276,24 @@ class AdminOrderController extends Controller
 
     private function checkAndDistributeRewards($user, $milestones, $settings)
     {
-        // Fetch IDs of rewards ALREADY received by this user
+        // RULES APPLIED: Only active users receive reward income
+        if ($user->status !== 'active') {
+            return;
+        }
+
         $receivedRewardIds = DB::table('rewards_incomes')
             ->where('user_id', $user->id)
             ->pluck('reward_id')
             ->toArray();
 
-
         foreach ($milestones as $reward) {
-            // Logic: If Business crosses achievement AND reward not received yet
             if ($user->total_business >= $reward->achievement && !in_array($reward->id, $receivedRewardIds)) {
 
-                // A. Distribute Reward Amount (Split Logic)
                 $this->distributeToWallets($user, $reward->reward, $settings, "Reward Achieved: {$reward->rank}");
 
-                // B. Update Rank (Last loop will set the highest rank)
                 $user->current_rank = $reward->rank;
                 $user->save();
 
-                // C. Log History in `rewards_incomes` table
                 DB::table('rewards_incomes')->insert([
                     'user_id'            => $user->id,
                     'user_ulid'          => $user->ulid,
@@ -315,15 +308,12 @@ class AdminOrderController extends Controller
         }
     }
 
-    // -------------------------------------------------------------------------
-    // EXISTING DISTRIBUTOR HELPERS
-    // -------------------------------------------------------------------------
-
     private function distributeDirectIncome($user, $purchaseAmount, $totalPV, $settings)
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
-        if ($sponsor) {
+        // RULES APPLIED: Check if sponsor is active
+        if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->direct_income / 100);
 
             $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Direct Income from User: {$user->ulid}");
@@ -345,10 +335,21 @@ class AdminOrderController extends Controller
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
-        if ($sponsor) {
+        // RULES APPLIED: Check if sponsor is active
+        if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->bonus_income / 100);
 
-            $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Bonus Income from User: {$user->ulid}");
+            // RULES APPLIED: 100% to Wallet 2 ONLY. No split distribution.
+            $sponsor->wallet2_balance += $incomeAmount;
+            $sponsor->save();
+
+            Wallet2Transaction::create([
+                'user_id'   => $sponsor->id,
+                'user_ulid' => $sponsor->ulid,
+                'wallet2'   => $incomeAmount,
+                'notes'     => "Bonus Income from User: {$user->ulid} (100% Bonus Wallet)",
+                'balance'   => $sponsor->wallet2_balance,
+            ]);
 
             BonusIncome::create([
                 'user_id'         => $sponsor->id,
@@ -387,26 +388,17 @@ class AdminOrderController extends Controller
         foreach ($levelSettings as $levelSetting) {
             $uplineUser = User::where('ulid', $currentUplineUlid)->first();
 
-            // Break if no upline or chain ends
             if (!$uplineUser) break;
 
-            // --- CAPPING CHECK START ---
-
-            // 1. Check if Upline has purchased a package (Is Capping Enabled?)
-            // If they haven't bought a package, they get NO income.
-            if ($uplineUser->is_capping_enabled == 0) {
-                // Move to next upline without paying this one
+            // RULES APPLIED: Skip if upline is inactive OR capping is disabled
+            if ($uplineUser->status !== 'active' || $uplineUser->is_capping_enabled == 0) {
                 $currentUplineUlid = $uplineUser->sponsor_id;
-                continue;
+                continue; // Moves to the next upline
             }
 
-            // 2. Calculate Potential Income
             $calculatedIncome = $totalPV * ($levelSetting->percentage / 100);
-
-            // 3. Check Daily Limit
             $dailyLimit = $uplineUser->capping_limit;
 
-            // Get total income earned TODAY from Level + Repurchase
             $todayLevelIncome = LevelIncome::where('user_id', $uplineUser->id)
                 ->whereDate('created_at', Carbon::today())
                 ->sum('amount');
@@ -416,24 +408,16 @@ class AdminOrderController extends Controller
                 ->sum('commission');
 
             $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome;
-
-            // 4. Determine Payable Amount
             $payableAmount = 0;
 
             if ($totalEarnedToday >= $dailyLimit) {
-                // Limit already reached, pay 0
                 $payableAmount = 0;
             } elseif (($totalEarnedToday + $calculatedIncome) > $dailyLimit) {
-                // If adding new income exceeds limit, pay only the difference
                 $payableAmount = $dailyLimit - $totalEarnedToday;
             } else {
-                // Within limit, pay full amount
                 $payableAmount = $calculatedIncome;
             }
 
-            // --- CAPPING CHECK END ---
-
-            // Only distribute if payable amount is greater than 0
             if ($payableAmount > 0) {
                 $note = ($tableType == 'level_incomes')
                     ? "Level {$levelSetting->level} Income from {$fromUser->ulid}"
@@ -441,7 +425,6 @@ class AdminOrderController extends Controller
 
                 $this->distributeToWallets($uplineUser, $payableAmount, $settings, $note);
 
-                // Record the Transaction
                 if ($tableType == 'level_incomes') {
                     LevelIncome::create([
                         'user_id'         => $uplineUser->id,
@@ -452,7 +435,7 @@ class AdminOrderController extends Controller
                         'purchase_amount' => $purchaseAmount,
                         'purchase_pv'     => $totalPV,
                         'level'           => $levelSetting->level,
-                        'amount'          => $payableAmount, // Log the capped amount
+                        'amount'          => $payableAmount,
                     ]);
                 } else {
                     RepurchaseIncome::create([
@@ -461,13 +444,12 @@ class AdminOrderController extends Controller
                         'from_name'       => $fromUser->name,
                         'purchase_amount' => $purchaseAmount,
                         'purchase_pv'     => $totalPV,
-                        'commission'      => $payableAmount, // Log the capped amount
+                        'commission'      => $payableAmount,
                         'level'           => $levelSetting->level,
                     ]);
                 }
             }
 
-            // Move to next upline
             $currentUplineUlid = $uplineUser->sponsor_id;
         }
     }

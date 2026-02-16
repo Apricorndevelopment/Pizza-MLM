@@ -275,12 +275,11 @@
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #FF6B35, #FFD166);
             display: flex;
             align-items: center;
             justify-content: center;
             border: 3px solid white;
-            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
         }
 
         .logo img {
@@ -291,7 +290,7 @@
         .brand-name {
             font-size: 2.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #FF6B35, #4CAF50);
+            background: linear-gradient(135deg, #5E17EB, #FF6B35);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
@@ -471,11 +470,11 @@
             <div class="text-center mb-6">
                 <div class="logo-container">
                     <div class="logo">
-                        <img src="{{ asset('images/ziddizone.jpeg') }}" alt="">
+                        <img src="{{ asset('images/smartsave.png') }}" alt="">
                     </div>
                     <div class="brand-name font-poppins">
-                        Ziddi<span
-                            style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Zone</span>
+                        Smart<span
+                            style="background: linear-gradient(135deg, #ffba19,#7232f1d9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Save24</span>
                     </div>
                 </div>
 
@@ -633,7 +632,8 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" onclick="return confirm('Are you sure you want to register with ZiddiZone?')"
+                    <button type="submit"
+                        onclick="return confirm('Are you sure you want to register with SmartSave24?')"
                         class="btn-register mt-8">
                         <i class="bi bi-person-plus-fill mr-3"></i>
                         Create Account & Start Earning

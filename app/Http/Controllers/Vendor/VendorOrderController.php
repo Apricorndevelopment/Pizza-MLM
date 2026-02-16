@@ -469,16 +469,6 @@ class VendorOrderController extends Controller
         $user->wallet2_balance += $wallet2Amount;
         $user->save();
 
-        if ($wallet1Amount > 0) {
-            Wallet1Transaction::create([
-                'user_id'   => $user->id,
-                'user_ulid' => $user->ulid,
-                'wallet1'   => $wallet1Amount,
-                'notes'     => $note . ' (W1)',
-                'balance'   => $user->wallet1_balance,
-            ]);
-        }
-
         if ($wallet2Amount > 0) {
             Wallet2Transaction::create([
                 'user_id'   => $user->id,

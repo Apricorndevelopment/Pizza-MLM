@@ -270,12 +270,11 @@
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #FF6B35, #FFD166);
             display: flex;
             align-items: center;
             justify-content: center;
             border: 3px solid white;
-            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 251, 249, 0.445);
         }
 
         .logo img {
@@ -453,12 +452,12 @@
                 <div class="logo-container">
                     <div class="logo">
                         <a href="/">
-                            <img src="{{ asset('images/ziddizone.jpeg') }}" alt="">
+                            <img src="{{ asset('images/smartsave.png') }}" alt="">
                         </a>
                     </div>
                     <div class="brand-name font-poppins">
-                        Ziddi<span
-                            style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Zone</span>
+                        Smart<span
+                            style="background: linear-gradient(135deg, #FFD166, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Save24</span>
                     </div>
                 </div>
 
@@ -541,7 +540,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" onclick="return confirm('Are you sure you want to login to ZiddiZone?')"
+                    <button type="submit" onclick="return confirm('Are you sure you want to login to SmartSave24?')"
                         class="btn-login">
                         <i class="bi bi-box-arrow-in-right mr-3"></i>
                         Sign In to Your Account

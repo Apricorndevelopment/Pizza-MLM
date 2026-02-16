@@ -85,49 +85,6 @@ class AuthController extends Controller
         return abort(404);
     }
 
-    public function loadMoreNews(Request $request)
-    {
-        $page                = (int) $request->get('page', 1); // First page = after first 3
-        $perPage             = 3;
-        $initialDisplayCount = 3;
-
-        // Skip initial 3, then apply pagination
-        $skip = $initialDisplayCount + (($page - 1) * $perPage);
-
-        $news = News::orderBy('created_at', 'desc')
-            ->skip($skip)
-            ->take($perPage)
-            ->get();
-        $totalNews = News::count();
-        $hasMore   = $totalNews > $skip + $news->count();
-
-        if ($request->ajax()) {
-            $html = '';
-            foreach ($news as $newsItem) {
-                $html .= '<div class="col-md-6 col-lg-4 news-item mb-4">';
-                $html .= '<div class="card h-100 shadow-sm border-0 news-card">';
-                $html .= '<div class="news-image-container">';
-                $html .= '<img src="' . asset('storage/news_pics/' . basename($newsItem->news_pic)) . '" alt="' . e($newsItem->title) . '" class="card-img-top news-image">';
-                $html .= '</div>';
-                $html .= '<div class="card-body">';
-                $html .= '<h5 class="card-title news-title">' . e($newsItem->title) . '</h5>';
-                $html .= '<p class="news-meta"><i class="far fa-clock me-1"></i>' . $newsItem->created_at->format('M d, Y') . '</p>';
-                $html .= '</div>';
-                $html .= '</div>';
-                $html .= '</div>';
-            }
-
-            return response()->json([
-                'html'    => $html,
-                'hasMore' => $hasMore,
-                'loaded'  => $news->count(),
-                'total'   => $totalNews,
-            ]);
-        }
-
-        return abort(404);
-    }
-
     public function register(Request $request)
     {
         $request->validate([
@@ -167,7 +124,6 @@ class AuthController extends Controller
                 'password'        => Hash::make($plainPassword),
                 'role'            => 'user',
                 'status'          => 'inactive',
-                'wallet2_balance' => 50,
             ]);
 
             // Create User Coupons
@@ -219,46 +175,6 @@ class AuthController extends Controller
         return view('Auth.login');
     }
 
-    // public function logindetails(Request $request)
-    // {
-    //     $request->validate([
-    //         'email' => 'required',
-    //         'password' => 'required',
-    //     ]);
-
-    //     $email = $request->email;
-    //     $password = $request->password;
-
-    //     if ($request->is('admin/login')) {
-    //         if (Auth::attempt(['email' => $email, 'password' => $password, 'role' => 'admin'])) {
-    //             $request->session()->regenerate();
-    //             session(['admin_logged_in' => true]);
-    //             return redirect()->route('admin.dashboard');
-    //         } else {
-    //             return back()->with('error', 'Login details are wrong.');
-    //         }
-    //     }
-
-    //     // Check if input is email or ULID
-    //     $fieldType = filter_var($email, FILTER_VALIDATE_EMAIL) ? 'email' : 'ulid';
-
-    //     if (Auth::attempt([$fieldType => $email, 'password' => $password])) {
-    //         $request->session()->regenerate();
-
-    //         if (Auth::user()->role === 'user') {
-    //             if (Auth::user()->role === 'user') {
-    //                 return redirect()->route('user.dashboard')
-    //                     ->with('welcome_popup', true)
-    //                     ->with('welcome_name', Auth::user()->name);
-    //             }
-    //         } else {
-    //             Auth::logout();
-    //             return back()->with('error', 'Login details are wrong.');
-    //         }
-    //     }
-
-    //     return back()->with('error', 'Login details are wrong.');
-    // }
 
     public function logindetails(Request $request)
     {
@@ -291,8 +207,6 @@ class AuthController extends Controller
 
             if ($user->role === 'user') {
 
-                // === MAIN LOGIC CHANGE HERE ===
-
                 if ($user->is_vendor == 1) {
                     // अगर is_vendor 1 है, तो Vendor Dashboard पर भेजें
                     return redirect()->route('vendor.dashboard');
@@ -302,8 +216,6 @@ class AuthController extends Controller
                         ->with('welcome_popup', true)
                         ->with('welcome_name', $user->name);
                 }
-
-                // ==============================
 
             } else {
                 Auth::logout();

@@ -165,7 +165,7 @@
                         <span class="badge bg-white/20 border border-white/30 rounded-pill mb-3 px-3 py-2 text-white">
                             <i class="fas fa-crown text-warning me-1"></i> {{ Auth::user()->current_rank ?? 'Member' }}
                         </span>
-                        <h1 class="display-4 fw-bolder mb-2">Ziddi Zone</h1>
+                        <h1 class="display-4 fw-bolder mb-2">Smart Save24</h1>
                         <p class="fs-5 opacity-90 mb-0">Welcome back, <strong>{{ $user->name }}</strong>! Ready to grow
                             your business?</p>
                     </div>

@@ -3,10 +3,10 @@
 @section('container')
 
     <div class="min-h-screen bg-gray-50/50 pb-8 font-sans">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
 
             {{-- Alerts Section --}}
-            <div class="mb-6 space-y-3">
+            <div class="mb-3 space-y-3">
                 @if (session('success'))
                     <div class="flex items-center p-4 mb-4 text-sm text-emerald-800 rounded-xl bg-emerald-50 border border-emerald-100 shadow-sm"
                         role="alert">
@@ -39,7 +39,7 @@
             <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
 
                 {{-- Card Header with Theme Color #EBF2FE --}}
-                <div class="bg-[#EBF2FE] px-6 py-5 border-b border-blue-100/50">
+                <div class="bg-[#EBF2FE] px-6 py-4 border-b border-blue-100/50">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
                         {{-- Title --}}
@@ -214,7 +214,7 @@
                 {{-- Pagination Section --}}
                 @if ($member->hasPages())
                     <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
-                        {{ $member->appends(['status' => $status, 'ulid' => request('ulid')])->links('vendor.pagination.tailwind') }}
+                        {{ $member->appends(['status' => $status, 'ulid' => request('ulid')])->links('pagination::bootstrap-5') }}
                     </div>
                 @endif
             </div>

@@ -174,10 +174,10 @@
         <div class="header">
             <div class="logo-container">
                 <div class="logo">
-                    <img src="{{ asset('images/ziddizone.jpeg') }}" alt="">
+                    <img src="{{ asset('images/smartsave.png') }}" alt="">
                 </div>
                 <div class="brand-name">
-                    Ziddi<span>Zone</span>
+                    Smart<span>Save24</span>
                 </div>
             </div>
             <h2 class="text-xl font-bold">Registration Successful!</h2>

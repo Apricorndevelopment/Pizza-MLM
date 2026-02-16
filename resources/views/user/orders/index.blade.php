@@ -113,7 +113,7 @@
                                                 class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border {{ $statusConfig['bg'] }} {{ $statusConfig['text'] }} {{ $statusConfig['border'] }} uppercase tracking-wider">
                                                 <i class="bi {{ $statusConfig['icon'] }}"></i> {{ $order->status }}
                                             </span>
-                                             <span class="text-gray-400 text-xs font-medium flex items-center gap-1">
+                                            <span class="text-gray-400 text-xs font-medium flex items-center gap-1">
                                                 <i class="bi bi-clock"></i> {{ $order->created_at->format('M d • h:i A') }}
                                             </span>
                                         </div>
@@ -241,7 +241,7 @@
                                                     @endif
                                                 @else
                                                     {{-- CASE 2: Admin Order (vendor_id is null) --}}
-                                                    Ziddi Group
+                                                    Smart Group
                                                     <span class="text-xs text-gray-500">(Official Store)</span>
                                                 @endif
                                             </h3>

@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZiddiZone | Healthy Food Network</title>
-    <link rel="shortcut icon" href="{{ asset('images/ziddizone.jpeg') }}" type="image/x-icon">
+    <title>SmartSave24 | Healthy Food Network</title>
+    <link rel="shortcut icon" href="{{ asset('images/smartsave.png') }}" type="image/x-icon">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -212,12 +212,12 @@
                 <div class="flex items-center space-x-3">
                     <a href="/">
                         <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
-                            <img src="{{ asset('images/ziddizone.jpeg') }}" alt=""
+                            <img src="{{ asset('images/smartsave.png') }}" alt=""
                                 class="w-full h-full object-cover">
                         </div>
                     </a>
                     <a href="/" class="font-poppins text-xl font-bold text-white">
-                        Ziddi<span class="text-orange-400">Zone</span>
+                        Smart<span class="text-orange-400">Save24</span>
                     </a>
                 </div>
 
@@ -278,7 +278,7 @@
                     </h1>
                     <p class="text-lg mb-8 text-gray-200">
                         Join India's fastest growing food network. Earn while promoting organic, healthy food products.
-                        Build your network and create sustainable income with ZiddiZone.
+                        Build your network and create sustainable income with SmartSave24.
                     </p>
                 </div>
                 <div class="relative animate__animated animate__fadeInRight">
@@ -297,7 +297,7 @@
     <section id="vendors" class="py-10 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">ZiddiZone Vendors</h2>
+                <h2 class="text-3xl font-bold text-gray-800">SmartSave24 Vendors</h2>
                 {{-- <p class="text-gray-500">Exclusive Offers from Top Vendors</p> --}}
             </div>
 
@@ -382,7 +382,7 @@
                     Revolutionizing Food & Income
                 </h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    ZiddiZone is more than a network marketing company. We are a movement towards healthier living
+                    SmartSave24 is more than a network marketing company. We are a movement towards healthier living
                     and financial freedom through premium organic food products.
                 </p>
             </div>
@@ -525,7 +525,7 @@
                         </div>
                     </div>
                     <p class="text-gray-700 italic mb-4">
-                        "ZiddiZone changed my life! I started part-time and now earn more than my corporate job."
+                        "SmartSave24 changed my life! I started part-time and now earn more than my corporate job."
                     </p>
                     <div class="text-yellow-500">
                         <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
@@ -719,10 +719,10 @@
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
                         <div class="w-10 h-10 rounded-full overflow-hidden">
-                            <img src="{{ asset('images/ziddizone.jpeg') }}" alt=""
+                            <img src="{{ asset('images/smartsave.png') }}" alt=""
                                 class="w-full h-full object-cover">
                         </div>
-                        <span class="text-xl font-bold">Ziddi<span class="text-orange-400">Zone</span></span>
+                        <span class="text-xl font-bold">Smart<span class="text-orange-400">Save24</span></span>
                     </div>
                     <p class="text-gray-400">
                         Promoting health through organic food while creating financial freedom for millions of Indians.
@@ -760,7 +760,7 @@
             </div>
             <div class="border-t border-gray-800 pt-8 text-center">
                 <p class="text-gray-400">
-                    &copy; 2026 ZiddiZone. All rights reserved. |
+                    &copy; 2026 SmartSave24. All rights reserved. |
                     <span class="text-orange-400">Designed & Developed By <a class="text-blue-600"
                             href="https://apricornsolutions.com/">Apricorn Solutions</a></span>
                 </p>

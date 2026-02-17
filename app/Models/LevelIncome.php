@@ -8,6 +8,9 @@ class LevelIncome extends Model
 {
     protected $table = 'level_incomes';
     protected $fillable = [
+        'order_id', // Added
+        'vendor_id', // Added
+        'admin_id',
         'user_id',
         'user_ulid',
         'from_user_id',

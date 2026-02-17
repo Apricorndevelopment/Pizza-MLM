@@ -141,8 +141,10 @@ Route::post('adminlogin', [AdminController::class, 'login'])->name('admin.login.
 
 // Admin Protected Routes
 Route::middleware(['auth:admin'])->group(function () {
-    Route::get('admindashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('adminlogout', [AdminController::class, 'logout'])->name('admin.logout');
+    Route::get('admindashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/revenue-report', [AdminController::class, 'revenueReport'])->name('admin.revenue.report');
+    Route::get('/admin/vendor-revenue-report', [AdminController::class, 'vendorRevenueReport'])->name('admin.vendor_revenue.report');
 
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::get('/admin/profile/edit', [AdminController::class, 'edit'])->name('admin.profile.edit');

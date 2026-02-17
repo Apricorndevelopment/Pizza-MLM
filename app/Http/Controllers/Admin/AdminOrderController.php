@@ -55,9 +55,6 @@ class AdminOrderController extends Controller
         return view('admin.orders.index', compact('orders'));
     }
 
-    /**
-     * Main Method: Handles Status Updates safely.
-     */
     public function updateStatus(Request $request)
     {
         $request->validate([
@@ -66,7 +63,7 @@ class AdminOrderController extends Controller
             'reason'   => 'nullable|string|required_if:status,rejected',
         ]);
 
-        $adminId = Auth::id();
+        $adminId = Auth::guard('admin')->user()->id;
 
         DB::beginTransaction();
 
@@ -78,20 +75,17 @@ class AdminOrderController extends Controller
                 throw new \Exception("Order not found.");
             }
 
-            // 1. Handle Rejection
             if ($request->status === 'rejected') {
                 $this->processOrderRejection($order, $user, $adminId, $request->reason);
             }
 
-            // 2. Handle Delivery
             if ($request->status === 'delivered') {
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
                 }
-                $this->processOrderDelivery($order, $user);
+                $this->processOrderDelivery($order, $user, $adminId);
             }
 
-            // 3. Update Status
             $order->status = $request->status;
             $order->save();
 
@@ -100,8 +94,7 @@ class AdminOrderController extends Controller
             return redirect()->back()->with('success', 'Order status updated successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            dd('Error: ' . $e->getMessage(), 'Line: ' . $e->getLine());
-            Log::error("Order Update Failed: " . $e->getMessage());
+            Log::error("Admin Order Update Failed: " . $e->getMessage());
             return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
         }
     }
@@ -119,7 +112,6 @@ class AdminOrderController extends Controller
         ]);
 
         if ($user) {
-            // Refund Money to Wallet 1
             $user->wallet1_balance += $order->total_amount;
             $user->save();
 
@@ -131,7 +123,6 @@ class AdminOrderController extends Controller
                 'balance'   => $user->wallet1_balance,
             ]);
 
-            // Refund Coupons
             if ($order->coupons_used > 0) {
                 $userCoupon = DB::table('user_coupons')->where('user_id', $user->id)->first();
                 if ($userCoupon) {
@@ -150,13 +141,10 @@ class AdminOrderController extends Controller
         }
     }
 
-    private function processOrderDelivery($order, $user)
+    private function processOrderDelivery($order, $user, $adminId)
     {
-        // --- STEP 1: Reduce Stock Quantity ---
-        // This decreases the product stock based on the order quantity
         $this->reduceProductStock($order);
 
-        // --- STEP 2: Check for Capping/Package Product ---
         foreach ($order->items as $item) {
             $product = ProductPackage::find($item->product_id);
 
@@ -167,7 +155,6 @@ class AdminOrderController extends Controller
             }
         }
 
-        // --- STEP 3: Calculate Total PV ---
         $totalPV = $this->calculateTotalPV($order);
 
         $settings = PercentageIncome::first();
@@ -177,35 +164,24 @@ class AdminOrderController extends Controller
 
         if ($totalPV > 0) {
             if ($user->status == 'inactive') {
-                $this->handleUserActivation($user, $order, $totalPV, $settings);
+                $this->handleUserActivation($user, $order, $totalPV, $settings, $adminId);
             } else {
-                $this->handleUserRepurchase($user, $order, $totalPV, $settings);
+                $this->handleUserRepurchase($user, $order, $totalPV, $settings, $adminId);
             }
 
             $this->processUplineGrowth($user, $totalPV, $settings);
         }
     }
 
-    /**
-     * NEW FUNCTION: Reduces stock for products in the order
-     */
     private function reduceProductStock($order)
     {
         foreach ($order->items as $item) {
-            // Find the product package
             $product = ProductPackage::find($item->product_id);
 
-            // Check if product exists and stock management is enabled
             if ($product && $product->manage_stock == 1) {
-
-                // Ensure stock doesn't go below zero (optional check, but decrement handles logic)
                 if ($product->stock_quantity >= $item->quantity) {
                     $product->decrement('stock_quantity', $item->quantity);
                 } else {
-                    // Logic if stock is insufficient (Optional: Force 0 or throw error)
-                    // For now, we allow it to go to 0 or negative if needed, 
-                    // or you can set it to 0 specifically.
-                    // $product->update(['stock_quantity' => 0]); 
                     $product->decrement('stock_quantity', $item->quantity);
                 }
             }
@@ -224,59 +200,43 @@ class AdminOrderController extends Controller
         return $totalPV;
     }
 
-    private function handleUserActivation($user, $order, $totalPV, $settings)
+    private function handleUserActivation($user, $order, $totalPV, $settings, $adminId)
     {
-        // RULES APPLIED: Cashback removed from Activation (First Purchase)
-        $this->distributeDirectIncome($user, $order->total_amount, $totalPV, $settings);
-        $this->distributeBonusIncome($user, $order->total_amount, $totalPV, $settings);
-        $this->distributeLevelIncome($user, $totalPV, $order->total_amount, $settings, 'level_incomes');
+        $this->distributeDirectIncome($user, $order, $totalPV, $settings, $adminId);
+        $this->distributeBonusIncome($user, $order, $totalPV, $settings, $adminId);
+        $this->distributeLevelIncome($user, $order, $totalPV, $settings, 'level_incomes', $adminId);
 
         $user->status = 'active';
         $user->user_doa = now();
         $user->save();
     }
 
-    private function handleUserRepurchase($user, $order, $totalPV, $settings)
+    private function handleUserRepurchase($user, $order, $totalPV, $settings, $adminId)
     {
-        // 1. Repurchase Income
-        $this->distributeLevelIncome($user, $totalPV, $order->total_amount, $settings, 'repurchase_incomes');
-
-        // 2. Cashback Income
-        $this->distributeCashbackIncome($user, $totalPV, $order->total_amount, $settings);
+        $this->distributeLevelIncome($user, $order, $totalPV, $settings, 'repurchase_incomes', $adminId);
+        $this->distributeCashbackIncome($user, $order, $totalPV, $settings, $adminId);
     }
-
-    // -------------------------------------------------------------------------
-    // NEW: UPLINE BUSINESS & REWARD LOGIC
-    // -------------------------------------------------------------------------
 
     private function processUplineGrowth($startUser, $pv, $settings)
     {
         $currentUplineUlid = $startUser->sponsor_id;
-
-        // Optimization: Fetch all milestones sorted by achievement ASC
         $milestones = PercentageReward::orderBy('achievement', 'asc')->get();
 
         while ($currentUplineUlid) {
             $upline = User::where('ulid', $currentUplineUlid)->first();
-
-            // Chain breaks? Stop.
             if (!$upline) break;
 
-            // 1. Update Total Business
             $upline->total_business += $pv;
             $upline->save();
 
-            // 2. Check for Rewards
             $this->checkAndDistributeRewards($upline, $milestones, $settings);
 
-            // Move Up
             $currentUplineUlid = $upline->sponsor_id;
         }
     }
 
     private function checkAndDistributeRewards($user, $milestones, $settings)
     {
-        // RULES APPLIED: Only active users receive reward income
         if ($user->status !== 'active') {
             return;
         }
@@ -308,79 +268,91 @@ class AdminOrderController extends Controller
         }
     }
 
-    private function distributeDirectIncome($user, $purchaseAmount, $totalPV, $settings)
+    private function distributeDirectIncome($user, $order, $totalPV, $settings, $adminId)
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
-        // RULES APPLIED: Check if sponsor is active
         if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->direct_income / 100);
 
-            $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Direct Income from User: {$user->ulid}");
+            if ($incomeAmount > 0) {
+                $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Direct Income from User: {$user->ulid}");
 
-            DirectIncome::create([
-                'user_id'         => $sponsor->id,
-                'user_ulid'       => $sponsor->ulid,
-                'from_name'       => $user->name,
-                'from_ulid'       => $user->ulid,
-                'purchase_amount' => $purchaseAmount,
-                'purchase_pv'     => $totalPV,
-                'income_amount'   => $incomeAmount,
-                'percentage'      => $settings->direct_income,
-            ]);
+                DirectIncome::create([
+                    'order_id'        => $order->id,
+                    'admin_id'        => $adminId,
+                    'vendor_id'       => null,
+                    'user_id'         => $sponsor->id,
+                    'user_ulid'       => $sponsor->ulid,
+                    'from_name'       => $user->name,
+                    'from_ulid'       => $user->ulid,
+                    'purchase_amount' => $order->total_amount,
+                    'purchase_pv'     => $totalPV,
+                    'income_amount'   => $incomeAmount,
+                    'percentage'      => $settings->direct_income,
+                ]);
+            }
         }
     }
 
-    private function distributeBonusIncome($user, $purchaseAmount, $totalPV, $settings)
+    private function distributeBonusIncome($user, $order, $totalPV, $settings, $adminId)
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
-        // RULES APPLIED: Check if sponsor is active
         if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->bonus_income / 100);
 
-            // RULES APPLIED: 100% to Wallet 2 ONLY. No split distribution.
-            $sponsor->wallet2_balance += $incomeAmount;
-            $sponsor->save();
+            if ($incomeAmount > 0) {
+                $sponsor->wallet2_balance += $incomeAmount;
+                $sponsor->save();
 
-            Wallet2Transaction::create([
-                'user_id'   => $sponsor->id,
-                'user_ulid' => $sponsor->ulid,
-                'wallet2'   => $incomeAmount,
-                'notes'     => "Bonus Income from User: {$user->ulid} (100% Bonus Wallet)",
-                'balance'   => $sponsor->wallet2_balance,
-            ]);
+                Wallet2Transaction::create([
+                    'user_id'   => $sponsor->id,
+                    'user_ulid' => $sponsor->ulid,
+                    'wallet2'   => $incomeAmount,
+                    'notes'     => "Bonus Income from User: {$user->ulid} (100% Bonus Wallet)",
+                    'balance'   => $sponsor->wallet2_balance,
+                ]);
 
-            BonusIncome::create([
-                'user_id'         => $sponsor->id,
-                'user_ulid'       => $sponsor->ulid,
-                'from_name'       => $user->name,
-                'from_ulid'       => $user->ulid,
-                'purchase_amount' => $purchaseAmount,
+                BonusIncome::create([
+                    'order_id'        => $order->id,
+                    'admin_id'        => $adminId,
+                    'vendor_id'       => null,
+                    'user_id'         => $sponsor->id,
+                    'user_ulid'       => $sponsor->ulid,
+                    'from_name'       => $user->name,
+                    'from_ulid'       => $user->ulid,
+                    'purchase_amount' => $order->total_amount,
+                    'purchase_pv'     => $totalPV,
+                    'income_amount'   => $incomeAmount,
+                    'percentage'      => $settings->bonus_income,
+                ]);
+            }
+        }
+    }
+
+    private function distributeCashbackIncome($user, $order, $totalPV, $settings, $adminId)
+    {
+        $incomeAmount = $totalPV * ($settings->cashback_income / 100);
+
+        if ($incomeAmount > 0) {
+            $this->distributeToWallets($user, $incomeAmount, $settings, "Cashback Income from Order #{$order->id}");
+
+            CashbackIncome::create([
+                'order_id'        => $order->id,
+                'admin_id'        => $adminId,
+                'vendor_id'       => null,
+                'user_id'         => $user->id,
+                'user_ulid'       => $user->ulid,
+                'purchase_amount' => $order->total_amount,
                 'purchase_pv'     => $totalPV,
+                'percentage'      => $settings->cashback_income,
                 'income_amount'   => $incomeAmount,
-                'percentage'      => $settings->bonus_income,
             ]);
         }
     }
 
-    private function distributeCashbackIncome($user, $totalPV, $purchaseAmount, $settings)
-    {
-        $incomeAmount = $totalPV * ($settings->cashback_income / 100);
-
-        $this->distributeToWallets($user, $incomeAmount, $settings, "Cashback Income from Order #{$user->id}");
-
-        CashbackIncome::create([
-            'user_id'         => $user->id,
-            'user_ulid'       => $user->ulid,
-            'purchase_amount' => $purchaseAmount,
-            'purchase_pv'     => $totalPV,
-            'percentage'      => $settings->cashback_income,
-            'income_amount'   => $incomeAmount,
-        ]);
-    }
-
-    private function distributeLevelIncome($fromUser, $totalPV, $purchaseAmount, $settings, $tableType)
+    private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $adminId)
     {
         $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
         $currentUplineUlid = $fromUser->sponsor_id;
@@ -390,10 +362,9 @@ class AdminOrderController extends Controller
 
             if (!$uplineUser) break;
 
-            // RULES APPLIED: Skip if upline is inactive OR capping is disabled
             if ($uplineUser->status !== 'active' || $uplineUser->is_capping_enabled == 0) {
                 $currentUplineUlid = $uplineUser->sponsor_id;
-                continue; // Moves to the next upline
+                continue;
             }
 
             $calculatedIncome = $totalPV * ($levelSetting->percentage / 100);
@@ -427,22 +398,28 @@ class AdminOrderController extends Controller
 
                 if ($tableType == 'level_incomes') {
                     LevelIncome::create([
-                        'user_id'         => $uplineUser->id,
-                        'user_ulid'       => $uplineUser->ulid,
-                        'from_user_id'    => $fromUser->id,
-                        'from_user_ulid'  => $fromUser->ulid,
-                        'from_user_name'  => $fromUser->name,
-                        'purchase_amount' => $purchaseAmount,
-                        'purchase_pv'     => $totalPV,
-                        'level'           => $levelSetting->level,
-                        'amount'          => $payableAmount,
+                        'order_id'         => $order->id,
+                        'admin_id'         => $adminId,
+                        'vendor_id'        => null,
+                        'user_id'          => $uplineUser->id,
+                        'user_ulid'        => $uplineUser->ulid,
+                        'from_user_id'     => $fromUser->id,
+                        'from_user_ulid'   => $fromUser->ulid,
+                        'from_user_name'   => $fromUser->name,
+                        'purchase_amount'  => $order->total_amount,
+                        'purchase_pv'      => $totalPV,
+                        'level'            => $levelSetting->level,
+                        'amount'           => $payableAmount,
                     ]);
                 } else {
                     RepurchaseIncome::create([
+                        'order_id'        => $order->id,
+                        'admin_id'        => $adminId,
+                        'vendor_id'       => null,
                         'user_id'         => $uplineUser->id,
                         'from_ulid'       => $fromUser->ulid,
                         'from_name'       => $fromUser->name,
-                        'purchase_amount' => $purchaseAmount,
+                        'purchase_amount' => $order->total_amount,
                         'purchase_pv'     => $totalPV,
                         'commission'      => $payableAmount,
                         'level'           => $levelSetting->level,
@@ -464,6 +441,16 @@ class AdminOrderController extends Controller
         $user->wallet1_balance += $wallet1Amount;
         $user->wallet2_balance += $wallet2Amount;
         $user->save();
+
+        if ($wallet1Amount > 0) {
+            Wallet1Transaction::create([
+                'user_id'   => $user->id,
+                'user_ulid' => $user->ulid,
+                'wallet1'   => $wallet1Amount,
+                'notes'     => $note . ' (W1)',
+                'balance'   => $user->wallet1_balance,
+            ]);
+        }
 
         if ($wallet2Amount > 0) {
             Wallet2Transaction::create([

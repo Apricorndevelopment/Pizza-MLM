@@ -188,6 +188,27 @@
                         <span class="font-medium">Transfer Coupons</span>
                     </a>
 
+                    <div class="menu-group">
+                        <div
+                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-600 rounded-lg cursor-pointer group">
+                            <div class="flex items-center gap-3">
+                                <i class="bi bi-diagram-3-fill text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="font-medium">Revenue Reports</span>
+                            </div>
+                            <i class="bi bi-chevron-down text-xs transition-transform duration-200"></i>
+                        </div>
+                        <div class="sidebar-submenu pl-10 mt-1 space-y-1">
+                            <a href="{{ route('admin.revenue.report') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Admin Revenue
+                            </a>
+                            <a href="{{ route('admin.vendor_revenue.report') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Vendors Revenue
+                            </a>
+                        </div>
+                    </div>
+
                     <div class="pt-4 pb-2">
                         <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Network & Funds</p>
                     </div>
@@ -306,12 +327,20 @@
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-600 rounded-lg cursor-pointer group">
                             <div class="flex items-center gap-3">
-                                <i class="bi bi-images text-lg group-hover:scale-110 transition-transform"></i>
-                                <span class="font-medium">Banners</span>
+                                <i class="bi bi-collection-play-fill text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="font-medium">Home Settings</span>
                             </div>
                             <i class="bi bi-chevron-down text-xs transition-transform duration-200"></i>
                         </div>
                         <div class="sidebar-submenu pl-10 mt-1 space-y-1">
+                             <a href="{{ route('admin.slider.index') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Home Sliders
+                            </a>
+                            <a href="{{ route('admin.stats.index') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Home Stats
+                            </a>
                             <a href="{{ route('admin.vendor.banners') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Vendor Banners
@@ -323,22 +352,10 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('admin.complaints.index') }}"
-                        class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
-                        <i class="bi bi-headset text-lg group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">Complaints</span>
-                    </a>
-
                     <a href="{{ route('admin.coupons.index') }}"
                         class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
                         <i class="bi bi-ticket-perforated-fill text-lg group-hover:scale-110 transition-transform"></i>
                         <span class="font-medium">Coupon Packages</span>
-                    </a>
-
-                    <a href="{{ route('admin.slider.index') }}"
-                        class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
-                        <i class="bi bi-sliders text-lg group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">Home Sliders</span>
                     </a>
 
                     <a href="{{ route('admin.media.index') }}"
@@ -347,17 +364,17 @@
                         <span class="font-medium">Media Library</span>
                     </a>
 
-                    <a href="{{ route('admin.stats.index') }}"
-                        class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
-                        <i class="bi bi-bar-chart-line-fill text-lg group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">Home Stats</span>
-                    </a>
-
                     <a href="{{ route('admin.payment.settings') }}"
                         class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
                         <i
                             class="bi bi-credit-card-2-front-fill text-lg group-hover:scale-110 transition-transform"></i>
                         <span class="font-medium">Payment Methods</span>
+                    </a>
+
+                      <a href="{{ route('admin.complaints.index') }}"
+                        class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
+                        <i class="bi bi-headset text-lg group-hover:scale-110 transition-transform"></i>
+                        <span class="font-medium">Complaints</span>
                     </a>
 
                 </div>

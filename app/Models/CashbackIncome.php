@@ -14,6 +14,9 @@ class CashbackIncome extends Model
 
     // Mass assignable fields
     protected $fillable = [
+        'order_id', // Added
+        'vendor_id', // Added
+        'admin_id',
         'user_id',
         'user_ulid',
         'purchase_amount',

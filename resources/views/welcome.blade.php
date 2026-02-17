@@ -264,42 +264,64 @@
         </nav>
     </header>
 
-    <section id="home" class="hero-bg text-white py-14 md:py-18">
-        <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="animate__animated animate__fadeInLeft">
+    <section id="home" class="hero-bg relative text-white py-20 md:py-28 overflow-hidden">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                <div class="animate__animated animate__fadeInLeft flex flex-col items-start text-left">
+
                     <span
-                        class="text-6xl font-extrabold 
-bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 
-bg-clip-text text-transparent 
-flex items-center justify-center 
-tracking-wide drop-shadow-lg">
-                        Welcome
+                        class="text-2xl md:text-3xl font-bold text-gray-200 mb-2 tracking-widest uppercase drop-shadow-md">
+                        Welcome To
                     </span>
 
-                    {{-- <span
-                        class="bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold mb-4 inline-block">
-                        <i class="bi bi-star-fill mr-1"></i> Premium Quality
-                    </span> --}}
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                        {{-- Healthy Food,<br>
-                        <span class="text-orange-300">Healthy Income</span> --}}
-                        <img src="{{ asset('images/smartsave1.png') }}" class="w-84" alt="">
-                    </h1>
-                    <p class="text-lg mb-8 text-gray-200">
-                        Join India's fastest growing food network. Earn while promoting organic, healthy food products.
-                        Build your network and create sustainable income with SmartSave24.
+                    <div class="relative mb-6 group">
+                        <div
+                            class="absolute -inset-2 bg-gradient-to-r from-green-400 to-emerald-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition duration-500">
+                        </div>
+
+                        <img src="{{ asset('images/smartsave1.png') }}"
+                            class="relative w-64 sm:w-80 md:w-96 drop-shadow-2xl object-contain transition-transform duration-500 group-hover:scale-105"
+                            alt="SmartSave24">
+                    </div>
+
+                    <p class="text-lg md:text-xl mb-10 text-gray-200 leading-relaxed max-w-lg">
+                        Join India's fastest-growing food network. Earn while promoting organic, healthy food products.
+                        Build your network and create sustainable income with <span
+                            class="text-emerald-400 font-bold">SmartSave24</span>.
                     </p>
+
+                    <div class="flex flex-wrap gap-4">
+                        <a href="{{ route('auth.register') }}"
+                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] hover:-translate-y-1 transition-all inline-flex items-center">
+                            Start Earning Now <i class="bi bi-arrow-right ml-2"></i>
+                        </a>
+                    </div>
                 </div>
-                {{-- <div class="relative animate__animated animate__fadeInRight">
-                    <div class="relative z-10 h-[500px]">
-                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                            alt="Organic Food" class="rounded-3xl shadow-2xl object-cover h-full w-full">
-                    </div>
+
+                <div class="relative hidden lg:block animate__animated animate__fadeInRight">
                     <div
-                        class="absolute -bottom-6 -left-6 w-64 h-64 bg-linear-to-r from-green-400 to-orange-400 rounded-full opacity-20 blur-3xl">
+                        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-pulse">
                     </div>
-                </div> --}}
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse"
+                        style="animation-delay: 2s;"></div>
+
+                    <div
+                        class="relative bg-white/10 border border-white/20 p-10 rounded-3xl backdrop-blur-md shadow-2xl mx-auto w-4/5 text-center transform hover:scale-105 transition-transform duration-500">
+                        <div
+                            class="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                            <i class="bi bi-graph-up-arrow text-4xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">Smart Investment</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            "अब खाना और खरीदना ही एक इन्वेस्टमेंट है।" Grow your network, increase your wealth, and
+                            secure your financial future today.
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -686,9 +708,9 @@ tracking-wide drop-shadow-lg">
                                 class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-pink-100">
                                 <i class="bi bi-instagram text-gray-600"></i>
                             </a>
-                            <a href="#"
+                            <a href="https://wa.me/918278273737" target="_blank"
                                 class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-red-100">
-                                <i class="bi bi-youtube text-gray-600"></i>
+                                <i class="bi bi-whatsapp text-gray-600"></i>
                             </a>
                         </div>
                     </div>

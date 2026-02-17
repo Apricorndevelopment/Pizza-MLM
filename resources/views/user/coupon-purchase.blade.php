@@ -22,7 +22,7 @@
                         ₹ {{ number_format(Auth::user()->wallet1_balance, 2) }}
                     </p>
                 </div>
-                <a href="{{ route('user.transferWallet1Form') }}" class="ml-2 text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                <a href="{{ route('user.funds.create') }}" class="ml-2 text-sm font-medium text-indigo-600 hover:text-indigo-800">
                     Top up <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>

@@ -84,7 +84,7 @@
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 800;
             line-height: 1.2;
             letter-spacing: -0.02em;
@@ -293,7 +293,7 @@
                 <div class="stat-card bg-gradient-success text-white p-4">
                     <div class="d-flex justify-content-between align-items-start z-10 position-relative">
                         <div>
-                            <p class="stat-label text-white-50">Wallet 1 Balance</p>
+                            <p class="stat-label text-white-50">Personal Wallet</p>
                             <h2 class="stat-value">{{ formatCurrency($user->wallet1_balance) }}</h2>
                         </div>
                         <div class="icon-box-glass">
@@ -309,7 +309,7 @@
                 <div class="stat-card bg-gradient-info text-white p-4">
                     <div class="d-flex justify-content-between align-items-start z-10 position-relative">
                         <div>
-                            <p class="stat-label text-white-50">Wallet 2 Balance</p>
+                            <p class="stat-label text-white-50">Wallet 2</p>
                             <h2 class="stat-value">{{ formatCurrency($user->wallet2_balance) }}</h2>
                         </div>
                         <div class="icon-box-glass">
@@ -326,7 +326,7 @@
                     <div class="d-flex justify-content-between align-items-start z-10 position-relative">
                         <div>
                             <p class="stat-label text-white-50">Active Coupons</p>
-                            <h2 class="stat-value">{{ number_format($totalCoupons) }}</h2>
+                            <h2 class="stat-value">{{ number_format($totalCoupons) }}(₹{{ number_format($totalCoupons * 10) }})</h2>
                         </div>
                         <div class="icon-box-glass">
                             <i class="fas fa-ticket-alt"></i>

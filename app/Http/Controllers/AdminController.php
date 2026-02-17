@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -107,6 +108,153 @@ class AdminController extends Controller
             ->header('Pragma', 'no-cache')
             ->header('Expires', '0');
     }
+
+    public function revenueReport(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // 1. Get all 'Delivered' Admin Orders within the date range
+        $query = Order::where('status', 'delivered')
+            ->whereHas('items', function ($q) {
+                $q->where('product_type', 'admin');
+            });
+
+        if ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+
+        // Get matching Order IDs and Total Revenue
+        $adminOrderIds = $query->pluck('id');
+        $totalRevenue = Order::whereIn('id', $adminOrderIds)->sum('total_amount');
+
+        // 2. Calculate Incomes Distributed SPECIFICALLY for these Orders
+        $directIncome = DB::table('direct_income')->whereIn('order_id', $adminOrderIds)->sum('income_amount');
+        $bonusIncome = DB::table('bonus_income')->whereIn('order_id', $adminOrderIds)->sum('income_amount');
+        $cashbackIncome = DB::table('cashback_income')->whereIn('order_id', $adminOrderIds)->sum('income_amount');
+        $levelIncome = DB::table('level_incomes')->whereIn('order_id', $adminOrderIds)->sum('amount');
+        $repurchaseIncome = DB::table('repurchase_incomes')->whereIn('order_id', $adminOrderIds)->sum('commission');
+
+        $totalDistributedToOrders = $directIncome + $bonusIncome + $cashbackIncome + $levelIncome + $repurchaseIncome;
+
+        // 3. Calculate Rewards Distributed in this Date Range 
+        // (Rewards are based on total business, not specific orders, so we filter them by date directly)
+        $rewardsQuery = DB::table('rewards_incomes');
+        if ($startDate) {
+            $rewardsQuery->whereDate('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $rewardsQuery->whereDate('created_at', '<=', $endDate);
+        }
+        $totalRewards = $rewardsQuery->sum('reward_amount');
+
+        // 4. Calculate Final Profit
+        $totalExpenses = $totalDistributedToOrders + $totalRewards;
+        $netProfit = $totalRevenue - $totalExpenses;
+
+        $totalOrdersCount = $adminOrderIds->count();
+
+        return view('admin.reports.revenue', compact(
+            'startDate',
+            'endDate',
+            'totalRevenue',
+            'directIncome',
+            'bonusIncome',
+            'cashbackIncome',
+            'levelIncome',
+            'repurchaseIncome',
+            'totalDistributedToOrders',
+            'totalRewards',
+            'totalExpenses',
+            'netProfit',
+            'totalOrdersCount'
+        ));
+    }
+
+    public function vendorRevenueReport(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $search = $request->input('search');
+
+        // 1. Fetch Vendors (Users where is_vendor = 1) and join with vendors table
+        $query = User::where('is_vendor', 1)
+            ->leftJoin('vendor', 'users.id', '=', 'vendor.user_id')
+            ->select(
+                'users.id', 
+                'users.name as vendor_name', 
+                'users.address as user_address',
+                'vendor.company_name', 
+                'vendor.company_address'
+            );
+
+        // 2. Apply Search Filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('users.name', 'LIKE', "%{$search}%")
+                  ->orWhere('vendor.company_name', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $vendors = $query->paginate(10);
+
+        // 3. Calculate Stats for the paginated vendors ONLY (Fast & Optimized)
+        foreach ($vendors as $vendor) {
+            
+            // Base query for vendor's delivered order items
+            $orderItemsQuery = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->where('order_items.vendor_id', $vendor->id)
+                ->where('orders.status', 'delivered');
+
+            if ($startDate) {
+                $orderItemsQuery->whereDate('orders.created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $orderItemsQuery->whereDate('orders.created_at', '<=', $endDate);
+            }
+
+            // Total Revenue & Order Count
+            $vendor->total_revenue = $orderItemsQuery->sum(\Illuminate\Support\Facades\DB::raw('order_items.price * order_items.quantity'));
+            $vendor->total_orders = $orderItemsQuery->distinct('orders.id')->count('orders.id');
+
+            // Vendor's 70% Share
+            $vendor->vendor_payout = $vendor->total_revenue * 0.70;
+
+            // Incomes Distributed (from the 6 income tables tracking this vendor_id)
+            $incomesSum = 0;
+            $incomeTables = [
+                ['table' => 'direct_income', 'col' => 'income_amount'],
+                ['table' => 'bonus_income', 'col' => 'income_amount'],
+                ['table' => 'cashback_income', 'col' => 'income_amount'],
+                ['table' => 'level_incomes', 'col' => 'amount'],
+                ['table' => 'repurchase_incomes', 'col' => 'commission'],
+                ['table' => 'vendor_incomes', 'col' => 'income_amount'], // Special Vendor Income
+            ];
+
+            foreach ($incomeTables as $inc) {
+                $incQ = DB::table($inc['table'])->where('vendor_id', $vendor->id);
+                if ($startDate) $incQ->whereDate('created_at', '>=', $startDate);
+                if ($endDate) $incQ->whereDate('created_at', '<=', $endDate);
+                
+                $incomesSum += $incQ->sum($inc['col']);
+            }
+
+            $vendor->total_distributed_incomes = $incomesSum;
+            
+            // Net Admin Profit = Total Revenue - Vendor Share - Network Incomes
+            $vendor->net_profit = $vendor->total_revenue - $vendor->vendor_payout - $vendor->total_distributed_incomes;
+        }
+
+        // Preserve query parameters in pagination
+        $vendors->appends(request()->query());
+
+        return view('admin.reports.vendor-revenue', compact('vendors', 'startDate', 'endDate', 'search'));
+    }
+
 
     public function profile()
     {
@@ -284,8 +432,7 @@ class AdminController extends Controller
             return $query->where('status', $status);
         })->when($ulid, function ($query) use ($ulid) {
             return $query->where('ulid', 'LIKE', '%' . $ulid . '%');
-        })
-            ->paginate(10);
+        })->latest()->paginate(10);
 
         // Append the search query and status filter to the pagination links
         $member->appends(['status' => $status, 'ulid' => $ulid]);
@@ -341,28 +488,55 @@ class AdminController extends Controller
 
             $sponsorIdOfDeletedMember = $member->sponsor_id;
 
-            // Delete from all related tables
-            DB::table('level_incomes')->where('user_id', $member->id)->delete();
-            DB::table('login_activities')->where('user_id', $member->id)->delete();
-            DB::table('loyalty_transactions')->where('user_id', $member->id)->delete();
-            DB::table('maturity_monthly_deductions')->where('user_id', $member->id)->delete();
-            DB::table('package2_purchases')->where('user_id', $member->id)->delete();
-            DB::table('package_monthly_distributions')->where('user_id', $member->id)->delete();
-            DB::table('package_transactions')->where('user_id', $member->id)->delete();
-            DB::table('points_transactions')->where('user_id', $member->id)->delete();
-            DB::table('royalty_rewards_income')->where('user_id', $member->id)->delete();
-            DB::table('sales_stock')->where('user_id', $member->id)->delete();
-            DB::table('user_package_inventories')->where('user_ulid', $member->ulid)->delete();
+            // Step 1: Delete Order Items first (to prevent orphaned records)
+            $orderIds = DB::table('orders')->where('user_id', $member->id)->pluck('id');
+            if ($orderIds->isNotEmpty()) {
+                DB::table('order_items')->whereIn('order_id', $orderIds)->delete();
+            }
 
-            // Update downline members to take on the sponsor of the deleted member
+            // Step 2: List of all tables provided by you
+            $tablesToDelete = [
+                'bonus_income',
+                'cashback_income',
+                'complaints',
+                'direct_income',
+                'fund_requests',
+                'level_incomes',
+                'login_activities',
+                'money_withdrawl',
+                'orders',
+                'order_rejections',
+                'repurchase_incomes',
+                'rewards_incomes',
+                'sales_stock',
+                'sessions',
+                'user_coupons',
+                'vendor', // Note: Agar DB me table ka naam 'vendors' (s ke sath) hai, toh isko 'vendors' kar dena
+                'vendor_incomes',
+                'wallet1_transactions',
+                'wallet2_transactions'
+            ];
+
+            // Step 3: Loop through all tables and delete records matching the user_id
+            foreach ($tablesToDelete as $table) {
+                // Ignore error if a table doesn't exist (like 'vendor' vs 'vendors')
+                try {
+                    DB::table($table)->where('user_id', $member->id)->delete();
+                } catch (\Exception $e) {
+                    // Log table not found errors but continue deleting from other tables
+                    Log::warning("Could not delete from table {$table}: " . $e->getMessage());
+                }
+            }
+
+            // Step 4: Update downline members to take on the sponsor of the deleted member
             User::where('sponsor_id', $member->ulid)->update(['sponsor_id' => $sponsorIdOfDeletedMember]);
 
-            // Finally delete the user
+            // Step 5: Finally delete the user
             $member->forceDelete();
 
             DB::commit();
 
-            return redirect()->route('admin.viewmember')->with('success', 'Member deleted successfully.');
+            return redirect()->route('admin.viewmember')->with('success', 'Member and all related data deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()

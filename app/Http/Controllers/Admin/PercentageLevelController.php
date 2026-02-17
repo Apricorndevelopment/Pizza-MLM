@@ -27,7 +27,7 @@ class PercentageLevelController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'level'      => 'required|numerix|unique:percentage_level_incomes,level',
+            'level'      => 'required|numeric|unique:percentage_level_incomes,level',
             'percentage' => 'required|numeric|min:0|max:100',
         ]);
 

@@ -135,7 +135,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Direct Income</label>
                             <div class="relative">
-                                <input type="number" name="direct_income" id="direct_income" required
+                                <input type="number" step="0.1" name="direct_income" id="direct_income" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -144,7 +144,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Bonus Income</label>
                             <div class="relative">
-                                <input type="number" name="bonus_income" id="bonus_income" required
+                                <input type="number" step="0.1" name="bonus_income" id="bonus_income" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -153,7 +153,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Vendor Income</label>
                             <div class="relative">
-                                <input type="number" name="vendor_income" id="vendor_income" required
+                                <input type="number" step="0.1" name="vendor_income" id="vendor_income" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -163,7 +163,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Cashback Income</label>
                             <div class="relative">
-                                <input type="number" name="cashback_income" id="cashback_income" required
+                                <input type="number" step="0.1" name="cashback_income" id="cashback_income" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -173,7 +173,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Personal Wallet</label>
                             <div class="relative">
-                                <input type="number" name="personal_wallet" id="personal_wallet" required
+                                <input type="number" step="0.1" name="personal_wallet" id="personal_wallet" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -183,7 +183,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Second Wallet</label>
                             <div class="relative">
-                                <input type="number" name="second_wallet" id="second_wallet" required
+                                <input type="number" step="0.1" name="second_wallet" id="second_wallet" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>

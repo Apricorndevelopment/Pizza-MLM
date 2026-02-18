@@ -210,165 +210,175 @@
 
                             {{-- HIDDEN INVOICE TEMPLATE FOR THIS ORDER (Used by JS) --}}
                             <div id="invoice-data-{{ $order->id }}" class="hidden">
-                                <div class="p-8 bg-white" style="font-family: sans-serif; color: #333;">
+                                <div class="p-3 sm:p-6 bg-white" style="font-family: sans-serif; color: #333;">
 
-                                    {{-- Invoice Header --}}
-                                    <div class="flex justify-between items-start mb-8 pb-8 border-b border-gray-200">
-                                        <div>
-                                            <h2 class="text-2xl font-bold text-gray-800 uppercase tracking-wide">Bill
-                                            </h2>
-                                            <p class="text-sm text-gray-500 mt-1">#{{ $order->order_id }}</p>
+                                    {{-- 1. Invoice Header: Logo & Platform Name --}}
+                                    <div class="flex justify-between items-center mb-6 pb-6 border-b border-gray-200">
+                                        <div class="flex items-center gap-3">
+                                            {{-- Platform Logo --}}
+                                            <div
+                                                class="w-10 sm:w-14 h-10 sm:h-14 bg-white rounded-lg border border-gray-100 shadow-sm p-1 flex items-center justify-center overflow-hidden">
+                                                <img src="{{ asset('images/smartsave.png') }}" alt="Logo"
+                                                    class="w-full h-full object-contain">
+                                            </div>
+                                            <div>
+                                                <h1
+                                                    class="text-xl sm:text-2xl font-black text-teal-800 tracking-tight m-0 leading-none uppercase">
+                                                    ZIDDI GROUP</h1>
+                                                <p
+                                                    class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
+                                                    SmartSave24 Platform</p>
+                                            </div>
                                         </div>
-
-                                        {{-- SELLER INFORMATION LOGIC --}}
                                         <div class="text-right">
-                                            @php
-                                                // Get the first item to determine the seller
-                                                $firstItem = $order->items->first();
-                                            @endphp
-
-                                            <h3 class="text-lg font-bold text-teal-700">
-                                                @if ($firstItem && $firstItem->vendor_id)
-                                                    {{-- CASE 1: Vendor Order --}}
-                                                    {{ $firstItem->vendor->company_name }}
-
-                                                    @if (!empty($firstItem->vendor->vendor_name))
-                                                        <span class="block text-xs font-medium text-gray-500">
-                                                            {{ $firstItem->vendor->user->email }}
-                                                        </span>
-                                                    @else
-                                                        <span class="text-xs text-gray-500">(Vendor)</span>
-                                                    @endif
-                                                @else
-                                                    {{-- CASE 2: Admin Order (vendor_id is null) --}}
-                                                    Ziddi Group
-                                                    <span class="text-xs text-gray-500">(Official Store)</span>
-                                                @endif
-                                            </h3>
-
-                                            {{-- Contact Info --}}
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                @if ($firstItem && $firstItem->vendor_id && $firstItem->vendor)
-                                                    {{ $firstItem->vendor->email }}
-                                                @else
-                                                    support@example.com
-                                                @endif
-                                            </p>
-
-                                            {{-- Address Info --}}
-                                            <p class="text-xs text-gray-500">
-                                                @if ($firstItem && $firstItem->vendor_id && $firstItem->vendor)
-                                                    {{ $firstItem->vendor->company_address ?? 'Address not provided' }},
-                                                    {{ $firstItem->vendor->company_city ?? 'City not provided' }},
-                                                    {{ $firstItem->vendor->company_state ?? 'State not provided' }}
-                                                @else
-                                                    Main GT Road, V.P.O Rai Sonipat, Haryana
-                                                @endif
-                                            </p>
+                                            <h2
+                                                class="text-2xl sm:text-3xl font-bold text-gray-200 uppercase tracking-widest m-0 leading-none">
+                                                BILL</h2>
+                                            <p class="text-xs sm:text-sm font-bold text-gray-700 mt-1">#{{ $order->order_id }}</p>
                                         </div>
                                     </div>
 
-                                    {{-- Bill To / Date Section (Remains mostly same) --}}
-                                    <div class="flex justify-between mb-8">
-                                        <div>
-                                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Billed
-                                                To</p>
-                                            <p class="font-bold text-gray-800">{{ Auth::user()->name }}</p>
-                                            <p class="text-sm text-gray-600">{{ Auth::user()->email }}</p>
-                                            <p class="text-sm text-gray-600">{{ Auth::user()->phone ?? 'N/A' }}</p>
-                                            <p class="text-sm text-gray-600 max-w-xs mt-1">
-                                                {{ Auth::user()->address ?? 'Address not provided' }}</p>
-                                        </div>
-                                        <div class="text-right">
-                                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date
-                                            </p>
-                                            <p class="font-bold text-gray-800">{{ $order->created_at->format('d M, Y') }}
-                                            </p>
-                                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 mt-3">
-                                                Status</p>
+                                    {{-- 2. Billing & Seller Information --}}
+                                    @php
+                                        // Determine if order belongs to a vendor or admin
+                                        $firstItem = $order->items->first();
+                                        $isVendorOrder = $firstItem && $firstItem->vendor_id && $firstItem->vendor;
+                                    @endphp
+
+                                    <div class="flex justify-between mb-8 gap-8">
+                                        {{-- Billed To (Customer Details) --}}
+                                        <div class="w-1/2">
                                             <p
-                                                class="text-sm font-bold uppercase {{ $order->status == 'delivered' ? 'text-teal-600' : 'text-gray-600' }}">
-                                                {{ $order->status }}
+                                                class="text-[8px] sm:text-[10px] font-bold text-teal-600 bg-teal-50 inline-block px-2 py-0.5 rounded uppercase tracking-widest mb-3">
+                                                Billed To</p>
+                                            <p class="font-extrabold text-gray-900 text-sm sm:text-lg leading-tight">
+                                                {{ Auth::user()->name }}</p>
+                                                <p class="text-xs sm:text-sm text-gray-600 mt-1">{{ Auth::user()->email }}</p>
+                                                <p class="text-xs sm:text-sm text-gray-600">{{ Auth::user()->phone ?? 'No Phone' }}</p>
+                                                <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-[250px] leading-snug">
+                                                {{ Auth::user()->address ?? 'Address not provided' }}
                                             </p>
+                                        </div>
+
+                                        {{-- Sold By (Vendor / Admin Details) --}}
+                                        <div class="w-1/2 text-right">
+                                            <p
+                                                class="text-[8px] sm:text-[10px] font-bold text-gray-500 bg-gray-100 inline-block px-2 py-0.5 rounded uppercase tracking-widest mb-3">
+                                                Sold By</p>
+
+                                            @if ($isVendorOrder)
+                                                <p class="font-extrabold text-gray-900 text-sm sm:text-lg leading-tight">
+                                                    {{ $firstItem->vendor->company_name ?? 'Vendor Store' }}</p>
+                                                <p class="text-xs sm:text-sm font-bold text-teal-600 mt-0.5">Owner:
+                                                    {{ $firstItem->vendor->user->name ?? 'Vendor' }}</p>
+                                                <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-[250px] ml-auto leading-snug">
+                                                    {{ $firstItem->vendor->company_address ?? 'Address not provided' }}<br>
+                                                    {{ $firstItem->vendor->company_city ?? '' }}
+                                                    {{ $firstItem->vendor->company_state ?? '' }}
+                                                </p>
+                                                <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                                                    {{ $firstItem->vendor->user->email ?? '' }}</p>
+                                            @else
+                                                <p class="font-extrabold text-gray-900 text-sm sm:text-lg leading-tight">Ziddi Group
+                                                    Official</p>
+                                                <p class="text-xs sm:text-sm font-bold text-teal-600 mt-0.5">SmartSave24 Admin</p>
+                                                <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-[250px] ml-auto leading-snug">
+                                                    Main GT Road, V.P.O Rai<br>Sonipat, Haryana
+                                                </p>
+                                                <p class="text-xs sm:text-sm text-gray-500 mt-1">support@smartsave24.com</p>
+                                            @endif
+
+                                            <div class="mt-4">
+                                                <p
+                                                    class="text-xs font-semibold sm:font-bold text-gray-800 bg-gray-50 inline-block px-3 py-1.5 rounded border border-gray-100">
+                                                    Date: {{ $order->created_at->format('d M, Y') }}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {{-- Table --}}
-                                    <table class="w-full mb-8" style="width: 100%; border-collapse: collapse;">
+                                    {{-- 3. Items Table --}}
+                                    <table class="w-full mb-6" style="width: 100%; border-collapse: collapse;">
                                         <thead>
-                                            <tr class="bg-gray-50">
-                                                <th class="text-left py-3 px-4 text-xs font-bold text-gray-500 uppercase">
-                                                    Item</th>
-                                                <th class="text-center py-3 px-4 text-xs font-bold text-gray-500 uppercase">
+                                            <tr class="bg-gray-100 border-b-2 border-gray-200">
+                                                <th
+                                                    class="text-left p-3 text-xs font-extrabold text-gray-600 uppercase">
+                                                    Item Description</th>
+                                                <th
+                                                    class="text-center p-3 text-xs font-extrabold text-gray-600 uppercase">
                                                     Qty</th>
-                                                <th class="text-right py-3 px-4 text-xs font-bold text-gray-500 uppercase">
+                                                <th
+                                                    class="text-right p-3 text-xs font-extrabold text-gray-600 uppercase">
                                                     Price</th>
-                                                <th class="text-right py-3 px-4 text-xs font-bold text-gray-500 uppercase">
+                                                <th
+                                                    class="text-right p-3 text-xs font-extrabold text-gray-600 uppercase">
                                                     Total</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-100">
                                             @foreach ($order->items as $item)
                                                 <tr>
-                                                    <td class="py-3 px-4 text-sm font-medium text-gray-800">
+                                                    <td class="py-3 px-3 text-sm font-bold text-gray-800">
                                                         {{ $item->product_name }}</td>
-                                                    <td class="py-3 px-4 text-sm text-gray-600 text-center">
+                                                    <td class="py-3 px-3 text-sm font-medium text-gray-600 text-center">
                                                         {{ $item->quantity }}</td>
-                                                    <td class="py-3 px-4 text-sm text-gray-600 text-right">
+                                                    <td class="py-3 px-3 text-sm font-medium text-gray-600 text-right">
                                                         ₹{{ number_format($item->price, 2) }}</td>
-                                                    <td class="py-3 px-4 text-sm font-bold text-gray-800 text-right">
+                                                    <td class="py-3 px-3 text-sm font-black text-teal-700 text-right">
                                                         ₹{{ number_format($item->subtotal, 2) }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
 
-                                    {{-- Totals --}}
+                                    {{-- 4. Totals Calculation --}}
                                     <div class="flex justify-end">
-                                        <div class="w-1/2">
-                                            <div class="flex justify-between py-2 border-b border-gray-100">
-                                                <span class="text-sm text-gray-600">Subtotal</span>
+                                        <div class="w-1/2 bg-gray-50 rounded-xl p-2 sm:p-4 border border-gray-100">
+                                            <div class="flex justify-between py-2 border-b border-gray-200/60">
+                                                <span class="text-sm font-medium text-gray-600">Subtotal</span>
                                                 <span
                                                     class="text-sm font-bold text-gray-800">₹{{ number_format($order->total_amount, 2) }}</span>
                                             </div>
-                                            <div class="flex justify-between py-2 border-b border-gray-100">
-                                                <span class="text-sm text-gray-600">Personal Wallet</span>
-                                                <span class="text-sm text-gray-800">
-                                                    ₹{{ number_format($order->wallet1_deducted, 2) }}</span>
+                                            <div class="flex justify-between py-2 border-b border-gray-200/60">
+                                                <span class="text-sm font-medium text-gray-600">Personal Wallet Used</span>
+                                                <span
+                                                    class="text-sm font-bold text-gray-800">₹{{ number_format($order->wallet1_deducted, 2) }}</span>
                                             </div>
                                             @if ($order->wallet2_deducted > 0)
-                                                <div class="flex justify-between py-2 border-b border-gray-100">
-                                                    <span class="text-sm text-gray-600">Paid via Second Wallet</span>
-                                                    <span class="text-sm text-gray-800">
-                                                        ₹{{ number_format($order->wallet2_deducted, 2) }}</span>
+                                                <div class="flex justify-between py-2 border-b border-gray-200/60">
+                                                    <span class="text-sm font-medium text-gray-600">Second Wallet
+                                                        Used</span>
+                                                    <span
+                                                        class="text-sm font-bold text-gray-800">₹{{ number_format($order->wallet2_deducted, 2) }}</span>
                                                 </div>
                                             @endif
-                                            <div class="flex justify-between py-2 border-b border-gray-100">
-                                                <span class="text-sm text-gray-600">Coupon Off</span>
-                                                <span class="text-sm text-gray-800">-
-                                                    ₹{{ number_format($order->coupons_used * 10) }}</span>
-                                            </div>
-                                            <div class="flex justify-between py-3">
-                                                <span class="text-base font-bold text-gray-800">Total Paid</span>
+                                            @if ($order->coupons_used > 0)
+                                                <div class="flex justify-between py-2 border-b border-gray-200/60">
+                                                    <span class="text-sm font-medium text-gray-600">Coupon Discount</span>
+                                                    <span class="text-sm font-bold text-orange-500">-
+                                                        ₹{{ number_format($order->coupons_used * 10) }}</span>
+                                                </div>
+                                            @endif
+
+                                            <div class="flex justify-between py-3 mt-1">
+                                                <span class="text-sm sm:text-base font-extrabold text-gray-900 uppercase">Total
+                                                    Paid</span>
                                                 <span
                                                     class="text-xl font-black text-teal-700">₹{{ number_format($order->wallet1_deducted + $order->wallet2_deducted, 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {{-- Footer --}}
-                                    <div class="mt-12 pt-8 border-t border-gray-200 text-center">
-                                        <p class="text-sm font-bold text-gray-800">Thank you for your business!</p>
-                                        <p class="text-xs text-gray-500 mt-1">For support, contact:
-                                            @if ($order->vendor)
-                                                {{ $order->vendor->email }}
-                                            @elseif($order->admin)
-                                                {{ $order->admin->email }}
-                                            @else
-                                                support@example.com
-                                            @endif
-                                        </p>
+                                    {{-- 5. Footer --}}
+                                    <div class="mt-12 pt-8 border-t-2 border-dashed border-gray-200 text-center">
+                                        <p class="text-base font-black text-gray-800">Thank you for shopping with Ziddi
+                                            Group!</p>
+                                        <p class="text-xs font-medium text-gray-500 mt-1">For support, please contact your
+                                            seller or reach out to Ziddi Group Helpdesk.</p>
+                                        <p class="text-[10px] text-gray-400 mt-4 uppercase tracking-widest">This is a
+                                            computer generated invoice</p>
                                     </div>
+
                                 </div>
                             </div>
 

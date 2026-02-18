@@ -79,7 +79,7 @@
 
        .nav-link {
             position: relative;
-            padding: 8px 16px;
+            padding: 6px 8px;
             color: #475569; /* Slate 600 - Darker color for light background */
             font-weight: 500;
             transition: color 0.3s ease;

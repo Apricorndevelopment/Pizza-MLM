@@ -56,12 +56,12 @@
             background: linear-gradient(135deg, #FFF9F0 0%, #F0FFEE 100%);
         }
 
-        .hero-bg {
+        /* .hero-bg {
             background: linear-gradient(rgba(42, 67, 101, 0.9), rgba(42, 67, 101, 0.9)),
                 url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
             background-size: cover;
             background-position: center;
-        }
+        } */
 
         .card-hover {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -77,29 +77,19 @@
             color: white;
         }
 
-        .nav-link {
+       .nav-link {
             position: relative;
             padding: 8px 16px;
-            color: white;
+            color: #475569; /* Slate 600 - Darker color for light background */
+            font-weight: 500;
             transition: color 0.3s ease;
         }
 
-        .nav-link:hover {
-            color: var(--accent);
-        }
-
-        .nav-link.active {
-            color: var(--accent);
-        }
-
+        .nav-link:hover { color: var(--primary); }
+        .nav-link.active { color: var(--primary); font-weight: 600; }
         .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 16px;
-            right: 16px;
-            height: 2px;
-            background: var(--accent);
+            content: ''; position: absolute; bottom: -2px; left: 16px; right: 16px; height: 2px; background: var(--primary);
+            border-radius: 2px;
         }
 
         .food-card {
@@ -206,156 +196,119 @@
 
 <body class="gradient-bg">
 
-    <header class="sticky top-0 z-50 shadow-md" style="background: var(--dark);">
+   <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <nav class="container mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-3 group">
                     <a href="/">
-                        <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
-                            <img src="{{ asset('images/smartsave.png') }}" alt=""
-                                class="w-full h-full object-cover">
+                        <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-orange-400 transition-colors shadow-sm">
+                            <img src="{{ asset('images/smartsave.png') }}" alt="Logo" class="w-full h-full object-cover bg-white">
                         </div>
                     </a>
-                    <a href="/" class="font-poppins text-xl font-bold text-white">
-                        Smart<span class="text-amber-400">Save24</span>
+                    <a href="/" class="font-poppins text-xl font-extrabold text-gray-800 tracking-tight">
+                        Smart<span class="text-orange-500">Save24</span>
                     </a>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-6">
+                <div class="hidden md:flex items-center space-x-2 lg:space-x-6">
                     <a href="#home" class="nav-link active">Home</a>
+                    <a href="#about" class="nav-link">About Us</a>
                     <a href="#vendors" class="nav-link">Vendors</a>
                     <a href="#products" class="nav-link">Products</a>
                     <a href="#achievers" class="nav-link">Achievers</a>
-                    <a href="#testimonials" class="nav-link">Reviews</a>
                     <a href="#contact" class="nav-link">Contact</a>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="{{ route('auth.login') }}" class="text-white hover:text-orange-300 transition">
-                        <i class="bi bi-box-arrow-in-right mr-1"></i> Login
+                <div class="hidden md:flex items-center space-x-5">
+                    <a href="{{ route('auth.login') }}" class="text-gray-600 hover:text-orange-500 font-semibold transition flex items-center">
+                        <i class="bi bi-box-arrow-in-right mr-1.5 text-lg"></i> Login
                     </a>
                     <a href="{{ route('auth.register') }}"
-                        class="bg-linear-to-r bg-orange-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all">
+                        class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2.5 rounded-full font-bold shadow-[0_4px_15px_rgba(249,115,22,0.3)] hover:shadow-[0_6px_20px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-0.5">
                         Join Now
                     </a>
                 </div>
 
-                <button id="mobileMenuBtn" class="md:hidden text-white text-2xl">
+                <button id="mobileMenuBtn" class="md:hidden text-gray-800 text-3xl focus:outline-none">
                     <i class="bi bi-list"></i>
                 </button>
-            </div>
-
-            <div id="mobileMenu" class="md:hidden hidden mt-4 mobile-menu">
-                <div class="flex flex-col space-y-3 bg-white rounded-lg p-4 shadow-lg">
-                    <a href="#home" class="text-gray-800 hover:text-orange-500 py-2 px-3 rounded">Home</a>
-                    <a href="#vendors" class="text-gray-800 hover:text-orange-500 py-2 px-3 rounded">Vendors</a>
-                    <a href="#products" class="text-gray-800 hover:text-orange-500 py-2 px-3 rounded">Products</a>
-                    <a href="#achievers" class="text-gray-800 hover:text-orange-500 py-2 px-3 rounded">Achievers</a>
-                    <a href="#testimonials" class="text-gray-800 hover:text-orange-500 py-2 px-3 rounded">Reviews</a>
-                    <a href="#contact" class="text-gray-800 hover:text-orange-500 py-2 px-3 rounded">Contact</a>
-                    <div class="border-t pt-3">
-                        <a href="{{ route('auth.login') }}"
-                            class="block text-center text-gray-700 hover:text-orange-500 py-2">Login</a>
-                        <a href="{{ route('auth.register') }}"
-                            class="block text-center bg-orange-500 text-white py-2 rounded-full mt-2">Join Now</a>
-                    </div>
-                </div>
             </div>
         </nav>
     </header>
 
-    <section id="home" class="hero-bg relative text-white py-20 md:py-28 overflow-hidden">
-        <div class="absolute inset-0 bg-black/40"></div>
+    <section id="home" class="relative pt-12 pb-20 md:pt-16 md:pb-24 overflow-hidden bg-slate-50">
+        
+        <div class="absolute top-0 right-0 w-full h-full overflow-hidden z-0">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse"></div>
+            <div class="absolute top-40 -left-24 w-80 h-80 bg-green-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-0 right-1/4 w-72 h-72 bg-yellow-100 rounded-full mix-blend-multiply filter blur-[60px] opacity-50"></div>
+        </div>
 
         <div class="container mx-auto px-4 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
 
-                <div class="animate__animated animate__fadeInLeft flex flex-col items-start text-left">
-
-                    <span
-                        class="text-2xl md:text-3xl font-bold text-gray-200 mb-2 tracking-widest uppercase drop-shadow-md">
-                        Welcome To
-                    </span>
-
-                    <div class="relative mb-6 group">
-                        <div
-                            class="absolute -inset-2 bg-gradient-to-r from-green-400 to-emerald-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-
-                        <img src="{{ asset('images/smartsave1.png') }}"
-                            class="relative w-64 sm:w-80 md:w-96 drop-shadow-2xl object-contain transition-transform duration-500 group-hover:scale-105"
-                            alt="SmartSave24">
+                <div class="flex flex-col items-start text-left">
+                    
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-green-100 shadow-sm mb-6">
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs font-bold text-green-700 tracking-wider uppercase">India's #1 Food Network</span>
                     </div>
 
-                    <p class="text-lg md:text-xl mb-10 text-gray-200 leading-relaxed max-w-lg">
-                        Join India's fastest-growing food network. Earn while promoting organic, healthy food products.
-                        Build your network and create sustainable income with <span
-                            class="text-emerald-400 font-bold">SmartSave24</span>.
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-500 mb-3 tracking-widest uppercase">
+                        Welcome To
+                    </h2>
+
+                    <div class="relative mb-6">
+                        <img src="{{ asset('images/smartsave1.png') }}" class="relative w-[280px] sm:w-[350px] md:w-[420px] object-contain drop-shadow-xl" alt="SmartSave24">
+                    </div>
+
+                    <p class="text-lg md:text-xl mb-10 text-gray-600 leading-relaxed max-w-lg font-medium">
+                        Order delicious fast food and build a sustainable income stream simultaneously. 
+                        Join our revolutionary network to <span class="text-green-600 font-bold">Eat Smart</span> and <span class="text-orange-500 font-bold">Earn Big</span>.
                     </p>
 
                     <div class="flex flex-wrap gap-4">
-                        <a href="{{ route('auth.register') }}"
-                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] hover:-translate-y-1 transition-all inline-flex items-center">
-                            Start Earning Now <i class="bi bi-arrow-right ml-2"></i>
+                        <a href="{{ route('auth.register') }}" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all flex items-center">
+                            Start Earning Now <i class="bi bi-rocket-takeoff ml-2"></i>
                         </a>
                     </div>
                 </div>
 
-                <div class="relative hidden lg:block animate__animated animate__fadeInRight">
-                    <div
-                        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-pulse">
-                    </div>
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse"
-                        style="animation-delay: 2s;"></div>
-
-                    <div
-                        class="relative bg-white/10 border border-white/20 p-10 rounded-3xl backdrop-blur-md shadow-2xl mx-auto w-4/5 text-center transform hover:scale-105 transition-transform duration-500">
-                        <div
-                            class="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
-                            <i class="bi bi-graph-up-arrow text-4xl text-white"></i>
+                <div class="relative hidden lg:flex justify-center items-center h-full">
+                    
+                    <div class="relative bg-white/70 border border-white p-10 rounded-[2.5rem] backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] w-[85%] text-center z-10 animate-float transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
+                        <div class="w-24 h-24 mx-auto bg-gradient-to-br from-green-100 to-emerald-50 rounded-2xl rotate-12 flex items-center justify-center mb-8 shadow-sm border border-green-200">
+                            <i class="bi bi-graph-up-arrow text-5xl text-green-600 -rotate-12"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-white mb-3">Smart Investment</h3>
-                        <p class="text-gray-300 text-sm leading-relaxed">
-                            "अब खाना और खरीदना ही एक इन्वेस्टमेंट है।" Grow your network, increase your wealth, and
-                            secure your financial future today.
+                        <h3 class="text-3xl font-extrabold text-gray-800 mb-4 tracking-tight">Smart Investment</h3>
+                        <p class="text-gray-600 text-base leading-relaxed font-medium">
+                            "अब खाना और खरीदना ही एक इन्वेस्टमेंट है।"<br>
+                            <span class="text-sm font-normal text-gray-500 mt-3 block">Grow your network, increase your wealth, and secure your financial future today.</span>
                         </p>
                     </div>
-                </div>
 
-            </div>
-        </div>
-    </section>
-
-    <section id="vendors" class="py-10 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">SmartSave24 Vendors</h2>
-                {{-- <p class="text-gray-500">Exclusive Offers from Top Vendors</p> --}}
-            </div>
-
-            <div class="swiper vendorSwiper pb-10">
-                <div class="swiper-wrapper">
-                    @forelse($vendorBanners as $banner)
-                        <div class="swiper-slide">
-                            <div class="rounded-xl overflow-hidden shadow-lg relative group">
-                                <img src="{{ asset($banner->banner_image) }}" class="banner-img"
-                                    alt="{{ $banner->title }}">
-                                @if ($banner->title)
-                                    <div class="absolute bottom-0 left-0 right-0 bg-black/50 p-4 text-white">
-                                        <h3 class="text-xl font-bold">{{ $banner->title }}</h3>
-                                        @if ($banner->link)
-                                            <a href="{{ $banner->link }}"
-                                                class="text-orange-300 text-sm hover:underline">Visit Store &rarr;</a>
-                                        @endif
-                                    </div>
-                                @endif
+                    <div class="absolute -left-12 top-10 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float-delayed">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-2xl shadow-sm border border-orange-100">🍔</div>
+                            <div class="text-left">
+                                <p class="text-gray-800 font-bold text-sm leading-tight">Top Vendors</p>
+                                <p class="text-orange-500 text-xs font-semibold">Partnered</p>
                             </div>
                         </div>
-                    @empty
-                        <div class="text-center w-full text-gray-400 py-10">No active vendor banners available.</div>
-                    @endforelse
+                    </div>
+
+                    <div class="absolute -right-8 bottom-10 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-2xl shadow-sm border border-green-100 text-green-600"><i class="bi bi-wallet2"></i></div>
+                            <div class="text-left">
+                                <p class="text-gray-800 font-bold text-sm leading-tight">Daily Income</p>
+                                <p class="text-green-600 text-xs font-semibold">Guaranteed</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="swiper-pagination"></div>
+
             </div>
         </div>
     </section>
@@ -404,48 +357,103 @@
         </div>
     </section>
 
-    <section id="about" class="py-16 md:py-24 bg-white">
-        <div class="container mx-auto px-4">
+    <section id="about" class="py-16 md:py-24 bg-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-orange-100 rounded-full blur-3xl opacity-50">
+        </div>
+        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-green-100 rounded-full blur-3xl opacity-50">
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10">
             <div class="text-center mb-16">
-                <span class="food-badge px-4 py-1 rounded-full text-sm font-semibold mb-4 inline-block">
-                    About
+                <span
+                    class="bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-bold mb-4 inline-block shadow-sm">
+                    Why Choose Us
                 </span>
                 <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-                    Revolutionizing Food & Income
+                    Eat Smart, Save Big, <span class="text-emerald-500">Earn More</span>
                 </h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    SmartSave24 is more than a network marketing company. We are a movement towards healthier living
-                    and financial freedom through premium organic food products.
+                    SmartSave24 isn't just about ordering food; it's a lifestyle revolution.
+                    Enjoy your favorite fast food while building a sustainable income stream through our unique savings
+                    & rewards program.
                 </p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="bi bi-heart-fill text-3xl text-green-600"></i>
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 card-hover text-center group transition-all duration-300 hover:border-orange-200">
+                    <div
+                        class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-orange-500 transition-colors duration-300">
+                        <i
+                            class="bi bi-basket2-fill text-3xl text-orange-500 group-hover:text-white transition-colors"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4">Health First</h3>
-                    <p class="text-gray-600">Promote 100% natural, chemical-free food products that enhance health and
-                        wellness.</p>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">Delicious Choices</h3>
+                    <p class="text-gray-600">
+                        From spicy noodles to cheesy burgers, order your favorite fast food from top-rated vendors
+                        instantly.
+                    </p>
                 </div>
 
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover text-center">
-                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="bi bi-currency-rupee text-3xl text-orange-600"></i>
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 card-hover text-center group transition-all duration-300 hover:border-emerald-200">
+                    <div
+                        class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500 transition-colors duration-300">
+                        <i
+                            class="bi bi-cash-coin text-3xl text-emerald-500 group-hover:text-white transition-colors"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4">Earn Unlimited</h3>
-                    <p class="text-gray-600">Build your network and earn commissions on every sale. Multiple income
-                        streams available.</p>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">Earn While You Eat</h3>
+                    <p class="text-gray-600">
+                        Get guaranteed cashback on every order and earn unlimited commissions by referring friends to
+                        our network.
+                    </p>
                 </div>
 
-                <div class="bg-white p-8 rounded-2xl shadow-lg card-hover text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="bi bi-people-fill text-3xl text-blue-600"></i>
+                <div
+                    class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 card-hover text-center group transition-all duration-300 hover:border-blue-200">
+                    <div
+                        class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500 transition-colors duration-300">
+                        <i class="bi bi-shop text-3xl text-blue-500 group-hover:text-white transition-colors"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4">Community Support</h3>
-                    <p class="text-gray-600">Join a supportive community with training, mentorship, and growth
-                        opportunities.</p>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">Vendor Network</h3>
+                    <p class="text-gray-600">
+                        Empowering local food vendors with a digital platform while providing you with quality, hygienic
+                        meals.
+                    </p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+     <section id="vendors" class="py-10 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">SmartSave24 Vendors</h2>
+                {{-- <p class="text-gray-500">Exclusive Offers from Top Vendors</p> --}}
+            </div>
+
+            <div class="swiper vendorSwiper pb-10">
+                <div class="swiper-wrapper">
+                    @forelse($vendorBanners as $banner)
+                        <div class="swiper-slide">
+                            <div class="rounded-xl overflow-hidden shadow-lg relative group">
+                                <img src="{{ asset($banner->banner_image) }}" class="banner-img"
+                                    alt="{{ $banner->title }}">
+                                @if ($banner->title)
+                                    <div class="absolute bottom-0 left-0 right-0 bg-black/50 p-4 text-white">
+                                        <h3 class="text-xl font-bold">{{ $banner->title }}</h3>
+                                        @if ($banner->link)
+                                            <a href="{{ $banner->link }}"
+                                                class="text-orange-300 text-sm hover:underline">Visit Store &rarr;</a>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center w-full text-gray-400 py-10">No active vendor banners available.</div>
+                    @endforelse
+                </div>
+                <div class="swiper-pagination"></div>
             </div>
         </div>
     </section>
@@ -535,7 +543,7 @@
         </div>
     </section>
 
-    <section id="testimonials" class="py-16 md:py-24 bg-white">
+    {{-- <section id="testimonials" class="py-16 md:py-24 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <span class="food-badge px-4 py-1 rounded-full text-sm font-semibold mb-4 inline-block">
@@ -606,7 +614,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <section class="py-16 md:py-24" style="background: linear-gradient(135deg, var(--dark), #374D7A);">
         <div class="container mx-auto px-4 text-center">
@@ -680,8 +688,8 @@
                         <div class="flex items-start">
                             <i class="bi bi-telephone text-2xl text-green-500 mr-4 mt-1"></i>
                             <div>
-                                <h4 class="font-bold mb-1">Phone Numbers</h4>
-                                <p class="text-gray-600">+91 827827 3737<br>+91 91234 xxxxx</p>
+                                <h4 class="font-bold mb-1">Phone Number</h4>
+                                <p class="text-gray-600">+91 827827 3737</p>
                             </div>
                         </div>
                         <div class="flex items-start">
@@ -766,7 +774,7 @@
                         <li><a href="#home" class="text-gray-400 hover:text-white">Home</a></li>
                         <li><a href="#about" class="text-gray-400 hover:text-white">About Us</a></li>
                         <li><a href="#products" class="text-gray-400 hover:text-white">Products</a></li>
-                        <li><a href="#network" class="text-gray-400 hover:text-white">Income Plan</a></li>
+                        <li><a href="#achievers" class="text-gray-400 hover:text-white">Achievers</a></li>
                     </ul>
                 </div>
                 <div>
@@ -781,10 +789,10 @@
                 <div>
                     <h4 class="text-lg font-bold mb-4">Download App</h4>
                     <div class="space-y-3">
-                        <a href="#" class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
+                        <a href="SmartSave24-app.apk" class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
                             <i class="bi bi-google-play mr-2"></i> Google Play
                         </a>
-                        <a href="#" class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
+                        <a href="SmartSave24-app.apk" class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
                             <i class="bi bi-apple mr-2"></i> App Store
                         </a>
                     </div>
@@ -792,7 +800,7 @@
             </div>
             <div class="border-t border-gray-800 pt-8 text-center">
                 <p class="text-gray-400">
-                    &copy; 2026 SmartSave24. All rights reserved. |
+                    &copy; {{ date('Y') }} SmartSave24. All rights reserved. |
                     <span class="text-orange-400">Designed & Developed By <a class="text-blue-600"
                             href="https://apricornsolutions.com/">Apricorn Solutions</a></span>
                 </p>

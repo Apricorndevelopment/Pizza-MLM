@@ -241,7 +241,7 @@
                                                     @endif
                                                 @else
                                                     {{-- CASE 2: Admin Order (vendor_id is null) --}}
-                                                    Smart Group
+                                                    Ziddi Group
                                                     <span class="text-xs text-gray-500">(Official Store)</span>
                                                 @endif
                                             </h3>
@@ -262,7 +262,7 @@
                                                     {{ $firstItem->vendor->company_city ?? 'City not provided' }},
                                                     {{ $firstItem->vendor->company_state ?? 'State not provided' }}
                                                 @else
-                                                    123 Main Street, New Delhi, India
+                                                    Main GT Road, V.P.O Rai Sonipat, Haryana
                                                 @endif
                                             </p>
                                         </div>

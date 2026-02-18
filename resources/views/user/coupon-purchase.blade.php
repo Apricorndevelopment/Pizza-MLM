@@ -75,7 +75,7 @@
                         <h3 class="text-slate-500 font-bold text-sm tracking-widest uppercase mb-2">Bundle #{{ $loop->iteration }}</h3>
                         <div class="flex items-center justify-center text-slate-800">
                             <span class="text-2xl font-bold self-start mt-2">₹</span>
-                            <span class="text-4xl font-extrabold tracking-tight">{{ number_format($package->coupon_price, 0) }}</span>
+                            <span class="text-4xl font-extrabold tracking-tight">{{ number_format($package->coupon_price * $package->coupon_qyt, 0) }}</span>
                         </div>
                         <p class="text-slate-400 text-sm font-medium mt-2">One-time payment</p>
                     </div>

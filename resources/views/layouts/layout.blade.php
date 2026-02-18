@@ -335,7 +335,7 @@
                         <div class="sidebar-submenu pl-10 mt-1 space-y-1">
                              <a href="{{ route('admin.slider.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
-                                Home Sliders
+                                Top Achievers
                             </a>
                             <a href="{{ route('admin.stats.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">

@@ -62,8 +62,8 @@
                             <p class="text-sm text-emerald-700/80 mb-4">Transfer funds to your linked bank/UPI account
                                 instantly.</p>
                             @if ($withdrawalStatus)
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#withdrawModal"
-                                    class="btn btn-primary">
+                                {{-- Is line ko replace karein --}}
+                                <button type="button" onclick="toggleModal('withdrawModal')" class="btn btn-primary">
                                     <i class="fas fa-money-bill-wave me-2"></i> Withdraw Money
                                 </button>
                             @else
@@ -256,7 +256,7 @@
                                     </tbody>
                                 </table>
                                 <div class="px-6 py-4 border-t border-slate-100">
-                                    {{ $wallet1Transactions->withQueryString()->onEachSide(1)->links('pagination::tailwind') }}
+                                    {{ $wallet1Transactions->withQueryString()->onEachSide(1)->links('pagination::bootstrap-5') }}
                                 </div>
                             @else
                                 <div class="py-10 text-center text-slate-400">
@@ -349,8 +349,8 @@
                     <div
                         class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100">
 
-                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                            <div class="flex justify-between items-center mb-5">
+                        <div class="bg-white px-3 pb-4 pt-3 sm:p-5 sm:pb-3">
+                            <div class="flex justify-between items-center mb-3">
                                 <h3 class="text-xl font-bold text-slate-800" id="modal-title">Withdraw Funds</h3>
                                 <button type="button" class="text-slate-400 hover:text-slate-600 transition"
                                     onclick="toggleModal('withdrawModal')">
@@ -361,14 +361,14 @@
                             <form id="withdrawForm" action="{{ route('user.withdraw.wallet1') }}" method="POST">
                                 @csrf
 
-                                <div class="bg-[#ECFDF5] border border-emerald-100 rounded-xl p-4 text-center mb-6">
+                                <div class="bg-[#ECFDF5] border border-emerald-100 rounded-xl p-4 text-center mb-4">
                                     <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Available
                                         Balance</span>
                                     <div class="text-3xl font-extrabold text-emerald-800 mt-1">
                                         ₹{{ number_format($wallet1) }}</div>
                                 </div>
 
-                                <div class="mb-5">
+                                <div class="mb-3">
                                     <label for="withdrawAmount"
                                         class="block text-xs font-bold text-slate-500 uppercase mb-2">Enter Amount</label>
                                     <div class="relative rounded-md shadow-sm">
@@ -383,7 +383,7 @@
 
                                 @php $user = Auth::user(); @endphp
 
-                                <div class="mb-6">
+                                <div class="mb-3">
                                     <label for="paymentMethod"
                                         class="block text-xs font-bold text-slate-500 uppercase mb-2">Receiving
                                         Account</label>
@@ -408,7 +408,7 @@
                                     @endif
                                 </div>
 
-                                <div class="bg-slate-50 rounded-xl p-4 mb-2 border border-slate-100">
+                                <div class="bg-slate-50 rounded-xl p-3 mb-2 border border-slate-100">
                                     <ul class="space-y-2 text-xs text-slate-500 font-medium">
                                         <li class="flex items-center"><i
                                                 class="fas fa-info-circle w-5 text-emerald-500"></i> Min. Withdrawal: ₹500

@@ -1,106 +1,94 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geokranti Forgot Password</title>
+    <title>SmartSave24 | Forgot Password</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         body {
-            background: url('/logoimg.png') no-repeat center center fixed;
-            background-size: cover;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
         }
-
-        .forgot-container {
-            background: #fff;
-            padding: 40px 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .forgot-container h4 {
-            margin-bottom: 25px;
-            color: #0072ff;
-            font-weight: bold;
-        }
-
-        .form-control {
-            border-radius: 30px;
-            padding: 12px 20px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            transition: 0.3s;
-        }
-
-        .form-control:focus {
-            border-color: #0072ff;
-            box-shadow: 0 0 5px rgba(0, 114, 255, 0.5);
-        }
-
-        .btn-submit {
-            background: #0072ff;
-            color: #fff;
-            border-radius: 30px;
-            padding: 12px 25px;
-            border: none;
-            transition: 0.3s;
-        }
-
-        .btn-submit:hover {
-            background: #005ecb;
-        }
-
-        .logo {
-            margin-bottom: 20px;
-        }
-
-        .logo img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
         }
     </style>
-
 </head>
 
-<body>
+<body class="min-h-screen flex items-center justify-center relative overflow-hidden selection:bg-emerald-500 selection:text-white">
 
-    <div class="forgot-container">
-        <div class="logo">
-            <img src="geokrantilogo-removebg.png" alt="Geokranti Logo">
-        </div>
-        <h4>Forgot Password</h4>
-        <form action="{{ route('password.email') }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <input type="email" name="email" class="form-control" placeholder="Enter your Email" required>
-                @error('email')
-                <div class="text-danger mt-2">{{ $message }}</div>
-                @enderror
-            </div>
-            <button type="submit" class="btn btn-submit"><i class="fas fa-paper-plane me-2"></i> Send OTP</button>
-        </form>
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse"></div>
+        <div class="absolute top-1/2 -right-24 w-80 h-80 bg-orange-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="relative z-10 w-full max-w-md px-4 sm:px-0">
+        
+        <div class="bg-white/90 backdrop-blur-xl border border-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 sm:p-10">
+            
+            <div class="flex flex-col items-center mb-8">
+                <div class="w-16 h-16 rounded-full overflow-hidden border border-gray-100 shadow-sm p-1 mb-3 bg-white">
+                    <img src="{{ asset('images/smartsave.png') }}" alt="SmartSave24 Logo" class="w-full h-full object-contain">
+                </div>
+                <h1 class="font-poppins text-2xl font-extrabold text-slate-800 tracking-tight">
+                    Smart<span class="text-orange-500">Save24</span>
+                </h1>
+            </div>
+
+            <div class="text-center mb-8">
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Reset Password</h2>
+                <p class="text-sm text-slate-500 font-medium leading-relaxed">
+                    Enter your registered email address and we'll send you an OTP to reset your password.
+                </p>
+            </div>
+
+            <form action="{{ route('password.email') }}" method="POST" class="space-y-5">
+                @csrf
+                
+                <div>
+                    <label for="email" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="bi bi-envelope text-slate-400 text-lg"></i>
+                        </div>
+                        <input type="email" name="email" id="email" 
+                            class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200" 
+                            placeholder="e.g. name@example.com" required value="{{ old('email') }}">
+                    </div>
+                    
+                    @error('email')
+                        <div class="mt-2 flex items-center gap-1.5 text-red-500 text-xs font-semibold">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold py-3.5 rounded-xl shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.4)] transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    <i class="bi bi-send-fill"></i> Send OTP
+                </button>
+            </form>
+
+            <div class="mt-8 text-center">
+                <p class="text-sm text-slate-500 font-medium">
+                    Remember your password? 
+                    <a href="{{ route('auth.login') }}" class="text-emerald-600 font-bold hover:text-emerald-700 transition-colors">
+                        Back to Login
+                    </a>
+                </p>
+            </div>
+
+        </div>
+    </div>
 
 </body>
-
 </html>

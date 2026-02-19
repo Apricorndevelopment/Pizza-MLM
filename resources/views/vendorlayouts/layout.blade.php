@@ -215,6 +215,11 @@
                                 <i class="bi bi-plus-circle mr-2"></i>
                                 Add Money
                             </a>
+                            <a href="{{ route('user.transferWallet1Form') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-plus-circle mr-2"></i>
+                                Transfer Money
+                            </a>
                         </div>
                     </div>
 

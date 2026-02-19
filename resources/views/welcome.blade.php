@@ -77,18 +77,32 @@
             color: white;
         }
 
-       .nav-link {
+        .nav-link {
             position: relative;
             padding: 6px 8px;
-            color: #475569; /* Slate 600 - Darker color for light background */
+            color: #475569;
+            /* Slate 600 - Darker color for light background */
             font-weight: 500;
             transition: color 0.3s ease;
         }
 
-        .nav-link:hover { color: var(--primary); }
-        .nav-link.active { color: var(--primary); font-weight: 600; }
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
         .nav-link.active::after {
-            content: ''; position: absolute; bottom: -2px; left: 16px; right: 16px; height: 2px; background: var(--primary);
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background: var(--primary);
             border-radius: 2px;
         }
 
@@ -196,13 +210,15 @@
 
 <body class="gradient-bg">
 
-   <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <nav class="container mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3 group">
                     <a href="/">
-                        <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-orange-400 transition-colors shadow-sm">
-                            <img src="{{ asset('images/smartsave.png') }}" alt="Logo" class="w-full h-full object-cover bg-white">
+                        <div
+                            class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-orange-400 transition-colors shadow-sm">
+                            <img src="{{ asset('images/smartsave.png') }}" alt="Logo"
+                                class="w-full h-full object-cover bg-white">
                         </div>
                     </a>
                     <a href="/" class="font-poppins text-xl font-extrabold text-gray-800 tracking-tight">
@@ -220,7 +236,8 @@
                 </div>
 
                 <div class="hidden md:flex items-center space-x-5">
-                    <a href="{{ route('auth.login') }}" class="text-gray-600 hover:text-orange-500 font-semibold transition flex items-center">
+                    <a href="{{ route('auth.login') }}"
+                        class="text-gray-600 hover:text-orange-500 font-semibold transition flex items-center">
                         <i class="bi bi-box-arrow-in-right mr-1.5 text-lg"></i> Login
                     </a>
                     <a href="{{ route('auth.register') }}"
@@ -237,21 +254,28 @@
     </header>
 
     <section id="home" class="relative pt-12 pb-20 md:pt-16 md:pb-24 overflow-hidden bg-slate-50">
-        
+
         <div class="absolute top-0 right-0 w-full h-full overflow-hidden z-0">
-            <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse"></div>
-            <div class="absolute top-40 -left-24 w-80 h-80 bg-green-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
-            <div class="absolute bottom-0 right-1/4 w-72 h-72 bg-yellow-100 rounded-full mix-blend-multiply filter blur-[60px] opacity-50"></div>
+            <div
+                class="absolute -top-24 -right-24 w-96 h-96 bg-orange-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse">
+            </div>
+            <div class="absolute top-40 -left-24 w-80 h-80 bg-green-100 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse"
+                style="animation-delay: 2s;"></div>
+            <div
+                class="absolute bottom-0 right-1/4 w-72 h-72 bg-yellow-100 rounded-full mix-blend-multiply filter blur-[60px] opacity-50">
+            </div>
         </div>
 
         <div class="container mx-auto px-4 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
 
                 <div class="flex flex-col items-start text-left">
-                    
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-green-100 shadow-sm mb-6">
+
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-green-100 shadow-sm mb-6">
                         <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                        <span class="text-xs font-bold text-green-700 tracking-wider uppercase">India's #1 Food Network</span>
+                        <span class="text-xs font-bold text-green-700 tracking-wider uppercase">India's #1 Direct
+                            selling Network</span>
                     </div>
 
                     <h2 class="text-2xl md:text-3xl font-bold text-gray-500 mb-3 tracking-widest uppercase">
@@ -259,37 +283,62 @@
                     </h2>
 
                     <div class="relative mb-6">
-                        <img src="{{ asset('images/smartsave1.png') }}" class="relative w-[280px] sm:w-[350px] md:w-[420px] object-contain drop-shadow-xl" alt="SmartSave24">
+                        <img src="{{ asset('images/smartsave1.png') }}"
+                            class="relative w-[250px] sm:w-[320px] md:w-[400px] object-contain drop-shadow-xl"
+                            alt="SmartSave24">
                     </div>
 
-                    <p class="text-lg md:text-xl mb-10 text-gray-600 leading-relaxed max-w-lg font-medium">
-                        Order delicious fast food and build a sustainable income stream simultaneously. 
-                        Join our revolutionary network to <span class="text-green-600 font-bold">Eat Smart</span> and <span class="text-orange-500 font-bold">Earn Big</span>.
-                    </p>
+                    {{-- NEW SLOGAN SECTION --}}
+                    <div class="mb-10 max-w-xl space-y-4">
+                        <h3 class="text-xl md:text-[22px] text-gray-800 font-extrabold leading-snug font-poppins">
+                            Smart Business for Smart People: <br class="hidden sm:block">
+                            <span class="text-emerald-600">Shop</span> what you love,
+                            <span class="text-orange-500">Eat</span> what you want,
+                            <span class="text-teal-700">Earn</span> what you deserve!
+                        </h3>
+
+                        <div class="relative">
+                            <div
+                                class="absolute left-0 top-0 h-full w-1.5 bg-gradient-to-b from-orange-400 to-emerald-500 rounded-full">
+                            </div>
+                            <p
+                                class="text-lg md:text-[19px] text-gray-600 font-medium hindi-font leading-relaxed pl-5 py-1 bg-gradient-to-r from-gray-50 to-transparent rounded-r-xl">
+                                "स्मार्ट लोगों के लिए स्मार्ट बिजनेस: वह खरीदें जो आपको पसंद हो, वह खाएं जो आप चाहते
+                                हैं, वह कमाएं जिसके आप हकदार हैं।"
+                            </p>
+                        </div>
+                    </div>
 
                     <div class="flex flex-wrap gap-4">
-                        <a href="{{ route('auth.register') }}" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all flex items-center">
+                        <a href="{{ route('auth.register') }}"
+                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all flex items-center">
                             Start Earning Now <i class="bi bi-rocket-takeoff ml-2"></i>
                         </a>
                     </div>
                 </div>
 
                 <div class="relative hidden lg:flex justify-center items-center h-full">
-                    
-                    <div class="relative bg-white/70 border border-white p-10 rounded-[2.5rem] backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] w-[85%] text-center z-10 animate-float transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
-                        <div class="w-24 h-24 mx-auto bg-gradient-to-br from-green-100 to-emerald-50 rounded-2xl rotate-12 flex items-center justify-center mb-8 shadow-sm border border-green-200">
+
+                    <div
+                        class="relative bg-white/70 border border-white p-10 rounded-[2.5rem] backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] w-[85%] text-center z-10 animate-float transition-all hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
+                        <div
+                            class="w-24 h-24 mx-auto bg-gradient-to-br from-green-100 to-emerald-50 rounded-2xl rotate-12 flex items-center justify-center mb-8 shadow-sm border border-green-200">
                             <i class="bi bi-graph-up-arrow text-5xl text-green-600 -rotate-12"></i>
                         </div>
                         <h3 class="text-3xl font-extrabold text-gray-800 mb-4 tracking-tight">Smart Investment</h3>
                         <p class="text-gray-600 text-base leading-relaxed font-medium">
                             "अब खाना और खरीदना ही एक इन्वेस्टमेंट है।"<br>
-                            <span class="text-sm font-normal text-gray-500 mt-3 block">Grow your network, increase your wealth, and secure your financial future today.</span>
+                            <span class="text-sm font-normal text-gray-500 mt-3 block">Grow your network, increase your
+                                wealth, and secure your financial future today.</span>
                         </p>
                     </div>
 
-                    <div class="absolute -left-12 top-10 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float-delayed">
+                    <div
+                        class="absolute -left-16 top-16 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float-delayed">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-2xl shadow-sm border border-orange-100">🍔</div>
+                            <div
+                                class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center text-2xl shadow-sm border border-orange-100">
+                                🍔</div>
                             <div class="text-left">
                                 <p class="text-gray-800 font-bold text-sm leading-tight">Top Vendors</p>
                                 <p class="text-orange-500 text-xs font-semibold">Partnered</p>
@@ -297,9 +346,13 @@
                         </div>
                     </div>
 
-                    <div class="absolute -right-8 bottom-10 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float">
+                    <div
+                        class="absolute -right-6 bottom-16 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-2xl shadow-sm border border-green-100 text-green-600"><i class="bi bi-wallet2"></i></div>
+                            <div
+                                class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-2xl shadow-sm border border-green-100 text-green-600">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
                             <div class="text-left">
                                 <p class="text-gray-800 font-bold text-sm leading-tight">Daily Income</p>
                                 <p class="text-green-600 text-xs font-semibold">Guaranteed</p>
@@ -358,73 +411,128 @@
     </section>
 
     <section id="about" class="py-16 md:py-24 bg-white relative overflow-hidden">
-        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-orange-100 rounded-full blur-3xl opacity-50">
+        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-60">
         </div>
-        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-green-100 rounded-full blur-3xl opacity-50">
+        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-60">
         </div>
 
         <div class="container mx-auto px-4 relative z-10">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 max-w-4xl mx-auto">
                 <span
-                    class="bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-bold mb-4 inline-block shadow-sm">
-                    Why Choose Us
+                    class="bg-gradient-to-r from-orange-100 to-amber-100 text-orange-600 px-5 py-1.5 rounded-full text-sm font-black tracking-widest mb-4 inline-block shadow-sm border border-orange-200 uppercase">
+                    Why Choose SmartSave24?
                 </span>
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-                    Eat Smart, Save Big, <span class="text-emerald-500">Earn More</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 text-gray-800 hindi-font">
+                    अब हर <span class="text-orange-500">Customer</span> बनेगा <span
+                        class="text-emerald-600">Businessman!</span>
                 </h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    SmartSave24 isn't just about ordering food; it's a lifestyle revolution.
-                    Enjoy your favorite fast food while building a sustainable income stream through our unique savings
-                    & rewards program.
+                <p class="text-lg md:text-xl text-gray-600 font-medium font-poppins">
+                    SmartSave24 सिर्फ एक प्लेटफ़ॉर्म नहीं, बल्कि आपकी तरक्की का नया address है।
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid lg:grid-cols-2 gap-10">
+
                 <div
-                    class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 card-hover text-center group transition-all duration-300 hover:border-orange-200">
+                    class="bg-gradient-to-br from-emerald-50 to-white p-8 md:p-10 rounded-[2rem] shadow-lg border border-emerald-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                     <div
-                        class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-orange-500 transition-colors duration-300">
-                        <i
-                            class="bi bi-basket2-fill text-3xl text-orange-500 group-hover:text-white transition-colors"></i>
+                        class="absolute top-0 right-0 w-32 h-32 bg-emerald-200 rounded-full blur-3xl opacity-40 -mr-10 -mt-10">
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">Delicious Choices</h3>
-                    <p class="text-gray-600">
-                        From spicy noodles to cheesy burgers, order your favorite fast food from top-rated vendors
-                        instantly.
+
+                    <div
+                        class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-emerald-100 relative z-10">
+                        <i class="bi bi-wallet2 text-3xl text-emerald-500"></i>
+                    </div>
+
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800 font-poppins relative z-10">
+                        Eat Smart, Save Big, <span class="text-emerald-500">Earn More</span>
+                    </h3>
+
+                    <p class="text-gray-600 mb-6 font-medium hindi-font relative z-10 text-lg leading-snug">
+                        अब आपका <span class="text-emerald-600 font-bold">खर्चा</span> ही आपकी सबसे बड़ी <span
+                            class="text-emerald-600 font-bold">Income</span> है! हर ख़रीदारी पर मिलेगा बेनिफ़िट:
                     </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
+                        <div
+                            class="bg-white p-3.5 rounded-xl shadow-sm border border-emerald-50 flex items-center gap-3 hover:border-emerald-200 transition-colors">
+                            <div class="bg-emerald-50 p-2 rounded-lg flex-shrink-0">
+                                <i class="bi bi-flower1 text-emerald-500 text-lg"></i>
+                            </div>
+                            <span class="font-bold text-gray-700 text-sm leading-tight">Health & <br>Ayurveda</span>
+                        </div>
+
+                        <div
+                            class="bg-white p-3.5 rounded-xl shadow-sm border border-emerald-50 flex items-center gap-3 hover:border-emerald-200 transition-colors">
+                            <div class="bg-emerald-50 p-2 rounded-lg flex-shrink-0">
+                                <i class="bi bi-cup-hot-fill text-emerald-500 text-lg"></i>
+                            </div>
+                            <span class="font-bold text-gray-700 text-sm leading-tight">Delicious <br>Fast Food</span>
+                        </div>
+
+                        <div
+                            class="bg-white p-3.5 rounded-xl shadow-sm border border-emerald-50 flex items-center gap-3 hover:border-emerald-200 transition-colors">
+                            <div class="bg-emerald-50 p-2 rounded-lg flex-shrink-0">
+                                <i class="bi bi-phone-vibrate text-emerald-500 text-lg"></i>
+                            </div>
+                            <span class="font-bold text-gray-700 text-sm leading-tight">Mobile Recharge <br>& Bill
+                                Pay</span>
+                        </div>
+
+                        <div
+                            class="bg-white p-3.5 rounded-xl shadow-sm border border-emerald-50 flex items-center gap-3 hover:border-emerald-200 transition-colors">
+                            <div class="bg-emerald-50 p-2 rounded-lg flex-shrink-0">
+                                <i class="bi bi-cart-check-fill text-emerald-500 text-lg"></i>
+                            </div>
+                            <span class="font-bold text-gray-700 text-sm leading-tight">Garments & <br>Grocery</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div
-                    class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 card-hover text-center group transition-all duration-300 hover:border-emerald-200">
+                    class="bg-gradient-to-br from-orange-50 to-white p-8 md:p-10 rounded-[2rem] shadow-lg border border-orange-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                     <div
-                        class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500 transition-colors duration-300">
-                        <i
-                            class="bi bi-cash-coin text-3xl text-emerald-500 group-hover:text-white transition-colors"></i>
+                        class="absolute top-0 right-0 w-32 h-32 bg-orange-200 rounded-full blur-3xl opacity-40 -mr-10 -mt-10">
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">Earn While You Eat</h3>
-                    <p class="text-gray-600">
-                        Get guaranteed cashback on every order and earn unlimited commissions by referring friends to
-                        our network.
-                    </p>
+
+                    <div
+                        class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-orange-100 relative z-10">
+                        <i class="bi bi-shop text-3xl text-orange-500"></i>
+                    </div>
+
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800 font-poppins relative z-10">
+                        <span class="text-orange-500">Vendor</span> Network
+                    </h3>
+
+                    <p class="text-gray-600 mb-6 font-medium hindi-font relative z-10 text-lg">क्या आप अपने बिज़नेस को
+                        नई ऊंचाइयों पर ले जाना चाहते हैं?</p>
+
+                    <div class="space-y-4 relative z-10">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-orange-50 flex gap-4 items-start">
+                            <div class="mt-1"><i class="bi bi-house-door-fill text-orange-400 text-xl"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Reach Every Home</h4>
+                                <p class="text-sm text-gray-600 hindi-font mt-1">क्या आप अपने Product को हर घर तक भेजना
+                                    चाहते हैं? हम आपकी मदद करेंगे।</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-orange-50 flex gap-4 items-start">
+                            <div class="mt-1"><i class="bi bi-diagram-3-fill text-orange-400 text-xl"></i></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Direct Selling Power</h4>
+                                <p class="text-sm text-gray-600 hindi-font mt-1">अपने बिज़नेस को Direct Selling के
+                                    नेटवर्क के साथ मिलकर तेज़ रफ़्तार दें।</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div
-                    class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 card-hover text-center group transition-all duration-300 hover:border-blue-200">
-                    <div
-                        class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500 transition-colors duration-300">
-                        <i class="bi bi-shop text-3xl text-blue-500 group-hover:text-white transition-colors"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-800">Vendor Network</h3>
-                    <p class="text-gray-600">
-                        Empowering local food vendors with a digital platform while providing you with quality, hygienic
-                        meals.
-                    </p>
-                </div>
             </div>
         </div>
     </section>
 
-     <section id="vendors" class="py-10 bg-white">
+    <section id="vendors" class="py-10 bg-white">
         <div class="container mx-auto px-4">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-800">SmartSave24 Vendors</h2>
@@ -627,7 +735,7 @@
 
             <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
                 <a href="{{ route('auth.register') }}"
-                    class="bg-linear-to-r from-orange-500 to-orange-600 text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-2xl transition-all inline-flex items-center text-center">
+                    class="bg-orange-500 text-white px-10 py-4 rounded-full font-bold text-lg hover:shadow-2xl transition-all inline-flex items-center text-center">
                     <i class="bi bi-rocket-takeoff mr-3"></i>
                     Start Free Registration
                 </a>
@@ -716,8 +824,12 @@
                                 class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-pink-100">
                                 <i class="bi bi-instagram text-gray-600"></i>
                             </a>
-                            <a href="https://wa.me/918278273737" target="_blank"
+                            <a href="https://www.youtube.com/@SMARTSAVE24" target="_blank"
                                 class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-red-100">
+                                <i class="bi bi-youtube text-gray-600"></i>
+                            </a>
+                            <a href="https://wa.me/918278273737" target="_blank"
+                                class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-green-100">
                                 <i class="bi bi-whatsapp text-gray-600"></i>
                             </a>
                         </div>
@@ -726,28 +838,61 @@
 
                 <div>
                     <h3 class="text-2xl font-bold mb-6">Send Message</h3>
-                    <form class="space-y-4">
+                    <form class="space-y-4" action="{{ route('contact.send') }}" method="POST">
+                        {{-- 1. CSRF Token added --}}
+                        @csrf
+
                         <div>
-                            <input type="text" placeholder="Your Name"
+                            {{-- 2. Added name="name" --}}
+                            <input type="text" name="name" placeholder="Your Name"
+                                value="{{ old('name') }}" required
                                 class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            @error('name')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
                         </div>
+
                         <div>
-                            <input type="email" placeholder="Your Email"
+                            {{-- Added name="email" --}}
+                            <input type="email" name="email" placeholder="Your Email"
+                                value="{{ old('email') }}" required
                                 class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            @error('email')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
                         </div>
+
                         <div>
-                            <input type="tel" placeholder="Phone Number"
+                            {{-- Added name="uphone" (exactly matching your controller) --}}
+                            <input type="tel" name="uphone" placeholder="Phone Number"
+                                value="{{ old('uphone') }}" required
                                 class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            @error('uphone')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
                         </div>
+
                         <div>
-                            <textarea placeholder="Your Message" rows="4"
-                                class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                            {{-- Added name="message" --}}
+                            <textarea name="message" placeholder="Your Message" rows="4" required
+                                class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">{{ old('message') }}</textarea>
+                            @error('message')
+                                <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                            @enderror
                         </div>
+
                         <button type="submit"
-                            class="bg-linear-to-r from-orange-500 to-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+                            class="bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
                             Send Message
                         </button>
                     </form>
+
+                    {{-- Success Message Display (Add this right above or below the form if you haven't already) --}}
+                    @if (session('success'))
+                        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 mt-4">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -789,10 +934,12 @@
                 <div>
                     <h4 class="text-lg font-bold mb-4">Download App</h4>
                     <div class="space-y-3">
-                        <a href="SmartSave24-app.apk" class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
+                        <a href="SmartSave24-app.apk"
+                            class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
                             <i class="bi bi-google-play mr-2"></i> Google Play
                         </a>
-                        <a href="SmartSave24-app.apk" class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
+                        <a href="SmartSave24-app.apk"
+                            class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
                             <i class="bi bi-apple mr-2"></i> App Store
                         </a>
                     </div>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactMail;
-use App\Models\ProductPackagePurchase;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +21,7 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        Mail::to('geokranti@gmail.com')->send(new ContactMail($data));
+        Mail::to('smartsave24company@gmail.com')->send(new ContactMail($data));
 
         return back()->with('success', 'Your message has been sent successfully!');
     }

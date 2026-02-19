@@ -270,4 +270,170 @@ class WalletController extends Controller
 
         return back()->with('success', 'Withdrawal rejected');
     }
+
+
+
+
+    //Transfer Wallet1 to Downline User in the user panel
+
+    public function showTransferForm()
+    {
+        $user = Auth::user();
+        // Get direct downline (level 1)
+        $downlineUsers = User::where('sponsor_id', $user->ulid)->get();
+
+        $breadcrumbs = [
+            ['title' => 'Wallet', 'url' => route('user.transferWallet1Form')],
+            ['title' => 'Transfer Wallet', 'url' => route('user.transferWallet1Form')]
+        ];
+
+        return view('user.transferWallet1', compact('user', 'downlineUsers', 'breadcrumbs'));
+    }
+
+    public function searchDownlineUser(Request $request)
+    {
+        $request->validate([
+            'ulid' => 'required|string',
+            'wallet_type' => 'required|in:wallet1,wallet2' // Naya validation
+        ]);
+
+        $user = Auth::user();
+        $downlineUser = User::where('ulid', $request->ulid)->first();
+
+        if (!$downlineUser) {
+            return response()->json(['success' => false, 'message' => 'User not found']);
+        }
+
+        if (!$this->isInDownline($user->ulid, $downlineUser)) {
+            return response()->json(['success' => false, 'message' => 'User is not in your downline.']);
+        }
+
+        // Wallet type ke basis par balance pick karein
+        $balance = ($request->wallet_type === 'wallet1')
+            ? $downlineUser->wallet1_balance
+            : $downlineUser->wallet2_balance;
+
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'name' => $downlineUser->name,
+                'email' => $downlineUser->email,
+                'balance' => $balance, // Dynamic balance
+                'ulid' => $downlineUser->ulid
+            ]
+        ]);
+    }
+
+    // Recursive function to check downline relationship
+    private function isInDownline($sponsorUlid, $user)
+    {
+        if ($user->sponsor_id === $sponsorUlid) {
+            return true;
+        }
+
+        if (!$user->sponsor_id) {
+            return false;
+        }
+
+        $sponsor = User::where('ulid', $user->sponsor_id)->first();
+        if (!$sponsor) {
+            return false;
+        }
+
+        return $this->isInDownline($sponsorUlid, $sponsor);
+    }
+
+    public function transferWallet1(Request $request)
+    {
+        $request->validate([
+            'ulid' => 'required|string',
+            'wallet1' => 'required|numeric|min:1',
+        ]);
+
+        $sender = Auth::user();
+        $receiver = User::where('ulid', $request->ulid)->firstOrFail();
+
+        // Verify receiver is in sender's downline
+        if (!$this->isInDownline($sender->ulid, $receiver)) {
+            return back()->with('error', 'User is not in your downline');
+        }
+
+        // Check if sender has enough wallet1
+        if ($sender->wallet1_balance < $request->wallet1) {
+            return back()->with('error', 'Insufficient personal wallet balance');
+        }
+
+        DB::transaction(function () use ($sender, $receiver, $request) {
+            // Deduct from sender
+            Wallet1Transaction::create([
+                'user_id' => $sender->id,
+                'wallet1' => -$request->wallet1,
+                'notes' => 'Wallet Point Transfered to ' . $receiver->name . ' (' . $receiver->ulid . ')',
+                'balance' => $sender->wallet1_balance - $request->wallet1
+            ]);
+            DB::table('users')
+                ->where('id', $sender->id)
+                ->decrement('wallet1_balance', $request->wallet1);
+            // $sender->decrement('wallet1_balance', $request->wallet1);
+
+            // Add to receiver
+            Wallet1Transaction::create([
+                'user_id' => $receiver->id,
+                'wallet1' => $request->wallet1,
+                'notes' => 'Recieved Wallet Point from ' . $sender->name . ' (' . $sender->ulid . ')',
+                'balance' => $receiver->wallet1_balance + $request->wallet1
+            ]);
+            $receiver->increment('wallet1_balance', $request->wallet1);
+        });
+
+        return back()->with('success', 'Money transferred successfully');
+    }
+
+    // Transfer Wallet 2 to Downline
+    public function transferWallet2(Request $request)
+    {
+        $request->validate([
+            'ulid' => 'required|string',
+            'wallet2' => 'required|numeric|min:1',
+        ]);
+
+        $sender = Auth::user();
+        $receiver = User::where('ulid', $request->ulid)->firstOrFail();
+
+        // Verify receiver is in sender's downline
+        if (!$this->isInDownline($sender->ulid, $receiver)) {
+            return back()->with('error', 'User is not in your downline');
+        }
+
+        // Check if sender has enough wallet2
+        if ($sender->wallet2_balance < $request->wallet2) {
+            return back()->with('error', 'Insufficient Wallet 2 balance');
+        }
+
+        DB::transaction(function () use ($sender, $receiver, $request) {
+            // Deduct from sender
+            \App\Models\Wallet2Transaction::create([
+                'user_id' => $sender->id,
+                'user_ulid' => $sender->ulid,
+                'wallet2' => -$request->wallet2,
+                'notes' => 'Wallet 2 Transfer to ' . $receiver->name . ' (' . $receiver->ulid . ')',
+                'balance' => $sender->wallet2_balance - $request->wallet2
+            ]);
+
+            DB::table('users')->where('id', $sender->id)->decrement('wallet2_balance', $request->wallet2);
+
+            // Add to receiver
+            \App\Models\Wallet2Transaction::create([
+                'user_id' => $receiver->id,
+                'user_ulid' => $receiver->ulid,
+                'wallet2' => $request->wallet2,
+                'notes' => 'Received Wallet 2 from ' . $sender->name . ' (' . $sender->ulid . ')',
+                'balance' => $receiver->wallet2_balance + $request->wallet2
+            ]);
+
+            DB::table('users')->where('id', $receiver->id)->increment('wallet2_balance', $request->wallet2);
+        });
+
+        return back()->with('success', 'Wallet 2 transferred successfully');
+    }
 }

@@ -119,9 +119,10 @@ Route::middleware(['auth', IsVendor::class])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/user/transfer-wallet1', [WalletController::class, 'showTransferForm'])->name('user.transferWallet1Form');
+    Route::get('/user/transfer-wallet', [WalletController::class, 'showTransferForm'])->name('user.transferWallet1Form');
     Route::post('/user/search-downline', [WalletController::class, 'searchDownlineUser'])->name('user.search.downline');
     Route::post('/user/transfer-wallet1', [WalletController::class, 'transferWallet1'])->name('user.transfer.wallet1');
+    Route::post('/transfer-wallet-2', [WalletController::class, 'transferWallet2'])->name('user.transfer.wallet2');
 
 
     Route::get('/my-orders', [UserOrderController::class, 'index'])->name('user.orders.index');

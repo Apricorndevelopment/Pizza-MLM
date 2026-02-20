@@ -447,8 +447,14 @@
 
     <div class="container max-w-xl mx-auto animate-float">
         <div class="card px-6 sm:px-8 py-5 sm:py-6">
-            <!-- Header -->
-            <div class="text-center mb-10">
+            <div class="text-center mb-10 relative">
+
+                <a href="/"
+                    class="absolute -top-2 -right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-200 hover:text-slate-800 transition-all border border-slate-100 shadow-sm z-10"
+                    title="Back to Home">
+                    <i class="bi bi-x-lg font-bold"></i>
+                </a>
+
                 <div class="logo-container">
                     <div class="logo">
                         <a href="/">
@@ -464,7 +470,7 @@
                 <div class="mb-2">
                     <span class="food-badge">
                         <i class="bi bi-heart-fill mr-2"></i>
-                        Healthy Food Network
+                        India's no 1 Direct selling network
                     </span>
                 </div>
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join - Healthy Food Network</title>
+    <title>Join - Smart Save24</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -467,29 +467,34 @@
     <div class="container max-w-2xl mx-auto animate-float">
         <div class="card px-6 sm:px-8 py-5 sm:py-6">
             <!-- Header -->
-            <div class="text-center mb-6">
-                <div class="logo-container">
-                    <div class="logo">
-                        <img src="{{ asset('images/smartsave.png') }}" alt="">
-                    </div>
-                    <div class="brand-name font-poppins">
-                        Smart<span
-                            style="background: linear-gradient(135deg, #ffba19,#7232f1d9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Save24</span>
-                    </div>
-                </div>
+          <div class="text-center mb-6 relative">
+    <a href="/" 
+       class="absolute -top-2 -right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-200 hover:text-slate-800 transition-all border border-slate-100 shadow-sm z-10"
+       title="Back to Home">
+        <i class="bi bi-x-lg font-bold"></i>
+    </a>
 
-                <div class="mb-2">
-                    <span class="food-badge">
-                        <i class="bi bi-rocket-takeoff-fill mr-2"></i>
-                        Join Our Network
-                    </span>
-                </div>
+    <div class="logo-container">
+        <div class="logo">
+            <img src="{{ asset('images/smartsave.png') }}" alt="">
+        </div>
+        <div class="brand-name font-poppins">
+            Smart<span style="background: linear-gradient(135deg, #ffba19,#7232f1d9); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Save24</span>
+        </div>
+    </div>
 
-                <h2 class="text-3xl font-bold text-gray-800 mb-2 font-poppins">
-                    Start Your Food Journey
-                </h2>
+    <div class="mb-2">
+        <span class="food-badge">
+            <i class="bi bi-rocket-takeoff-fill mr-2"></i>
+            Join Our Network
+        </span>
+    </div>
+    {{-- 
+    <h2 class="text-3xl font-bold text-gray-800 mb-2 font-poppins">
+        Start Your Food Journey
+    </h2> --}}
 
-            </div>
+</div>
 
             <!-- Messages -->
             @if (session('success'))

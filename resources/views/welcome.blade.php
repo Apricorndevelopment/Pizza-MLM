@@ -450,7 +450,7 @@
 
                     <p class="text-gray-600 mb-6 font-medium hindi-font relative z-10 text-lg leading-snug">
                         अब आपका <span class="text-emerald-600 font-bold">खर्चा</span> ही आपकी सबसे बड़ी <span
-                            class="text-emerald-600 font-bold">Income</span> है! हर ख़रीदारी पर मिलेगा बेनिफ़िट:
+                            class="text-emerald-600 font-bold">Income</span> है! हर ख़रीदारी पर मिलेगा फायदा:
                     </p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
@@ -465,7 +465,7 @@
                         <div
                             class="bg-white p-3.5 rounded-xl shadow-sm border border-emerald-50 flex items-center gap-3 hover:border-emerald-200 transition-colors">
                             <div class="bg-emerald-50 p-2 rounded-lg flex-shrink-0">
-                                <i class="bi bi-cup-hot-fill text-emerald-500 text-lg"></i>
+                                <i class="bi bi-shop text-emerald-500 text-lg"></i>
                             </div>
                             <span class="font-bold text-gray-700 text-sm leading-tight">Delicious <br>Fast Food</span>
                         </div>
@@ -521,7 +521,7 @@
                             <div class="mt-1"><i class="bi bi-diagram-3-fill text-orange-400 text-xl"></i></div>
                             <div>
                                 <h4 class="font-bold text-gray-800">Direct Selling Power</h4>
-                                <p class="text-sm text-gray-600 hindi-font mt-1">अपने बिज़नेस को Direct Selling के
+                                <p class="text-sm text-gray-600 hindi-font mt-1">अपने बिज़नेस को Direct Selling
                                     नेटवर्क के साथ मिलकर तेज़ रफ़्तार दें।</p>
                             </div>
                         </div>

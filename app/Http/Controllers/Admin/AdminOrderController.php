@@ -55,12 +55,57 @@ class AdminOrderController extends Controller
         return view('admin.orders.index', compact('orders'));
     }
 
+    // public function updateStatus(Request $request)
+    // {
+    //     $request->validate([
+    //         'order_id' => 'required|exists:orders,id',
+    //         'status'   => 'required|in:placed,accepted,delivered,rejected',
+    //         'reason'   => 'nullable|string|required_if:status,rejected',
+    //     ]);
+
+    //     $adminId = Auth::guard('admin')->user()->id;
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         $order = Order::with('items', 'user')->lockForUpdate()->find($request->order_id);
+    //         $user = $order->user;
+
+    //         if (!$order) {
+    //             throw new \Exception("Order not found.");
+    //         }
+
+    //         if ($request->status === 'rejected') {
+    //             $this->processOrderRejection($order, $user, $adminId, $request->reason);
+    //         }
+
+    //         if ($request->status === 'delivered') {
+    //             if (!$user) {
+    //                 throw new \Exception("User not found for this order.");
+    //             }
+    //             $this->processOrderDelivery($order, $user, $adminId);
+    //         }
+
+    //         $order->status = $request->status;
+    //         $order->save();
+
+    //         DB::commit();
+
+    //         return redirect()->back()->with('success', 'Order status updated successfully!');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         Log::error("Admin Order Update Failed: " . $e->getMessage());
+    //         return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
+    //     }
+    // }
+
     public function updateStatus(Request $request)
     {
         $request->validate([
             'order_id' => 'required|exists:orders,id',
             'status'   => 'required|in:placed,accepted,delivered,rejected',
             'reason'   => 'nullable|string|required_if:status,rejected',
+            'delivery_otp' => 'nullable|string|required_if:status,delivered', // OTP is required for delivery
         ]);
 
         $adminId = Auth::guard('admin')->user()->id;
@@ -83,6 +128,13 @@ class AdminOrderController extends Controller
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
                 }
+                
+                // VERIFY OTP HERE
+                if ($order->delivery_otp !== $request->delivery_otp) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', 'Invalid Delivery OTP! Cannot mark as delivered.');
+                }
+
                 $this->processOrderDelivery($order, $user, $adminId);
             }
 

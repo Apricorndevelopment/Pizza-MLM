@@ -79,7 +79,7 @@
             </div>
 
             <div class="px-4 py-3 border-t border-gray-100 bg-gray-50">
-                {{ $incomes->links() }}
+                {{ $incomes->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

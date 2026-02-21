@@ -108,6 +108,9 @@ class PersistOrder
                 $orderStringId = 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
             } while (DB::table('orders')->where('order_id', $orderStringId)->exists());
 
+            // Generate a 6-digit random OTP
+            $deliveryOtp = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
+
             // C. Create Order Record
             $orderIdDb = DB::table('orders')->insertGetId([
                 'user_id' => $context->user->id,
@@ -120,6 +123,7 @@ class PersistOrder
                 'coupons_used' => 0, // Proportional logic excluded for simplicity
                 
                 'status' => 'placed',
+                'delivery_otp' => $deliveryOtp,
                 
                 // Contact Details from Request
                 'phone_number' => $context->requestData['phone_number'] ?? null,

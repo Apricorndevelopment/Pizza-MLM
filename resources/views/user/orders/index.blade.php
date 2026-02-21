@@ -67,11 +67,21 @@
 
                                     {{-- Section 1: ID & Status --}}
                                     <div class="lg:col-span-4">
-                                        <div class="mb-2">
+                                        <div class="mb-2 flex items-center gap-3">
                                             <span
                                                 class="bg-[#ECFDF5] text-teal-800 font-semibold px-3 py-1.5 rounded-lg text-sm tracking-wide border border-teal-100/50">
                                                 #{{ $order->order_id }}
                                             </span>
+
+                                            {{-- Display OTP --}}
+                                            @if($order->status !== 'delivered' && $order->status !== 'rejected')
+                                                <div class="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 border border-blue-100 rounded-lg" title="Share this OTP with the delivery partner">
+                                                    <i class="bi bi-shield-lock-fill text-blue-500 text-xs"></i>
+                                                    <span class="text-xs font-bold text-blue-700 tracking-widest">
+                                                        OTP: {{ $order->delivery_otp ?? 'N/A' }}
+                                                    </span>
+                                                </div>
+                                            @endif
                                         </div>
 
                                         @php

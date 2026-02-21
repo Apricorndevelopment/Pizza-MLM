@@ -272,6 +272,11 @@
                                 <i class="bi bi-arrow-repeat mr-2"></i>
                                 Repurchase Income
                             </a>
+                            <a href="{{ route('user.income.vendor-income') }}"
+                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                                <i class="bi bi-arrow-repeat mr-2"></i>
+                                Vendor Income
+                            </a>
                         </div>
                     </div>
 

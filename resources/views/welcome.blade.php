@@ -30,12 +30,7 @@
             font-family: 'Inter', sans-serif;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        .font-poppins {
+        h1, h2, h3, h4, h5, .font-poppins {
             font-family: 'Poppins', sans-serif;
         }
 
@@ -56,13 +51,6 @@
             background: linear-gradient(135deg, #FFF9F0 0%, #F0FFEE 100%);
         }
 
-        /* .hero-bg {
-            background: linear-gradient(rgba(42, 67, 101, 0.9), rgba(42, 67, 101, 0.9)),
-                url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
-            background-size: cover;
-            background-position: center;
-        } */
-
         .card-hover {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -81,7 +69,6 @@
             position: relative;
             padding: 6px 8px;
             color: #475569;
-            /* Slate 600 - Darker color for light background */
             font-weight: 500;
             transition: color 0.3s ease;
         }
@@ -195,7 +182,6 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -374,9 +360,6 @@
                     style="color: var(--primary);">
                     "ज़िद है तो जीत है"
                 </h2>
-                {{-- <p class="text-xl md:text-2xl text-gray-600 font-medium hindi-font mt-3">
-                    "अब खाना और खरीदना ही एक इन्वेस्टमेंट है"
-                </p> --}}
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -566,43 +549,59 @@
         </div>
     </section>
 
-    <section id="products" class="py-10 bg-white">
+    <section id="products" class="py-12 bg-slate-50">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">Featured Offers</h2>
-                <p class="text-gray-500">Unbeatable Deals on Our Best Products</p>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-extrabold text-gray-800 tracking-tight">Featured Offers</h2>
+                <p class="text-gray-500 mt-2 font-medium">Unbeatable Deals on Our Best Products</p>
             </div>
 
-            <div class="swiper productBannerSwiper pb-10">
+            <div class="swiper productBannerSwiper pb-14 px-2 pt-2">
                 <div class="swiper-wrapper">
                     @forelse($productBanners as $pBanner)
-                        <div class="swiper-slide">
-                            <div class="rounded-xl overflow-hidden shadow-lg relative group h-[350px] md:h-[450px]">
-                                <img src="{{ asset($pBanner->banner_image) }}"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    alt="{{ $pBanner->title }}">
-                                @if ($pBanner->title)
-                                    <div
-                                        class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-6 text-white">
-                                        <h3 class="text-2xl font-bold mb-2">{{ $pBanner->title }}</h3>
+                        <div class="swiper-slide h-auto"> <div class="bg-white rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
+                                
+                                <div class="relative h-[220px] w-full overflow-hidden bg-gray-100">
+                                    <img src="{{ asset($pBanner->banner_image) }}"
+                                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        alt="{{ $pBanner->title ?? 'Offer Image' }}">
+                                    
+                                    <div class="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md">
+                                        Hot Deal
+                                    </div>
+                                </div>
+
+                                <div class="p-5 flex flex-col flex-grow">
+                                    @if ($pBanner->title)
+                                        <h3 class="text-lg font-bold text-gray-800 mb-3 leading-snug line-clamp-2">
+                                            {{ $pBanner->title }}
+                                        </h3>
+                                    @endif
+                                    
+                                    <div class="mt-auto pt-4 border-t border-gray-50">
                                         @if ($pBanner->link)
                                             <a href="{{ $pBanner->link }}"
-                                                class="inline-block bg-white text-gray-900 px-6 py-2 rounded-full font-bold text-sm hover:bg-orange-100 transition">Shop
-                                                Now</a>
+                                                class="flex items-center justify-center w-full bg-emerald-50 text-emerald-600 px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-500 hover:text-white transition-all duration-300">
+                                                Shop Now <i class="bi bi-arrow-right ml-2 text-lg leading-none"></i>
+                                            </a>
                                         @endif
                                     </div>
-                                @endif
+                                </div>
+
                             </div>
                         </div>
                     @empty
-                        <div class="text-center w-full text-gray-400 py-10">No product offers available.</div>
+                        <div class="text-center w-full flex flex-col items-center justify-center text-gray-400 py-12">
+                            <i class="bi bi-box-seam text-4xl mb-3 text-gray-300"></i>
+                            <p>No product offers available at the moment.</p>
+                        </div>
                     @endforelse
                 </div>
+                
                 <div class="swiper-pagination"></div>
             </div>
         </div>
     </section>
-
     <section id="achievers" class="py-12 md:py-18" style="background: #F8FFEE;">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
@@ -650,79 +649,6 @@
             </div>
         </div>
     </section>
-
-    {{-- <section id="testimonials" class="py-16 md:py-24 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <span class="food-badge px-4 py-1 rounded-full text-sm font-semibold mb-4 inline-block">
-                    Success Stories
-                </span>
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-                    Hear From Our Members
-                </h2>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="testimonial-card shadow-lg">
-                    <div class="flex items-center mb-6">
-                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Testimonial"
-                            class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                            <h4 class="font-bold">Priya Sharma</h4>
-                            <p class="text-gray-500 text-sm">Delhi • 2 years with </p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 italic mb-4">
-                        "SmartSave24 changed my life! I started part-time and now earn more than my corporate job."
-                    </p>
-                    <div class="text-yellow-500">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-fill"></i>
-                    </div>
-                </div>
-
-                <div class="testimonial-card shadow-lg">
-                    <div class="flex items-center mb-6">
-                        <img src="https://randomuser.me/api/portraits/men/54.jpg" alt="Testimonial"
-                            class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                            <h4 class="font-bold">Rajesh Kumar</h4>
-                            <p class="text-gray-500 text-sm">Bangalore • 3 years with </p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 italic mb-4">
-                        "As a retired teacher, I found a new purpose. Earning ₹50,000+ monthly while promoting healthy
-                        products."
-                    </p>
-                    <div class="text-yellow-500">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-half"></i>
-                    </div>
-                </div>
-
-                <div class="testimonial-card shadow-lg">
-                    <div class="flex items-center mb-6">
-                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Testimonial"
-                            class="w-12 h-12 rounded-full mr-4">
-                        <div>
-                            <h4 class="font-bold">Anjali Mehta</h4>
-                            <p class="text-gray-500 text-sm">Mumbai • 1 year with </p>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 italic mb-4">
-                        "Started with zero experience. The training helped me build a team of 100+ members!"
-                    </p>
-                    <div class="text-yellow-500">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                            class="bi bi-star-fill"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
 
     <section class="py-16 md:py-24" style="background: linear-gradient(135deg, var(--dark), #374D7A);">
         <div class="container mx-auto px-4 text-center">
@@ -898,7 +824,7 @@
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-white py-12">
+    <footer class="bg-gray-900 text-white pt-12 pb-4">
         <div class="container mx-auto px-4">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div>
@@ -909,7 +835,7 @@
                         </div>
                         <span class="text-xl font-bold">Smart<span class="text-orange-400">Save24</span></span>
                     </div>
-                    <p class="text-gray-400">
+                    <p class="text-gray-400"> SmartSave24 is a non-profit organization dedicated to
                         Promoting health through organic food while creating financial freedom for millions of Indians.
                     </p>
                 </div>
@@ -979,10 +905,10 @@
             },
         });
 
-        // 2. Product Banner Swiper (Middle - Full Width Effect)
+        // 2. Product Banner Swiper (UPDATED FOR CARDS)
         var productSwiper = new Swiper(".productBannerSwiper", {
             loop: true,
-            effect: "fade", // Changed to fade for full-width impact like vendors
+            spaceBetween: 20, // Add space between cards
             autoplay: {
                 delay: 3500,
                 disableOnInteraction: false
@@ -991,6 +917,29 @@
                 el: ".swiper-pagination",
                 clickable: true
             },
+            // Responsive breakpoints
+            breakpoints: {
+                // when window width is >= 320px
+                320: {
+                    slidesPerView: 1,
+                    spaceBetween: 20
+                },
+                // when window width is >= 640px
+                640: {
+                    slidesPerView: 2,
+                    spaceBetween: 20
+                },
+                // when window width is >= 1024px
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30
+                },
+                // when window width is >= 1280px
+                1280: {
+                    slidesPerView: 4,
+                    spaceBetween: 30
+                }
+            }
         });
 
         // 3. Achiever Swiper (Responsive Grid Slider)

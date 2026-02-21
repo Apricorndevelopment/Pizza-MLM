@@ -12,6 +12,7 @@ use App\Models\LevelIncome;
 use App\Models\PercentageReward;
 use App\Models\RewardsIncome;
 use App\Models\RepurchaseIncome;
+use App\Models\VendorIncome;
 
 class UserIncomeController extends Controller
 {
@@ -91,5 +92,17 @@ class UserIncomeController extends Controller
             ->paginate(10);
 
         return view('user.incomes.repurchase', compact('incomes'));
+    }
+
+    public function vendorIncomeReport()
+    {
+        $user = Auth::user();
+
+        // Current user ko unke direct vendors se aayi hui income
+        $incomes = VendorIncome::where('user_id', $user->id)
+            ->latest()
+            ->paginate(10);
+
+        return view('user.incomes.vendor_income', compact('incomes'));
     }
 }

@@ -873,9 +873,7 @@
             </div>
             <div class="border-t border-gray-800 pt-8 text-center">
                 <p class="text-gray-400">
-                    &copy; {{ date('Y') }} SmartSave24. All rights reserved. |
-                    <span class="text-orange-400">Designed & Developed By <a class="text-blue-600"
-                            href="https://apricornsolutions.com/">Apricorn Solutions</a></span>
+                    &copy; {{ date('Y') }} <span class="text-orange-400"></span> SmartSave24. All rights reserved.
                 </p>
                 <p class="text-gray-500 text-sm mt-2">
                     This is a network marketing opportunity. Earnings shown are examples and not guarantees. Success
@@ -908,7 +906,7 @@
         // 2. Product Banner Swiper (UPDATED FOR CARDS)
         var productSwiper = new Swiper(".productBannerSwiper", {
             loop: true,
-            spaceBetween: 20, // Add space between cards
+            spaceBetween: 15, // Add space between cards
             autoplay: {
                 delay: 3500,
                 disableOnInteraction: false

@@ -163,7 +163,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Select File</label>
                         <input type="file" name="file" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-500" required>
-                        <p class="text-xs text-gray-500 mt-1">Supported: mp3, wav, mp4, webm (Max 50MB)</p>
+                        <p class="text-xs text-gray-500 mt-1">Supported: mp3, wav, mp4, webm (Max 250MB)</p>
                     </div>
 
                     <div class="flex justify-end pt-2">

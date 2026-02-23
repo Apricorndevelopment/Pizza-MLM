@@ -90,7 +90,7 @@ class VendorProductController extends Controller
 
         $request->validate([
             'product_name' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'profit' => 'required|numeric',
             'mrp' => 'required|numeric',
             'gst' => 'required|numeric',
             'dp' => 'required|numeric',
@@ -100,7 +100,7 @@ class VendorProductController extends Controller
         ]);
 
         $product->product_name = $request->product_name;
-        $product->price = $request->price;
+        $product->profit = $request->profit;
         $product->mrp = $request->mrp;
         $product->gst = $request->gst;
         $product->dp = $request->dp;

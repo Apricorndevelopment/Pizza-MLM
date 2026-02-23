@@ -546,8 +546,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" onclick="return confirm('Are you sure you want to login to SmartSave24?')"
-                        class="btn-login">
+                    <button type="submit" class="btn-login">
                         <i class="bi bi-box-arrow-in-right mr-3"></i>
                         Sign In to Your Account
                     </button>

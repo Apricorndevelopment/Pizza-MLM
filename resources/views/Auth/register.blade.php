@@ -552,7 +552,7 @@
                         <div class="input-with-icon">
                             <i class="form-icon bi bi-envelope-fill"></i>
                             <input type="email" name="email" value="{{ old('email') }}" id="email"
-                                class="form-input" placeholder="your@email.com" required>
+                                class="form-input" placeholder="Enter your email" required>
                         </div>
                         <div id="email-message" class="text-sm mt-1 ml-2"></div>
                         @error('email')
@@ -566,7 +566,7 @@
                         <div class="input-with-icon">
                             <i class="form-icon bi bi-telephone-fill"></i>
                             <input type="tel" name="phone" value="{{ old('phone') }}" class="form-input"
-                                placeholder="+91 98765 43210" required>
+                                placeholder="Enter your phone number" required>
                         </div>
                         @error('phone')
                             <p class="text-red-500 text-sm mt-1 ml-2">{{ $message }}</p>
@@ -638,9 +638,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit"
-                        onclick="return confirm('Are you sure you want to register with SmartSave24?')"
-                        class="btn-register mt-8">
+                    <button type="submit" class="btn-register mt-8">
                         <i class="bi bi-person-plus-fill mr-3"></i>
                         Create Account & Start Earning
                     </button>

@@ -47,6 +47,8 @@ class User extends Authenticatable
         'passbook_photo',
         'left_business',
         'right_business',
+        'capping_limit',
+        'is_capping_enabled',
     ];
 
     public function pointsTransactions()

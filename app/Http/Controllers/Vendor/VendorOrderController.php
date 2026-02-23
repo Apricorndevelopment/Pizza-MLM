@@ -17,6 +17,7 @@ use App\Models\Wallet2Transaction;
 
 use App\Models\PercentageIncome;
 use App\Models\PercentageLevelIncome;
+use App\Models\PercentageRepurchaseIncome; // Naya Model Import kiya
 use App\Models\BonusIncome;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
@@ -57,60 +58,6 @@ class VendorOrderController extends Controller
         return view('vendor.orders.index', compact('orders'));
     }
 
-    // public function updateStatus(Request $request)
-    // {
-    //     $request->validate([
-    //         'order_id' => 'required|exists:orders,id',
-    //         'status'   => 'required|in:placed,accepted,delivered,rejected',
-    //         'reason'   => 'nullable|string|required_if:status,rejected',
-    //     ]);
-
-    //     $vendorId = Auth::id();
-
-    //     DB::beginTransaction();
-
-    //     try {
-    //         $order = Order::with('items', 'user')->lockForUpdate()->find($request->order_id);
-    //         $user = $order->user;
-
-    //         if (!$order) {
-    //             throw new \Exception("Order not found.");
-    //         }
-
-    //         $hasItems = $order->items()->where('vendor_id', $vendorId)->exists();
-
-    //         if (!$hasItems) {
-    //             return redirect()->back()->with('error', 'You are not authorized to update this order.');
-    //         }
-
-    //         if ($request->status === 'rejected') {
-    //             $this->processOrderRejection($order, $user, $vendorId, $request->reason);
-    //         }
-
-    //         if ($request->status === 'delivered') {
-    //             if (!$user) {
-    //                 throw new \Exception("User not found for this order.");
-    //             }
-                
-    //             $this->processOrderDelivery($order, $user, $vendorId);
-
-    //             // Pay Vendor 70% of the sale
-    //             $this->payVendorForOrder($order, $vendorId);
-    //         }
-
-    //         $order->status = $request->status;
-    //         $order->save();
-
-    //         DB::commit();
-
-    //         return redirect()->back()->with('success', 'Order status updated successfully!');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         Log::error("Vendor Order Update Failed: " . $e->getMessage());
-    //         return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
-    //     }
-    // }
-
     public function updateStatus(Request $request)
     {
         // 1. Update Validation Rules to include OTP
@@ -149,13 +96,13 @@ class VendorOrderController extends Controller
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
                 }
-                
+
                 // VERIFY OTP HERE
                 if ($order->delivery_otp !== $request->delivery_otp) {
                     DB::rollBack();
                     return redirect()->back()->with('error', 'Invalid Delivery OTP! Cannot mark as delivered.');
                 }
-                
+
                 $this->processOrderDelivery($order, $user, $vendorId);
 
                 // Pay Vendor 70% of the sale
@@ -220,7 +167,7 @@ class VendorOrderController extends Controller
         // Total Sale of THIS vendor's items
         $vendorTotalSales = $order->items()
             ->where('vendor_id', $vendorId)
-            ->sum(DB::raw('price * quantity')); 
+            ->sum(DB::raw('price * quantity'));
 
         // Vendor gets 70% of the item total
         $vendorEarnings = $vendorTotalSales * 0.70;
@@ -269,8 +216,10 @@ class VendorOrderController extends Controller
     private function distributeVendorIncome($vendorId, $order, $totalPV, $settings)
     {
         $vendorUser = User::find($vendorId);
-        
-        if (!$vendorUser || !$vendorUser->sponsor_id) { return; }
+
+        if (!$vendorUser || !$vendorUser->sponsor_id) {
+            return;
+        }
 
         $vendorSponsor = User::where('ulid', $vendorUser->sponsor_id)->first();
 
@@ -354,7 +303,9 @@ class VendorOrderController extends Controller
 
     private function checkAndDistributeRewards($user, $milestones, $settings)
     {
-        if ($user->status !== 'active') { return; }
+        if ($user->status !== 'active') {
+            return;
+        }
 
         $receivedRewardIds = DB::table('rewards_incomes')->where('user_id', $user->id)->pluck('reward_id')->toArray();
 
@@ -366,8 +317,6 @@ class VendorOrderController extends Controller
                 $user->save();
 
                 DB::table('rewards_incomes')->insert([
-                    // Reward incomes generally don't trigger from a single order, but business growth.
-                    // If you want to track order_id here, you can, but it's optional for rewards.
                     'user_id'            => $user->id,
                     'user_ulid'          => $user->ulid,
                     'rank_name'          => $reward->rank,
@@ -388,21 +337,23 @@ class VendorOrderController extends Controller
         if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->direct_income / 100);
 
-            $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Direct Income from User: {$user->ulid}");
+            if ($incomeAmount > 0) {
+                $this->distributeToWallets($sponsor, $incomeAmount, $settings, "Direct Income from User: {$user->ulid}");
 
-            DirectIncome::create([
-                'order_id'        => $order->id,        // Added Tracker
-                'vendor_id'       => $vendorId,         // Added Tracker
-                'admin_id'        => null,
-                'user_id'         => $sponsor->id,
-                'user_ulid'       => $sponsor->ulid,
-                'from_name'       => $user->name,
-                'from_ulid'       => $user->ulid,
-                'purchase_amount' => $order->total_amount,
-                'purchase_pv'     => $totalPV,
-                'income_amount'   => $incomeAmount,
-                'percentage'      => $settings->direct_income,
-            ]);
+                DirectIncome::create([
+                    'order_id'        => $order->id,
+                    'vendor_id'       => $vendorId,
+                    'admin_id'        => null,
+                    'user_id'         => $sponsor->id,
+                    'user_ulid'       => $sponsor->ulid,
+                    'from_name'       => $user->name,
+                    'from_ulid'       => $user->ulid,
+                    'purchase_amount' => $order->total_amount,
+                    'purchase_pv'     => $totalPV,
+                    'income_amount'   => $incomeAmount,
+                    'percentage'      => $settings->direct_income,
+                ]);
+            }
         }
     }
 
@@ -413,30 +364,32 @@ class VendorOrderController extends Controller
         if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->bonus_income / 100);
 
-            $sponsor->wallet2_balance += $incomeAmount;
-            $sponsor->save();
+            if ($incomeAmount > 0) {
+                $sponsor->wallet2_balance += $incomeAmount;
+                $sponsor->save();
 
-            Wallet2Transaction::create([
-                'user_id'   => $sponsor->id,
-                'user_ulid' => $sponsor->ulid,
-                'wallet2'   => $incomeAmount,
-                'notes'     => "Bonus Income from User: {$user->ulid} (100% Bonus Wallet)",
-                'balance'   => $sponsor->wallet2_balance,
-            ]);
+                Wallet2Transaction::create([
+                    'user_id'   => $sponsor->id,
+                    'user_ulid' => $sponsor->ulid,
+                    'wallet2'   => $incomeAmount,
+                    'notes'     => "Bonus Income from User: {$user->ulid} (100% Bonus Wallet)",
+                    'balance'   => $sponsor->wallet2_balance,
+                ]);
 
-            BonusIncome::create([
-                'order_id'        => $order->id,        // Added Tracker
-                'vendor_id'       => $vendorId,         // Added Tracker
-                'admin_id'        => null,
-                'user_id'         => $sponsor->id,
-                'user_ulid'       => $sponsor->ulid,
-                'from_name'       => $user->name,
-                'from_ulid'       => $user->ulid,
-                'purchase_amount' => $order->total_amount,
-                'purchase_pv'     => $totalPV,
-                'income_amount'   => $incomeAmount,
-                'percentage'      => $settings->bonus_income,
-            ]);
+                BonusIncome::create([
+                    'order_id'        => $order->id,
+                    'vendor_id'       => $vendorId,
+                    'admin_id'        => null,
+                    'user_id'         => $sponsor->id,
+                    'user_ulid'       => $sponsor->ulid,
+                    'from_name'       => $user->name,
+                    'from_ulid'       => $user->ulid,
+                    'purchase_amount' => $order->total_amount,
+                    'purchase_pv'     => $totalPV,
+                    'income_amount'   => $incomeAmount,
+                    'percentage'      => $settings->bonus_income,
+                ]);
+            }
         }
     }
 
@@ -444,49 +397,79 @@ class VendorOrderController extends Controller
     {
         $incomeAmount = $totalPV * ($settings->cashback_income / 100);
 
-        $this->distributeToWallets($user, $incomeAmount, $settings, "Cashback Income from Order #{$order->id}");
+        if ($incomeAmount > 0) {
+            $this->distributeToWallets($user, $incomeAmount, $settings, "Cashback Income from Order #{$order->id}");
 
-        CashbackIncome::create([
-            'order_id'        => $order->id,        // Added Tracker
-            'vendor_id'       => $vendorId,         // Added Tracker
-            'admin_id'        => null,
-            'user_id'         => $user->id,
-            'user_ulid'       => $user->ulid,
-            'purchase_amount' => $order->total_amount,
-            'purchase_pv'     => $totalPV,
-            'percentage'      => $settings->cashback_income,
-            'income_amount'   => $incomeAmount,
-        ]);
+            CashbackIncome::create([
+                'order_id'        => $order->id,
+                'vendor_id'       => $vendorId,
+                'admin_id'        => null,
+                'user_id'         => $user->id,
+                'user_ulid'       => $user->ulid,
+                'purchase_amount' => $order->total_amount,
+                'purchase_pv'     => $totalPV,
+                'percentage'      => $settings->cashback_income,
+                'income_amount'   => $incomeAmount,
+            ]);
+        }
     }
 
-   private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $vendorId)
+    private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $vendorId)
     {
-        $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
+        // 1. Level aur Repurchase ka percentage alag-alag model se fetch hoga
+        if ($tableType === 'level_incomes') {
+            $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
+        } else {
+            $levelSettings = PercentageRepurchaseIncome::orderBy('level', 'asc')->get();
+        }
+
         $currentUplineUlid = $fromUser->sponsor_id;
 
         foreach ($levelSettings as $levelSetting) {
             $uplineUser = User::where('ulid', $currentUplineUlid)->first();
             if (!$uplineUser) break;
 
-            if ($uplineUser->status !== 'active') {
+            // 2. User Active hona chahiye aur Capping Enable honi chahiye
+            if ($uplineUser->status !== 'active' || $uplineUser->is_capping_enabled == 0) {
                 $currentUplineUlid = $uplineUser->sponsor_id;
-                continue; 
+                continue;
             }
 
-            $incomeAmount = $totalPV * ($levelSetting->percentage / 100);
-            
-            // SIRF TABHI CHALEGA JAB INCOME 0 SE ZYADA HO
-            if ($incomeAmount > 0) {
+            // 3. Capping Limit Calculation (Same as Admin Controller)
+            $calculatedIncome = $totalPV * ($levelSetting->percentage / 100);
+            $dailyLimit = $uplineUser->capping_limit;
+
+            $todayLevelIncome = LevelIncome::where('user_id', $uplineUser->id)
+                ->whereDate('created_at', Carbon::today())
+                ->sum('amount');
+
+            $todayRepurchaseIncome = RepurchaseIncome::where('user_id', $uplineUser->id)
+                ->whereDate('created_at', Carbon::today())
+                ->sum('commission');
+
+            $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome;
+            $payableAmount = 0;
+
+            if ($totalEarnedToday >= $dailyLimit) {
+                $payableAmount = 0;
+            } elseif (($totalEarnedToday + $calculatedIncome) > $dailyLimit) {
+                $payableAmount = $dailyLimit - $totalEarnedToday;
+            } else {
+                $payableAmount = $calculatedIncome;
+            }
+
+            // 4. Distribution if payable amount is > 0
+            if ($payableAmount > 0) {
                 $note = ($tableType == 'level_incomes')
                     ? "Level {$levelSetting->level} Income from {$fromUser->ulid}"
                     : "Repurchase Level {$levelSetting->level} Income from {$fromUser->ulid}";
 
-                $this->distributeToWallets($uplineUser, $incomeAmount, $settings, $note);
+                $this->distributeToWallets($uplineUser, $payableAmount, $settings, $note);
 
                 if ($tableType == 'level_incomes') {
                     LevelIncome::create([
-                        'order_id'         => $order->id,        
-                        'vendor_id'        => $vendorId,         
+                        'order_id'         => $order->id,
+                        'vendor_id'        => $vendorId,
                         'admin_id'         => null,
                         'user_id'          => $uplineUser->id,
                         'user_ulid'        => $uplineUser->ulid,
@@ -496,25 +479,25 @@ class VendorOrderController extends Controller
                         'purchase_amount'  => $order->total_amount,
                         'purchase_pv'      => $totalPV,
                         'level'            => $levelSetting->level,
-                        'amount'           => $incomeAmount,
+                        'amount'           => $payableAmount,
                     ]);
                 } else {
                     RepurchaseIncome::create([
-                        'order_id'        => $order->id,        
-                        'vendor_id'       => $vendorId,         
+                        'order_id'        => $order->id,
+                        'vendor_id'       => $vendorId,
                         'admin_id'        => null,
                         'user_id'         => $uplineUser->id,
                         'from_ulid'       => $fromUser->ulid,
                         'from_name'       => $fromUser->name,
                         'purchase_amount' => $order->total_amount,
                         'purchase_pv'     => $totalPV,
-                        'commission'      => $incomeAmount,
+                        'commission'      => $payableAmount,
                         'level'           => $levelSetting->level,
                     ]);
                 }
             }
 
-            // Upline hamesha change hoga, chahe income 0 kyu na ho
+            // Upline hamesha change hoga
             $currentUplineUlid = $uplineUser->sponsor_id;
         }
     }
@@ -535,7 +518,7 @@ class VendorOrderController extends Controller
                 'user_id'   => $user->id,
                 'user_ulid' => $user->ulid,
                 'wallet1'   => $wallet1Amount,
-                'notes'     => $note . ' (W1)', 
+                'notes'     => $note . ' (W1)',
                 'balance'   => $user->wallet1_balance,
             ]);
         }

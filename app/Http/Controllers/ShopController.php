@@ -20,63 +20,66 @@ use App\Services\Checkout\Pipes\PersistOrder;
 
 class ShopController extends Controller
 {
-    public function index(Request $request)
+   public function index(Request $request)
     {
        $query = $request->input('search');
-        $user = Auth::user();
+       $user = Auth::user();
 
-        // 1. Check if current user is a vendor to exclude their ID
-        $currentVendorId = null;
-        if ($user->is_vendor == 1) {
-            $vendor = Vendor::where('user_id', $user->id)->first();
-            $currentVendorId = $vendor ? $vendor->id : null;
-        }
+       // 1. Check if current user is a vendor to exclude their ID
+       $currentVendorId = null;
+       if ($user->is_vendor == 1) {
+           $vendor = Vendor::where('user_id', $user->id)->first();
+           $currentVendorId = $vendor ? $vendor->id : null;
+       }
 
-        $admin = Admin::first();
-        
-        // Admin Products (unchanged)
-        $adminProducts = ProductPackage::query();
-        if ($query) {
-            $adminProducts->where('product_name', 'LIKE', "%{$query}%");
-        }
-        $adminProducts = $adminProducts->get();
+       $admin = Admin::first();
+       
+       // 1. Admin Products Query
+       $adminProductsQuery = ProductPackage::query();
+       if ($query) {
+           $adminProductsQuery->where('product_name', 'LIKE', "%{$query}%");
+       }
+       // ADDED: ->withQueryString() to keep search parameter on next page
+       $adminProducts = $adminProductsQuery->paginate(8, ['*'], 'admin_page')->withQueryString();
 
-        // 2. Vendor Products (Modified Query)
-        $vendorProducts = Product::with('vendor')
-            ->where('status', 'approved')
-            ->whereHas('vendor', function ($q) {
-                $q->where('isShopOpen', 1);
-            });
+       // 2. Vendor Products Query
+       $vendorProductsQuery = Product::with('vendor')
+           ->where('status', 'approved')
+           ->whereHas('vendor', function ($q) {
+               $q->where('isShopOpen', 1);
+           });
 
-        // EXCLUDE CURRENT USER'S PRODUCTS
-        if ($currentVendorId) {
-            $vendorProducts->where('vendor_id', '!=', $currentVendorId);
-        }
+       // EXCLUDE CURRENT USER'S PRODUCTS
+       if ($currentVendorId) {
+           $vendorProductsQuery->where('vendor_id', '!=', $currentVendorId);
+       }
 
-        if ($query) {
-            $vendorProducts->where('product_name', 'LIKE', "%{$query}%");
-        }
+       if ($query) {
+           $vendorProductsQuery->where('product_name', 'LIKE', "%{$query}%");
+       }
+       
+       // ADDED: ->withQueryString()
+       $vendorProducts = $vendorProductsQuery->paginate(8, ['*'], 'vendor_page')->withQueryString();
 
-        $vendorProducts = $vendorProducts->get();
+       // User Coupon Count
+       $userCoupon = DB::table('user_coupons')
+           ->where('user_id', Auth::id())
+           ->first();
 
-        // User Coupon Count
-        $userCoupon = DB::table('user_coupons')
-            ->where('user_id', Auth::id())
-            ->first();
+       $userCouponCount = $userCoupon ? $userCoupon->coupon_quantity : 0;
 
-        $userCouponCount = $userCoupon ? $userCoupon->coupon_quantity : 0;
+       if ($request->ajax()) {
+           return view(
+               'user.shop.partials.products',
+               // FIXED: Added 'admin' here so the view knows the shop is open!
+               compact('adminProducts', 'vendorProducts', 'admin')
+           )->render();
+       }
 
-        if ($request->ajax()) {
-            return view(
-                'user.shop.partials.products',
-                compact('adminProducts', 'vendorProducts')
-            )->render();
-        }
-
-        return view(
-            'user.shop.index',
-            compact('adminProducts', 'admin','vendorProducts', 'query', 'userCouponCount')
-        );
+       return view(
+           'user.shop.index',
+           compact('adminProducts', 'admin','vendorProducts', 'query', 'userCouponCount')
+       );
     }
 
 

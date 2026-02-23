@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\HomeStatisticController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PercentageIncomeController;
 use App\Http\Controllers\Admin\PercentageLevelController;
+use App\Http\Controllers\Admin\PercentageRepurchaseController;
 use App\Http\Controllers\Admin\PercentageRewardController;
 use App\Http\Controllers\Admin\SliderUserController;
 use App\Models\User;
@@ -200,6 +201,7 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::put('/product-package/{id}/stock', [PackageController::class, 'updateStock'])->name('admin.product_package.stock.update');
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('/vendor-orders', [AdminOrderController::class, 'vendorOrders'])->name('admin.vendor_orders');
 
         // Update Status (Admin Override)
         Route::post('/orders/update-status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
@@ -209,23 +211,31 @@ Route::middleware(['auth:admin'])->group(function () {
 
         // List
         Route::get('/percentage-levels', [PercentageLevelController::class, 'index'])
-            ->name('admin.percentage.index');
+            ->name('admin.percentage.level.index');
 
-        // Create
-        Route::get('/percentage-level/add', [PercentageLevelController::class, 'create'])
-            ->name('admin.percentage.create');
         Route::post('/percentage-level/store', [PercentageLevelController::class, 'store'])
-            ->name('admin.percentage.store');
+            ->name('admin.percentage.level.store');
 
-        // Edit
-        Route::get('/percentage-level/edit/{id}', [PercentageLevelController::class, 'edit'])
-            ->name('admin.percentage.edit');
         Route::put('/percentage-level/update/{id}', [PercentageLevelController::class, 'update'])
-            ->name('admin.percentage.update');
+            ->name('admin.percentage.level.update');
 
         // Delete
         Route::delete('/percentage-level/delete/{id}', [PercentageLevelController::class, 'destroy'])
-            ->name('admin.percentage.destroy');
+            ->name('admin.percentage.level.destroy');
+
+        // List
+        Route::get('/percentage-repurchase', [PercentageRepurchaseController::class, 'index'])
+            ->name('admin.percentage.repurchase.index');
+
+        Route::post('/percentage-repurchase/store', [PercentageRepurchaseController::class, 'store'])
+            ->name('admin.percentage.repurchase.store');
+
+        Route::put('/percentage-repurchase/update/{id}', [PercentageRepurchaseController::class, 'update'])
+            ->name('admin.percentage.repurchase.update');
+
+        // Delete
+        Route::delete('/percentage-repurchase/delete/{id}', [PercentageRepurchaseController::class, 'destroy'])
+            ->name('admin.percentage.repurchase.destroy');
 
 
         Route::get('/percentage-income', [PercentageIncomeController::class, 'index'])->name('admin.income.index');

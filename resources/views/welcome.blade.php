@@ -155,14 +155,19 @@
 
         .banner-img {
             width: 100%;
-            height: 450px;
+            height: 600px;
             object-fit: cover;
             border-radius: 15px;
         }
 
         @media (max-width: 768px) {
             .banner-img {
-                height: 250px;
+                height: 400px;
+            }
+        }
+        @media (max-width: 500px) {
+            .banner-img {
+                height: 350px;
             }
         }
 
@@ -335,7 +340,7 @@
                         </p>
                     </div>
 
-                    <div
+                    {{-- <div
                         class="absolute -left-16 top-16 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float-delayed">
                         <div class="flex items-center gap-3">
                             <div
@@ -346,9 +351,9 @@
                                 <p class="text-orange-500 text-xs font-semibold">Partnered</p>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div
+                    {{-- <div
                         class="absolute -right-6 bottom-16 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 animate-float">
                         <div class="flex items-center gap-3">
                             <div
@@ -360,7 +365,7 @@
                                 <p class="text-green-600 text-xs font-semibold">Guaranteed</p>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                 </div>
 
@@ -682,7 +687,7 @@
                     Start Free Registration
                 </a>
 
-                <a href="#contact"
+                <a href="https://wa.me/918278273737" target="_blank"
                     class="bg-white text-gray-800 px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all inline-flex items-center">
                     <i class="bi bi-headset mr-3"></i>
                     Talk to Our Team
@@ -746,7 +751,7 @@
                             <i class="bi bi-envelope text-2xl text-blue-500 mr-4 mt-1"></i>
                             <div>
                                 <h4 class="font-bold mb-1">Email Address</h4>
-                                <p class="text-gray-600">support@foodvendor.com<br>careers@foodvendor.com</p>
+                                <p class="text-gray-600">smartsave24company@gmail.com</p>
                             </div>
                         </div>
                     </div>

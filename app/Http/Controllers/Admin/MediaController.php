@@ -25,6 +25,9 @@ class MediaController extends Controller
             'type'  => 'required|in:audio,video',
             // Validation: Audio ke liye mp3, wav | Video ke liye mp4, webm
             'file'  => 'required|file|mimes:mp3,wav,ogg,mp4,webm,avi,mkv|max:256000', // Max 50MB
+        ],[
+            'file.mimes' => 'Invalid file type. Supported: mp3, wav, ogg for audio and mp4, webm, avi, mkv for videos.',
+            'file.max' => 'File size should be less than 250MB.',
         ]);
 
         if ($request->hasFile('file')) {

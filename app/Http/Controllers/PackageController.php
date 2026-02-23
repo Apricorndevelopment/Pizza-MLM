@@ -68,11 +68,11 @@ class PackageController extends Controller
                 'dp'                 => 'required|numeric|min:0',
                 'pv'                 => 'required|numeric|min:0',
                 'max_coupon_usage'   => 'required|integer|min:0',
-                'capping'            => 'required|numeric|min:0',
+                'is_package_product' => 'required|in:0,1',
+                'capping' => 'nullable|required_if:is_package_product,1|numeric|min:0',
                 'profit'             => 'required|numeric|min:0',
 
                 // FIX: Use 'in:0,1' instead of 'boolean' to accept the string "1" from your dump
-                'is_package_product' => 'required|in:0,1',
                 'isVeg'              => 'required|in:veg,non-veg',
             ]);
 
@@ -176,8 +176,8 @@ class PackageController extends Controller
             'max_coupon_usage' => 'required|integer|min:0',
             'profit' => 'required|numeric|min:0|max:100',
             'isVeg' => 'required|string|in:veg,non-veg',
-            'capping'            => 'required|numeric|min:0',
             'is_package_product' => 'required|in:0,1',
+            'capping' => 'nullable|required_if:is_package_product,1|numeric|min:0',
         ]);
 
         $product = ProductPackage::findOrFail($id);

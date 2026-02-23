@@ -573,12 +573,12 @@
                 <a href="tel:+919876543210"
                     class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
                     <i class="bi bi-telephone-fill mr-2 text-lg"></i>
-                    <span class="text-lg">+91 98765 xxxxx</span>
+                    <span class="text-lg">+91 827827 3737</span>
                 </a>
                 <a href="mailto:support@foodvendor.com"
                     class="text-gray-200 hover:text-orange-300 transition-colors flex items-center">
                     <i class="bi bi-envelope-fill mr-2 text-lg"></i>
-                    <span class="text-lg">support@foodvendor.com</span>
+                    <span class="text-lg">smartsave24company@gmail.com</span>
                 </a>
             </div>
         </div>

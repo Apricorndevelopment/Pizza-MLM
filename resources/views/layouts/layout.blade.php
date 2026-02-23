@@ -173,7 +173,13 @@
                     <a href="{{ route('admin.orders.index') }}"
                         class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
                         <i class="bi bi-cart-check-fill text-lg group-hover:scale-110 transition-transform"></i>
-                        <span class="font-medium">All Orders</span>
+                        <span class="font-medium">User Orders</span>
+                    </a>
+
+                    <a href="{{ route('admin.vendor_orders') }}"
+                        class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
+                        <i class="bi bi-bag-check-fill text-lg group-hover:scale-110 transition-transform"></i>
+                        <span class="font-medium">All Vendor's Orders</span>
                     </a>
 
                     <a href="{{ route('admin.products.index') }}"
@@ -312,9 +318,13 @@
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Income Distribution
                             </a>
-                            <a href="{{ route('admin.percentage.index') }}"
+                            <a href="{{ route('admin.percentage.level.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Level Percentage
+                            </a>
+                            <a href="{{ route('admin.percentage.repurchase.index') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Repurchase Percentage
                             </a>
                             <a href="{{ route('admin.rewards.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">

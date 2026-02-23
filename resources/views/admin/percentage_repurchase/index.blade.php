@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'Manage Level Percentages')
+@section('title', 'Manage Repurchase Percentages')
 
 @section('container')
     <div class="container mx-auto px-4">
@@ -11,7 +11,7 @@
                     <i class="fas fa-layer-group fa-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-bold text-slate-800">Level Income Settings</h3>
+                    <h3 class="text-2xl font-bold text-slate-800">Repurchase Income Settings</h3>
                     <p class="text-slate-500 text-sm">Manage commission percentages</p>
                 </div>
             </div>
@@ -97,8 +97,8 @@
                                     </button>
 
                                     {{-- Delete Form --}}
-                                    <form action="{{ route('admin.percentage.level.destroy', $item->id) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to delete this level?');"
+                                    <form action="{{ route('admin.percentage.repurchase.destroy', $item->id) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this repurchase level?');"
                                         class="inline">
                                         @csrf
                                         @method('DELETE')
@@ -214,18 +214,18 @@
 
             if (type === 'create') {
                 // Setup for Create
-                title.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Level';
-                btnText.innerText = 'Save Level';
-                form.action = "{{ route('admin.percentage.level.store') }}";
+                title.innerHTML = '<i class="fas fa-plus-circle"></i> Add New Repurchase Level';
+                btnText.innerText = 'Save Repurchase Level';
+                form.action = "{{ route('admin.percentage.repurchase.store') }}";
                 methodField.innerHTML = ''; // Clear PUT method
                 form.reset();
             } else {
                 // Setup for Edit
-                title.innerHTML = '<i class="fas fa-edit"></i> Edit Level';
-                btnText.innerText = 'Update Level';
+                title.innerHTML = '<i class="fas fa-edit"></i> Edit Repurchase Level';
+                btnText.innerText = 'Update Repurchase Level';
 
-                // Assuming your route is like /admin/percentage-level/update/{id}
-                form.action = `/admin/percentage-level/update/${data.id}`;
+                // Assuming your route is like /admin/percentage-repurchase/update/{id}
+                form.action = `/admin/percentage-repurchase/update/${data.id}`;
                 methodField.innerHTML = '@method('PUT')'; // Inject PUT method
 
                 // Fill Data

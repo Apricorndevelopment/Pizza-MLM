@@ -162,7 +162,27 @@
 
                         {{-- Collapsible Details Section --}}
                         <div id="details-{{ $order->id }}" class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out opacity-0 bg-slate-50/50">
-                            <div class="p-6 border-t border-slate-100">
+                            <div class="p-3 border-t border-slate-100">
+                                {{-- NAYA: Delivery Details Box --}}
+                            <div class="mb-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                                <h6 class="text-[11px] uppercase tracking-widest font-bold text-slate-400 mb-2 flex items-center gap-2">
+                                    Delivery Details
+                                </h6>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    <div>
+                                        <span class="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Phone Number</span>
+                                        <span class="font-semibold text-slate-800 text-sm">{{ $order->phone_number ?? ($order->user->phone ?? 'N/A') }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Delivery Address</span>
+                                        <span class="font-semibold text-slate-800 text-sm">{{ $order->address ?? ($order->user->address ?? 'N/A') }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Location/Landmark</span>
+                                        <span class="font-semibold text-slate-800 text-sm">{{ $order->location ?? 'N/A' }}</span>
+                                    </div>
+                                </div>
+                            </div>
                                 <h6 class="text-[11px] uppercase tracking-widest font-bold text-slate-400 mb-4 flex items-center gap-2">
                                     <i class="mdi mdi-basket-outline text-lg"></i> Order Items
                                 </h6>
@@ -382,8 +402,8 @@
             </div>
 
             {{-- Pagination --}}
-            <div id="paginationContainer" class="mt-8 flex justify-center">
-                {{ $orders->appends(request()->query())->links('pagination::tailwind') }}
+            <div id="paginationContainer" class="mt-6">
+                {{ $orders->appends(request()->query())->links('pagination::bootstrap-5') }}
             </div>
         @else
             {{-- Empty State --}}
@@ -411,7 +431,7 @@
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <i class="mdi mdi-alert-circle text-red-600 text-xl"></i>
+                                <i class="fas fa-times text-red-600 text-xl"></i>
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Reject Order</h3>

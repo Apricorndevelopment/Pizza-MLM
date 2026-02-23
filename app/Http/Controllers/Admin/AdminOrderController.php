@@ -15,6 +15,7 @@ use App\Models\ProductPackage;
 use App\Models\User;
 use App\Models\PercentageIncome;
 use App\Models\PercentageLevelIncome;
+use App\Models\PercentageRepurchaseIncome; // Naya Model Import kiya
 use App\Models\BonusIncome;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
@@ -55,49 +56,38 @@ class AdminOrderController extends Controller
         return view('admin.orders.index', compact('orders'));
     }
 
-    // public function updateStatus(Request $request)
-    // {
-    //     $request->validate([
-    //         'order_id' => 'required|exists:orders,id',
-    //         'status'   => 'required|in:placed,accepted,delivered,rejected',
-    //         'reason'   => 'nullable|string|required_if:status,rejected',
-    //     ]);
+    // Add this to AdminOrderController.php
+    public function vendorOrders(Request $request)
+    {
+        // Fetch only orders that belong to a vendor
+        $query = Order::whereNotNull('vendor_id')
+            ->with(['user', 'vendor.user', 'items']);
 
-    //     $adminId = Auth::guard('admin')->user()->id;
+        // Handle Search (Order ID, Customer Name/Email, Vendor Company Name)
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('order_id', 'LIKE', "%{$search}%")
+                  ->orWhereHas('user', function ($u) use ($search) {
+                      $u->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('email', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('vendor', function ($v) use ($search) {
+                      $v->where('company_name', 'LIKE', "%{$search}%")
+                        ->orWhere('vendor_name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
 
-    //     DB::beginTransaction();
+        // Handle Status Filter
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
 
-    //     try {
-    //         $order = Order::with('items', 'user')->lockForUpdate()->find($request->order_id);
-    //         $user = $order->user;
+        $orders = $query->latest()->paginate(12)->withQueryString();
 
-    //         if (!$order) {
-    //             throw new \Exception("Order not found.");
-    //         }
-
-    //         if ($request->status === 'rejected') {
-    //             $this->processOrderRejection($order, $user, $adminId, $request->reason);
-    //         }
-
-    //         if ($request->status === 'delivered') {
-    //             if (!$user) {
-    //                 throw new \Exception("User not found for this order.");
-    //             }
-    //             $this->processOrderDelivery($order, $user, $adminId);
-    //         }
-
-    //         $order->status = $request->status;
-    //         $order->save();
-
-    //         DB::commit();
-
-    //         return redirect()->back()->with('success', 'Order status updated successfully!');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         Log::error("Admin Order Update Failed: " . $e->getMessage());
-    //         return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
-    //     }
-    // }
+        return view('admin.orders.vendor_orders', compact('orders'));
+    }
 
     public function updateStatus(Request $request)
     {
@@ -406,7 +396,13 @@ class AdminOrderController extends Controller
 
     private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $adminId)
     {
-        $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
+        // Yahan maine condition laga di hai dono tables ke percentages alag fetch karne ke liye
+        if ($tableType === 'level_incomes') {
+            $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
+        } else {
+            $levelSettings = PercentageRepurchaseIncome::orderBy('level', 'asc')->get();
+        }
+
         $currentUplineUlid = $fromUser->sponsor_id;
 
         foreach ($levelSettings as $levelSetting) {

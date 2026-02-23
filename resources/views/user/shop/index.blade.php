@@ -303,9 +303,19 @@
                                     <div class="vstack gap-2 border-bottom pb-3 mb-2">
                                         <div class="d-flex justify-content-between text-sm">
                                             <span class="text-secondary">Subtotal (DP)</span>
-                                            <span class="fw-bold text-dark">₹<span id="modalTotal">0.00</span></span>
+                                            <span class="fw-bold text-dark">₹<span id="modalSubtotal">0.00</span></span>
                                         </div>
-                                        <div class="d-flex justify-content-between text-sm text-warning text-opacity-100">
+                                        <div class="d-flex justify-content-between text-sm">
+                                            <span class="text-secondary">GST Charges</span>
+                                            <span class="fw-bold text-danger">+ ₹<span id="modalGst">0.00</span></span>
+                                        </div>
+                                        <div class="d-flex justify-content-between text-sm pt-2 border-top">
+                                            <span class="text-dark fw-bold">Total Bill</span>
+                                            <span class="fw-bold text-dark">₹<span id="modalTotal"
+                                                    data-total="0">0.00</span></span>
+                                        </div>
+                                        <div
+                                            class="d-flex justify-content-between text-sm text-warning text-opacity-100 mt-2">
                                             <span><i class="bi bi-tag-fill me-1"></i> Coupon Discount</span>
                                             <span class="fw-bold">- ₹<span id="modalCouponDisc">0.00</span></span>
                                         </div>
@@ -396,27 +406,26 @@
         }
 
         // ==========================================
-        // 3. Cart & Coupon Logic (THE FIX)
+        // 3. Cart & Coupon Logic (GST ADDED)
         // ==========================================
 
         const userWallet2 = {{ Auth::user()->wallet2_balance }};
         const userCouponBalance = {{ $userCouponCount }};
         let cart = {};
-
-        // Global variable to store the calculated limit
         let currentMaxCoupons = 0;
 
-        // 1. ADD TO CART - Now saves max_coupon
-        function addToCart(id, name, price, type, max_coupon = 0) {
+        // 1. ADD TO CART - Now accepts GST parameter
+        function addToCart(id, name, price, type, max_coupon = 0, gst = 0) {
             let key = type + '_' + id;
             if (!cart[key]) {
                 cart[key] = {
                     id: id,
                     name: name,
-                    price: price,
+                    price: parseFloat(price),
                     type: type,
                     qty: 1,
-                    max_coupon: parseInt(max_coupon) // Ensure it's a number
+                    max_coupon: parseInt(max_coupon),
+                    gst: parseFloat(gst) // Save GST %
                 };
             } else {
                 cart[key].qty++;
@@ -434,43 +443,50 @@
             renderCartModal();
         }
 
-        // 3. UPDATE UI (Calculates Limits)
+        // 3. UPDATE UI (Calculates Limits & GST)
         function updateUI() {
             let count = 0;
-            let total = 0;
-
-            // YOUR LOGIC IMPLEMENTATION:
-            // Calculate total allowed coupons based on cart items
+            let subtotal = 0;
+            let totalGst = 0;
             let cartAllowedCoupons = 0;
 
             for (let key in cart) {
                 let item = cart[key];
                 count += item.qty;
-                total += item.qty * item.price;
 
-                // Logic: (Item Qty * Item Max Coupon Limit)
-                // Example: 2 qty * 2 limit = 4 coupons allowed for this item
+                let itemTotalDP = item.qty * item.price;
+                subtotal += itemTotalDP;
+
+                // Calculate GST amount for this item
+                let itemGstAmount = itemTotalDP * (item.gst / 100);
+                totalGst += itemGstAmount;
+
                 cartAllowedCoupons += (item.qty * item.max_coupon);
             }
 
-            // Determine the REAL limit:
-            // It is the smaller number between: 
-            // A) What the user has in their account
-            // B) What the items in the cart allow
+            let finalTotalWithGst = subtotal + totalGst;
             currentMaxCoupons = Math.min(userCouponBalance, cartAllowedCoupons);
 
-            // Update Standard UI Elements
             if (document.getElementById('cartCount')) document.getElementById('cartCount').innerText = count;
-            if (document.getElementById('cartTotal')) document.getElementById('cartTotal').innerText = total.toFixed(2);
+            if (document.getElementById('cartTotal')) document.getElementById('cartTotal').innerText = finalTotalWithGst
+                .toFixed(2);
             if (document.getElementById('cartBar')) document.getElementById('cartBar').style.display = count > 0 ? 'block' :
                 'none';
-            if (document.getElementById('modalTotal')) document.getElementById('modalTotal').innerText = total.toFixed(2);
 
-            // Update Coupon Limit Text
+            // Set values in modal summary
+            if (document.getElementById('modalSubtotal')) document.getElementById('modalSubtotal').innerText = subtotal
+                .toFixed(2);
+            if (document.getElementById('modalGst')) document.getElementById('modalGst').innerText = totalGst.toFixed(2);
+
+            const modalTotalEl = document.getElementById('modalTotal');
+            if (modalTotalEl) {
+                modalTotalEl.innerText = finalTotalWithGst.toFixed(2);
+                modalTotalEl.setAttribute('data-total', finalTotalWithGst);
+            }
+
             const msgEl = document.getElementById('maxCouponMessage');
             if (msgEl) msgEl.innerText = `Max allowed: ${currentMaxCoupons}`;
 
-            // Validate Input (Reset if current value > new limit)
             const inputEl = document.getElementById('couponSelect');
             if (inputEl) {
                 let currentVal = parseInt(inputEl.value) || 0;
@@ -481,17 +497,14 @@
             calculateFinalTotal();
         }
 
-        // 4. STEPPER FUNCTION (+ / - Buttons)
+        // 4. STEPPER FUNCTION
         function updateCouponQty(change) {
-            console.log("Stepper Clicked. Change:", change); // Debugging
-
             const inputEl = document.getElementById('couponSelect');
             if (!inputEl) return;
 
             let currentVal = parseInt(inputEl.value) || 0;
             let newVal = currentVal + change;
 
-            // Enforce Limits using the calculated global variable
             if (newVal < 0) newVal = 0;
             if (newVal > currentMaxCoupons) newVal = currentMaxCoupons;
 
@@ -499,14 +512,13 @@
             calculateFinalTotal();
         }
 
-        // 5. CALCULATE FINALS (Updated for flexible Wallet 2)
+        // 5. CALCULATE FINALS
         function calculateFinalTotal() {
             const modalTotalEl = document.getElementById('modalTotal');
             if (!modalTotalEl) return;
 
-            let total = parseFloat(modalTotalEl.innerText);
+            let total = parseFloat(modalTotalEl.getAttribute('data-total')) || 0;
 
-            // 1. Coupon Logic
             let coupons = parseInt(document.getElementById('couponSelect').value) || 0;
             let couponDiscount = coupons * 10;
 
@@ -518,73 +530,31 @@
 
             let remainingAfterCoupon = total - couponDiscount;
 
-            // 2. Wallet 2 Logic (Flexible Input)
             const wallet2InputEl = document.getElementById('wallet2InputRaw');
             let w2Entered = parseFloat(wallet2InputEl.value) || 0;
 
-            // Constraints for Wallet 2
-            // A. Cannot exceed user balance
-            if (w2Entered > userWallet2) {
-                w2Entered = userWallet2;
-                wallet2InputEl.value = w2Entered.toFixed(2);
-            }
-            // B. Cannot exceed remaining total after coupons
-            if (w2Entered > remainingAfterCoupon) {
-                w2Entered = remainingAfterCoupon;
-                wallet2InputEl.value = w2Entered.toFixed(2);
-            }
+            if (w2Entered > userWallet2) w2Entered = userWallet2;
+            if (w2Entered > remainingAfterCoupon) w2Entered = remainingAfterCoupon;
 
-            // 3. Wallet 1 Logic (Remainder)
             let w1 = remainingAfterCoupon - w2Entered;
 
-            // Update UI
             document.getElementById('modalCouponDisc').innerText = couponDiscount.toFixed(2);
             document.getElementById('modalW2').innerText = w2Entered.toFixed(2);
             document.getElementById('modalW1').innerText = w1.toFixed(2);
 
-            // Update Form Inputs
             document.getElementById('cartInput').value = JSON.stringify(Object.values(cart));
             document.getElementById('wallet2Input').value = w2Entered;
             document.getElementById('couponInput').value = coupons;
         }
 
-        // Validate manual typing in Coupon Input
         function validateCouponInput(input) {
             let val = parseInt(input.value) || 0;
-
-            // Cannot be less than 0
-            if (val < 0) {
-                input.value = 0;
-            }
-
-            // Cannot be more than the dynamically calculated max coupons
-            if (val > currentMaxCoupons) {
-                input.value = currentMaxCoupons;
-            }
-
-            // Update the totals
+            if (val < 0) input.value = 0;
+            if (val > currentMaxCoupons) input.value = currentMaxCoupons;
             calculateFinalTotal();
         }
 
-        // REMOVE the function 'populateWallet2Options' calls from 'updateUI', it is no longer needed.
-
-        // 6. WALLET 2 DROPDOWN
-        // function populateWallet2Options(total) {
-        //     let select = document.getElementById('wallet2Select');
-        //     if (!select) return;
-        //     let currentSelection = parseInt(select.value) || 0;
-        //     select.innerHTML = '<option value="0">Do not use Cashback</option>';
-        //     let maxRedeem = Math.min(userWallet2, total);
-        //     for (let i = 50; i <= maxRedeem; i += 50) {
-        //         let option = document.createElement('option');
-        //         option.value = i;
-        //         option.text = `Use ₹${i}`;
-        //         if (i === currentSelection) option.selected = true;
-        //         select.appendChild(option);
-        //     }
-        // }
-
-        // 7. RENDER CART LIST
+        // 7. RENDER CART LIST (Shows GST per item now)
         function renderCartModal() {
             let container = document.getElementById('cartItemsList');
             if (!container) return;
@@ -597,11 +567,15 @@
 
             for (let key in cart) {
                 let item = cart[key];
+                let itemSubtotal = item.price * item.qty;
+                let itemGst = itemSubtotal * (item.gst / 100);
+                let itemTotal = itemSubtotal + itemGst;
+
                 let html = `
                 <div class="d-flex align-items-center p-2 bg-white border rounded-3 shadow-sm mb-2">
                     <div class="flex-grow-1 ms-3">
                         <h6 class="mb-0 fw-semibold text-dark">${item.name}</h6>
-                        <small class="text-muted">₹${item.price} x ${item.qty}</small>
+                        <small class="text-muted">₹${item.price} x ${item.qty} ${item.gst > 0 ? `<span class="text-orange-500">(+${item.gst}% GST)</span>` : ''}</small>
                         <div style="font-size:10px; color:orange;">Max Coupons: ${item.max_coupon * item.qty}</div>
                     </div>
                     <div class="d-flex align-items-center bg-light rounded-pill px-2 py-1 mx-2">
@@ -609,7 +583,7 @@
                         <span class="mx-2 fw-bold small">${item.qty}</span>
                         <button class="btn btn-sm p-0 border-0" onclick="updateQty('${key}', 1)"><i class="bi bi-plus"></i></button>
                     </div>
-                    <div class="fw-bold">₹${(item.price * item.qty).toFixed(2)}</div>
+                    <div class="fw-bold">₹${itemTotal.toFixed(2)}</div>
                 </div>`;
                 container.insertAdjacentHTML('beforeend', html);
             }
@@ -665,6 +639,52 @@
                     status.className = "text-xs text-danger";
                 }
             );
+        }
+
+        // ==========================================
+        // 9. LOAD MORE PAGINATION LOGIC (FIXED)
+        // ==========================================
+        function loadMoreProducts(url, type) {
+            const btnContainer = document.getElementById(type + '-load-more-container');
+            if (btnContainer) {
+                btnContainer.innerHTML =
+                    '<span class="spinner-border spinner-border-sm text-secondary me-2"></span> Loading...';
+            }
+
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const newGrid = doc.getElementById(type + '-product-grid');
+                    const newLoadMore = doc.getElementById(type + '-load-more-container');
+                    const currentGrid = document.getElementById(type + '-product-grid');
+
+                    if (newGrid && currentGrid) {
+                        // FIXED: using insertAdjacentHTML prevents re-rendering old items and breaking events
+                        currentGrid.insertAdjacentHTML('beforeend', newGrid.innerHTML);
+                    }
+
+                    const currentBtnContainer = document.getElementById(type + '-load-more-container');
+                    if (currentBtnContainer) {
+                        if (newLoadMore) {
+                            currentBtnContainer.outerHTML = newLoadMore.outerHTML; // Properly swap button with new URL
+                        } else {
+                            currentBtnContainer.remove(); // No more pages, remove button
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading more products:', error);
+                    if (btnContainer) {
+                        btnContainer.innerHTML = '<span class="text-danger">Failed to load. Please try again.</span>';
+                    }
+                });
         }
     </script>
 @endsection

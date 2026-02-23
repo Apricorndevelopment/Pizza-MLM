@@ -4,26 +4,26 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\PercentageLevelIncome;
+use App\Models\PercentageRepurchaseIncome;
 
-class PercentageLevelController extends Controller
+class PercentageRepurchaseController extends Controller
 {
     // List all levels
     public function index()
     {
-        $levels = PercentageLevelIncome::orderBy('id', 'asc')->get();
-        return view('admin.percentage_level.index', compact('levels'));
+        $levels = PercentageRepurchaseIncome::orderBy('id', 'asc')->get();
+        return view('admin.percentage_repurchase.index', compact('levels'));
     }
 
     // Store New Level
     public function store(Request $request)
     {
         $request->validate([
-            'level'      => 'required|numeric|unique:percentage_level_incomes,level',
+            'level'      => 'required|numeric|unique:percentage_repurchase_incomes,level',
             'percentage' => 'required|numeric|min:0|max:100',
         ]);
 
-        PercentageLevelIncome::create([
+        PercentageRepurchaseIncome::create([
             'level'      => $request->level,
             'percentage' => $request->percentage,
         ]);
@@ -34,11 +34,11 @@ class PercentageLevelController extends Controller
     // Update Existing Level
     public function update(Request $request, $id)
     {
-        $level = PercentageLevelIncome::findOrFail($id);
+        $level = PercentageRepurchaseIncome::findOrFail($id);
 
         $request->validate([
             // 'unique' rule ignores the current ID so you can save without changing the name
-            'level'      => 'required|numeric|unique:percentage_level_incomes,level,' . $level->id,
+            'level'      => 'required|numeric|unique:percentage_repurchase_incomes,level,' . $level->id,
             'percentage' => 'required|numeric|min:0|max:100',
         ]);
 
@@ -53,7 +53,7 @@ class PercentageLevelController extends Controller
     // Delete Level
     public function destroy($id)
     {
-        $level = PercentageLevelIncome::findOrFail($id);
+        $level = PercentageRepurchaseIncome::findOrFail($id);
         $level->delete();
 
         return redirect()->back()->with('success', 'Level deleted successfully!');

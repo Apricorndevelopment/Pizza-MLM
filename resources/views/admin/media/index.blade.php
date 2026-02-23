@@ -2,7 +2,7 @@
 @section('title', 'Media Library (Audio & Video)')
 
 @section('container')
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4">
 
         <div class="flex justify-between items-center mb-6">
             <div>
@@ -17,17 +17,15 @@
 
         {{-- Alerts --}}
         @if (session('success'))
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm">
+            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded flex items-center justify-between shadow-sm">
                 <p><i class="fas fa-check-circle mr-2"></i> {{ session('success') }}</p>
+                <i class="fas fa-times-circle text-green-700 hover:text-green-900 cursor-pointer ml-2" onclick="this.closest('.bg-green-50').remove()"></i>
             </div>
         @endif
-        @if ($errors->any())
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm">
-                <ul class="list-disc pl-5">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+        @if (session('error'))
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 flex items-center justify-between rounded shadow-sm">
+               <p><i class="fas fa-times-circle mr-2"></i> {{ session('error') }}</p>
+               <i class="fas fa-times-circle text-red-700 hover:text-red-900 cursor-pointer ml-2" onclick="this.closest('.bg-red-50').remove()"></i>
             </div>
         @endif
 
@@ -182,7 +180,7 @@
                         <input type="file" name="file"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-slate-50 focus:ring-2 focus:ring-indigo-500"
                             required>
-                        <p class="text-xs text-gray-500 mt-1">Supported: mp3, wav, mp4, webm (Max 250MB)</p>
+                        <p class="text-xs text-gray-500 mt-1">Supported: mp3, wav, mp4, webm, mkv (Max 250MB)</p>
                     </div>
 
                     <div class="flex justify-end pt-2">

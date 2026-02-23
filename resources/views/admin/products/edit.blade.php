@@ -404,6 +404,9 @@
         const profit = document.getElementById('profit');
 
         if (profit) { // Safety check to ensure element exists
+            const recommendedPvValue = (profit.value * 30) / 100;
+            // FIX: Changed Math.rounded to Math.round
+            recomendedPv.textContent = `Recommended PV: ${Math.round(recommendedPvValue)}`;
             profit.addEventListener('input', function() {
                 console.log("running");
                 if (this.value) {

@@ -63,6 +63,11 @@
                     @csrf
                     @method('PUT')
 
+                    {{-- TRUE HIDDEN FIELD FOR CONTROLLER --}}
+                    {{-- Retains existing state or falls back to '0' --}}
+                    <input type="hidden" name="is_package_product" id="is_package_product_hidden" value="{{ old('is_package_product', $product->is_package_product ?? '0') }}">
+
+
                     {{-- Section 1: Basic Info & Image --}}
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
 
@@ -81,8 +86,8 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Max Coupons Allowed <span
-                                        class="text-danger">*</span></label>
-                                <div>
+                                        class="text-red-500">*</span></label>
+                                <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i
                                             class="bi bi-ticket-perforated"></i></span>
                                     <input type="number"
@@ -90,8 +95,7 @@
                                         name="max_coupon_usage"
                                         value="{{ old('max_coupon_usage', $product->max_coupon_usage) }}" min="0">
                                 </div>
-                                <small class="text-muted">Current Limit: {{ $product->max_coupon_usage }} coupons per
-                                    unit</small>
+                                <small class="text-gray-500 mt-1 block">Current Limit: {{ $product->max_coupon_usage }} coupons per unit</small>
                             </div>
 
                             <div>
@@ -151,7 +155,7 @@
                             Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
                         </label>
 
-                        <select name="isVeg" id="isVeg" class="form-select">
+                        <select name="isVeg" id="isVeg" class="form-select w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm">
                             <option value="veg" {{ old('isVeg', $product->isVeg) === 'veg' ? 'selected' : '' }}>
                                 Veg
                             </option>
@@ -195,7 +199,7 @@
                             </div>
 
                             <div class="group">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">GST %
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">GST %</label>
                                 <div class="relative">
                                     <input type="number" step="0.01" name="gst"
                                         value="{{ old('gst', $product->gst) }}"
@@ -239,10 +243,10 @@
                         </div>
                     </div>
 
-                    {{-- New Section for Capping & PV --}}
+                    {{-- Section 3: Capping & PV --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
 
-                        {{-- REFACTORED PV FIELD: Value only --}}
+                        {{-- PV FIELD --}}
                         <div>
                             <label for="pv" class="block text-sm font-semibold text-gray-700 mb-2">
                                 PV (Point Value) <span class="text-red-500">*</span>
@@ -259,19 +263,19 @@
 
                         {{-- CAPPING FIELD WITH TOGGLE CHECKBOX --}}
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            {{-- 1. Checkbox to Enable --}}
+                            {{-- Checkbox Toggle (UI only) --}}
                             <div class="flex items-center mb-3">
-                                {{-- FIX: Removed name="is_package_product" to prevent conflict --}}
-                                <input type="checkbox" id="toggle-capping"
-                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
-                                <label for="toggle-capping"
+                                <input type="checkbox" id="ui-toggle-capping"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" 
+                                    {{ old('is_package_product', $product->is_package_product ?? '0') == '1' ? 'checked' : '' }}>
+                                <label for="ui-toggle-capping"
                                     class="ml-2 text-sm font-bold text-gray-700 cursor-pointer select-none">
-                                    Set Capping Limit?
+                                    Set as Package Product (Enable Capping Limit)?
                                 </label>
                             </div>
 
-                            {{-- 2. Hidden Input Container --}}
-                            <div id="capping-section" class="hidden transition-all duration-300">
+                            {{-- Hidden Input Container --}}
+                            <div id="capping-section" class="transition-all duration-300 {{ old('is_package_product', $product->is_package_product ?? '0') == '1' ? 'block' : 'hidden' }}">
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                                         <i class="fas fa-chart-line"></i>
@@ -287,7 +291,7 @@
 
                     {{-- Actions --}}
                     <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-end gap-4">
-                        <a href="{{ route('admin.package') }}"
+                        <a href="{{ route('admin.product-package') }}"
                             class="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm">
                             Cancel
                         </a>
@@ -332,7 +336,7 @@
             });
 
             removeBtn.addEventListener('click', function() {
-                fileInput.click();
+                fileInput.click(); // Open file browser again
             });
 
             ['dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -352,12 +356,11 @@
             });
 
             // ==========================================
-            // 2. PROFIT -> RECOMMENDED PV LOGIC (ADDED)
+            // 2. PROFIT -> RECOMMENDED PV LOGIC
             // ==========================================
             const profitInput = document.getElementById('profit');
             const recomendLabel = document.getElementById('recomend');
 
-            // Define calculation function
             const calculatePv = () => {
                 if (profitInput.value && profitInput.value > 0) {
                     const recommended = (parseFloat(profitInput.value) * 30) / 100;
@@ -367,30 +370,34 @@
                 }
             };
 
-            // Run on input change
             profitInput.addEventListener('input', calculatePv);
-
-            // Run immediately on page load (for Edit mode)
-            calculatePv();
+            calculatePv(); // Run on load
 
             // ==========================================
-            // 3. CAPPING TOGGLE LOGIC
+            // 3. CAPPING TOGGLE LOGIC (Fixed for Backend Sync)
             // ==========================================
-            const toggleCapping = document.getElementById('toggle-capping');
+            const uiToggleCapping = document.getElementById('ui-toggle-capping');
+            const hiddenStatusInput = document.getElementById('is_package_product_hidden');
             const cappingSection = document.getElementById('capping-section');
             const cappingInput = document.getElementById('capping-input');
 
-            if (cappingInput.value && parseFloat(cappingInput.value) > 0) {
-                toggleCapping.checked = true;
+            // Force initial state consistency
+            if(uiToggleCapping.checked) {
+                hiddenStatusInput.value = '1';
                 cappingSection.classList.remove('hidden');
+            } else {
+                hiddenStatusInput.value = '0';
+                cappingSection.classList.add('hidden');
             }
 
-            toggleCapping.addEventListener('change', function() {
+            uiToggleCapping.addEventListener('change', function() {
                 if (this.checked) {
                     cappingSection.classList.remove('hidden');
+                    hiddenStatusInput.value = '1';
                 } else {
                     cappingSection.classList.add('hidden');
-                    cappingInput.value = '';
+                    cappingInput.value = '0'; // Clear/reset value when disabled
+                    hiddenStatusInput.value = '0';
                 }
             });
         });

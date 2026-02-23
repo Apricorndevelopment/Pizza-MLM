@@ -2,12 +2,11 @@
 @section('title', 'Package Management')
 @section('container')
 
-    <div class="min-h-screen bg-gray-50 px-2 sm:px-3 lg:px-4">
+    <div class="min-h-screen bg-gray-50 px-2 lg:px-3">
         <div class="max-w-8xl mx-auto">
 
-            @session('success')
-                <div
-                    class="mb-4 alert rounded-md bg-green-50 p-4 border border-green-200 transition-opacity duration-500 ease-in-out">
+            @if(session('success'))
+                <div class="mb-3 alert rounded-md bg-green-50 p-4 border border-green-200 transition-opacity duration-500 ease-in-out">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -34,18 +33,18 @@
                         </div>
                     </div>
                 </div>
-            @endsession
+            @endif
 
-            <div class="mb-6">
+            <div class="mb-3">
                 <h1 class="text-3xl font-bold text-gray-900">Product Package Management</h1>
                 <p class="mt-2 text-sm text-gray-600">Manage your admin products.</p>
             </div>
 
-            <div class="mb-8">
+            <div class="mb-6">
 
                 <div
                     class="bg-white overflow-hidden shadow-sm rounded-xl border border-cyan-100 hover:shadow-md transition-shadow duration-200">
-                    <div class="p-6">
+                    <div class="p-3">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-cyan-100 rounded-md p-3">
                                 <svg class="h-6 w-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +57,7 @@
                                 <p class="text-sm text-gray-500">Products to Purchase for the Users</p>
                             </div>
                         </div>
-                        <div class="mt-6">
+                        <div class="mt-3">
                             <a href="{{ route('admin.package2.create') }}"
                                 class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 w-full sm:w-auto transition-colors">
                                 <svg class="mr-2 -ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +74,7 @@
             <div class="space-y-6">
 
                 <div class="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
-                    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                         <h3 class="text-lg font-medium text-gray-900">Product Package List</h3>
                     </div>
                     <div class="overflow-x-auto">
@@ -96,7 +95,7 @@
                                         PV</th>
                                     <th scope="col"
                                         class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Profit %</th>
+                                        Profit</th>
                                     <th scope="col"
                                         class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
@@ -115,7 +114,6 @@
                                                                 alt="{{ $package->product_name }}">
                                                             <div class="h-3 w-3 absolute right-1 top-1 rounded-full">
                                                                 @if ($package->isVeg === 'veg')
-                                                                    <!-- VEG SVG -->
                                                                     <svg viewBox="0 0 100 100" width="100%" height="100%"
                                                                         xmlns="http://www.w3.org/2000/svg">
                                                                         <rect x="5" y="5" width="90" height="90"
@@ -125,7 +123,6 @@
                                                                             fill="#16a34a" />
                                                                     </svg>
                                                                 @else
-                                                                    <!-- NON-VEG SVG -->
                                                                     <svg viewBox="0 0 100 100" width="100%" height="100%"
                                                                         xmlns="http://www.w3.org/2000/svg">
                                                                         <rect x="5" y="5" width="90" height="90"
@@ -158,7 +155,7 @@
                                         <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-500">{{ $package->pv }}
                                         </td>
                                         <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $package->profit }}%</td>
+                                            {{ $package->profit }}</td>
                                         <td class="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end space-x-2">
                                                 <a href="{{ route('admin.package2.edit', $package->id) }}"
@@ -202,10 +199,19 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    {{-- ADDED PAGINATION LINKS HERE --}}
+                    @if ($product_package->hasPages())
+                        <div class="px-4 py-3 border-t border-gray-200 bg-white sm:px-6">
+                            {{ $product_package->links('pagination::bootstrap-5') }}
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>
     </div>
+    
     <div id="stock-modal" class="fixed inset-0 z-50 hidden" aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeStockModal()"></div>
 
@@ -273,17 +279,12 @@
         const qtyContainer = document.getElementById('quantity-container');
 
         function openStockModal(id, manageStock, quantity) {
-            // Form Action Set karein
             stockForm.action = `/admin/product-package/${id}/stock`;
 
-            // Values Set karein
             manageCheckbox.checked = (manageStock == 1);
             qtyInput.value = quantity;
 
-            // UI Update karein
             toggleQuantityInput();
-
-            // Modal Show karein
             stockModal.classList.remove('hidden');
         }
 

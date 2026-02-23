@@ -19,7 +19,7 @@ class PackageController extends Controller
 
     public function productPackage()
     {
-        $product_package = ProductPackage::all();
+        $product_package = ProductPackage::paginate(10);
         return view('admin.manage-package.product-package', compact('product_package'));
     }
 
@@ -176,6 +176,8 @@ class PackageController extends Controller
             'max_coupon_usage' => 'required|integer|min:0',
             'profit' => 'required|numeric|min:0|max:100',
             'isVeg' => 'required|string|in:veg,non-veg',
+            'capping'            => 'required|numeric|min:0',
+            'is_package_product' => 'required|in:0,1',
         ]);
 
         $product = ProductPackage::findOrFail($id);
@@ -206,7 +208,10 @@ class PackageController extends Controller
             'pv' => $request->pv,
             'profit' => $request->profit,
             'max_coupon_usage' => $request->max_coupon_usage,
-            'isVeg' => $request->isVeg
+            'isVeg' => $request->isVeg,
+            // Cast to integer to match tinyint(1) database column
+            'is_package_product' => (int) $request->is_package_product,
+            'capping'            => $request->capping,
         ]);
 
         return redirect()->route('admin.product-package')->with('success', 'Product updated successfully!');

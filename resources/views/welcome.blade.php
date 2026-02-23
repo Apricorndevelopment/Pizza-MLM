@@ -201,10 +201,8 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3 group">
                     <a href="/">
-                        <div
-                            class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-orange-400 transition-colors shadow-sm">
-                            <img src="{{ asset('images/smartsave.png') }}" alt="Logo"
-                                class="w-full h-full object-cover bg-white">
+                        <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-orange-400 transition-colors shadow-sm">
+                            <img src="{{ asset('images/smartsave.png') }}" alt="Logo" class="w-full h-full object-cover bg-white">
                         </div>
                     </a>
                     <a href="/" class="font-poppins text-xl font-extrabold text-gray-800 tracking-tight">
@@ -222,12 +220,10 @@
                 </div>
 
                 <div class="hidden md:flex items-center space-x-5">
-                    <a href="{{ route('auth.login') }}"
-                        class="text-gray-600 hover:text-orange-500 font-semibold transition flex items-center">
+                    <a href="{{ route('auth.login') }}" class="text-gray-600 hover:text-orange-500 font-semibold transition flex items-center">
                         <i class="bi bi-box-arrow-in-right mr-1.5 text-lg"></i> Login
                     </a>
-                    <a href="{{ route('auth.register') }}"
-                        class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2.5 rounded-full font-bold shadow-[0_4px_15px_rgba(249,115,22,0.3)] hover:shadow-[0_6px_20px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-0.5">
+                    <a href="{{ route('auth.register') }}" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2.5 rounded-full font-bold shadow-[0_4px_15px_rgba(249,115,22,0.3)] hover:shadow-[0_6px_20px_rgba(249,115,22,0.4)] transition-all transform hover:-translate-y-0.5">
                         Join Now
                     </a>
                 </div>
@@ -237,6 +233,26 @@
                 </button>
             </div>
         </nav>
+
+        <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl mobile-menu">
+            <div class="flex flex-col px-6 py-5 space-y-4">
+                <a href="#home" class="mobile-link text-gray-700 font-medium hover:text-orange-500 border-b border-gray-50 pb-2">Home</a>
+                <a href="#about" class="mobile-link text-gray-700 font-medium hover:text-orange-500 border-b border-gray-50 pb-2">About Us</a>
+                <a href="#vendors" class="mobile-link text-gray-700 font-medium hover:text-orange-500 border-b border-gray-50 pb-2">Vendors</a>
+                <a href="#products" class="mobile-link text-gray-700 font-medium hover:text-orange-500 border-b border-gray-50 pb-2">Products</a>
+                <a href="#achievers" class="mobile-link text-gray-700 font-medium hover:text-orange-500 border-b border-gray-50 pb-2">Achievers</a>
+                <a href="#contact" class="mobile-link text-gray-700 font-medium hover:text-orange-500 border-b border-gray-50 pb-2">Contact</a>
+
+                <div class="flex flex-col gap-3 mt-4">
+                    <a href="{{ route('auth.login') }}" class="text-center text-gray-600 border border-gray-200 hover:text-orange-500 font-semibold py-2.5 rounded-xl transition">
+                        <i class="bi bi-box-arrow-in-right mr-1.5"></i> Login
+                    </a>
+                    <a href="{{ route('auth.register') }}" class="text-center bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2.5 rounded-xl font-bold shadow-md transition">
+                        Join Now
+                    </a>
+                </div>
+            </div>
+        </div>
     </header>
 
     <section id="home" class="relative pt-12 pb-20 md:pt-16 md:pb-24 overflow-hidden bg-slate-50">
@@ -885,9 +901,32 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // Mobile Menu Toggle
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
+      // Mobile Menu Toggle & Auto-Close
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        // Toggle menu on button click
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            // Icon change (List to Cross)
+            const icon = this.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('bi-x-lg');
+                icon.classList.add('bi-list');
+            } else {
+                icon.classList.remove('bi-list');
+                icon.classList.add('bi-x-lg');
+            }
+        });
+
+        // Close menu when a link is clicked
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenuBtn.querySelector('i').classList.remove('bi-x-lg');
+                mobileMenuBtn.querySelector('i').classList.add('bi-list');
+            });
         });
 
         var vendorSwiper = new Swiper(".vendorSwiper", {

@@ -9,7 +9,7 @@ class PercentageRepurchaseIncome extends Model
 {
     use HasFactory;
 
-    protected $table = 'percentage_level_incomes';
+    protected $table = 'percentage_repurchase_incomes';
 
     protected $fillable = [
         'level',

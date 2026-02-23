@@ -119,7 +119,7 @@
                         <!-- Price -->
                         <div class="space-y-2">
                             <label for="profit" class="block text-sm font-medium text-gray-700">
-                                Selling Profit <span class="text-red-500">*</span>
+                                Profit <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>

@@ -30,8 +30,20 @@ class CalculateCartTotal
             if (!$product) continue;
 
             $qty = (int) $item['qty'];
-            $price = $product->dp;
-            $lineTotal = $price * $qty;
+            
+            // --- GST CALCULATION LOGIC START ---
+            $basePrice = $product->dp; // Dealer Price
+            $gstPercent = $product->gst ?? 0; // Get GST % from DB or 0
+            
+            // Calculate GST Amount per unit
+            $gstAmountPerUnit = ($basePrice * $gstPercent) / 100;
+            
+            // Final Unit Price (Inclusive of GST)
+            $unitPriceWithTax = $basePrice + $gstAmountPerUnit;
+            
+            // Total Line Amount
+            $lineTotal = $unitPriceWithTax * $qty;
+            // --- GST CALCULATION LOGIC END ---
 
             $context->totalDp += $lineTotal;
 
@@ -41,16 +53,15 @@ class CalculateCartTotal
                 'product_id' => $product->id,
                 'product_name' => $product->product_name,
                 'product_image' => $product->product_image,
-                'price' => $price,
+                'price' => $unitPriceWithTax, // Store the Tax Inclusive Price
                 'quantity' => $qty,
-                'subtotal' => $lineTotal,
+                'subtotal' => $lineTotal, // Total with Tax
                 'vendor_id' => $vendorId,
-                // CRITICAL FOR COUPONS: Pass the limit
                 'max_coupon_usage' => $product->max_coupon_usage ?? 0 
             ];
         }
 
-        // Initialize payable amount
+        // Initialize payable amount with the Tax Inclusive Total
         $context->payableAmount = $context->totalDp;
 
         return $next($context);

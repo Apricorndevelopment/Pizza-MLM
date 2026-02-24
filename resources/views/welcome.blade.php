@@ -160,14 +160,19 @@
             border-radius: 15px;
         }
 
+        @media (max-width: 950px) {
+            .banner-img {
+                height: 450px;
+            }
+        }
         @media (max-width: 768px) {
             .banner-img {
-                height: 400px;
+                height: 350px;
             }
         }
         @media (max-width: 500px) {
             .banner-img {
-                height: 350px;
+                height: 200px;
             }
         }
 

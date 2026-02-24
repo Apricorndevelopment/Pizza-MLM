@@ -93,8 +93,8 @@
                                         {{ substr($order->user->name ?? 'G', 0, 1) }}
                                     </div>
                                     <div>
-                                        <p class="text-sm font-bold text-slate-800">{{ $order->user->name ?? 'Guest' }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ $order->user->email ?? 'No Email' }}</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ $order->user->name }}({{ $order->user->ulid }}) </p>
+                                        <p class="text-[10px] text-slate-400">{{ $order->user->email }}</p>
                                     </div>
                                 </div>
                             </div>

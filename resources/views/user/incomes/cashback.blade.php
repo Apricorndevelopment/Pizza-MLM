@@ -24,7 +24,7 @@
                             <tr class="text-gray-700 hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-3 text-sm">
                                     <span
-                                        class="font-medium">{{ $income->created_at ? $income->created_at->format('d M Y') : '-' }}</span>
+                                        class="font-medium">{{ $income->created_at->format('d M Y, h:i A') }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-sm text-right">
                                     ₹{{ number_format($income->purchase_amount, 2) }}

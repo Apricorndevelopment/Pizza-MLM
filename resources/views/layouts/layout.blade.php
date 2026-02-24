@@ -170,6 +170,12 @@
                         <span class="font-medium">User Management</span>
                     </a>
 
+                    <a href="{{ route('admin.vendors.list') }}"
+                        class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
+                        <i class="fas fa-users text-lg group-hover:scale-110 transition-transform"></i>
+                        <span class="font-medium">View Vendors</span>
+                    </a>
+
                     <a href="{{ route('admin.orders.index') }}"
                         class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
                         <i class="bi bi-cart-check-fill text-lg group-hover:scale-110 transition-transform"></i>

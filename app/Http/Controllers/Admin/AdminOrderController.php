@@ -28,6 +28,7 @@ class AdminOrderController extends Controller
 {
     public function index(Request $request)
     {
+        // 1. Base Query (Admin Products Only)
         $query = Order::whereHas('items', function ($q) {
             $q->where('product_type', 'admin');
         })
@@ -35,14 +36,22 @@ class AdminOrderController extends Controller
                 $q->where('product_type', 'admin');
             }]);
 
+        // 2. Search Logic
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
+
             $query->where(function ($q) use ($search) {
+                // A. Search by Order ID
                 $q->where('order_id', 'LIKE', "%{$search}%")
+
+                    // B. Search by Status
                     ->orWhere('status', 'LIKE', "%{$search}%")
+
+                    // C. Search by User Details (Name, Email, ULID)
                     ->orWhereHas('user', function ($u) use ($search) {
                         $u->where('name', 'LIKE', "%{$search}%")
-                            ->orWhere('email', 'LIKE', "%{$search}%");
+                            ->orWhere('email', 'LIKE', "%{$search}%")
+                            ->orWhere('ulid', 'LIKE', "%{$search}%"); // Ensure 'ulid' column exists in 'users' table
                     });
             });
         }
@@ -70,6 +79,7 @@ class AdminOrderController extends Controller
                 $q->where('order_id', 'LIKE', "%{$search}%")
                     ->orWhereHas('user', function ($u) use ($search) {
                         $u->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('ulid', 'LIKE', "%{$search}%")
                             ->orWhere('email', 'LIKE', "%{$search}%");
                     })
                     ->orWhereHas('vendor', function ($v) use ($search) {

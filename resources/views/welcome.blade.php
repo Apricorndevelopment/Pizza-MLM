@@ -162,7 +162,7 @@
 
         @media (max-width: 950px) {
             .banner-img {
-                height: 450px;
+                height: 420px;
             }
         }
         @media (max-width: 768px) {
@@ -172,7 +172,7 @@
         }
         @media (max-width: 500px) {
             .banner-img {
-                height: 200px;
+                height: 190px;
             }
         }
 

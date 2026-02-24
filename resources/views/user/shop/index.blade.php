@@ -374,7 +374,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 document.querySelectorAll('[id^="alert-"]').forEach(el => dismissAlert(el.id));
-            }, 50000);
+            }, 5000);
         });
 
         // ==========================================
@@ -390,7 +390,7 @@
                 let query = this.value;
                 debounceTimer = setTimeout(() => {
                     performSearch(query);
-                }, 300);
+                }, 500);
             });
         }
 

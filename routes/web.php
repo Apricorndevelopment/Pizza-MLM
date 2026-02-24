@@ -163,6 +163,7 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/editmember/{id}', [AdminController::class, 'editMember'])->name('admin.editmember');
     Route::put('/admin/update-member/{id}', [AdminController::class, 'updateMember'])->name('admin.updatemember');
     Route::delete('/admin/delete-member/{id}', [AdminController::class, 'deleteMember'])->name('admin.deletemember');
+    Route::get('/admin/vendors-list', [AdminController::class, 'adminVendors'])->name('admin.vendors.list');
     Route::get('/admin/network/summary', [AdminController::class, 'networkSummary'])->name('admin.network.summary');
     Route::get('/admin/user-tree/{adminId}', [AuthController::class, 'showUserTreeFromAdmin'])->name('admin.user.tree');
 

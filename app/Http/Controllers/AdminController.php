@@ -13,6 +13,7 @@ use App\Models\PackageMonthlyDistribution;
 use App\Models\Wallet1Transaction;
 use App\Models\User;
 use App\Models\UserCoupon;
+use App\Models\Vendor;
 use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -130,6 +131,30 @@ class AdminController extends Controller
             ->header('Expires', '0');
     }
 
+    public function adminVendors(Request $request)
+    {
+        // Fetch vendors with their associated User data
+        $query = Vendor::with('user');
+
+        // Search Functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('company_name', 'LIKE', "%{$search}%")
+                  ->orWhere('vendor_name', 'LIKE', "%{$search}%")
+                  ->orWhere('gst', 'LIKE', "%{$search}%")
+                  ->orWhereHas('user', function ($u) use ($search) {
+                      $u->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('ulid', 'LIKE', "%{$search}%")
+                        ->orWhere('email', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        $vendors = $query->latest()->paginate(10)->withQueryString();
+
+        return view('admin.vendors.index', compact('vendors'));
+    }
     public function revenueReport(Request $request)
     {
         $startDate = $request->input('start_date');

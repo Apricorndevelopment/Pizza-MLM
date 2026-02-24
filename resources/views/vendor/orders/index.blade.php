@@ -88,7 +88,7 @@
                                             {{ substr($order->user->name ?? 'G', 0, 1) }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-slate-800">{{ $order->user->name ?? 'Guest' }}</p>
+                                            <p class="text-sm font-bold text-slate-800">{{ $order->user->name }}({{ $order->user->ulid }})</p>
                                             <p class="text-[10px] text-slate-400">{{ $order->user->email ?? 'No Email' }}</p>
                                         </div>
                                     </div>
@@ -105,11 +105,11 @@
 
                                     {{-- LOGIC: LOCK STATUS IF DELIVERED OR REJECTED --}}
                                     @if ($order->status === 'delivered' || $order->status === 'rejected')
-                                        <div class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold uppercase cursor-not-allowed flex items-center justify-center gap-2">
+                                        <div class="w-full sm:w-auto px-3 py-2 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold uppercase cursor-not-allowed flex items-center justify-center gap-2">
                                             @if ($order->status === 'delivered')
-                                                <i class="mdi mdi-check-all text-green-500"></i>
+                                                <i class="fas fa-check-circle text-green-500"></i>
                                             @else
-                                                <i class="mdi mdi-close-circle text-red-500"></i>
+                                                <i class="fas fa-times-circle text-red-500"></i>
                                             @endif
                                             {{ $order->status }}
                                         </div>

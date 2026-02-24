@@ -24,7 +24,8 @@
                         @forelse($incomes as $income)
                             <tr class="text-gray-700 hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-3 text-sm">
-                                    {{ $income->created_at ? $income->created_at->format('d M, Y') : '-' }}
+                                    <p class="font-semibold">{{ $income->created_at->format('d M Y') }}</p>
+                                    <p class="text-xs text-gray-600">{{ $income->created_at->format('h:i A') }}</p>
                                 </td>
                                 <td class="px-4 py-3 text-sm">
                                     <div class="flex items-center">

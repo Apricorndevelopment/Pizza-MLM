@@ -118,6 +118,10 @@ Route::middleware(['auth', IsVendor::class])->group(function () {
     Route::get('/orders/{id}', [VendorOrderController::class, 'show'])->name('vendor.orders.show');
     Route::post('/orders/update-status', [VendorOrderController::class, 'updateStatus'])->name('vendor.orders.updateStatus');
     Route::post('/toggle-shop-status', [VendorController::class, 'toggleShopStatus'])->name('vendor.toggleShopStatus');
+
+    // Company Profile Routes
+    Route::get('/vendor/company-profile', [VendorController::class, 'index'])->name('vendor.company.index');
+    Route::post('/vendor/company-profile', [VendorController::class, 'update'])->name('vendor.company.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

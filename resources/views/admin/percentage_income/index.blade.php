@@ -2,7 +2,7 @@
 @section('title', 'Percentage Income Settings')
 
 @section('container')
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-2 sm:px-4 py-3">
 
         {{-- Page Header --}}
         <div class="flex justify-between items-center mb-6">

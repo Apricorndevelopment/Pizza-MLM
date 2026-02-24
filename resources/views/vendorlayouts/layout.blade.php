@@ -163,6 +163,12 @@
                         <span class="font-medium">User Orders</span>
                     </a>
 
+                    <a href="{{ route('vendor.company.index') }}"
+                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
+                        <i class="bi bi-person-circle mr-3 text-lg"></i>
+                        <span class="font-medium">Company Profile</span>
+                    </a>
+
                     <a href="{{ route('user.profile') }}"
                         class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
                         <i class="bi bi-person-circle mr-3 text-lg"></i>

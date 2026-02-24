@@ -12,7 +12,7 @@ class Vendor extends Model
         'user_id',
         'vendor_name',
         'company_name',
-        'comany_address',
+        'company_address',
         'company_city',
         'company_state',
         'zip_code',

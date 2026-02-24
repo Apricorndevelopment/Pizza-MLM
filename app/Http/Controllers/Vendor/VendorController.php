@@ -184,4 +184,45 @@ class VendorController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Show the Company Profile Page.
+     */
+    public function index()
+    {
+        // Fetch the vendor record associated with the logged-in user
+        $vendor = Vendor::where('user_id', Auth::id())->firstOrFail();
+
+        return view('vendor.profile.company', compact('vendor'));
+    }
+
+    /**
+     * Update Company Details.
+     */
+    public function update(Request $request)
+    {
+        $request->validate([
+            'company_name'   => 'required|string|max:255',
+            'gst'            => 'nullable|string|max:20',
+            'company_address' => 'required|string|max:500', // Note: Keeping your DB typo 'comany'
+            'company_city'   => 'required|string|max:100',
+            'company_state'  => 'required|string|max:100',
+            'zip_code'       => 'required|string|max:10',
+            'isShopOpen'     => 'required|boolean',
+        ]);
+
+        $vendor = Vendor::where('user_id', Auth::id())->firstOrFail();
+
+        $vendor->update([
+            'company_name'   => $request->company_name,
+            'gst'            => $request->gst,
+            'company_address' => $request->company_address,
+            'company_city'   => $request->company_city,
+            'company_state'  => $request->company_state,
+            'zip_code'       => $request->zip_code,
+            'isShopOpen'     => (int) $request->isShopOpen,
+        ]);
+
+        return back()->with('success', 'Company Profile Updated Successfully!');
+    }
 }

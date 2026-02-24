@@ -117,15 +117,15 @@
                                             default => 'bg-slate-100 text-slate-800 border-slate-200'
                                         };
                                         $statusIcon = match($order->status) {
-                                            'placed' => 'mdi-clock-outline',
-                                            'accepted' => 'mdi-thumb-up-outline',
-                                            'delivered' => 'mdi-check-all',
-                                            'rejected' => 'mdi-close-circle-outline',
-                                            default => 'mdi-circle-outline'
+                                            'placed' => 'fa-clock',
+                                            'accepted' => 'fa-thumbs-up',
+                                            'delivered' => 'fa-check',
+                                            'rejected' => 'fa-times-circle',
+                                            default => 'fa-circle'
                                         };
                                     @endphp
-                                    <div class="px-3 py-1.5 rounded-lg border {{ $statusClass }} text-xs font-bold uppercase tracking-wide flex items-center justify-center gap-1.5 min-w-[100px] text-center">
-                                        <i class="mdi {{ $statusIcon }}"></i> {{ $order->status }}
+                                    <div class="px-2 py-1.5 rounded-lg border {{ $statusClass }} text-xs font-bold uppercase tracking-wide flex items-center justify-center gap-1.5 min-w-[100px] text-center">
+                                        <i class="fas {{ $statusIcon }}"></i> {{ $order->status }}
                                     </div>
 
                                     <button type="button" onclick="toggleDetails('details-{{ $order->id }}')" class="inline-flex items-center justify-center p-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 transition-colors duration-200" title="View Items">

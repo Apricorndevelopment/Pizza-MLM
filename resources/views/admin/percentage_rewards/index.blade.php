@@ -2,7 +2,7 @@
 @section('title', 'Manage Rewards')
 
 @section('container')
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-2 sm:px-4">
 
         {{-- Page Header --}}
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">

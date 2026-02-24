@@ -68,14 +68,14 @@ class AdminOrderController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('order_id', 'LIKE', "%{$search}%")
-                  ->orWhereHas('user', function ($u) use ($search) {
-                      $u->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
-                  })
-                  ->orWhereHas('vendor', function ($v) use ($search) {
-                      $v->where('company_name', 'LIKE', "%{$search}%")
-                        ->orWhere('vendor_name', 'LIKE', "%{$search}%");
-                  });
+                    ->orWhereHas('user', function ($u) use ($search) {
+                        $u->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('email', 'LIKE', "%{$search}%");
+                    })
+                    ->orWhereHas('vendor', function ($v) use ($search) {
+                        $v->where('company_name', 'LIKE', "%{$search}%")
+                            ->orWhere('vendor_name', 'LIKE', "%{$search}%");
+                    });
             });
         }
 
@@ -118,7 +118,7 @@ class AdminOrderController extends Controller
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
                 }
-                
+
                 // VERIFY OTP HERE
                 if ($order->delivery_otp !== $request->delivery_otp) {
                     DB::rollBack();

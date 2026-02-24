@@ -20,66 +20,66 @@ use App\Services\Checkout\Pipes\PersistOrder;
 
 class ShopController extends Controller
 {
-   public function index(Request $request)
+    public function index(Request $request)
     {
-       $query = $request->input('search');
-       $user = Auth::user();
+        $query = $request->input('search');
+        $user = Auth::user();
 
-       // 1. Check if current user is a vendor to exclude their ID
-       $currentVendorId = null;
-       if ($user->is_vendor == 1) {
-           $vendor = Vendor::where('user_id', $user->id)->first();
-           $currentVendorId = $vendor ? $vendor->id : null;
-       }
+        // 1. Check if current user is a vendor to exclude their ID
+        $currentVendorId = null;
+        if ($user->is_vendor == 1) {
+            $vendor = Vendor::where('user_id', $user->id)->first();
+            $currentVendorId = $vendor ? $vendor->id : null;
+        }
 
-       $admin = Admin::first();
-       
-       // 1. Admin Products Query
-       $adminProductsQuery = ProductPackage::query();
-       if ($query) {
-           $adminProductsQuery->where('product_name', 'LIKE', "%{$query}%");
-       }
-       // ADDED: ->withQueryString() to keep search parameter on next page
-       $adminProducts = $adminProductsQuery->paginate(8, ['*'], 'admin_page')->withQueryString();
+        $admin = Admin::first();
 
-       // 2. Vendor Products Query
-       $vendorProductsQuery = Product::with('vendor')
-           ->where('status', 'approved')
-           ->whereHas('vendor', function ($q) {
-               $q->where('isShopOpen', 1);
-           });
+        // 1. Admin Products Query
+        $adminProductsQuery = ProductPackage::query();
+        if ($query) {
+            $adminProductsQuery->where('product_name', 'LIKE', "%{$query}%");
+        }
+        // ADDED: ->withQueryString() to keep search parameter on next page
+        $adminProducts = $adminProductsQuery->paginate(8, ['*'], 'admin_page')->withQueryString();
 
-       // EXCLUDE CURRENT USER'S PRODUCTS
-       if ($currentVendorId) {
-           $vendorProductsQuery->where('vendor_id', '!=', $currentVendorId);
-       }
+        // 2. Vendor Products Query
+        $vendorProductsQuery = Product::with('vendor')
+            ->where('status', 'approved')
+            ->whereHas('vendor', function ($q) {
+                $q->where('isShopOpen', 1);
+            });
 
-       if ($query) {
-           $vendorProductsQuery->where('product_name', 'LIKE', "%{$query}%");
-       }
-       
-       // ADDED: ->withQueryString()
-       $vendorProducts = $vendorProductsQuery->paginate(8, ['*'], 'vendor_page')->withQueryString();
+        // EXCLUDE CURRENT USER'S PRODUCTS
+        if ($currentVendorId) {
+            $vendorProductsQuery->where('vendor_id', '!=', $currentVendorId);
+        }
 
-       // User Coupon Count
-       $userCoupon = DB::table('user_coupons')
-           ->where('user_id', Auth::id())
-           ->first();
+        if ($query) {
+            $vendorProductsQuery->where('product_name', 'LIKE', "%{$query}%");
+        }
 
-       $userCouponCount = $userCoupon ? $userCoupon->coupon_quantity : 0;
+        // ADDED: ->withQueryString()
+        $vendorProducts = $vendorProductsQuery->paginate(8, ['*'], 'vendor_page')->withQueryString();
 
-       if ($request->ajax()) {
-           return view(
-               'user.shop.partials.products',
-               // FIXED: Added 'admin' here so the view knows the shop is open!
-               compact('adminProducts', 'vendorProducts', 'admin')
-           )->render();
-       }
+        // User Coupon Count
+        $userCoupon = DB::table('user_coupons')
+            ->where('user_id', Auth::id())
+            ->first();
 
-       return view(
-           'user.shop.index',
-           compact('adminProducts', 'admin','vendorProducts', 'query', 'userCouponCount')
-       );
+        $userCouponCount = $userCoupon ? $userCoupon->coupon_quantity : 0;
+
+        if ($request->ajax()) {
+            return view(
+                'user.shop.partials.products',
+                // FIXED: Added 'admin' here so the view knows the shop is open!
+                compact('adminProducts', 'vendorProducts', 'admin')
+            )->render();
+        }
+
+        return view(
+            'user.shop.index',
+            compact('adminProducts', 'admin', 'vendorProducts', 'query', 'userCouponCount')
+        );
     }
 
 

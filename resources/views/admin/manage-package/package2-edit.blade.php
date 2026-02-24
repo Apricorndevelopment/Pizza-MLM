@@ -224,7 +224,7 @@
 
                             {{-- PROFIT FIELD WITH RECOMMENDATION LABEL --}}
                             <div class="group">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Profit %
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Profit
                                     <span class="text-red-500">*</span>
                                 </label>
 

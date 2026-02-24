@@ -59,14 +59,35 @@ class AdminController extends Controller
             ->count();
         $inactiveUsers = User::where('status', 'inactive')->count();
 
-        // 2. Order Statistics
-        $newPlacedOrders = Order::where('status', 'placed')->count();
+        // ==========================================
+        // 2. ADMIN ORDER STATISTICS
+        // ==========================================
 
-        // Calculate Total Sales (Excluding cancelled orders)
-        $totalSales = Order::where('status', '!=', 'rejected')->sum('total_amount');
+        // Base Query: सिर्फ वो ऑर्डर्स लाएं जिनमें एडमिन के प्रोडक्ट्स हों
+        $adminOrdersQuery = Order::whereHas('items', function ($q) {
+            $q->where('product_type', 'admin');
+        });
 
-        // 3. Recent Orders Table (Latest 6)
-        $recentOrders = Order::with('user')->latest()->take(6)->get();
+        /* * Note: क्यूंकि आपने Checkout में एडमिन ऑर्डर्स के लिए `vendor_id = null` रखा है, 
+         * तो आप चाहो तो `Order::whereNull('vendor_id')` भी यूज़ कर सकते हो। ये डेटाबेस के लिए ज्यादा फ़ास्ट होता है।
+         */
+
+        // सिर्फ एडमिन के नए (Placed) ऑर्डर्स
+        $newPlacedOrders = (clone $adminOrdersQuery)
+            ->where('status', 'placed')
+            ->count();
+
+        // एडमिन की टोटल सेल्स (Rejected/Cancelled ऑर्डर्स को हटाकर)
+        $totalSales = (clone $adminOrdersQuery)
+            ->where('status', '=', 'delivered')
+            ->sum('total_amount');
+
+        // 3. Recent Orders Table (सिर्फ एडमिन के लेटेस्ट 6 ऑर्डर्स)
+        $recentOrders = (clone $adminOrdersQuery)
+            ->with('user')
+            ->latest()
+            ->take(6)
+            ->get();
 
         return view('admin.dashboard', compact(
             'totalUsers',
@@ -184,18 +205,18 @@ class AdminController extends Controller
         $query = User::where('is_vendor', 1)
             ->leftJoin('vendor', 'users.id', '=', 'vendor.user_id')
             ->select(
-                'users.id', 
-                'users.name as vendor_name', 
+                'users.id',
+                'users.name as vendor_name',
                 'users.address as user_address',
-                'vendor.company_name', 
+                'vendor.company_name',
                 'vendor.company_address'
             );
 
         // 2. Apply Search Filter
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('users.name', 'LIKE', "%{$search}%")
-                  ->orWhere('vendor.company_name', 'LIKE', "%{$search}%");
+                    ->orWhere('vendor.company_name', 'LIKE', "%{$search}%");
             });
         }
 
@@ -203,7 +224,7 @@ class AdminController extends Controller
 
         // 3. Calculate Stats for the paginated vendors ONLY (Fast & Optimized)
         foreach ($vendors as $vendor) {
-            
+
             // Base query for vendor's delivered order items
             $orderItemsQuery = DB::table('order_items')
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
@@ -239,12 +260,12 @@ class AdminController extends Controller
                 $incQ = DB::table($inc['table'])->where('vendor_id', $vendor->id);
                 if ($startDate) $incQ->whereDate('created_at', '>=', $startDate);
                 if ($endDate) $incQ->whereDate('created_at', '<=', $endDate);
-                
+
                 $incomesSum += $incQ->sum($inc['col']);
             }
 
             $vendor->total_distributed_incomes = $incomesSum;
-            
+
             // Net Admin Profit = Total Revenue - Vendor Share - Network Incomes
             $vendor->net_profit = $vendor->total_revenue - $vendor->vendor_payout - $vendor->total_distributed_incomes;
         }

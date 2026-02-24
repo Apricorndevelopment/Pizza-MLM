@@ -6,7 +6,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Header Section --}}
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
                         Welcome back, <span class="text-emerald-700">{{ Auth::user()->name }}!</span>
@@ -15,7 +15,7 @@
                 </div>
 
                 {{-- SHOP STATUS TOGGLE --}}
-                <div class="bg-white px-5 py-2.5 rounded-full shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="bg-white px-5 py-2.5 rounded-full shadow-sm border border-slate-100 flex items-center gap-3">
                     <form id="shopStatusForm" class="flex items-center gap-3 m-0">
                         @csrf
                         <span id="statusLabel" class="text-sm font-bold {{ $isShopOpen ? 'text-emerald-600' : 'text-red-500' }} flex items-center gap-2">
@@ -32,12 +32,12 @@
             </div>
 
             {{-- 1. SALES STATISTICS GRID --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
                 
                 {{-- Today's Sales --}}
                 <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600">
+                    <div class="flex items-center gap-3">
+                        <div class="px-3 py-2.5 bg-indigo-50 rounded-xl text-indigo-600">
                             <i class="fas fa-calendar-day text-xl"></i>
                         </div>
                         <div>
@@ -49,8 +49,8 @@
 
                 {{-- Yesterday's Sales --}}
                 <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-purple-50 rounded-xl text-purple-600">
+                    <div class="flex items-center gap-3">
+                        <div class="px-3 py-2.5 bg-purple-50 rounded-xl text-purple-600">
                             <i class="fas fa-history text-xl"></i>
                         </div>
                         <div>
@@ -62,8 +62,8 @@
 
                 {{-- Monthly Sales --}}
                 <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
+                    <div class="flex items-center gap-3">
+                        <div class="px-3 py-2.5 bg-emerald-50 rounded-xl text-emerald-600">
                             <i class="fas fa-calendar-alt text-xl"></i>
                         </div>
                         <div>
@@ -75,8 +75,8 @@
 
                 {{-- Total Revenue --}}
                 <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-teal-50 rounded-xl text-teal-600">
+                    <div class="flex items-center gap-3">
+                        <div class="px-3 py-2.5 bg-teal-50 rounded-xl text-teal-600">
                             <i class="fas fa-wallet text-xl"></i>
                         </div>
                         <div>
@@ -88,10 +88,10 @@
             </div>
 
             {{-- 2. OPERATIONAL STATS GRID --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
                 
                 {{-- Pending Orders Card --}}
-                <div class="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden">
+                <div class="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-3 shadow-lg text-white relative overflow-hidden">
                     <div class="relative z-10">
                         <div class="flex justify-between items-center mb-4">
                             <div class="p-2 bg-white/20 rounded-lg">
@@ -109,11 +109,11 @@
                 </div>
 
                 {{-- Active Products Card --}}
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-center justify-between">
+                <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex items-center justify-between">
                     <div>
                         <p class="text-slate-500 text-sm font-medium mb-1">Active Products</p>
                         <h2 class="text-3xl font-bold text-slate-900">{{ $activeProducts }}</h2>
-                        <a href="#" class="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2 inline-block">Manage Products &rarr;</a>
+                        <a href="{{ route('admin.products.index') }}" class="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2 inline-block">Manage Products &rarr;</a>
                     </div>
                     <div class="h-16 w-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 text-2xl">
                         <i class="fas fa-box"></i>

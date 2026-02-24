@@ -133,7 +133,7 @@
                                                 @endif
                                             </select>
                                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                <i class="mdi mdi-chevron-down text-slate-400 text-xs"></i>
+                                                <i class="fa fa-chevron-down text-slate-400 text-xs"></i>
                                             </div>
                                         </div>
                                     </form>
@@ -195,7 +195,7 @@
                                                                 <img src="{{ asset($item->product_image) }}" class="h-full w-full object-cover">
                                                             @else
                                                                 <div class="h-full w-full flex items-center justify-center text-slate-300">
-                                                                    <i class="mdi mdi-image"></i>
+                                                                    <i class="fa fa-image"></i>
                                                                 </div>
                                                             @endif
                                                         </div>

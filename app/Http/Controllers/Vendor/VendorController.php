@@ -204,7 +204,7 @@ class VendorController extends Controller
         $request->validate([
             'company_name'   => 'required|string|max:255',
             'gst'            => 'nullable|string|max:20',
-            'company_address' => 'required|string|max:500', // Note: Keeping your DB typo 'comany'
+            'company_address' => 'required|string|max:500', 
             'company_city'   => 'required|string|max:100',
             'company_state'  => 'required|string|max:100',
             'zip_code'       => 'required|string|max:10',

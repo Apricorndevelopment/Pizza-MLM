@@ -95,7 +95,7 @@ class AdminOrderController extends Controller
             'order_id' => 'required|exists:orders,id',
             'status'   => 'required|in:placed,accepted,delivered,rejected',
             'reason'   => 'nullable|string|required_if:status,rejected',
-            'delivery_otp' => 'nullable|string|required_if:status,delivered', // OTP is required for delivery
+            'delivery_otp' => 'nullable|string|required_if:status,delivered',
         ]);
 
         $adminId = Auth::guard('admin')->user()->id;
@@ -110,22 +110,32 @@ class AdminOrderController extends Controller
                 throw new \Exception("Order not found.");
             }
 
+            // 1. REJECTED: Refund User
             if ($request->status === 'rejected') {
                 $this->processOrderRejection($order, $user, $adminId, $request->reason);
             }
 
+            // 2. ACCEPTED: Distribute MLM Income & Reduce Stock
+            if ($request->status === 'accepted') {
+                // Ensure ye pehle se accepted/delivered na ho
+                if ($order->status === 'placed') {
+                    $this->processOrderAcceptance($order, $user, $adminId);
+                }
+            }
+
+            // 3. DELIVERED: Verify OTP Only
             if ($request->status === 'delivered') {
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
                 }
 
-                // VERIFY OTP HERE
+                // VERIFY OTP
                 if ($order->delivery_otp !== $request->delivery_otp) {
                     DB::rollBack();
                     return redirect()->back()->with('error', 'Invalid Delivery OTP! Cannot mark as delivered.');
                 }
 
-                $this->processOrderDelivery($order, $user, $adminId);
+                // Note: Income accepted pe bant chuki hai, yahan sirf delivery confirm ho rahi hai
             }
 
             $order->status = $request->status;
@@ -183,7 +193,7 @@ class AdminOrderController extends Controller
         }
     }
 
-    private function processOrderDelivery($order, $user, $adminId)
+    private function processOrderAcceptance($order, $user, $adminId)
     {
         $this->reduceProductStock($order);
 

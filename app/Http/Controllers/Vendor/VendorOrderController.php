@@ -86,12 +86,20 @@ class VendorOrderController extends Controller
                 return redirect()->back()->with('error', 'You are not authorized to update this order.');
             }
 
-            // 2. Process Rejection
+            // 1. REJECTED: Refund User
             if ($request->status === 'rejected') {
                 $this->processOrderRejection($order, $user, $vendorId, $request->reason);
             }
 
-            // 3. Process Delivery & Verify OTP
+            // 2. ACCEPTED: Distribute MLM Income & Reduce Stock
+            if ($request->status === 'accepted') {
+                // Ensure ye pehle se accepted/delivered na ho
+                if ($order->status === 'placed') {
+                    $this->processOrderAcceptance($order, $user, $vendorId);
+                }
+            }
+
+            // 3. DELIVERED: Verify OTP & Pay Vendor
             if ($request->status === 'delivered') {
                 if (!$user) {
                     throw new \Exception("User not found for this order.");
@@ -103,9 +111,7 @@ class VendorOrderController extends Controller
                     return redirect()->back()->with('error', 'Invalid Delivery OTP! Cannot mark as delivered.');
                 }
 
-                $this->processOrderDelivery($order, $user, $vendorId);
-
-                // Pay Vendor 70% of the sale
+                // Vendor Payment (Income already distributed on Accepted)
                 $this->payVendorForOrder($order, $vendorId);
             }
 
@@ -190,7 +196,7 @@ class VendorOrderController extends Controller
         }
     }
 
-    private function processOrderDelivery($order, $user, $vendorId)
+    private function processOrderAcceptance($order, $user, $vendorId)
     {
         $this->reduceProductStock($order);
         $totalPV = $this->calculateTotalPV($order);

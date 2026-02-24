@@ -590,12 +590,14 @@
         }
 
 
-        // ==========================================
-        // 8. GEOLOCATION LOGIC
+       // ==========================================
+        // 8. GEOLOCATION LOGIC (UPGRADED for Exact Address)
         // ==========================================
         function getLocation() {
             const status = document.getElementById('locationStatus');
-            const input = document.getElementById('locationInput');
+            const locationInput = document.getElementById('locationInput');
+            // Select the textarea using its name attribute
+            const addressInput = document.querySelector('textarea[name="address"]');
 
             if (!navigator.geolocation) {
                 status.innerText = "Geolocation is not supported by your browser";
@@ -603,41 +605,87 @@
                 return;
             }
 
-            status.innerText = "Locating...";
+            status.innerText = "Fetching location...";
             status.className = "text-xs text-info";
+
+            // Options for high accuracy
+            const options = {
+                enableHighAccuracy: true, // Forces GPS usage if available
+                timeout: 10000,           // Wait up to 10 seconds
+                maximumAge: 0             // Do not use cached location
+            };
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
 
-                    // Use OpenStreetMap Nominatim API (Free)
-                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Try to find the most relevant city/area name
-                            const address = data.address;
-                            const city = address.city || address.town || address.village || address.suburb || '';
-                            const state = address.state || '';
+                    // OpenStreetMap Nominatim API with addressdetails=1 and zoom=18 for building level
+                    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`;
 
-                            // Format: City, State (or just City if state is missing)
-                            let locationString = city;
-                            if (city && state) locationString += `, ${state}`;
-                            else if (!city && state) locationString = state;
-                            else if (!city && !state) locationString = "Location Found";
+                    fetch(url, {
+                        headers: { 'Accept-Language': 'en-US,en;q=0.9' } // Prefer English
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
 
-                            input.value = locationString;
-                            status.innerText = "";
-                        })
-                        .catch(() => {
-                            status.innerText = "Unable to retrieve address.";
-                            status.className = "text-xs text-danger";
-                        });
+                        const addr = data.address;
+
+                        // 1. Fill "Location" Field (Short Format: Area, City, State)
+                        // Priority: Suburb -> Neighbourhood -> Village -> City
+                        const area = addr.suburb || addr.neighbourhood || addr.residential || addr.village || addr.town || addr.city || '';
+                        const state = addr.state || '';
+                        const pincode = addr.postcode || '';
+
+                        let shortLocation = area;
+                        if (state) shortLocation += `, ${state}`;
+                        if (pincode) shortLocation += ` - ${pincode}`;
+                        
+                        locationInput.value = shortLocation;
+
+                        // 2. Fill "Address" Textarea (Detailed Format)
+                        // Construct a clean address string manually
+                        let fullAddressParts = [];
+
+                        if (addr.house_number) fullAddressParts.push(addr.house_number);
+                        if (addr.building) fullAddressParts.push(addr.building);
+                        if (addr.road) fullAddressParts.push(addr.road);
+                        if (addr.suburb) fullAddressParts.push(addr.suburb);
+                        if (addr.city || addr.town || addr.village) fullAddressParts.push(addr.city || addr.town || addr.village);
+                        if (addr.state) fullAddressParts.push(addr.state);
+                        if (addr.postcode) fullAddressParts.push(addr.postcode);
+
+                        // If manual construction fails, fallback to API's display_name
+                        const finalAddress = fullAddressParts.length > 2 
+                            ? fullAddressParts.join(', ') 
+                            : data.display_name;
+
+                        if (addressInput) {
+                            addressInput.value = finalAddress;
+                        }
+
+                        status.innerText = "Location found!";
+                        status.className = "text-xs text-success";
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        status.innerText = "Address not found. Please type manually.";
+                        status.className = "text-xs text-danger";
+                    });
                 },
-                () => {
-                    status.innerText = "Unable to retrieve your location.";
+                (error) => {
+                    let msg = "Unable to retrieve location.";
+                    if (error.code === 1) msg = "Permission denied. Allow location access.";
+                    else if (error.code === 2) msg = "Position unavailable.";
+                    else if (error.code === 3) msg = "Request timed out.";
+                    
+                    status.innerText = msg;
                     status.className = "text-xs text-danger";
-                }
+                },
+                options // Pass the high accuracy options here
             );
         }
 

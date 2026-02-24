@@ -104,7 +104,7 @@
                         </div>
 
                         <div>
-                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Zip Code</label>
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Pin Code</label>
                             <div class="flex items-center gap-3 text-slate-700">
                                 <i class="fas fa-mail-bulk text-indigo-400 w-5"></i>
                                 <span class="font-semibold">{{ $vendor->zip_code }}</span>

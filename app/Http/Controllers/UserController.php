@@ -250,7 +250,7 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
             'state' => 'nullable|string|max:100',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
 
             // KYC Documents
             'adhar_no' => [
@@ -275,8 +275,8 @@ class UserController extends Controller
                     }
                 }
             ],
-            'adhar_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'pan_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'adhar_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'pan_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
 
             'nom_name' => 'nullable|string|max:255',
             'nom_relation' => 'nullable|string|max:100',
@@ -295,7 +295,7 @@ class UserController extends Controller
                 }
             ],
             'upi_id' => 'nullable|string|max:100',
-            'passbook_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'passbook_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
 
             // Password Change
             'current_password' => [
@@ -329,10 +329,10 @@ class UserController extends Controller
             'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character',
             'adhar_no.min' => 'Aadhaar number must be exactly 12 digits',
             'pan_no.min' => 'PAN number must be exactly 10 characters',
-            'profile_picture.max' => 'Profile picture must be less than 2MB',
-            'adhar_photo.max' => 'Aadhaar photo must be less than 2MB',
-            'pan_photo.max' => 'PAN photo must be less than 2MB',
-            'passbook_photo.max' => 'Passbook photo must be less than 2MB',
+            'profile_picture.max' => 'Profile picture must be less than 5MB',
+            'adhar_photo.max' => 'Aadhaar photo must be less than 5MB',
+            'pan_photo.max' => 'PAN photo must be less than 5MB',
+            'passbook_photo.max' => 'Passbook photo must be less than 5MB',
         ]);
 
         // Update basic fields

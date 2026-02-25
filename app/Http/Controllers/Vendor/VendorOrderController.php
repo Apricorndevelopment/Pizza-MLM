@@ -17,13 +17,14 @@ use App\Models\Wallet2Transaction;
 
 use App\Models\PercentageIncome;
 use App\Models\PercentageLevelIncome;
-use App\Models\PercentageRepurchaseIncome; // Naya Model Import kiya
+use App\Models\PercentageRepurchaseIncome;
 use App\Models\BonusIncome;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
 use App\Models\RepurchaseIncome;
 use App\Models\CashbackIncome;
 use App\Models\PercentageReward;
+use App\Models\Vendor;
 use App\Models\VendorIncome;
 use Carbon\Carbon;
 
@@ -31,7 +32,16 @@ class VendorOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $vendorId = Auth::id();
+        // 1. Get Vendor ID from User
+        $user = Auth::user();
+        $vendor = \App\Models\Vendor::where('user_id', $user->id)->first();
+
+        if (!$vendor) {
+            if ($request->ajax()) { return response()->json(['data' => []]); }
+            return view('vendor.orders.index', ['orders' => collect([])]);
+        }
+
+        $vendorId = $vendor->id;
 
         $query = Order::whereHas('items', function ($q) use ($vendorId) {
             $q->where('vendor_id', $vendorId);
@@ -48,38 +58,43 @@ class VendorOrderController extends Controller
                     ->orWhereHas('user', function ($u) use ($search) {
                         $u->where('name', 'LIKE', "%{$search}%")
                             ->orWhere('email', 'LIKE', "%{$search}%")
-                            ->orWhere('ulid', 'LIKE', "%{$search}%"); // Ensure 'ulid' column exists in 'users' table
-                    });;
+                            ->orWhere('ulid', 'LIKE', "%{$search}%");
+                    });
             });
         }
 
-        $orders = $query->latest()->paginate(10);
+        $orders = $query->latest()->paginate(10)->withQueryString();
 
         $orders->getCollection()->transform(function ($order) {
             $order->vendor_total = $order->items->sum('subtotal');
             return $order;
         });
 
+        if ($request->ajax()) {
+            return response()->json($orders);
+        }
+
         return view('vendor.orders.index', compact('orders'));
     }
 
     public function updateStatus(Request $request)
     {
-        // 1. Update Validation Rules to include OTP
         $request->validate([
             'order_id' => 'required|exists:orders,id',
             'status'   => 'required|in:placed,accepted,delivered,rejected',
             'reason'   => 'nullable|string|required_if:status,rejected',
-            'delivery_otp' => 'nullable|string|required_if:status,delivered', // OTP is required for delivery
+            'delivery_otp' => 'nullable|string|required_if:status,delivered',
         ]);
 
-        $vendorId = Auth::id();
+        $user = Auth::user();
+        $vendor = Vendor::where('user_id', $user->id)->firstOrFail();
+        $vendorId = $vendor->id;
 
         DB::beginTransaction();
 
         try {
             $order = Order::with('items', 'user')->lockForUpdate()->find($request->order_id);
-            $user = $order->user;
+            $orderUser = $order->user;
 
             if (!$order) {
                 throw new \Exception("Order not found.");
@@ -91,32 +106,31 @@ class VendorOrderController extends Controller
                 return redirect()->back()->with('error', 'You are not authorized to update this order.');
             }
 
-            // 1. REJECTED: Refund User
+            // 1. REJECTED
             if ($request->status === 'rejected') {
-                $this->processOrderRejection($order, $user, $vendorId, $request->reason);
+                $this->processOrderRejection($order, $orderUser, $vendorId, $request->reason);
             }
 
-            // 2. ACCEPTED: Distribute MLM Income & Reduce Stock
+            // 2. ACCEPTED (Trigger MLM Income Here)
             if ($request->status === 'accepted') {
-                // Ensure ye pehle se accepted/delivered na ho
                 if ($order->status === 'placed') {
-                    $this->processOrderAcceptance($order, $user, $vendorId);
+                    $this->processOrderAcceptance($order, $orderUser, $vendorId);
                 }
             }
 
-            // 3. DELIVERED: Verify OTP & Pay Vendor
+            // 3. DELIVERED (Only OTP & Vendor Payment)
             if ($request->status === 'delivered') {
-                if (!$user) {
+                if (!$orderUser) {
                     throw new \Exception("User not found for this order.");
                 }
 
-                // VERIFY OTP HERE
+                // Verify OTP
                 if ($order->delivery_otp !== $request->delivery_otp) {
                     DB::rollBack();
                     return redirect()->back()->with('error', 'Invalid Delivery OTP! Cannot mark as delivered.');
                 }
 
-                // Vendor Payment (Income already distributed on Accepted)
+                // Pay Vendor (Income to upline already distributed on Accepted)
                 $this->payVendorForOrder($order, $vendorId);
             }
 
@@ -175,16 +189,16 @@ class VendorOrderController extends Controller
 
     private function payVendorForOrder($order, $vendorId)
     {
-        // Total Sale of THIS vendor's items
         $vendorTotalSales = $order->items()
             ->where('vendor_id', $vendorId)
             ->sum(DB::raw('price * quantity'));
 
-        // Vendor gets 70% of the item total
-        $vendorEarnings = $vendorTotalSales * 0.70;
+        $vendorEarnings = $vendorTotalSales * 0.70; // 70% to Vendor
 
         if ($vendorEarnings > 0) {
-            $vendorUser = User::find($vendorId);
+            $vendorUser = User::whereHas('vendor', function ($q) use ($vendorId) {
+                $q->where('id', $vendorId);
+            })->first();
 
             if ($vendorUser) {
                 $vendorUser->wallet1_balance += $vendorEarnings;
@@ -201,6 +215,7 @@ class VendorOrderController extends Controller
         }
     }
 
+    // Renamed to match logic
     private function processOrderAcceptance($order, $user, $vendorId)
     {
         $this->reduceProductStock($order);
@@ -212,21 +227,33 @@ class VendorOrderController extends Controller
         }
 
         if ($totalPV > 0) {
-            if ($user->status == 'inactive') {
-                $this->handleUserActivation($user, $order, $totalPV, $settings, $vendorId);
+            
+            // Logic: Is Paid Check (Status Active nahi hoga vendor order se)
+            if ($user->is_paid == 0) {
+                // First Time Purchase (Direct/Bonus Income)
+                $this->handleFirstPurchase($user, $order, $totalPV, $settings, $vendorId);
+                
+                // Mark as Paid but NOT Active
+                $user->is_paid = 1;
+                $user->user_doa = now();
             } else {
+                // Already Paid User (Repurchase Income)
                 $this->handleUserRepurchase($user, $order, $totalPV, $settings, $vendorId);
             }
+            
+            $user->save();
 
             $this->processUplineGrowth($user, $totalPV, $settings);
-
             $this->distributeVendorIncome($vendorId, $order, $totalPV, $settings);
         }
     }
 
     private function distributeVendorIncome($vendorId, $order, $totalPV, $settings)
     {
-        $vendorUser = User::find($vendorId);
+        // Find user associated with vendor
+        $vendorUser = User::whereHas('vendor', function ($q) use ($vendorId) {
+            $q->where('id', $vendorId);
+        })->first();
 
         if (!$vendorUser || !$vendorUser->sponsor_id) {
             return;
@@ -240,8 +267,8 @@ class VendorOrderController extends Controller
             $this->distributeToWallets($vendorSponsor, $incomeAmount, $settings, "Vendor Income from Vendor ID: {$vendorUser->ulid}");
 
             VendorIncome::create([
-                'order_id'         => $order->id,        // Added Tracker
-                'vendor_id'        => $vendorId,         // Added Tracker
+                'order_id'         => $order->id,
+                'vendor_id'        => $vendorId,
                 'admin_id'         => null,
                 'user_id'          => $vendorSponsor->id,
                 'user_ulid'        => $vendorSponsor->ulid,
@@ -277,15 +304,13 @@ class VendorOrderController extends Controller
         return $totalPV;
     }
 
-    private function handleUserActivation($user, $order, $totalPV, $settings, $vendorId)
+    // Renamed from handleUserActivation to handleFirstPurchase
+    private function handleFirstPurchase($user, $order, $totalPV, $settings, $vendorId)
     {
         $this->distributeDirectIncome($user, $order, $totalPV, $settings, $vendorId);
         $this->distributeBonusIncome($user, $order, $totalPV, $settings, $vendorId);
         $this->distributeLevelIncome($user, $order, $totalPV, $settings, 'level_incomes', $vendorId);
-
-        $user->status = 'active';
-        $user->user_doa = now();
-        $user->save();
+        // Note: No $user->status = 'active' here as requested
     }
 
     private function handleUserRepurchase($user, $order, $totalPV, $settings, $vendorId)
@@ -427,7 +452,6 @@ class VendorOrderController extends Controller
 
     private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $vendorId)
     {
-        // 1. Level aur Repurchase ka percentage alag-alag model se fetch hoga
         if ($tableType === 'level_incomes') {
             $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
         } else {
@@ -440,13 +464,12 @@ class VendorOrderController extends Controller
             $uplineUser = User::where('ulid', $currentUplineUlid)->first();
             if (!$uplineUser) break;
 
-            // 2. User Active hona chahiye aur Capping Enable honi chahiye
             if ($uplineUser->status !== 'active' || $uplineUser->is_capping_enabled == 0) {
                 $currentUplineUlid = $uplineUser->sponsor_id;
                 continue;
             }
 
-            // 3. Capping Limit Calculation (Same as Admin Controller)
+            // Capping Calculation
             $calculatedIncome = $totalPV * ($levelSetting->percentage / 100);
             $dailyLimit = $uplineUser->capping_limit;
 
@@ -469,7 +492,6 @@ class VendorOrderController extends Controller
                 $payableAmount = $calculatedIncome;
             }
 
-            // 4. Distribution if payable amount is > 0
             if ($payableAmount > 0) {
                 $note = ($tableType == 'level_incomes')
                     ? "Level {$levelSetting->level} Income from {$fromUser->ulid}"
@@ -508,7 +530,6 @@ class VendorOrderController extends Controller
                 }
             }
 
-            // Upline hamesha change hoga
             $currentUplineUlid = $uplineUser->sponsor_id;
         }
     }

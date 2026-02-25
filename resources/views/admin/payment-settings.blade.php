@@ -102,7 +102,7 @@
                                                 <span>Upload a file</span>
                                             </span>
                                         </div>
-                                        <p class="text-xs text-slate-500">PNG, JPG, WEBP up to 2MB</p>
+                                        <p class="text-xs text-slate-500">PNG, JPG, WEBP up to 5MB</p>
                                         <input id="upi_qr" name="upi_qr" type="file" class="sr-only" accept="image/*"
                                             onchange="previewImage(this)">
                                     </div>

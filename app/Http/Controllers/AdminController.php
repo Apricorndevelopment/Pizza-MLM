@@ -80,7 +80,7 @@ class AdminController extends Controller
 
         // एडमिन की टोटल सेल्स (Rejected/Cancelled ऑर्डर्स को हटाकर)
         $totalSales = (clone $adminOrdersQuery)
-            ->where('status', '=', 'delivered')
+            ->whereIn('status', ['delivered', 'accepted'])
             ->sum('total_amount');
 
         // 3. Recent Orders Table (सिर्फ एडमिन के लेटेस्ट 6 ऑर्डर्स)
@@ -141,13 +141,13 @@ class AdminController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('company_name', 'LIKE', "%{$search}%")
-                  ->orWhere('vendor_name', 'LIKE', "%{$search}%")
-                  ->orWhere('gst', 'LIKE', "%{$search}%")
-                  ->orWhereHas('user', function ($u) use ($search) {
-                      $u->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('ulid', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
-                  });
+                    ->orWhere('vendor_name', 'LIKE', "%{$search}%")
+                    ->orWhere('gst', 'LIKE', "%{$search}%")
+                    ->orWhereHas('user', function ($u) use ($search) {
+                        $u->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('ulid', 'LIKE', "%{$search}%")
+                            ->orWhere('email', 'LIKE', "%{$search}%");
+                    });
             });
         }
 
@@ -160,8 +160,8 @@ class AdminController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // 1. Get all 'Delivered' Admin Orders within the date range
-        $query = Order::where('status', 'delivered')
+        // 1. Get Admin Orders that are Delivered OR Accepted
+        $query = Order::whereIn('status', ['delivered', 'accepted']) // CHANGED HERE
             ->whereHas('items', function ($q) {
                 $q->where('product_type', 'admin');
             });
@@ -254,7 +254,7 @@ class AdminController extends Controller
             $orderItemsQuery = DB::table('order_items')
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
                 ->where('order_items.vendor_id', $vendor->id)
-                ->where('orders.status', 'delivered');
+                ->whereIn('orders.status', ['delivered', 'accepted']);
 
             if ($startDate) {
                 $orderItemsQuery->whereDate('orders.created_at', '>=', $startDate);
@@ -323,7 +323,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'current_password' => [
                 'nullable',
                 'required_with:password,password_confirmation',
@@ -831,7 +831,7 @@ class AdminController extends Controller
         // Validation
         $request->validate([
             'upi_id' => 'required|max:255', // Treating as string generally, though your DB is int(50) currently
-            'upi_qr' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
+            'upi_qr' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120'
         ]);
 
         // Update UPI ID

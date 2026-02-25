@@ -247,7 +247,7 @@
                                                 <span class="text-emerald-600 underline font-bold">Upload</span> or
                                                 drag<br>
                                                 <span class="text-[10px] text-slate-400 font-normal">PNG, JPG (Max
-                                                    2MB)</span>
+                                                    5MB)</span>
                                             </p>
                                         </div>
 

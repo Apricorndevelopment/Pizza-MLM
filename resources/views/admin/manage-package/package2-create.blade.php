@@ -11,7 +11,7 @@
                     <h1 class="text-2xl font-bold text-gray-900">Product Management</h1>
                     <p class="text-sm text-gray-500 mt-1">Add a new package to your inventory</p>
                 </div>
-                <a href="{{ route('admin.package') }}"
+                <a href="{{ route('admin.product-package') }}"
                     class="hidden sm:flex items-center text-gray-600 hover:text-blue-600 transition-colors">
                     <i class="fas fa-arrow-left mr-2"></i> Back to List
                 </a>
@@ -247,7 +247,7 @@
 
                     {{-- Actions --}}
                     <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-end gap-4">
-                        <a href="{{ route('admin.package') }}"
+                        <a href="{{ route('admin.product-package') }}"
                             class="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm">
                             Cancel
                         </a>

@@ -24,7 +24,7 @@ class ComplaintController extends Controller
         $request->validate([
             'subject' => 'required|in:Payment Issue,Product Quality,Technical Support,Account Issue,Other',
             'message' => 'required|string|max:1000',
-            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image'   => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
         ]);
 
         $imagePath = null;

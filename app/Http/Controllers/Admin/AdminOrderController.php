@@ -15,7 +15,7 @@ use App\Models\ProductPackage;
 use App\Models\User;
 use App\Models\PercentageIncome;
 use App\Models\PercentageLevelIncome;
-use App\Models\PercentageRepurchaseIncome; // Naya Model Import kiya
+use App\Models\PercentageRepurchaseIncome;
 use App\Models\BonusIncome;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
@@ -28,7 +28,6 @@ class AdminOrderController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Base Query (Admin Products Only)
         $query = Order::whereHas('items', function ($q) {
             $q->where('product_type', 'admin');
         })
@@ -36,22 +35,15 @@ class AdminOrderController extends Controller
                 $q->where('product_type', 'admin');
             }]);
 
-        // 2. Search Logic
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
-
             $query->where(function ($q) use ($search) {
-                // A. Search by Order ID
                 $q->where('order_id', 'LIKE', "%{$search}%")
-
-                    // B. Search by Status
                     ->orWhere('status', 'LIKE', "%{$search}%")
-
-                    // C. Search by User Details (Name, Email, ULID)
                     ->orWhereHas('user', function ($u) use ($search) {
                         $u->where('name', 'LIKE', "%{$search}%")
                             ->orWhere('email', 'LIKE', "%{$search}%")
-                            ->orWhere('ulid', 'LIKE', "%{$search}%"); // Ensure 'ulid' column exists in 'users' table
+                            ->orWhere('ulid', 'LIKE', "%{$search}%");
                     });
             });
         }
@@ -65,22 +57,18 @@ class AdminOrderController extends Controller
         return view('admin.orders.index', compact('orders'));
     }
 
-    // Add this to AdminOrderController.php
     public function vendorOrders(Request $request)
     {
-        // Fetch only orders that belong to a vendor
         $query = Order::whereNotNull('vendor_id')
             ->with(['user', 'vendor.user', 'items']);
 
-        // Handle Search (Order ID, Customer Name/Email, Vendor Company Name)
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('order_id', 'LIKE', "%{$search}%")
                     ->orWhereHas('user', function ($u) use ($search) {
                         $u->where('name', 'LIKE', "%{$search}%")
-                            ->orWhere('ulid', 'LIKE', "%{$search}%")
-                            ->orWhere('email', 'LIKE', "%{$search}%");
+                            ->orWhere('email', 'LIKE', "%{$search}%")->orWhere('ulid', 'LIKE', "%{$search}%");
                     })
                     ->orWhereHas('vendor', function ($v) use ($search) {
                         $v->where('company_name', 'LIKE', "%{$search}%")
@@ -89,7 +77,6 @@ class AdminOrderController extends Controller
             });
         }
 
-        // Handle Status Filter
         if ($request->has('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
@@ -120,32 +107,25 @@ class AdminOrderController extends Controller
                 throw new \Exception("Order not found.");
             }
 
-            // 1. REJECTED: Refund User
+            // 1. REJECTED
             if ($request->status === 'rejected') {
                 $this->processOrderRejection($order, $user, $adminId, $request->reason);
             }
 
-            // 2. ACCEPTED: Distribute MLM Income & Reduce Stock
+            // 2. ACCEPTED (Main Logic Change Here)
             if ($request->status === 'accepted') {
-                // Ensure ye pehle se accepted/delivered na ho
                 if ($order->status === 'placed') {
                     $this->processOrderAcceptance($order, $user, $adminId);
                 }
             }
 
-            // 3. DELIVERED: Verify OTP Only
+            // 3. DELIVERED
             if ($request->status === 'delivered') {
-                if (!$user) {
-                    throw new \Exception("User not found for this order.");
-                }
-
-                // VERIFY OTP
+                if (!$user) throw new \Exception("User not found.");
                 if ($order->delivery_otp !== $request->delivery_otp) {
                     DB::rollBack();
-                    return redirect()->back()->with('error', 'Invalid Delivery OTP! Cannot mark as delivered.');
+                    return redirect()->back()->with('error', 'Invalid OTP.');
                 }
-
-                // Note: Income accepted pe bant chuki hai, yahan sirf delivery confirm ho rahi hai
             }
 
             $order->status = $request->status;
@@ -157,13 +137,65 @@ class AdminOrderController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Admin Order Update Failed: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Error updating status: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 
     // =========================================================================
-    // MODULAR FUNCTIONS (PRIVATE)
+    // MODULAR FUNCTIONS
     // =========================================================================
+
+    private function processOrderAcceptance($order, $user, $adminId)
+    {
+        $this->reduceProductStock($order);
+
+        // --- NEW LOGIC: CHECK FOR PACKAGE PRODUCT ---
+        // User ko 'Active' sirf tab mark karein agar usne Package Product kharida ho
+        $isPackageProductPurchased = false;
+
+        foreach ($order->items as $item) {
+            $product = ProductPackage::find($item->product_id);
+
+            // Agar product package hai (is_package_product == 1)
+            if ($product && $product->is_package_product == 1) {
+                $user->capping_limit = $product->capping;
+                $user->is_capping_enabled = 1;
+                $isPackageProductPurchased = true;
+            }
+        }
+
+        // Agar package kharida hai, to hi status ACTIVE hoga
+        if ($isPackageProductPurchased) {
+            $user->status = 'active';
+        }
+
+        // --- INCOME DISTRIBUTION LOGIC ---
+        $totalPV = $this->calculateTotalPV($order);
+        $settings = PercentageIncome::first();
+
+        if (!$settings) throw new \Exception("Income Settings not configured.");
+
+        if ($totalPV > 0) {
+            
+            // Logic: Agar user pehli baar pay kar rha hai (is_paid == 0) -> Direct/Bonus Income
+            // Agar pehle se paid hai (is_paid == 1) -> Repurchase Income
+            
+            if ($user->is_paid == 0) {
+                $this->handleFirstPurchase($user, $order, $totalPV, $settings, $adminId);
+                
+                // Income batne ke baad user ko Paid mark karein
+                $user->is_paid = 1;
+                $user->user_doa = now(); // Date of Activation/Payment
+            } else {
+                $this->handleUserRepurchase($user, $order, $totalPV, $settings, $adminId);
+            }
+
+            // User ka status aur is_paid update save karein
+            $user->save();
+
+            $this->processUplineGrowth($user, $totalPV, $settings);
+        }
+    }
 
     private function processOrderRejection($order, $user, $adminId, $reason)
     {
@@ -188,9 +220,7 @@ class AdminOrderController extends Controller
             if ($order->coupons_used > 0) {
                 $userCoupon = DB::table('user_coupons')->where('user_id', $user->id)->first();
                 if ($userCoupon) {
-                    DB::table('user_coupons')
-                        ->where('user_id', $user->id)
-                        ->increment('coupon_quantity', $order->coupons_used);
+                    DB::table('user_coupons')->where('user_id', $user->id)->increment('coupon_quantity', $order->coupons_used);
                 } else {
                     DB::table('user_coupons')->insert([
                         'user_id' => $user->id,
@@ -203,49 +233,12 @@ class AdminOrderController extends Controller
         }
     }
 
-    private function processOrderAcceptance($order, $user, $adminId)
-    {
-        $this->reduceProductStock($order);
-
-        foreach ($order->items as $item) {
-            $product = ProductPackage::find($item->product_id);
-
-            if ($product && $product->is_package_product == 1) {
-                $user->capping_limit = $product->capping;
-                $user->is_capping_enabled = 1;
-                $user->save();
-            }
-        }
-
-        $totalPV = $this->calculateTotalPV($order);
-
-        $settings = PercentageIncome::first();
-        if (!$settings) {
-            throw new \Exception("Percentage Income Settings not configured in Admin.");
-        }
-
-        if ($totalPV > 0) {
-            if ($user->status == 'inactive') {
-                $this->handleUserActivation($user, $order, $totalPV, $settings, $adminId);
-            } else {
-                $this->handleUserRepurchase($user, $order, $totalPV, $settings, $adminId);
-            }
-
-            $this->processUplineGrowth($user, $totalPV, $settings);
-        }
-    }
-
     private function reduceProductStock($order)
     {
         foreach ($order->items as $item) {
             $product = ProductPackage::find($item->product_id);
-
             if ($product && $product->manage_stock == 1) {
-                if ($product->stock_quantity >= $item->quantity) {
-                    $product->decrement('stock_quantity', $item->quantity);
-                } else {
-                    $product->decrement('stock_quantity', $item->quantity);
-                }
+                $product->decrement('stock_quantity', $item->quantity);
             }
         }
     }
@@ -262,15 +255,12 @@ class AdminOrderController extends Controller
         return $totalPV;
     }
 
-    private function handleUserActivation($user, $order, $totalPV, $settings, $adminId)
+    // Renamed from handleUserActivation to handleFirstPurchase
+    private function handleFirstPurchase($user, $order, $totalPV, $settings, $adminId)
     {
         $this->distributeDirectIncome($user, $order, $totalPV, $settings, $adminId);
         $this->distributeBonusIncome($user, $order, $totalPV, $settings, $adminId);
         $this->distributeLevelIncome($user, $order, $totalPV, $settings, 'level_incomes', $adminId);
-
-        $user->status = 'active';
-        $user->user_doa = now();
-        $user->save();
     }
 
     private function handleUserRepurchase($user, $order, $totalPV, $settings, $adminId)
@@ -299,7 +289,7 @@ class AdminOrderController extends Controller
 
     private function checkAndDistributeRewards($user, $milestones, $settings)
     {
-        if ($user->status !== 'active') {
+        if ($user->status !== 'active') { // Inactive users don't get rewards
             return;
         }
 
@@ -334,6 +324,7 @@ class AdminOrderController extends Controller
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
+        // Sponsor must be ACTIVE to receive Direct Income
         if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->direct_income / 100);
 
@@ -361,6 +352,7 @@ class AdminOrderController extends Controller
     {
         $sponsor = User::where('ulid', $user->sponsor_id)->first();
 
+        // Sponsor must be ACTIVE to receive Bonus Income
         if ($sponsor && $sponsor->status === 'active') {
             $incomeAmount = $totalPV * ($settings->bonus_income / 100);
 
@@ -416,7 +408,6 @@ class AdminOrderController extends Controller
 
     private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $adminId)
     {
-        // Yahan maine condition laga di hai dono tables ke percentages alag fetch karne ke liye
         if ($tableType === 'level_incomes') {
             $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
         } else {
@@ -430,6 +421,7 @@ class AdminOrderController extends Controller
 
             if (!$uplineUser) break;
 
+            // Upline must be ACTIVE and have CAPPING ENABLED to receive Level Income
             if ($uplineUser->status !== 'active' || $uplineUser->is_capping_enabled == 0) {
                 $currentUplineUlid = $uplineUser->sponsor_id;
                 continue;

@@ -33,7 +33,7 @@ class VendorProductController extends Controller
     {
         $request->validate([
             'product_name' => 'required|string|max:255',
-            'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'profit' => 'required|numeric|min:0',
             'mrp' => 'required|numeric|min:0',
             'gst' => 'required|numeric|min:0',
@@ -94,7 +94,7 @@ class VendorProductController extends Controller
             'mrp' => 'required|numeric',
             'gst' => 'required|numeric',
             'dp' => 'required|numeric',
-            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'description' => 'nullable|string',
             'isVeg' => 'required|string|in:veg,non-veg',
         ]);

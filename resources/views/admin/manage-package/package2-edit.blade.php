@@ -12,7 +12,7 @@
                     <p class="text-sm text-gray-500 mt-1">Update details for <span
                             class="font-semibold text-blue-600">{{ $product->product_name }}</span></p>
                 </div>
-                <a href="{{ route('admin.package') }}"
+                <a href="{{ route('admin.product-package') }}"
                     class="hidden sm:flex items-center text-gray-600 hover:text-blue-600 transition-colors">
                     <i class="fas fa-arrow-left mr-2"></i> Cancel Edit
                 </a>

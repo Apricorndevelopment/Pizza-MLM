@@ -31,7 +31,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'product_name' => 'required|string|max:255',
-            'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'product_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'price' => 'required|numeric|min:0',
             'mrp' => 'required|numeric|min:0',
             'gst' => 'required|numeric|min:0',
@@ -70,7 +70,7 @@ class ProductController extends Controller
             'pv' => 'nullable|numeric|min:0',
             'max_coupon_usage' => 'nullable|integer|min:0',
             'percentage' => 'nullable|numeric|min:0',
-            'isVeg'=>'required|string|in:veg,non-veg', 
+            'isVeg' => 'required|string|in:veg,non-veg',
         ]);
 
         $product->fill($request->except('product_image'));

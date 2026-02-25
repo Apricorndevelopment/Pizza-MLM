@@ -25,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'address',
         'state',
+        'is_paid',
         'status',
         'sponsor_id',
         'role',

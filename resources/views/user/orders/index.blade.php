@@ -160,14 +160,14 @@
                                         {{-- INVOICE BUTTON (Visible only if status is 'delivered') --}}
                                         @if ($order->status == 'delivered')
                                             <button onclick="openInvoiceModal('{{ $order->id }}')"
-                                                class="w-full lg:w-auto flex items-center justify-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold rounded-xl border border-indigo-100 transition-all duration-200">
+                                                class="w-full lg:w-auto flex items-center justify-center gap-2 px-2.5 sm:px-3.5 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold rounded-xl border border-indigo-100 transition-all duration-200">
                                                 <i class="bi bi-receipt text-xs"></i> <span class="text-sm">Invoice</span>
                                             </button>
                                         @endif
 
                                         {{-- VIEW ITEMS BUTTON (Always Visible) --}}
                                         <button onclick="toggleDetails('details-{{ $order->id }}')"
-                                            class="w-full lg:w-auto group/btn relative flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-700 hover:text-teal-700 font-bold rounded-xl border border-gray-200 hover:border-teal-200 hover:bg-[#ECFDF5] transition-all duration-200">
+                                            class="w-full lg:w-auto group/btn relative flex items-center justify-center gap-2 px-2.5 sm:px-4.5 py-2 bg-white text-gray-700 hover:text-teal-700 font-bold rounded-xl border border-gray-200 hover:border-teal-200 hover:bg-[#ECFDF5] transition-all duration-200">
                                             <span class="text-sm">View Items</span>
                                             <i id="icon-details-{{ $order->id }}"
                                                 class="bi bi-chevron-down transition-transform duration-300 text-xs"></i>
@@ -220,11 +220,11 @@
 
                             {{-- HIDDEN INVOICE TEMPLATE FOR THIS ORDER (Used by JS) --}}
                             <div id="invoice-data-{{ $order->id }}" class="hidden">
-                                <div class="p-3 sm:p-6 bg-white" style="font-family: sans-serif; color: #333;">
+                                <div class="p-2.5 sm:p-6 bg-white" style="font-family: sans-serif; color: #333;">
 
                                     {{-- 1. Invoice Header: Logo & Platform Name --}}
                                     <div class="flex justify-between items-center mb-6 pb-6 border-b border-gray-200">
-                                        <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-2.5 sm:gap-3.5">
                                             {{-- Platform Logo --}}
                                             <div
                                                 class="w-10 sm:w-14 h-10 sm:h-14 bg-white rounded-lg border border-gray-100 shadow-sm p-1 flex items-center justify-center overflow-hidden">
@@ -300,7 +300,7 @@
 
                                             <div class="mt-4">
                                                 <p
-                                                    class="text-xs font-semibold sm:font-bold text-gray-800 bg-gray-50 inline-block px-3 py-1.5 rounded border border-gray-100">
+                                                    class="text-xs font-semibold sm:font-bold text-gray-800 bg-gray-50 inline-block px-2.5 sm:px-4.5 py-1.5 rounded border border-gray-100">
                                                     Date: {{ $order->created_at->format('d M, Y') }}
                                                 </p>
                                             </div>
@@ -312,29 +312,29 @@
                                         <thead>
                                             <tr class="bg-gray-100 border-b-2 border-gray-200">
                                                 <th
-                                                    class="text-left p-3 text-xs font-extrabold text-gray-600 uppercase">
-                                                    Item Description</th>
+                                                    class="text-left p-1.5 sm:p-3.5 text-xs font-extrabold text-gray-600 sm:uppercase">
+                                                    Product Name</th>
                                                 <th
-                                                    class="text-center p-3 text-xs font-extrabold text-gray-600 uppercase">
+                                                    class="text-center p-1.5 sm:p-3.5 text-xs font-extrabold text-gray-600 sm:uppercase">
                                                     Qty</th>
                                                 <th
-                                                    class="text-right p-3 text-xs font-extrabold text-gray-600 uppercase">
+                                                    class="text-right p-1.5 sm:p-3.5 text-xs font-extrabold text-gray-600 sm:uppercase">
                                                     Price</th>
                                                 <th
-                                                    class="text-right p-3 text-xs font-extrabold text-gray-600 uppercase">
+                                                    class="text-right p-1.5 sm:p-3.5 text-xs font-extrabold text-gray-600 sm:uppercase">
                                                     Total</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-100">
                                             @foreach ($order->items as $item)
                                                 <tr>
-                                                    <td class="py-3 px-3 text-sm font-bold text-gray-800">
+                                                    <td class="p-1.5 sm:p-3.5 text-xs sm:text-sm font-semibold sm:font-bold text-gray-800">
                                                         {{ $item->product_name }}</td>
-                                                    <td class="py-3 px-3 text-sm font-medium text-gray-600 text-center">
+                                                    <td class="p-1.5 sm:p-3.5 text-xs sm:text-sm font-medium text-gray-600 text-center">
                                                         {{ $item->quantity }}</td>
-                                                    <td class="py-3 px-3 text-sm font-medium text-gray-600 text-right">
+                                                    <td class="p-1.5 sm:p-3.5 text-xs sm:text-sm font-medium text-gray-600 text-right">
                                                         ₹{{ number_format($item->price, 2) }}</td>
-                                                    <td class="py-3 px-3 text-sm font-black text-teal-700 text-right">
+                                                    <td class="p-1.5 sm:p-3.5 text-xs sm:text-sm font-black text-teal-700 text-right">
                                                         ₹{{ number_format($item->subtotal, 2) }}</td>
                                                 </tr>
                                             @endforeach
@@ -343,7 +343,7 @@
 
                                     {{-- 4. Totals Calculation --}}
                                     <div class="flex justify-end">
-                                        <div class="w-1/2 bg-gray-50 rounded-xl p-2 sm:p-4 border border-gray-100">
+                                        <div class="w-full sm:w-1/2 bg-gray-50 rounded-xl p-2.5 sm:p-4.5 border border-gray-100">
                                             <div class="flex justify-between py-2 border-b border-gray-200/60">
                                                 <span class="text-sm font-medium text-gray-600">Subtotal</span>
                                                 <span
@@ -374,14 +374,14 @@
                                                 <span class="text-sm sm:text-base font-extrabold text-gray-900 uppercase">Total
                                                     Paid</span>
                                                 <span
-                                                    class="text-xl font-black text-teal-700">₹{{ number_format($order->wallet1_deducted + $order->wallet2_deducted, 2) }}</span>
+                                                    class="text-lg sm:text-xl font-black text-teal-700">₹{{ number_format($order->wallet1_deducted + $order->wallet2_deducted, 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {{-- 5. Footer --}}
                                     <div class="mt-12 pt-8 border-t-2 border-dashed border-gray-200 text-center">
-                                        <p class="text-base font-black text-gray-800">Thank you for shopping with Ziddi
+                                        <p class="text-sm sm:text-base font-black text-gray-800">Thank you for shopping with Ziddi
                                             Group!</p>
                                         <p class="text-xs font-medium text-gray-500 mt-1">For support, please contact your
                                             seller or reach out to Ziddi Group Helpdesk.</p>

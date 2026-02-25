@@ -886,11 +886,11 @@
                 <div>
                     <h4 class="text-lg font-bold mb-4">Download App</h4>
                     <div class="space-y-3">
-                        <a href="SmartSave24-app.apk"
+                        <a href="SmartSave24-app1.apk"
                             class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
                             <i class="bi bi-google-play mr-2"></i> Google Play
                         </a>
-                        <a href="SmartSave24-app.apk"
+                        <a href="SmartSave24-app1.apk"
                             class="block bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800">
                             <i class="bi bi-apple mr-2"></i> App Store
                         </a>

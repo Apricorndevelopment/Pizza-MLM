@@ -472,7 +472,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="position-relative h-[320px] sm:h-[400px]" style="width: 100%;">
+                    <div class="position-relative h-80 sm:h-[400px]" style="width: 100%;">
                         <canvas id="sales-chart"></canvas>
                     </div>
                 </div>

@@ -192,7 +192,7 @@
                                                 <i class="fas fa-eye"></i>
                                             </a>
 
-                                            <form action="{{ route('admin.deletemember', $user->id) }}" method="post"
+                                            {{-- <form action="{{ route('admin.deletemember', $user->id) }}" method="post"
                                                 class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
@@ -202,7 +202,7 @@
                                                     title="Delete Member">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
-                                            </form>
+                                            </form> --}}
                                         </div>
                                     </td>
                                 </tr>

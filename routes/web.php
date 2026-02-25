@@ -274,6 +274,12 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::put('/product-banners/update/{id}', [BannerController::class, 'productUpdate'])->name('product.banners.update');
         Route::delete('/product-banners/delete/{id}', [BannerController::class, 'productDestroy'])->name('product.banners.destroy');
 
+        // User Gallery Routes
+        Route::get('/user-gallery', [BannerController::class, 'userGalleryIndex'])->name('user.gallery.index');
+        Route::post('/user-gallery/store', [BannerController::class, 'userGalleryStore'])->name('user.gallery.store');
+        Route::put('/user-gallery/update/{id}', [BannerController::class, 'userGalleryUpdate'])->name('user.gallery.update');
+        Route::delete('/user-gallery/delete/{id}', [BannerController::class, 'userGalleryDestroy'])->name('user.gallery.destroy');
+
         Route::get('/media', [MediaController::class, 'index'])->name('media.index');
         Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');
         Route::delete('/media/delete/{id}', [MediaController::class, 'destroy'])->name('media.destroy');

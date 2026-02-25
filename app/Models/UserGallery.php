@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Gallery extends Model
+class UserGallery extends Model
 {
-    protected $table = 'gallery';
+    protected $table = 'user_gallery';
 
     protected $fillable = ['title','photo'];
 

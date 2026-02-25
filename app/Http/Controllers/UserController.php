@@ -27,6 +27,7 @@ use App\Models\Wallet1Transaction;
 use App\Models\RoyaltyRewardsIncome;
 use App\Models\User;
 use App\Models\UserCoupon;
+use App\Models\UserGallery;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -57,12 +58,10 @@ class UserController extends Controller
         // or multiple rows we sum up.
         $totalCoupons = UserCoupon::where('user_id', $user->id)->sum('coupon_quantity');
 
-        $breadcrumbs = [
-            ['title' => 'Dashboard', 'url' => route('user.dashboard')]
-        ];
+        // 4. NEW: Fetch Gallery Banners
+        $galleries = UserGallery::latest()->get();
 
         return view('user.dashboard', compact(
-            'breadcrumbs',
             'levelIncome',
             'bonusIncome',
             'directIncome',
@@ -73,7 +72,8 @@ class UserController extends Controller
             'audios',
             'videos',
             'totalCoupons',
-            'user'
+            'user',
+            'galleries'
         ));
     }
 

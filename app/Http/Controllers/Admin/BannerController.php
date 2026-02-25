@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\VendorBanner;
 use App\Models\ProductBanner;
+use App\Models\UserGallery;
 use Illuminate\Support\Facades\File;
 
 class BannerController extends Controller
@@ -156,5 +157,59 @@ class BannerController extends Controller
         if ($path && File::exists(public_path($path))) {
             File::delete(public_path($path));
         }
+    }
+
+    public function userGalleryIndex()
+    {
+        $galleries = UserGallery::latest()->get();
+        return view('admin.banners.user-gallery', compact('galleries'));
+    }
+
+    public function userGalleryStore(Request $request)
+    {
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+        ]);
+
+        // Using the existing uploadImage helper
+        $imagePath = $this->uploadImage($request, 'photo', 'storage/user-gallery');
+
+        UserGallery::create([
+            'title' => $request->title,
+            'photo' => $imagePath
+        ]);
+
+        return back()->with('success', 'Gallery Image added successfully!');
+    }
+
+    public function userGalleryUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+        ]);
+
+        $gallery = UserGallery::findOrFail($id);
+
+        if ($request->hasFile('photo')) {
+            // Using existing deleteImage helper
+            $this->deleteImage($gallery->photo);
+            $gallery->photo = $this->uploadImage($request, 'photo', 'storage/user-gallery');
+        }
+
+        $gallery->update([
+            'title' => $request->title,
+        ]);
+
+        return back()->with('success', 'Gallery Image updated successfully!');
+    }
+
+    public function userGalleryDestroy($id)
+    {
+        $gallery = UserGallery::findOrFail($id);
+        $this->deleteImage($gallery->photo);
+        $gallery->delete();
+        return back()->with('success', 'Gallery Image deleted successfully!');
     }
 }

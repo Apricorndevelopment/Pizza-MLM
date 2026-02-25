@@ -12,7 +12,7 @@
             background-color: #f8f9fc;
         }
 
-        /* --- Modern Card Gradients --- */
+        /* --- Gradients & Cards (Kept your existing styles) --- */
         .bg-gradient-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -41,7 +41,6 @@
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         }
 
-        /* --- Stat Card Design --- */
         .stat-card {
             border: none;
             border-radius: 20px;
@@ -54,10 +53,9 @@
 
         .stat-card:hover {
             transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
         }
 
-        /* Glass Icon Box */
         .icon-box-glass {
             width: 56px;
             height: 56px;
@@ -70,10 +68,8 @@
             justify-content: center;
             font-size: 1.5rem;
             color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
-        /* Typography inside cards */
         .stat-label {
             font-size: 0.85rem;
             font-weight: 600;
@@ -90,7 +86,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* Decorative Overlay Icon */
         .overlay-icon {
             position: absolute;
             right: -15px;
@@ -102,7 +97,6 @@
             z-index: 0;
         }
 
-        /* --- Banner Design --- */
         .company-banner {
             background: linear-gradient(120deg, #2980b9, #8e44ad);
             border-radius: 24px;
@@ -121,52 +115,58 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* --- Custom Grid for Income (5 Columns) --- */
-        @media (min-width: 1200px) {
-            .col-xl-20 {
-                flex: 0 0 20%;
-                max-width: 20%;
-            }
-        }
-
-        /* --- Media Players --- */
-        .media-card {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #edf2f7;
-            overflow: hidden;
-            height: 100%;
-            transition: transform 0.2s;
-        }
-
-        .media-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-        }
-
-        /* --- Chart Container --- */
         .chart-container {
             background: white;
             border-radius: 24px;
-            padding: 2rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             border: 1px solid #f1f5f9;
+        }
+
+        /* --- Carousel Custom CSS --- */
+        .dashboard-carousel-img {
+            height: 180px;
+            /* Mobile Height */
+            object-fit: cover;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-carousel-img {
+                height: 380px;
+                /* Desktop Height */
+            }
+        }
+
+        .carousel-caption-bg {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            border-radius: 12px;
+            padding: 10px 20px;
+            display: inline-block;
         }
     </style>
 
     <div class="container-fluid py-4">
 
-        {{-- 1. HERO BANNER --}}
+        {{-- 1. HERO BANNER (Rearranged: Welcome Title First, then Rank) --}}
         <div class="row mb-4">
             <div class="col-12">
-                <div class="company-banner p-6 lg:p-8 text-white d-flex align-items-center justify-content-between">
+                <div class="company-banner p-3.5 lg:p-6 text-white d-flex align-items-center justify-content-between">
                     <div class="position-relative z-10">
-                        <span class="badge bg-white/20 border border-white/30 rounded-pill mb-3 px-3 py-2 text-white">
-                            <i class="fas fa-crown text-warning me-1"></i> {{ Auth::user()->current_rank ?? 'Member' }}
-                        </span>
-                        <h1 class="display-4 fw-bolder mb-2">Smart Save24</h1>
-                        <p class="fs-5 opacity-90 mb-0">Welcome back, <strong>{{ $user->name }}</strong>! Ready to grow
-                            your business?</p>
+                        {{-- Welcome Title First --}}
+                        <h1 class="display-5 fw-bolder mb-3">Welcome to Smart Save24</h1>
+
+                        {{-- Rank Badge Second --}}
+                        <div class="mb-3">
+                            <span
+                                class="badge bg-white/20 border border-white/30 rounded-pill px-3 py-2 text-white fs-6 fw-normal">
+                                <i class="fas fa-crown text-warning me-1"></i> Current Rank:
+                                <strong>{{ Auth::user()->current_rank ?? 'Member' }}</strong>
+                            </span>
+                        </div>
+
+                        <p class="fs-5 opacity-90 mb-0">Hello, <strong>{{ $user->name }}</strong>! Let's grow your
+                            earnings today.</p>
                     </div>
                     <div class="d-none d-lg-block position-relative z-10 pe-5">
                         <i class="fas fa-building fa-6x opacity-25 text-white"></i>
@@ -175,7 +175,56 @@
             </div>
         </div>
 
-        {{-- 2. MEDIA SECTION --}}
+        {{-- 2. NEW: USER GALLERY CAROUSEL --}}
+        @if ($galleries->count() > 0)
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div id="galleryCarousel" class="carousel slide rounded-4 overflow-hidden shadow-sm"
+                        data-bs-ride="carousel">
+                        {{-- Indicators --}}
+                        <div class="carousel-indicators">
+                            @foreach ($galleries as $key => $gallery)
+                                <button type="button" data-bs-target="#galleryCarousel"
+                                    data-bs-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}"
+                                    aria-current="{{ $key == 0 ? 'true' : 'false' }}"
+                                    aria-label="Slide {{ $key + 1 }}"></button>
+                            @endforeach
+                        </div>
+
+                        {{-- Slides --}}
+                        <div class="carousel-inner">
+                            @foreach ($galleries as $key => $gallery)
+                                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                    <img src="{{ asset($gallery->photo) }}" class="d-block w-100 dashboard-carousel-img"
+                                        alt="{{ $gallery->title ?? 'Banner' }}">
+                                    @if ($gallery->title)
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <div class="carousel-caption-bg">
+                                                <h5 class="fw-bold mb-0">{{ $gallery->title }}</h5>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Controls --}}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarousel"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#galleryCarousel"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- 3. MEDIA SECTION --}}
         <div class="row g-4 mb-4">
             {{-- Audio Playlist --}}
             <div class="col-lg-6">
@@ -264,7 +313,7 @@
             }
         @endphp
 
-        {{-- 3. FINANCIAL OVERVIEW --}}
+        {{-- 4. FINANCIAL OVERVIEW --}}
         <div class="d-flex align-items-center mb-4">
             <h4 class="fw-bold text-gray-800 mb-0">Financial Overview</h4>
             <div class="ms-3 flex-grow-1 border-bottom"></div>
@@ -279,9 +328,7 @@
                             <p class="stat-label text-white-50">Total Earnings</p>
                             <h2 class="stat-value">{{ formatCurrency($totalIncome) }}</h2>
                         </div>
-                        <div class="icon-box-glass">
-                            <i class="fas fa-wallet"></i>
-                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-wallet"></i></div>
                     </div>
                     <i class="fas fa-coins overlay-icon text-white"></i>
                 </div>
@@ -295,9 +342,7 @@
                             <p class="stat-label text-white-50">Personal Wallet</p>
                             <h2 class="stat-value">{{ formatCurrency($user->wallet1_balance) }}</h2>
                         </div>
-                        <div class="icon-box-glass">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-money-bill-wave"></i></div>
                     </div>
                     <i class="fas fa-chart-line overlay-icon text-white"></i>
                 </div>
@@ -311,9 +356,7 @@
                             <p class="stat-label text-white-50">Wallet 2</p>
                             <h2 class="stat-value">{{ formatCurrency($user->wallet2_balance) }}</h2>
                         </div>
-                        <div class="icon-box-glass">
-                            <i class="fas fa-university"></i>
-                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-university"></i></div>
                     </div>
                     <i class="fas fa-piggy-bank overlay-icon text-white"></i>
                 </div>
@@ -325,25 +368,23 @@
                     <div class="d-flex justify-content-between align-items-start z-10 position-relative">
                         <div>
                             <p class="stat-label text-white-50">Active Coupons</p>
-                            <h2 class="stat-value">{{ number_format($totalCoupons) }}(₹{{ number_format($totalCoupons * 10) }})</h2>
+                            <h2 class="stat-value">{{ number_format($totalCoupons) }}
+                                (₹{{ number_format($totalCoupons * 10) }})</h2>
                         </div>
-                        <div class="icon-box-glass">
-                            <i class="fas fa-ticket-alt"></i>
-                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-ticket-alt"></i></div>
                     </div>
                     <i class="fas fa-tags overlay-icon text-white"></i>
                 </div>
             </div>
         </div>
 
-        {{-- 4. INCOME BREAKDOWN (GRID) --}}
+        {{-- 5. INCOME BREAKDOWN --}}
         <div class="d-flex align-items-center mb-4">
             <h4 class="fw-bold text-gray-800 mb-0">Income Breakdown</h4>
             <div class="ms-3 flex-grow-1 border-bottom"></div>
         </div>
 
         <div class="row g-3 mb-4">
-            {{-- Direct Income --}}
             <div class="col-md-4 col-xl-2">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
@@ -355,7 +396,6 @@
                     <p class="text-muted small mb-0 fw-bold text-uppercase">Direct Income</p>
                 </div>
             </div>
-            {{-- Bonus Income --}}
             <div class="col-md-4 col-xl-2">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
@@ -367,8 +407,6 @@
                     <p class="text-muted small mb-0 fw-bold text-uppercase">Bonus Income</p>
                 </div>
             </div>
-
-            {{-- Level Income --}}
             <div class="col-md-4 col-xl-2">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
@@ -391,8 +429,6 @@
                     <p class="text-muted small mb-0 fw-bold text-uppercase">Cashback Income</p>
                 </div>
             </div>
-
-            {{-- Repurchase Income --}}
             <div class="col-md-4 col-xl-2">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
@@ -404,8 +440,6 @@
                     <p class="text-muted small mb-0 fw-bold text-uppercase">Repurchase</p>
                 </div>
             </div>
-
-            {{-- Rewards Income --}}
             <div class="col-md-4 col-xl-2">
                 <div
                     class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
@@ -419,10 +453,10 @@
             </div>
         </div>
 
-        {{-- 5. CHART SECTION --}}
+        {{-- 6. CHART SECTION --}}
         <div class="row">
             <div class="col-12">
-                <div class="chart-container">
+                <div class="chart-container p-3.5 sm:p-6">
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
                         <div class="mb-3 mb-md-0">
                             <h4 class="fw-bold text-gray-800 mb-1">Business Performance</h4>
@@ -438,7 +472,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="position-relative" style="height: 400px; width: 100%;">
+                    <div class="position-relative h-[320px] sm:h-[400px]" style="width: 100%;">
                         <canvas id="sales-chart"></canvas>
                     </div>
                 </div>
@@ -467,12 +501,11 @@
                     datasets: [{
                         label: 'Business Volume',
                         data: [],
-                        borderColor: '#4f46e5', // Indigo 600
+                        borderColor: '#4f46e5',
                         backgroundColor: (context) => {
                             const ctx = context.chart.ctx;
                             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                            gradient.addColorStop(0,
-                                'rgba(79, 70, 229, 0.2)'); // Indigo with opacity
+                            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)');
                             gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
                             return gradient;
                         },
@@ -551,7 +584,7 @@
                     },
                     interaction: {
                         mode: 'index',
-                        intersect: false,
+                        intersect: false
                     },
                 }
             });

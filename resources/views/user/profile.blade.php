@@ -2,7 +2,7 @@
 @section('title', 'My Profile')
 @section('container')
 
-    <div class="min-h-screen bg-slate-50/50 py-4 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-slate-50/50 py-4 px-3 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
 
             {{-- Alerts --}}
@@ -164,17 +164,17 @@
                             </nav>
                         </div>
 
-                        <div class="p-6">
+                        <div class="p-3.5 sm:p-6">
                             <div id="tab-content-profile" class="tab-content block animate-fade-in">
                                 <div class="grid grid-cols-1 gap-3 mb-3">
 
                                     {{-- 1. ACCOUNT STATUS CARD --}}
                                     @if ($user->status === 'active')
                                         <div
-                                            class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 flex items-start gap-3">
+                                            class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 flex items-start gap-2 sm:gap-3">
                                             <div
-                                                class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 text-emerald-600">
-                                                <i class="fas fa-check-circle text-xl"></i>
+                                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 text-emerald-600">
+                                                <i class="fas fa-check-circle text-sm sm:text-xl"></i>
                                             </div>
                                             <div>
                                                 <h4 class="text-emerald-800 font-bold text-sm">Account Status: ACTIVE</h4>
@@ -185,8 +185,8 @@
                                     @else
                                         <div class="bg-red-50 border border-red-200 rounded-xl p-2 flex items-start gap-3">
                                             <div
-                                                class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600">
-                                                <i class="fas fa-times-circle text-xl"></i>
+                                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600">
+                                                <i class="fas fa-times-circle text-sm sm:text-xl"></i>
                                             </div>
                                             <div class="flex-grow">
                                                 <h4 class="text-red-800 font-bold text-sm">Account Status: INACTIVE</h4>
@@ -199,24 +199,24 @@
 
                                     {{-- 2. CAPPING LIMIT CARD --}}
                                     <div
-                                        class="bg-blue-50 border border-blue-200 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                                        class="bg-blue-50 border border-blue-200 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 text-blue-600">
-                                                <i class="fas fa-chart-line text-xl"></i>
+                                                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 text-blue-600">
+                                                <i class="fas fa-chart-line text-sm sm:text-xl"></i>
                                             </div>
                                             <div>
                                                 <div class="flex items-center justify-between">
-                                                    <h4 class="text-blue-800 font-bold text-sm uppercase tracking-wider">
+                                                    <h4 class="text-blue-800 font-bold text-xs sm:text-sm uppercase tracking-wider">
                                                         Daily Capping Limit</h4>
                                                     <div class="flex items-baseline gap-1">
-                                                        <span class="text-2xl font-bold text-blue-900">
+                                                        <span class="text-xl sm:text-2xl font-bold text-blue-900">
                                                             ₹{{ number_format($user->capping_limit ?? 0, 2) }}
                                                         </span>
                                                         <span class="text-xs text-blue-500 font-medium">/ day</span>
                                                     </div>
                                                 </div>
-                                                <p class="text-blue-600 text-[11px] mt-2 leading-relaxed max-w-md">
+                                                <p class="text-blue-600 text-[9px] sm:text-[11px] mt-2 leading-relaxed max-w-md">
                                                     Your daily earning limit from Level or Repurchase incomes is
                                                     <strong>₹{{ number_format($user->capping_limit ?? 0, 0) }}</strong>.
                                                     Purchase the more bigger admin package to increase the capping limit.

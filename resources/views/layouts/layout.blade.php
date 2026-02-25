@@ -365,6 +365,10 @@
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Product Banners
                             </a>
+                            <a href="{{ route('admin.user.gallery.index') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                User Dashboard Banners
+                            </a>
                         </div>
                     </div>
 

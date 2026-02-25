@@ -106,7 +106,6 @@
         .company-banner {
             background: linear-gradient(120deg, #2980b9, #8e44ad);
             border-radius: 24px;
-            padding: 3rem;
             position: relative;
             overflow: hidden;
             box-shadow: 0 20px 40px -10px rgba(142, 68, 173, 0.4);
@@ -160,7 +159,7 @@
         {{-- 1. HERO BANNER --}}
         <div class="row mb-4">
             <div class="col-12">
-                <div class="company-banner text-white d-flex align-items-center justify-content-between">
+                <div class="company-banner p-6 lg:p-8 text-white d-flex align-items-center justify-content-between">
                     <div class="position-relative z-10">
                         <span class="badge bg-white/20 border border-white/30 rounded-pill mb-3 px-3 py-2 text-white">
                             <i class="fas fa-crown text-warning me-1"></i> {{ Auth::user()->current_rank ?? 'Member' }}

@@ -81,6 +81,14 @@ class User extends Authenticatable
         ];
     }
 
+    // Add this inside App\Models\User.php
+    public function vendor()
+    {
+        // Assuming your vendors table has a 'user_id' column
+        return $this->hasOne(Vendor::class, 'user_id');
+        
+    }
+
     public function complaints()
     {
         return $this->hasMany(Complaint::class);

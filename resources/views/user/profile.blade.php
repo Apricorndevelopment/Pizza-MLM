@@ -5,6 +5,7 @@
     <div class="min-h-screen bg-slate-50/50 py-4 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
 
+            {{-- Alerts --}}
             <div id="alerts-container">
                 @if (session('success'))
                     <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex justify-between items-center mb-4 text-sm"
@@ -30,11 +31,11 @@
 
             <div class="flex flex-col lg:flex-row gap-6">
 
+                {{-- LEFT COLUMN: Sidebar --}}
                 <div class="w-full lg:w-1/3">
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
 
                         <div class="h-24 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
-
 
                         <div class="px-4 p-4">
 
@@ -50,6 +51,7 @@
                                             <i class="fas fa-user text-3xl"></i>
                                         </div>
                                     @endif
+                                    {{-- Sidebar Status Dot --}}
                                     <span
                                         class="absolute bottom-1 right-1 w-4 h-4 border-2 border-white rounded-full {{ $user->status == 'active' ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
                                 </div>
@@ -123,20 +125,21 @@
                                     </button>
                                 </div>
                             </div>
-                            
-                            @if($user->is_vendor === 0)
-                            <div class="pt-4 border-t border-slate-100">
-                                <a href="{{ route('user.become_vendor') }}"
-                                    class="block w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold uppercase tracking-wider text-center rounded-lg shadow-sm transition-transform active:scale-[0.98]">
-                                    Become a Vendor
-                                </a>
-                            </div>
+
+                            @if ($user->is_vendor === 0)
+                                <div class="pt-4 border-t border-slate-100">
+                                    <a href="{{ route('user.become_vendor') }}"
+                                        class="block w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold uppercase tracking-wider text-center rounded-lg shadow-sm transition-transform active:scale-[0.98]">
+                                        Become a Vendor
+                                    </a>
+                                </div>
                             @endif
 
                         </div>
                     </div>
                 </div>
 
+                {{-- RIGHT COLUMN: Main Content --}}
                 <div class="w-full h-full lg:w-2/3">
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 min-h-[500px]">
 
@@ -163,7 +166,68 @@
 
                         <div class="p-6">
                             <div id="tab-content-profile" class="tab-content block animate-fade-in">
-                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Personal Details
+                                <div class="grid grid-cols-1 gap-3 mb-3">
+
+                                    {{-- 1. ACCOUNT STATUS CARD --}}
+                                    @if ($user->status === 'active')
+                                        <div
+                                            class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 flex items-start gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 text-emerald-600">
+                                                <i class="fas fa-check-circle text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-emerald-800 font-bold text-sm">Account Status: ACTIVE</h4>
+                                                <p class="text-emerald-600 text-xs mt-1">You are eligible for all incomes
+                                                    and rewards.</p>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="bg-red-50 border border-red-200 rounded-xl p-2 flex items-start gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600">
+                                                <i class="fas fa-times-circle text-xl"></i>
+                                            </div>
+                                            <div class="flex-grow">
+                                                <h4 class="text-red-800 font-bold text-sm">Account Status: INACTIVE</h4>
+                                                <p class="text-red-600 text-xs mt-1 leading-relaxed">
+                                                    Your status is inactive. Purchase any admin product to be active.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    {{-- 2. CAPPING LIMIT CARD --}}
+                                    <div
+                                        class="bg-blue-50 border border-blue-200 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 text-blue-600">
+                                                <i class="fas fa-chart-line text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center justify-between">
+                                                    <h4 class="text-blue-800 font-bold text-sm uppercase tracking-wider">
+                                                        Daily Capping Limit</h4>
+                                                    <div class="flex items-baseline gap-1">
+                                                        <span class="text-2xl font-bold text-blue-900">
+                                                            ₹{{ number_format($user->capping_limit ?? 0, 2) }}
+                                                        </span>
+                                                        <span class="text-xs text-blue-500 font-medium">/ day</span>
+                                                    </div>
+                                                </div>
+                                                <p class="text-blue-600 text-[11px] mt-2 leading-relaxed max-w-md">
+                                                    Your daily earning limit from Level or Repurchase incomes is
+                                                    <strong>₹{{ number_format($user->capping_limit ?? 0, 0) }}</strong>.
+                                                    Purchase the more bigger admin package to increase the capping limit.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Personal
+                                    Details
                                 </h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
                                     <div class="border-b border-slate-50 pb-2">

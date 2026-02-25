@@ -66,13 +66,24 @@
             object-fit: cover;
         }
 
-        .online-status {
+        .active-status {
             position: absolute;
             bottom: 2px;
             right: 2px;
             width: 10px;
             height: 10px;
             background: #10b981;
+            border: 2px solid #fff;
+            border-radius: 50%;
+        }
+
+        .inactive-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: #ff0000;
             border: 2px solid #fff;
             border-radius: 50%;
         }
@@ -334,7 +345,7 @@
                         @else
                             <img src="{{ asset('images/smartsave.png') }}" alt="Profile">
                         @endif
-                        <span class="online-status"></span>
+                        <span class="{{  Auth::user()->status == 'active' ? 'active-status' : 'inactive-status'}}"></span>
                     </div>
                     <div class="ml-2">
                         <p class="font-medium text-gray-800">{{ Auth::user()->name }}</p>
@@ -366,7 +377,7 @@
                                 @else
                                     <img src="{{ asset('images/smartsave.png') }}" alt="profile" />
                                 @endif
-                                <span class="online-status"></span>
+                                <span class="{{  Auth::user()->status == 'active' ? 'active-status' : 'inactive-status'}}"></span>
                             </div>
                             <div class="hidden md:block text-left">
                                 <p class="font-medium text-gray-800">{{ Auth::user()->name }}</p>

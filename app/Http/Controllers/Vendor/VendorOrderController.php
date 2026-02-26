@@ -321,7 +321,17 @@ class VendorOrderController extends Controller
 
     private function processUplineGrowth($startUser, $pv, $settings)
     {
+         // 1. Update the Current User's Total Business (Self Business)
+        $startUser->total_business += $pv;
+        $startUser->save();
+
+        // Check if the current user achieves a reward based on their own new total business
+        $this->checkAndDistributeRewards($startUser, $milestones = PercentageReward::orderBy('achievement', 'asc')->get(), $settings);
+
+
+        // 2. Update Upline's Total Business (Team Business)
         $currentUplineUlid = $startUser->sponsor_id;
+        
         $milestones = PercentageReward::orderBy('achievement', 'asc')->get();
 
         while ($currentUplineUlid) {

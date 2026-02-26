@@ -198,7 +198,7 @@
         <!-- Pagination -->
         @if ($products->hasPages())
             <div class="mt-6">
-                {{ $products->links('vendor.pagination.tailwind') }}
+                {{ $products->links('pagination::bootstrap-5') }}
             </div>
         @endif
     </div>

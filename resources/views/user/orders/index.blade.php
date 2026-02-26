@@ -244,7 +244,7 @@
                                             <h2
                                                 class="text-2xl sm:text-3xl font-bold text-gray-200 uppercase tracking-widest m-0 leading-none">
                                                 BILL</h2>
-                                            <p class="text-xs sm:text-sm font-bold text-gray-700 mt-1">#{{ $order->order_id }}</p>
+                                            <p class="text-[8px] sm:text-sm font-bold text-gray-700 mt-1">#{{ $order->order_id }}</p>
                                         </div>
                                     </div>
 
@@ -257,50 +257,50 @@
 
                                     <div class="flex justify-between mb-8 gap-8">
                                         {{-- Billed To (Customer Details) --}}
-                                        <div class="w-1/2">
+                                        <div class="w-28 sm:w-1/2">
                                             <p
                                                 class="text-[8px] sm:text-[10px] font-bold text-teal-600 bg-teal-50 inline-block px-2 py-0.5 rounded uppercase tracking-widest mb-3">
                                                 Billed To</p>
-                                            <p class="font-extrabold text-gray-900 text-sm sm:text-lg leading-tight">
+                                            <p class="font-extrabold text-gray-900 text-xs sm:text-lg leading-tight">
                                                 {{ Auth::user()->name }}</p>
-                                                <p class="text-xs sm:text-sm text-gray-600 mt-1">{{ Auth::user()->email }}</p>
-                                                <p class="text-xs sm:text-sm text-gray-600">{{ Auth::user()->phone ?? 'No Phone' }}</p>
-                                                <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-[250px] leading-snug">
+                                                <p class="text-[8px] sm:text-sm text-gray-600 mt-1">{{ Auth::user()->email }}</p>
+                                                <p class="text-[8px] sm:text-sm text-gray-600">{{ Auth::user()->phone ?? 'No Phone' }}</p>
+                                                <p class="text-[8px] sm:text-sm text-gray-600 mt-1 max-w-[250px] leading-snug">
                                                 {{ Auth::user()->address ?? 'Address not provided' }}
                                             </p>
                                         </div>
 
                                         {{-- Sold By (Vendor / Admin Details) --}}
-                                        <div class="w-1/2 text-right">
+                                        <div class="w-28 sm:w-1/2 text-right">
                                             <p
                                                 class="text-[8px] sm:text-[10px] font-bold text-gray-500 bg-gray-100 inline-block px-2 py-0.5 rounded uppercase tracking-widest mb-3">
                                                 Sold By</p>
 
                                             @if ($isVendorOrder)
-                                                <p class="font-extrabold text-gray-900 text-sm sm:text-lg leading-tight">
+                                                <p class="font-extrabold text-gray-900 text-xs sm:text-lg leading-tight">
                                                     {{ $firstItem->vendor->company_name ?? 'Vendor Store' }}</p>
-                                                <p class="text-xs sm:text-sm font-bold text-teal-600 mt-0.5">Owner:
+                                                <p class="text-[8px] sm:text-sm font-bold text-teal-600 mt-0.5">Owner:
                                                     {{ $firstItem->vendor->user->name ?? 'Vendor' }}</p>
-                                                <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-[250px] ml-auto leading-snug">
+                                                <p class="text-[8px] sm:text-sm text-gray-600 mt-1 max-w-[250px] ml-auto leading-snug">
                                                     {{ $firstItem->vendor->company_address ?? 'Address not provided' }}<br>
                                                     {{ $firstItem->vendor->company_city ?? '' }}
                                                     {{ $firstItem->vendor->company_state ?? '' }}
                                                 </p>
-                                                <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                                                <p class="text-[8px] sm:text-sm text-gray-500 mt-1">
                                                     {{ $firstItem->vendor->user->email ?? '' }}</p>
                                             @else
-                                                <p class="font-extrabold text-gray-900 text-sm sm:text-lg leading-tight">Ziddi Group
+                                                <p class="font-extrabold text-gray-900 text-xs sm:text-lg leading-tight">Ziddi Group
                                                     Official</p>
-                                                <p class="text-xs sm:text-sm font-bold text-teal-600 mt-0.5">SmartSave24 Admin</p>
-                                                <p class="text-xs sm:text-sm text-gray-600 mt-1 max-w-[250px] ml-auto leading-snug">
+                                                <p class="text-[8px] sm:text-sm font-bold text-teal-600 mt-0.5">SmartSave24 Admin</p>
+                                                <p class="text-[8px] sm:text-sm text-gray-600 mt-1 max-w-[250px] ml-auto leading-snug">
                                                     Main GT Road, V.P.O Rai<br>Sonipat, Haryana
                                                 </p>
-                                                <p class="text-xs sm:text-sm text-gray-500 mt-1">support@smartsave24.com</p>
+                                                <p class="text-[8px] sm:text-sm text-gray-500 mt-1">support@smartsave24.com</p>
                                             @endif
 
                                             <div class="mt-4">
                                                 <p
-                                                    class="text-xs font-semibold sm:font-bold text-gray-800 bg-gray-50 inline-block px-2.5 sm:px-4.5 py-1.5 rounded border border-gray-100">
+                                                    class="text-[8px] font-semibold sm:font-bold text-gray-800 bg-gray-50 inline-block px-2.5 sm:px-4.5 py-1.5 rounded border border-gray-100">
                                                     Date: {{ $order->created_at->format('d M, Y') }}
                                                 </p>
                                             </div>

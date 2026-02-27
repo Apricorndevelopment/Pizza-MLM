@@ -80,7 +80,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($products as $product)
+                            @forelse ($products as $product)
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex-shrink-0 h-12 w-12">
@@ -137,7 +137,14 @@
                                         </button>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
+                                    You have not added any products. <a href="{{ route('vendor.products.create') }}"
+                                        class="text-blue-600 hover:text-blue-900 font-medium">Add your first product</a>.
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

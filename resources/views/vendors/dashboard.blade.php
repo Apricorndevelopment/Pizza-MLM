@@ -113,7 +113,7 @@
                     <div>
                         <p class="text-slate-500 text-sm font-medium mb-1">Active Products</p>
                         <h2 class="text-3xl font-bold text-slate-900">{{ $activeProducts }}</h2>
-                        <a href="{{ route('admin.products.index') }}" class="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2 inline-block">Manage Products &rarr;</a>
+                        <a href="{{ route('vendor.products.index') }}" class="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2 inline-block">Manage Products &rarr;</a>
                     </div>
                     <div class="h-16 w-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 text-2xl">
                         <i class="fas fa-box"></i>

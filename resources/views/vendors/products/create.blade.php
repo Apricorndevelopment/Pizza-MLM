@@ -125,7 +125,7 @@
                                 <input type="number" step="0.01" name="gst" id="gst"
                                     class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
                                               @error('gst') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                    placeholder="18" value="{{ old('gst', 18) }}" required>
+                                    placeholder="Enter GST percentage" value="{{ old('gst', 5) }}" required>
                             </div>
                             @error('gst')
                                 <p class="text-sm text-red-600 mt-1 flex items-center">

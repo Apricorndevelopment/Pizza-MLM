@@ -230,7 +230,8 @@ class AdminController extends Controller
         $query = User::where('is_vendor', 1)
             ->leftJoin('vendor', 'users.id', '=', 'vendor.user_id')
             ->select(
-                'users.id',
+                'users.id', // This is User ID
+                'vendor.id as vendor_profile_id', // FIXED: Fetching Vendor Table ID
                 'users.name as vendor_name',
                 'users.address as user_address',
                 'vendor.company_name',
@@ -247,13 +248,23 @@ class AdminController extends Controller
 
         $vendors = $query->paginate(10);
 
-        // 3. Calculate Stats for the paginated vendors ONLY (Fast & Optimized)
+        // 3. Calculate Stats for the paginated vendors ONLY
         foreach ($vendors as $vendor) {
 
-            // Base query for vendor's delivered order items
+            // Safety Check: If user is marked vendor but profile not created yet
+            if (!$vendor->vendor_profile_id) {
+                $vendor->total_revenue = 0;
+                $vendor->total_orders = 0;
+                $vendor->vendor_payout = 0;
+                $vendor->total_distributed_incomes = 0;
+                $vendor->net_profit = 0;
+                continue;
+            }
+
+            // Base query for vendor's delivered/accepted order items
             $orderItemsQuery = DB::table('order_items')
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->where('order_items.vendor_id', $vendor->id)
+                ->where('order_items.vendor_id', $vendor->vendor_profile_id) // FIXED: Used Vendor Profile ID
                 ->whereIn('orders.status', ['delivered', 'accepted']);
 
             if ($startDate) {
@@ -278,11 +289,13 @@ class AdminController extends Controller
                 ['table' => 'cashback_income', 'col' => 'income_amount'],
                 ['table' => 'level_incomes', 'col' => 'amount'],
                 ['table' => 'repurchase_incomes', 'col' => 'commission'],
-                ['table' => 'vendor_incomes', 'col' => 'income_amount'], // Special Vendor Income
+                ['table' => 'vendor_incomes', 'col' => 'income_amount'],
             ];
 
             foreach ($incomeTables as $inc) {
-                $incQ = DB::table($inc['table'])->where('vendor_id', $vendor->id);
+                // FIXED: Used Vendor Profile ID here as well
+                $incQ = DB::table($inc['table'])->where('vendor_id', $vendor->vendor_profile_id);
+
                 if ($startDate) $incQ->whereDate('created_at', '>=', $startDate);
                 if ($endDate) $incQ->whereDate('created_at', '<=', $endDate);
 

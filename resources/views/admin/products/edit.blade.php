@@ -298,9 +298,7 @@
                                     <label for="pv" class="block text-sm font-medium text-gray-700">
                                         <span class="text-purple-600 font-semibold">PV (Point Value)</span>
                                     </label>
-                                    <div> {{-- Fixed height to prevent layout jump --}}
-                                        <span class="text-xs font-bold text-red-600" id="recomendedPv"></span>
-                                    </div>
+                                  
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500">
                                             <i class="bi bi-star"></i>
@@ -308,7 +306,10 @@
                                         <input type="number" name="pv" id="pv"
                                             class="w-full pl-10 pr-4 py-2.5 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 
                                                   @error('pv') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                            value="{{ old('pv', $product->pv ?? 0) }}">
+                                            value="{{ old('pv', $product->pv ?? 0) }}" required>
+                                    </div>
+                                      <div> {{-- Fixed height to prevent layout jump --}}
+                                        <span class="text-xs font-bold text-red-600" id="recomendedPv"></span>
                                     </div>
                                     <p class="text-xs text-gray-500">Required for commission calculation</p>
                                     @error('pv')
@@ -319,6 +320,27 @@
                                     @enderror
                                 </div>
 
+                                <div class="space-y-2">
+                                    <label for="pv" class="block text-sm font-medium text-gray-700">
+                                        <span class="text-purple-600 font-semibold">Percentage</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500">
+                                            <i class="bi bi-percent"></i>
+                                        </span>
+                                        <input type="number" name="percentage" id="percentage"
+                                            class="w-full pl-10 pr-4 py-2.5 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 
+                                                  @error('percentage') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
+                                            value="{{ old('percentage', $product->percentage ?? 0) }}" required>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Required for percentage to the admin</p>
+                                    @error('percentage')
+                                        <p class="text-sm text-red-600 mt-1 flex items-center">
+                                            <i class="bi bi-exclamation-circle mr-1"></i>
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
+                                </div>
 
                                 <!-- Max Coupons -->
                                 <div class="space-y-2">
@@ -332,7 +354,7 @@
                                         <input type="number" name="max_coupon_usage" id="max_coupon_usage"
                                             class="w-full pl-10 pr-4 py-2.5 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 
                                                   @error('max_coupon_usage') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                            value="{{ old('max_coupon_usage', $product->max_coupon_usage ?? 0) }}">
+                                            value="{{ old('max_coupon_usage', $product->max_coupon_usage ?? 0) }}" required>
                                     </div>
                                     @error('max_coupon_usage')
                                         <p class="text-sm text-red-600 mt-1 flex items-center">

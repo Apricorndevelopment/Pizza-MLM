@@ -85,8 +85,8 @@
                             <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $product->product_name }}</h1>
                             <div class="flex items-center space-x-4">
                                 <span
-                                    class="text-3xl font-bold text-green-600">₹{{ number_format($product->price, 2) }}</span>
-                                <span class="text-lg text-gray-400">₹{{ number_format($product->mrp, 2) }}</span>
+                                    class="text-3xl font-bold text-green-600">₹{{ number_format($product->dp, 2) }}</span>
+                                <span class="text-lg text-gray-400 text-decoration-line-through">₹{{ number_format($product->mrp, 2) }}</span>
                             </div>
                         </div>
 

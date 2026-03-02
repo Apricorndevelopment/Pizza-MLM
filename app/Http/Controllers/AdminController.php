@@ -231,7 +231,7 @@ class AdminController extends Controller
             ->leftJoin('vendor', 'users.id', '=', 'vendor.user_id')
             ->select(
                 'users.id', // This is User ID
-                'vendor.id as vendor_profile_id', // FIXED: Fetching Vendor Table ID
+                'vendor.id as vendor_profile_id', // Fetching Vendor Table ID
                 'users.name as vendor_name',
                 'users.address as user_address',
                 'vendor.company_name',
@@ -264,7 +264,7 @@ class AdminController extends Controller
             // Base query for vendor's delivered/accepted order items
             $orderItemsQuery = DB::table('order_items')
                 ->join('orders', 'order_items.order_id', '=', 'orders.id')
-                ->where('order_items.vendor_id', $vendor->vendor_profile_id) // FIXED: Used Vendor Profile ID
+                ->where('order_items.vendor_id', $vendor->vendor_profile_id) // Used Vendor Profile ID
                 ->whereIn('orders.status', ['delivered', 'accepted']);
 
             if ($startDate) {
@@ -278,8 +278,22 @@ class AdminController extends Controller
             $vendor->total_revenue = $orderItemsQuery->sum(\Illuminate\Support\Facades\DB::raw('order_items.price * order_items.quantity'));
             $vendor->total_orders = $orderItemsQuery->distinct('orders.id')->count('orders.id');
 
-            // Vendor's 70% Share
-            $vendor->vendor_payout = $vendor->total_revenue * 0.70;
+            // ==========================================
+            // NEW: Vendor's Actual Payout (From Wallet 1)
+            // ==========================================
+            $payoutQuery = DB::table('wallet1_transactions')
+                ->where('user_id', $vendor->id) // users.id
+                ->where('notes', 'LIKE', 'Payment received for Order #%');
+
+            if ($startDate) {
+                $payoutQuery->whereDate('created_at', '>=', $startDate);
+            }
+            if ($endDate) {
+                $payoutQuery->whereDate('created_at', '<=', $endDate);
+            }
+
+            $vendor->vendor_payout = $payoutQuery->sum('wallet1');
+            // ==========================================
 
             // Incomes Distributed (from the 6 income tables tracking this vendor_id)
             $incomesSum = 0;
@@ -293,7 +307,6 @@ class AdminController extends Controller
             ];
 
             foreach ($incomeTables as $inc) {
-                // FIXED: Used Vendor Profile ID here as well
                 $incQ = DB::table($inc['table'])->where('vendor_id', $vendor->vendor_profile_id);
 
                 if ($startDate) $incQ->whereDate('created_at', '>=', $startDate);

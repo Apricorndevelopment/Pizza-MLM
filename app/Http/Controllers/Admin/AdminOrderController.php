@@ -145,28 +145,23 @@ class AdminOrderController extends Controller
     // MODULAR FUNCTIONS
     // =========================================================================
 
+    // =========================================================================
+    // MODULAR FUNCTIONS
+    // =========================================================================
+
     private function processOrderAcceptance($order, $user, $adminId)
     {
         $this->reduceProductStock($order);
 
-        // --- NEW LOGIC: CHECK FOR PACKAGE PRODUCT ---
-        // User ko 'Active' sirf tab mark karein agar usne Package Product kharida ho
-        $isPackageProductPurchased = false;
-
+        // --- CHECK FOR PACKAGE PRODUCT (CAPPING SETTINGS) ---
         foreach ($order->items as $item) {
             $product = ProductPackage::find($item->product_id);
 
-            // Agar product package hai (is_package_product == 1)
+            // Agar product package hai, to Capping Limit aur Enable true kar do
             if ($product && $product->is_package_product == 1) {
                 $user->capping_limit = $product->capping;
                 $user->is_capping_enabled = 1;
-                $isPackageProductPurchased = true;
             }
-        }
-
-        // Agar package kharida hai, to hi status ACTIVE hoga
-        if ($isPackageProductPurchased) {
-            $user->status = 'active';
         }
 
         // --- INCOME DISTRIBUTION LOGIC ---
@@ -176,21 +171,22 @@ class AdminOrderController extends Controller
         if (!$settings) throw new \Exception("Income Settings not configured.");
 
         if ($totalPV > 0) {
-            
-            // Logic: Agar user pehli baar pay kar rha hai (is_paid == 0) -> Direct/Bonus Income
-            // Agar pehle se paid hai (is_paid == 1) -> Repurchase Income
-            
+
+            // Logic: Check if it's the first purchase
             if ($user->is_paid == 0) {
+                // First Time Purchase (Direct/Bonus Income)
                 $this->handleFirstPurchase($user, $order, $totalPV, $settings, $adminId);
-                
-                // Income batne ke baad user ko Paid mark karein
+
+                // Mark user as Paid AND change Status to ACTIVE
                 $user->is_paid = 1;
+                $user->status = 'active'; // <--- YAHAN STATUS ACTIVE KIYA GAYA HAI
                 $user->user_doa = now(); // Date of Activation/Payment
             } else {
+                // Already Paid User (Repurchase Income)
                 $this->handleUserRepurchase($user, $order, $totalPV, $settings, $adminId);
             }
 
-            // User ka status aur is_paid update save karein
+            // User ka status, is_paid aur capping update save karein
             $user->save();
 
             $this->processUplineGrowth($user, $totalPV, $settings);
@@ -281,7 +277,7 @@ class AdminOrderController extends Controller
 
         // 2. Update Upline's Total Business (Team Business)
         $currentUplineUlid = $startUser->sponsor_id;
-        
+
         $milestones = PercentageReward::orderBy('achievement', 'asc')->get();
 
         while ($currentUplineUlid) {

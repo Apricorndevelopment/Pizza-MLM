@@ -37,7 +37,9 @@ class VendorOrderController extends Controller
         $vendor = \App\Models\Vendor::where('user_id', $user->id)->first();
 
         if (!$vendor) {
-            if ($request->ajax()) { return response()->json(['data' => []]); }
+            if ($request->ajax()) {
+                return response()->json(['data' => []]);
+            }
             return view('vendor.orders.index', ['orders' => collect([])]);
         }
 
@@ -189,18 +191,40 @@ class VendorOrderController extends Controller
 
     private function payVendorForOrder($order, $vendorId)
     {
-        $vendorTotalSales = $order->items()
-            ->where('vendor_id', $vendorId)
-            ->sum(DB::raw('price * quantity'));
+        $vendorEarnings = 0;
+        $vendorTotalSales = 0;
 
-        $vendorEarnings = $vendorTotalSales * 0.70; // 70% to Vendor
+        // लूप चलाकर हर आइटम का अलग-अलग कमीशन निकालेंगे
+        foreach ($order->items as $item) {
+            // सिर्फ इसी वेंडर के आइटम्स को चेक करेंगे
+            if ($item->vendor_id == $vendorId) {
+
+                // प्रोडक्ट टेबल से प्रोडक्ट को निकालें ताकि percentage मिल सके
+                $product = Product::find($item->product_id);
+
+                // अगर डेटाबेस में percentage नल (null) है, तो डिफ़ॉल्ट 30% एडमिन का मानेंगे
+                $adminPercentage = ($product && $product->percentage !== null) ? $product->percentage : 30;
+
+                // वेंडर का हिस्सा = 100 - एडमिन का हिस्सा
+                $vendorPercentage = 100 - $adminPercentage;
+
+                // इस आइटम की टोटल सेल (Price x Quantity)
+                $itemTotal = $item->price * $item->quantity;
+                $vendorTotalSales += $itemTotal;
+
+                // वेंडर की कमाई में इसका हिस्सा जोड़ देंगे
+                $vendorEarnings += $itemTotal * ($vendorPercentage / 100);
+            }
+        }
 
         if ($vendorEarnings > 0) {
+            // वेंडर का यूजर अकाउंट ढूंढें
             $vendorUser = User::whereHas('vendor', function ($q) use ($vendorId) {
                 $q->where('id', $vendorId);
             })->first();
 
             if ($vendorUser) {
+                // वेंडर के वॉलेट में पैसे जोड़ें
                 $vendorUser->wallet1_balance += $vendorEarnings;
                 $vendorUser->save();
 
@@ -208,7 +232,7 @@ class VendorOrderController extends Controller
                     'user_id'   => $vendorUser->id,
                     'user_ulid' => $vendorUser->ulid,
                     'wallet1'   => $vendorEarnings,
-                    'notes'     => "Payment received for Order #{$order->order_id} (70% of ₹{$vendorTotalSales})",
+                    'notes'     => "Payment received for Order #{$order->order_id}",
                     'balance'   => $vendorUser->wallet1_balance,
                 ]);
             }
@@ -227,20 +251,21 @@ class VendorOrderController extends Controller
         }
 
         if ($totalPV > 0) {
-            
-            // Logic: Is Paid Check (Status Active nahi hoga vendor order se)
+
+            // Logic: Check if it's the first purchase
             if ($user->is_paid == 0) {
-                // First Time Purchase (Direct/Bonus Income)
+                // First Time Purchase (Direct/Bonus Income will be distributed)
                 $this->handleFirstPurchase($user, $order, $totalPV, $settings, $vendorId);
-                
-                // Mark as Paid but NOT Active
+
+                // Mark user as Paid AND change Status to ACTIVE
                 $user->is_paid = 1;
+                $user->status = 'active';  // <--- YAHAN STATUS ACTIVE KIYA GAYA HAI
                 $user->user_doa = now();
             } else {
                 // Already Paid User (Repurchase Income)
                 $this->handleUserRepurchase($user, $order, $totalPV, $settings, $vendorId);
             }
-            
+
             $user->save();
 
             $this->processUplineGrowth($user, $totalPV, $settings);
@@ -310,7 +335,6 @@ class VendorOrderController extends Controller
         $this->distributeDirectIncome($user, $order, $totalPV, $settings, $vendorId);
         $this->distributeBonusIncome($user, $order, $totalPV, $settings, $vendorId);
         $this->distributeLevelIncome($user, $order, $totalPV, $settings, 'level_incomes', $vendorId);
-        // Note: No $user->status = 'active' here as requested
     }
 
     private function handleUserRepurchase($user, $order, $totalPV, $settings, $vendorId)
@@ -321,7 +345,7 @@ class VendorOrderController extends Controller
 
     private function processUplineGrowth($startUser, $pv, $settings)
     {
-         // 1. Update the Current User's Total Business (Self Business)
+        // 1. Update the Current User's Total Business (Self Business)
         $startUser->total_business += $pv;
         $startUser->save();
 
@@ -331,7 +355,7 @@ class VendorOrderController extends Controller
 
         // 2. Update Upline's Total Business (Team Business)
         $currentUplineUlid = $startUser->sponsor_id;
-        
+
         $milestones = PercentageReward::orderBy('achievement', 'asc')->get();
 
         while ($currentUplineUlid) {

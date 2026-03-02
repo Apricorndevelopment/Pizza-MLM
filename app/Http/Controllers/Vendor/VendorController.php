@@ -75,21 +75,36 @@ class VendorController extends Controller
     // 3. Vendor Dashboard View
     public function dashboard()
     {
-        $vendorId = Auth::id();
+        $userId = Auth::id();
 
-        // 1. Fetch Shop Status
-        $vendor = Vendor::where('user_id', $vendorId)->first();
-        $isShopOpen = $vendor ? $vendor->isShopOpen : false;
+        // 1. Fetch Vendor Profile and Correct Vendor ID
+        $vendor = \App\Models\Vendor::where('user_id', $userId)->first();
+
+        // अगर किसी कारण से वेंडर प्रोफाइल नहीं बनी है, तो डैशबोर्ड क्रैश न हो इसलिए डिफ़ॉल्ट 0 भेजेंगे
+        if (!$vendor) {
+            return view('vendors.dashboard', [
+                'isShopOpen' => false,
+                'todaySales' => 0,
+                'yesterdaySales' => 0,
+                'monthlySales' => 0,
+                'totalSales' => 0,
+                'placedOrdersCount' => 0,
+                'activeProducts' => 0,
+                'lowStockProducts' => collect([]),
+                'recentSales' => collect([])
+            ]);
+        }
+
+        $vendorProfileId = $vendor->id; // <-- असली Vendor ID यहाँ से मिलेगी
+        $isShopOpen = $vendor->isShopOpen;
 
         // --- SALES STATISTICS LOGIC ---
 
-        // Base Query: Joins Orders, OrderItems, and Products to filter by this vendor
-        // We use this base query to avoid repeating code
+        // Base Query: अब हम सीधा order_items.vendor_id का इस्तेमाल कर रहे हैं
         $salesBaseQuery = DB::table('order_items')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->where('products.vendor_user_id', $vendorId)
-            ->where('orders.status', '!=', 'rejected'); // Exclude cancelled orders
+            ->where('order_items.vendor_id', $vendorProfileId) // FIXED: Using Vendor Table ID
+            ->whereIn('orders.status', ['delivered', 'accepted']); // Revenue के लिए सिर्फ accepted/delivered लेना बेहतर है
 
         // A. Today's Sales
         $todaySales = (clone $salesBaseQuery)
@@ -113,20 +128,20 @@ class VendorController extends Controller
         // --- ORDER COUNTS ---
 
         // E. Currently Placed/Pending Orders
-        $placedOrdersCount = DB::table('orders')
-            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->where('orders.vendor_id', $vendorId)
+        $placedOrdersCount = DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('order_items.vendor_id', $vendorProfileId) // FIXED
             ->where('orders.status', 'placed')
-            ->distinct('orders.id')->count();
+            ->distinct('orders.id')
+            ->count('orders.id');
 
-        // F. Active Products Count
-        $activeProducts = Product::where('vendor_user_id', $vendorId)
+        // F. Active Products Count (यह User ID से ही लिंक रहता है, इसलिए इसे नहीं छेड़ा)
+        $activeProducts = \App\Models\Product::where('vendor_user_id', $userId)
             ->where('status', 'approved')
             ->count();
 
         // G. Low Stock Products
-        $lowStockProducts = Product::where('vendor_user_id', $vendorId)
+        $lowStockProducts = \App\Models\Product::where('vendor_user_id', $userId)
             ->where('manage_stock', 1)
             ->where('stock_quantity', '<', 10)
             ->orderBy('stock_quantity', 'asc')
@@ -135,6 +150,7 @@ class VendorController extends Controller
 
         // H. Recent Sales Table
         $recentSales = (clone $salesBaseQuery)
+            ->join('products', 'order_items.product_id', '=', 'products.id')
             ->join('users', 'orders.user_id', '=', 'users.id')
             ->select(
                 'users.name as user_name',
@@ -204,7 +220,7 @@ class VendorController extends Controller
         $request->validate([
             'company_name'   => 'required|string|max:255',
             'gst'            => 'nullable|string|max:20',
-            'company_address' => 'required|string|max:500', 
+            'company_address' => 'required|string|max:500',
             'company_city'   => 'required|string|max:100',
             'company_state'  => 'required|string|max:100',
             'zip_code'       => 'required|string|max:10',

@@ -192,10 +192,10 @@
                 </div>
 
                 <h3 class="text-xl font-bold text-gray-800 mb-2">
-                    Welcome to , {{ $user->name }}! 🎉
+                    Welcome to SmartSave24, {{ $user->name }}! 🎉
                 </h3>
                 <p class="text-muted mb-4">
-                    You're now part of India's fastest growing food network
+                    You're now part of India's fastest growing direct selling network
                 </p>
             </div>
 

@@ -54,9 +54,9 @@
                     <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
                         <tr>
                             <th class="px-2 py-3 border-b border-slate-100">Vendor Details</th>
-                            <th class="px-2 py-3 border-b border-slate-100">Orders<br><span class="text-[9px] text-slate-400">(Delivered)</span></th>
+                            <th class="px-2 py-3 border-b border-slate-100">Orders</th>
                             <th class="px-2 py-3 border-b border-slate-100">Total Revenue</th>
-                            <th class="px-2 py-3 border-b border-slate-100">Vendor Share<br><span class="text-[9px] text-slate-400">(70%)</span></th>
+                            <th class="px-2 py-3 border-b border-slate-100">Vendor Share</th>
                             <th class="px-2 py-3 border-b border-slate-100">Network Income<br><span class="text-[9px] text-slate-400">(Distributed)</span></th>
                             <th class="px-2 py-3 border-b border-slate-100 text-emerald-600">Net Admin Profit</th>
                         </tr>

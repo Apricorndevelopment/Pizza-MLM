@@ -155,29 +155,33 @@ class AdminController extends Controller
 
         return view('admin.vendors.index', compact('vendors'));
     }
+    
     public function revenueReport(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // 1. Get Admin Orders that are Delivered OR Accepted
-        $query = Order::whereIn('status', ['delivered', 'accepted']) // CHANGED HERE
+        // 1. Get Admin Orders (Accepted/Delivered)
+        $query = Order::whereIn('status', ['delivered', 'accepted'])
             ->whereHas('items', function ($q) {
                 $q->where('product_type', 'admin');
             });
 
-        if ($startDate) {
-            $query->whereDate('created_at', '>=', $startDate);
-        }
-        if ($endDate) {
-            $query->whereDate('created_at', '<=', $endDate);
-        }
+        if ($startDate) $query->whereDate('created_at', '>=', $startDate);
+        if ($endDate) $query->whereDate('created_at', '<=', $endDate);
 
-        // Get matching Order IDs and Total Revenue
         $adminOrderIds = $query->pluck('id');
+
+        // 2. Financial Calculations
         $totalRevenue = Order::whereIn('id', $adminOrderIds)->sum('total_amount');
 
-        // 2. Calculate Incomes Distributed SPECIFICALLY for these Orders
+        // Calculate Total Profit margin stored in order_items
+        $totalProfitMargin = DB::table('order_items')->whereIn('order_id', $adminOrderIds)->sum('profit');
+
+        // Actual Product Cost = Revenue - Profit Margin
+        $totalActualProductCost = $totalRevenue - $totalProfitMargin;
+
+        // 3. Distributions
         $directIncome = DB::table('direct_income')->whereIn('order_id', $adminOrderIds)->sum('income_amount');
         $bonusIncome = DB::table('bonus_income')->whereIn('order_id', $adminOrderIds)->sum('income_amount');
         $cashbackIncome = DB::table('cashback_income')->whereIn('order_id', $adminOrderIds)->sum('income_amount');
@@ -186,19 +190,15 @@ class AdminController extends Controller
 
         $totalDistributedToOrders = $directIncome + $bonusIncome + $cashbackIncome + $levelIncome + $repurchaseIncome;
 
-        // 3. Calculate Rewards Distributed in this Date Range 
-        // (Rewards are based on total business, not specific orders, so we filter them by date directly)
+        // Rewards (Filtered by date)
         $rewardsQuery = DB::table('rewards_incomes');
-        if ($startDate) {
-            $rewardsQuery->whereDate('created_at', '>=', $startDate);
-        }
-        if ($endDate) {
-            $rewardsQuery->whereDate('created_at', '<=', $endDate);
-        }
+        if ($startDate) $rewardsQuery->whereDate('created_at', '>=', $startDate);
+        if ($endDate) $rewardsQuery->whereDate('created_at', '<=', $endDate);
         $totalRewards = $rewardsQuery->sum('reward_amount');
 
-        // 4. Calculate Final Profit
-        $totalExpenses = $totalDistributedToOrders + $totalRewards;
+        // 4. Accurate Net Profit
+        // Profit = Total Revenue - (Cost + Distributed + Rewards)
+        $totalExpenses = $totalActualProductCost + $totalDistributedToOrders + $totalRewards;
         $netProfit = $totalRevenue - $totalExpenses;
 
         $totalOrdersCount = $adminOrderIds->count();
@@ -207,6 +207,7 @@ class AdminController extends Controller
             'startDate',
             'endDate',
             'totalRevenue',
+            'totalActualProductCost',
             'directIncome',
             'bonusIncome',
             'cashbackIncome',

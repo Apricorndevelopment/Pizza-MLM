@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartSave24 | Healthy Food Network</title>
+    <title>SmartSave24 | India's No.1 Direct Selling Network</title>
     <link rel="shortcut icon" href="{{ asset('images/smartsave.png') }}" type="image/x-icon">
 
     <script src="https://cdn.tailwindcss.com"></script>

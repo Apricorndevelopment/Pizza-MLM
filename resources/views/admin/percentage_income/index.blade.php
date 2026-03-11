@@ -2,7 +2,7 @@
 @section('title', 'Percentage Income Settings')
 
 @section('container')
-    <div class="container mx-auto px-2 sm:px-4 py-3">
+    <div class="container mx-auto py-2">
 
         {{-- Page Header --}}
         <div class="flex justify-between items-center mb-6">
@@ -55,31 +55,32 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-100">
-                            <th class="p-3 font-semibold">ID</th>
-                            <th class="p-3 font-semibold">Direct Income</th>
-                            <th class="p-3 font-semibold">Bonus Income</th>
-                            <th class="p-3 font-semibold">Vendor Income</th>
-                            <th class="p-3 font-semibold">Cashback Income</th>
-                            <th class="p-3 font-semibold">Personal Wallet</th>
-                            <th class="p-3 font-semibold">Second Wallet</th>
-                            <th class="p-3 font-semibold text-right">Actions</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Direct Income</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Bonus Income</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Vendor Income</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Cashback Income</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Personal Wallet</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Second Wallet</th>
+                            <th class="px-1.5 py-2.5 font-semibold">TDS Charge</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Admin Charge</th>
+                            <th class="px-1.5 py-2.5 font-semibold text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($incomes as $item)
                             <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="p-3 text-slate-500 font-mono text-sm">#{{ $item->id }}</td>
-
                                 {{-- Data Columns --}}
-                                <td class="p-3 text-slate-700 font-bold">{{ $item->direct_income }}%</td>
-                                <td class="p-3 text-slate-700 font-bold">{{ $item->bonus_income }}%</td>
-                                <td class="p-3 text-slate-700 font-bold">{{ $item->vendor_income }}%</td>
-                                <td class="p-3 text-slate-700 font-bold">{{ $item->cashback_income }}%</td>
-                                <td class="p-3 text-slate-700 font-bold">{{ $item->personal_wallet }}%</td>
-                                <td class="p-3 text-slate-700 font-bold">{{ $item->second_wallet }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->direct_income }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->bonus_income }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->vendor_income }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->cashback_income }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->personal_wallet }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->second_wallet }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->tds_charge }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->admin_charge }}%</td>
 
                                 {{-- Actions (Only Edit) --}}
-                                <td class="p-3 text-right">
+                                <td class="px-1.5 py-2.5 text-right">
                                     <button onclick='openEditModal(@json($item))'
                                         class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md text-sm font-medium transition-colors">
                                         <i class="fas fa-edit mr-1.5"></i> Edit
@@ -188,6 +189,25 @@
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
                         </div>
+                        <div class="col-span-2 text-lg font-bold text-gray-700 mt-1">
+                            Withdraw Charge
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Admin Charge</label>
+                            <div class="relative">
+                                <input type="number" step="0.1" name="admin_charge" id="admin_charge" required
+                                    class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                                <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">TDS Charge</label>
+                            <div class="relative">
+                                <input type="number" step="0.1" name="tds_charge" id="tds_charge" required
+                                    class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                                <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-8 flex justify-end gap-3">
@@ -221,6 +241,8 @@
             document.getElementById('cashback_income').value = data.cashback_income;
             document.getElementById('personal_wallet').value = data.personal_wallet;
             document.getElementById('second_wallet').value = data.second_wallet;
+             document.getElementById('admin_charge').value = data.admin_charge;
+             document.getElementById('tds_charge').value = data.tds_charge;
 
             // Show Modal
             modal.classList.remove('hidden');

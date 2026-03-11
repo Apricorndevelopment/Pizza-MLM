@@ -30,6 +30,8 @@ class PercentageIncomeController extends Controller
             'cashback_income'    => 'required|numeric|min:0',
             'personal_wallet' => 'required|numeric|min:0',
             'second_wallet'   => 'required|numeric|min:0',
+            'tds_charge'  => 'required|numeric|min:0',
+            'admin_charge'  => 'required|numeric|min:0',
         ]);
 
         $income = PercentageIncome::findOrFail($id);
@@ -41,6 +43,8 @@ class PercentageIncomeController extends Controller
             'cashback_income'    => $request->cashback_income,
             'personal_wallet' => $request->personal_wallet,
             'second_wallet'   => $request->second_wallet,
+            'tds_charge'  => $request->tds_charge,
+            'admin_charge'  => $request->admin_charge,
         ]);
 
         return redirect()->back()->with('success', 'Configuration updated successfully!');

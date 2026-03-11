@@ -21,6 +21,7 @@ use App\Models\ProductPackageDetails;
 use App\Models\ProductPackagePurchase;
 use App\Models\PackageMonthlyDistribution;
 use App\Models\PackageTransaction;
+use App\Models\PercentageIncome;
 use App\Models\RepurchaseIncome;
 use App\Models\RewardsIncome;
 use App\Models\Wallet1Transaction;
@@ -961,6 +962,7 @@ class UserController extends Controller
     {
         $wallet1 = Auth::user()->wallet1_balance;
         $wallet2 = Auth::user()->wallet2_balance;
+        $percentageIncome = PercentageIncome::first();
         $user = Auth::user();
 
         // Withdrawals with pagination
@@ -995,14 +997,10 @@ class UserController extends Controller
             ->take(10)
             ->get();
 
-        $breadcrumbs = [
-            ['title' => 'Wallet', 'url' => route('user.viewwallet')],
-            ['title' => 'Manage Wallet', 'url' => route('user.viewwallet')]
-        ];
-
+    
         $withdrawalStatus = Admin::first()->is_withdrawal_open;
 
-        return view('user.viewwallet', compact('wallet1', 'wallet2', 'wallet1Transactions', 'wallet2Transactions', 'withdrawals', 'breadcrumbs', 'withdrawalStatus'));
+        return view('user.viewwallet', compact('wallet1', 'wallet2', 'wallet1Transactions', 'wallet2Transactions', 'withdrawals', 'percentageIncome', 'withdrawalStatus'));
     }
 
     // public function level1Commissions(Request $request)

@@ -25,7 +25,7 @@ class ShopController extends Controller
         $query = $request->input('search');
         $user = Auth::user();
 
-        // 1. Check if current user is a vendor to exclude their ID
+        // 1. Get current vendor ID to exclude own products
         $currentVendorId = null;
         if ($user->is_vendor == 1) {
             $vendor = Vendor::where('user_id', $user->id)->first();
@@ -34,34 +34,38 @@ class ShopController extends Controller
 
         $admin = Admin::first();
 
-        // 1. Admin Products Query
+        // 2. Admin Products Query
         $adminProductsQuery = ProductPackage::query();
         if ($query) {
             $adminProductsQuery->where('product_name', 'LIKE', "%{$query}%");
         }
-        // ADDED: ->withQueryString() to keep search parameter on next page
         $adminProducts = $adminProductsQuery->paginate(8, ['*'], 'admin_page')->withQueryString();
 
-        // 2. Vendor Products Query
+        // 3. Vendor Products Query (Enhanced with Company Name Search)
         $vendorProductsQuery = Product::with('vendor')
             ->where('status', 'approved')
             ->whereHas('vendor', function ($q) {
                 $q->where('isShopOpen', 1);
             });
 
-        // EXCLUDE CURRENT USER'S PRODUCTS
         if ($currentVendorId) {
             $vendorProductsQuery->where('vendor_id', '!=', $currentVendorId);
         }
 
         if ($query) {
-            $vendorProductsQuery->where('product_name', 'LIKE', "%{$query}%");
+            $vendorProductsQuery->where(function ($q) use ($query) {
+                // Match product name
+                $q->where('product_name', 'LIKE', "%{$query}%")
+                    // OR Match vendor company name
+                    ->orWhereHas('vendor', function ($v) use ($query) {
+                        $v->where('company_name', 'LIKE', "%{$query}%");
+                    });
+            });
         }
 
-        // ADDED: ->withQueryString()
-        $vendorProducts = $vendorProductsQuery->paginate(8, ['*'], 'vendor_page')->withQueryString();
+        $vendorProducts = $vendorProductsQuery->latest()->paginate(12, ['*'], 'vendor_page')->withQueryString();
 
-        // User Coupon Count
+        // 4. User Coupon Count
         $userCoupon = DB::table('user_coupons')
             ->where('user_id', Auth::id())
             ->first();
@@ -69,17 +73,10 @@ class ShopController extends Controller
         $userCouponCount = $userCoupon ? $userCoupon->coupon_quantity : 0;
 
         if ($request->ajax()) {
-            return view(
-                'user.shop.partials.products',
-                // FIXED: Added 'admin' here so the view knows the shop is open!
-                compact('adminProducts', 'vendorProducts', 'admin')
-            )->render();
+            return view('user.shop.partials.products', compact('adminProducts', 'vendorProducts', 'admin'))->render();
         }
 
-        return view(
-            'user.shop.index',
-            compact('adminProducts', 'admin', 'vendorProducts', 'query', 'userCouponCount')
-        );
+        return view('user.shop.index', compact('adminProducts', 'admin', 'vendorProducts', 'query', 'userCouponCount'));
     }
 
 

@@ -93,33 +93,38 @@
                                     <thead>
                                         <tr
                                             class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-slate-200">
-                                            <th class="px-6 py-4">Date</th>
-                                            <th class="px-6 py-4">Amount</th>
-                                            <th class="px-6 py-4">Net Payout</th>
-                                            <th class="px-6 py-4">Method</th>
-                                            <th class="px-6 py-4 text-center">Status</th>
-                                            <th class="px-6 py-4"></th>
+                                            <th class="px-3.5 py-3">Date</th>
+                                            <th class="px-3.5 py-3">Amount</th>
+                                            <th class="px-3.5 py-3">Net Payout</th>
+                                            <th class="px-3.5 py-3">Charge</th>
+                                            <th class="px-3.5 py-3">Method</th>
+                                            <th class="px-3.5 py-3 text-center">Status</th>
+                                            <th class="px-3.5 py-3"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
                                         @foreach ($withdrawals as $withdrawal)
                                             <tr class="hover:bg-slate-50 transition-colors group">
-                                                <td class="px-6 py-4 text-sm font-medium text-slate-600">
+                                                <td class="px-3.5 py-3 text-sm font-medium text-slate-600">
                                                     {{ $withdrawal->created_at->format('d M Y') }}
                                                 </td>
-                                                <td class="px-6 py-4 text-sm font-bold text-slate-800">
+                                                <td class="px-3.5 py-3 text-sm font-bold text-slate-800">
                                                     ₹{{ number_format($withdrawal->total_amount, 2) }}
                                                 </td>
-                                                <td class="px-6 py-4 text-sm font-bold text-emerald-600">
+                                                <td class="px-3.5 py-3 text-sm font-bold text-emerald-600">
                                                     ₹{{ number_format($withdrawal->credited_amount, 2) }}
                                                 </td>
-                                                <td class="px-6 py-4">
+                                                <td class="px-3.5 py-3 text-sm font-semibold flex flex-col">
+                                                   <span> Admin Charge - ₹{{ number_format($withdrawal->admin_charge, 2) }} </span>
+                                                   <span> TDS Charge - ₹{{ number_format($withdrawal->tds_charge, 2) }} </span>
+                                                </td>
+                                                <td class="px-3.5 py-3">
                                                     <span
                                                         class="px-2 py-1 bg-slate-100 border border-slate-200 rounded text-xs font-bold text-slate-600 uppercase">
                                                         {{ ucfirst($withdrawal->payment_method) }}
                                                     </span>
                                                 </td>
-                                                <td class="px-6 py-4 text-center">
+                                                <td class="px-3.5 py-3 text-center">
                                                     @if ($withdrawal->status === 'pending')
                                                         <span
                                                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-200">
@@ -137,7 +142,7 @@
                                                         </span>
                                                     @endif
                                                 </td>
-                                                <td class="px-6 py-4 text-right">
+                                                <td class="px-3.5 py-3 text-right">
                                                     <button onclick="toggleDetails('details-{{ $withdrawal->id }}')"
                                                         class="text-slate-400 hover:text-emerald-600 transition">
                                                         <i class="fas fa-chevron-down"></i>
@@ -146,7 +151,7 @@
                                             </tr>
                                             <tr id="details-{{ $withdrawal->id }}"
                                                 class="hidden bg-slate-50 border-b border-slate-200">
-                                                <td colspan="6" class="px-6 py-4">
+                                                <td colspan="6" class="px-3.5 py-3">
                                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                                         <div class="col-span-3">
                                                             <h6
@@ -180,7 +185,7 @@
                                 </table>
                             </div>
                             <div class="px-6 py-4 border-t border-slate-100">
-                                {{ $withdrawals->withQueryString()->onEachSide(1)->links('pagination::tailwind') }}
+                                {{ $withdrawals->withQueryString()->onEachSide(1)->links('pagination::bootstrap-5') }}
                             </div>
                         @endif
                     </div>
@@ -233,19 +238,19 @@
                                     <thead
                                         class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-slate-200">
                                         <tr>
-                                            <th class="px-6 py-4">Date</th>
-                                            <th class="px-6 py-4">Description</th>
-                                            <th class="px-6 py-4 text-right">Amount</th>
+                                            <th class="px-3.5 py-3">Date</th>
+                                            <th class="px-3.5 py-3">Description</th>
+                                            <th class="px-3.5 py-3 text-right">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
                                         @foreach ($wallet1Transactions as $transaction)
                                             <tr class="hover:bg-slate-50 transition">
-                                                <td class="px-6 py-4 text-sm text-slate-500">
+                                                <td class="px-3.5 py-3 text-sm text-slate-500">
                                                     {{ $transaction->created_at->format('d M Y') }}</td>
-                                                <td class="px-6 py-4 text-sm font-medium text-slate-700">
+                                                <td class="px-3.5 py-3 text-sm font-medium text-slate-700">
                                                     {{ $transaction->notes ?? 'Transaction' }}</td>
-                                                <td class="px-6 py-4 text-right">
+                                                <td class="px-3.5 py-3 text-right">
                                                     <span
                                                         class="text-sm font-bold {{ $transaction->wallet1 >= 0 ? 'text-emerald-600' : 'text-red-500' }}">
                                                         {{ $transaction->wallet1 >= 0 ? '+' : '' }}{{ $transaction->wallet1 }}
@@ -304,19 +309,19 @@
                                 <thead
                                     class="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b border-slate-200">
                                     <tr>
-                                        <th class="px-6 py-4">Date</th>
-                                        <th class="px-6 py-4">Description</th>
-                                        <th class="px-6 py-4 text-right">Amount</th>
+                                        <th class="px-3.5 py-3">Date</th>
+                                        <th class="px-3.5 py-3">Description</th>
+                                        <th class="px-3.5 py-3 text-right">Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100">
                                     @foreach ($wallet2Transactions as $transaction)
                                         <tr class="hover:bg-slate-50 transition">
-                                            <td class="px-6 py-4 text-sm text-slate-500">
+                                            <td class="px-3.5 py-3 text-sm text-slate-500">
                                                 {{ $transaction->created_at->format('d M Y') }}</td>
-                                            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+                                            <td class="px-3.5 py-3 text-sm font-medium text-slate-700">
                                                 {{ $transaction->notes ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 text-right">
+                                            <td class="px-3.5 py-3 text-right">
                                                 <span
                                                     class="text-sm font-bold {{ $transaction->wallet2 >= 0 ? 'text-emerald-600' : 'text-red-500' }}">
                                                     {{ $transaction->wallet2 >= 0 ? '+' : '' }}{{ $transaction->wallet2 }}
@@ -414,9 +419,9 @@
                                                 class="fas fa-info-circle w-5 text-emerald-500"></i> Min. Withdrawal: ₹500
                                         </li>
                                         <li class="flex items-center"><i
-                                                class="fas fa-percentage w-5 text-emerald-500"></i> 5% Admin Charge</li>
+                                                class="fas fa-percentage w-5 text-emerald-500"></i> {{ $percentageIncome->admin_charge }} % Admin Charge</li>
                                         <li class="flex items-center"><i
-                                                class="fas fa-file-invoice-dollar w-5 text-emerald-500"></i> 5% TDS
+                                                class="fas fa-file-invoice-dollar w-5 text-emerald-500"></i> {{ $percentageIncome->tds_charge }}% TDS
                                             Deduction</li>
                                     </ul>
                                 </div>
@@ -517,7 +522,7 @@
                         // Tailwind error classes
                         div.className = 'mt-2 text-sm text-red-600 font-bold flex items-center';
                         div.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (amount < 500 ?
-                            'Minimum withdrawal is 500 wallet1' :
+                            'Minimum withdrawal amount is 500' :
                             'Amount exceeds your available balance');
 
                         targetContainer.appendChild(div);
@@ -525,7 +530,7 @@
                         // Update text if element exists
                         errorElement.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (
                             amount < 500 ?
-                            'Minimum withdrawal is 500 wallet1' :
+                            'Minimum withdrawal amount is 500' :
                             'Amount exceeds your available balance');
                     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Wallet2Transaction;
 use App\Models\MoneyWithdrawl;
+use App\Models\PercentageIncome;
 use App\Models\User;
 use App\Models\Wallet1Transaction;
 use Illuminate\Http\Request;
@@ -190,13 +191,15 @@ class WalletController extends Controller
             'payment_method' => 'required|in:bank,upi'
         ]);
 
+        $percentageIncome = PercentageIncome::first();
+
         // Calculate charges (5% each)
-        $adminCharge = $validated['amount'] * 0.05;
-        $tdsCharge = $validated['amount'] * 0.05;
+        $adminCharge = $validated['amount'] * ($percentageIncome->admin_charge / 100);
+        $tdsCharge = $validated['amount'] * ($percentageIncome->tds_charge / 100);
         $creditedAmount = $validated['amount'] - $adminCharge - $tdsCharge;
 
         // Create withdrawal request
-        $withdrawal = MoneyWithdrawl::create([
+        MoneyWithdrawl::create([
             'user_id' => $user->id,
             'user_ulid' => $user->ulid,
             'total_amount' => $validated['amount'],

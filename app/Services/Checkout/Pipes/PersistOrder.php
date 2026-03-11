@@ -17,11 +17,11 @@ class PersistOrder
         // ====================================================
         // 1. RECORD TRANSACTIONS (Global Deduction)
         // ====================================================
-        
+
         // Deduct Wallet 1
         if ($context->wallet1Deduction > 0) {
             $context->user->decrement('wallet1_balance', $context->wallet1Deduction);
-            
+
             Wallet1Transaction::create([
                 'user_id' => $context->user->id,
                 'user_ulid' => $context->user->ulid,
@@ -54,7 +54,7 @@ class PersistOrder
         // ====================================================
         // 2. PREPARE ITEMS (Identify Vendors & Grouping)
         // ====================================================
-        
+
         $cartItems = $context->cartItems;
         $itemsWithVendor = [];
         $totalCartValue = 0;
@@ -73,7 +73,7 @@ class PersistOrder
             $item['vendor_id'] = $vendorId;
             // Use 'quantity' as standardized in CalculateCartTotal
             $item['line_total'] = $item['price'] * $item['quantity'];
-            
+
             $itemsWithVendor[] = $item;
             $totalCartValue += $item['line_total'];
         }
@@ -87,7 +87,7 @@ class PersistOrder
         // ====================================================
 
         foreach ($groupedItems as $vendorId => $items) {
-            
+
             // FIX: PHP array keys cast NULL to "", so we must convert it back to NULL
             // This prevents "Incorrect integer value: '' for column 'vendor_id'"
             if ($vendorId === "") {
@@ -100,7 +100,7 @@ class PersistOrder
 
             $orderWallet1 = round($context->wallet1Deduction * $ratio, 2);
             $orderWallet2 = round($context->wallet2Deduction * $ratio, 2);
-            
+
             // B. Generate Unique ID
             $orderStringId = null;
             do {
@@ -116,20 +116,24 @@ class PersistOrder
                 'user_id' => $context->user->id,
                 'order_id' => $orderStringId,
                 'vendor_id' => $vendorId, // Null for Admin, ID for Vendors
-                
+
                 'total_amount' => $orderSubtotal,
                 'wallet1_deducted' => $orderWallet1,
                 'wallet2_deducted' => $orderWallet2,
                 'coupons_used' => 0, // Proportional logic excluded for simplicity
-                
+
                 'status' => 'placed',
                 'delivery_otp' => $deliveryOtp,
-                
+
                 // Contact Details from Request
                 'phone_number' => $context->requestData['phone_number'] ?? null,
                 'address'      => $context->requestData['address'] ?? null,
                 'location'     => $context->requestData['location'] ?? null,
-                
+                // orders table mein insert karte waqt
+                'total_profit' => $items->sum(function ($i) {
+                    return $i['profit_per_unit'] * $i['quantity'];
+                }),
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -142,15 +146,19 @@ class PersistOrder
                     'order_id' => $orderIdDb,
                     'product_id' => $item['product_id'],
                     'product_name' => $item['product_name'],
-                    
+
                     // Added Missing Columns
-                    'product_image' => $item['product_image'] ?? null, 
-                    'vendor_id' => $vendorId, 
+                    'product_image' => $item['product_image'] ?? null,
+                    'vendor_id' => $vendorId,
                     'product_type' => $item['product_type'],
-                    
+
                     'price' => $item['price'],
                     'quantity' => $item['quantity'],
                     'subtotal' => $item['line_total'],
+
+                    // --- NEW: Storing Profit ---
+                    // Yahan item ka profit store ho raha hai taaki revenue report mein kaam aaye
+                    'profit' => $item['profit_per_unit'] * $item['quantity'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

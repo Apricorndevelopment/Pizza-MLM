@@ -61,6 +61,7 @@
                                         <i class="fas fa-id-card"></i> {{ $vendor->user->ulid ?? 'N/A' }}
                                     </span>
                                     <p class="text-slate-800">{{ $vendor->user->email }}</p>
+                                    <p class="text-slate-800">Ph. No. - {{ $vendor->user->phone }}</p>
                                 </div>
                             </div>
                         </td>

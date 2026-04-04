@@ -3,7 +3,7 @@
 @section('container')
 
     <div class="min-h-screen bg-gray-50/50 pb-8 font-sans">
-        <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div class="max-w-7xl mx-auto">
 
             {{-- Alerts Section --}}
             <div class="mb-3 space-y-3">
@@ -39,7 +39,7 @@
             <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden">
 
                 {{-- Card Header with Theme Color #EBF2FE --}}
-                <div class="bg-[#EBF2FE] px-6 py-4 border-b border-blue-100/50">
+                <div class="bg-[#EBF2FE] px-3 py-3.5 border-b border-blue-100/50">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
                         {{-- Title --}}
@@ -103,16 +103,16 @@
                         <thead>
                             <tr class="bg-slate-50/80 border-b border-slate-100">
                                 <th
-                                    class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-16">
+                                    class="px-3 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-16">
                                     #</th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Member Info
+                                <th class="px-3 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Member Info
                                 </th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Sponsor</th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Registered
+                                <th class="px-3 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Sponsor</th>
+                                <th class="px-3 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Registered
                                     On</th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                                <th class="px-3 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                                     Status</th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                                <th class="px-3 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                                     Actions</th>
                             </tr>
                         </thead>
@@ -120,12 +120,12 @@
                             @foreach ($member as $index => $user)
                                 <tr class="group hover:bg-[#EBF2FE]/30 transition-colors duration-200">
                                     {{-- Index --}}
-                                    <td class="px-6 py-4 text-sm text-slate-500 text-center font-mono">
+                                    <td class="px-3 py-3.5 text-sm text-slate-500 text-center font-mono">
                                         {{ ($member->currentPage() - 1) * $member->perPage() + $index + 1 }}
                                     </td>
 
                                     {{-- Name & ULID (Index 1 for JS) --}}
-                                    <td class="px-6 py-4">
+                                    <td class="px-3 py-3.5">
                                         <div class="flex flex-col">
                                             <span
                                                 class="text-sm font-bold text-slate-700 group-hover:text-blue-700 transition-colors">
@@ -139,12 +139,12 @@
                                     </td>
 
                                     {{-- Sponsor (Index 2 for JS) --}}
-                                    <td class="px-6 py-4 text-sm text-slate-600 font-medium">
+                                    <td class="px-3 py-3.5 text-sm text-slate-600 font-medium">
                                         {{ $user->sponsor_id ?? 'N/A' }}
                                     </td>
 
                                     {{-- Date --}}
-                                    <td class="px-6 py-4">
+                                    <td class="px-3 py-3.5">
                                         <div class="flex flex-col">
                                             <span
                                                 class="text-sm text-slate-600 font-medium">{{ $user->created_at->format('d M, Y') }}</span>
@@ -154,7 +154,7 @@
                                     </td>
 
                                     {{-- Status Badge --}}
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-3 py-3.5 text-center">
                                         @if ($user->status == 'active')
                                             <span
                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
@@ -177,7 +177,7 @@
                                     </td>
 
                                     {{-- Action Buttons --}}
-                                    <td class="px-6 py-4">
+                                    <td class="px-3 py-3.5">
                                         <div class="flex justify-center items-center gap-2">
 
                                             <a href="{{ route('admin.editmember', $user->id) }}"
@@ -213,7 +213,7 @@
 
                 {{-- Pagination Section --}}
                 @if ($member->hasPages())
-                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+                    <div class="px-3 py-3.5 bg-slate-50 border-t border-slate-100">
                         {{ $member->appends(['status' => $status, 'ulid' => request('ulid')])->links('pagination::bootstrap-5') }}
                     </div>
                 @endif

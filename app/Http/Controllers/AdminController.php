@@ -196,9 +196,17 @@ class AdminController extends Controller
         if ($endDate) $rewardsQuery->whereDate('created_at', '<=', $endDate);
         $totalRewards = $rewardsQuery->sum('reward_amount');
 
+        // ==============================================================
+        // NEW: Auto Pool Earnings (Filtered by date)
+        // ==============================================================
+        $autopoolQuery = DB::table('autopool_earnings_histories');
+        if ($startDate) $autopoolQuery->whereDate('created_at', '>=', $startDate);
+        if ($endDate) $autopoolQuery->whereDate('created_at', '<=', $endDate);
+        $autopoolIncome = $autopoolQuery->sum('reward_amount');
+
         // 4. Accurate Net Profit
-        // Profit = Total Revenue - (Cost + Distributed + Rewards)
-        $totalExpenses = $totalActualProductCost + $totalDistributedToOrders + $totalRewards;
+        // Profit = Total Revenue - (Cost + Distributed + Rewards + Auto Pool)
+        $totalExpenses = $totalActualProductCost + $totalDistributedToOrders + $totalRewards + $autopoolIncome;
         $netProfit = $totalRevenue - $totalExpenses;
 
         $totalOrdersCount = $adminOrderIds->count();
@@ -215,6 +223,7 @@ class AdminController extends Controller
             'repurchaseIncome',
             'totalDistributedToOrders',
             'totalRewards',
+            'autopoolIncome', // <--- Added here
             'totalExpenses',
             'netProfit',
             'totalOrdersCount'
@@ -282,7 +291,7 @@ class AdminController extends Controller
             // ==========================================
             // NEW: Vendor's Actual Payout (From Wallet 1)
             // ==========================================
-            $payoutQuery = DB::table('wallet1_transactions')
+            $payoutQuery = DB::table('vendor_wallet_transactions')
                 ->where('user_id', $vendor->id) // users.id
                 ->where('notes', 'LIKE', 'Payment received for Order #%');
 
@@ -293,7 +302,7 @@ class AdminController extends Controller
                 $payoutQuery->whereDate('created_at', '<=', $endDate);
             }
 
-            $vendor->vendor_payout = $payoutQuery->sum('wallet1');
+            $vendor->vendor_payout = $payoutQuery->sum('amount');
             // ==========================================
 
             // Incomes Distributed (from the 6 income tables tracking this vendor_id)

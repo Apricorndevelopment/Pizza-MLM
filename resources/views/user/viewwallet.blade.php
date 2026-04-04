@@ -3,7 +3,7 @@
 @section('container')
 
     <div class="min-h-screen bg-slate-50 pb-8 font-sans text-slate-600">
-        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
 
             @if (session('success'))
                 <div class="mb-6 rounded-xl bg-emerald-50 border border-emerald-200 p-4 flex items-center shadow-sm"
@@ -77,7 +77,7 @@
 
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         <div
-                            class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
+                            class="px-6 py-3 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
                             <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                                 <i class="fas fa-history text-slate-400"></i> Withdrawal Requests
                             </h3>
@@ -115,8 +115,8 @@
                                                     ₹{{ number_format($withdrawal->credited_amount, 2) }}
                                                 </td>
                                                 <td class="px-3.5 py-3 text-sm font-semibold flex flex-col">
-                                                   <span> Admin Charge - ₹{{ number_format($withdrawal->admin_charge, 2) }} </span>
-                                                   <span> TDS Charge - ₹{{ number_format($withdrawal->tds_charge, 2) }} </span>
+                                                   <span> Admin Charge - {{ number_format($withdrawal->admin_charge/$withdrawal->total_amount*100, 2) }}% </span>
+                                                   <span> TDS Charge - {{ number_format($withdrawal->tds_charge/$withdrawal->total_amount*100, 2) }}% </span>
                                                 </td>
                                                 <td class="px-3.5 py-3">
                                                     <span
@@ -151,7 +151,7 @@
                                             </tr>
                                             <tr id="details-{{ $withdrawal->id }}"
                                                 class="hidden bg-slate-50 border-b border-slate-200">
-                                                <td colspan="6" class="px-3.5 py-3">
+                                                <td colspan="7" class="px-3.5 py-3">
                                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                                         <div class="col-span-3">
                                                             <h6
@@ -184,14 +184,14 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="px-6 py-4 border-t border-slate-100">
+                            <div class="px-6 py-3 border-t border-slate-100">
                                 {{ $withdrawals->withQueryString()->onEachSide(1)->links('pagination::bootstrap-5') }}
                             </div>
                         @endif
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-8">
-                        <div class="px-6 py-5 border-b border-slate-100">
+                        <div class="px-6 py-3 border-b border-slate-100">
                             <h3 class="text-lg font-bold text-slate-800">Main Wallet Transactions</h3>
                         </div>
 
@@ -260,7 +260,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <div class="px-6 py-4 border-t border-slate-100">
+                                <div class="px-6 py-3 border-t border-slate-100">
                                     {{ $wallet1Transactions->withQueryString()->onEachSide(1)->links('pagination::bootstrap-5') }}
                                 </div>
                             @else
@@ -301,7 +301,7 @@
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="px-6 py-5 border-b border-slate-100">
+                        <div class="px-6 py-3 border-b border-slate-100">
                             <h3 class="text-lg font-bold text-slate-800">Second Wallet History</h3>
                         </div>
                         @if ($wallet2Transactions->count() > 0)

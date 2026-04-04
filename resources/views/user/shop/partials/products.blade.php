@@ -52,10 +52,13 @@
                                         {{ $prod->product_name }}
                                     </h3>
                                     
-                                    {{-- ACTUAL PRODUCT DESCRIPTION --}}
-                                    <p class="text-[10px] md:text-xs text-gray-500 line-clamp-6 mt-1 mb-2" title="{{ $prod->description }}">
-                                        {{ $prod->description ?? 'No description available.' }}
-                                    </p>
+                                    {{-- ACTUAL PRODUCT DESCRIPTION (MODIFIED FOR READ MORE) --}}
+                                    <div class="mt-1 mb-2">
+                                        <p id="desc-admin-{{ $prod->id }}" class="text-[10px] md:text-xs text-gray-500 line-clamp-5 transition-all duration-300 m-0" title="{{ $prod->description }}">
+                                            {{ $prod->description ?? 'No description available.' }}
+                                        </p>
+                                        <button id="btn-admin-{{ $prod->id }}" onclick="toggleDescription('admin-{{ $prod->id }}')" class="hidden text-teal-600 hover:text-teal-800 text-[10px] md:text-xs font-bold mt-1 bg-transparent border-0 p-0 cursor-pointer">Read more</button>
+                                    </div>
 
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <div class="flex items-center gap-1">
@@ -92,7 +95,7 @@
                 @endforeach
             </div>
             
-            {{-- LOAD MORE BUTTON FOR ADMIN (Fix: Used {!! !!} to prevent URL breaking) --}}
+            {{-- LOAD MORE BUTTON FOR ADMIN --}}
             @if($adminProducts->hasMorePages())
                 <div class="text-center mt-3 mb-4" id="admin-load-more-container">
                     <button onclick="loadMoreProducts('{!! $adminProducts->nextPageUrl() !!}', 'admin')" class="bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 hover:text-teal-700 font-bold py-2 px-6 rounded-full text-sm shadow-sm transition-all flex items-center justify-center gap-2 mx-auto">
@@ -164,10 +167,13 @@
                                     {{ $prod->product_name }}
                                 </h3>
 
-                                {{-- PRODUCT DESCRIPTION --}}
-                                <p class="text-[10px] md:text-xs text-gray-500 line-clamp-6 mt-1 mb-2" title="{{ $prod->description }}">
-                                    {{ $prod->description ?? 'No description available.' }}
-                                </p>
+                                {{-- PRODUCT DESCRIPTION (MODIFIED FOR READ MORE) --}}
+                                <div class="mt-1 mb-2">
+                                    <p id="desc-vendor-{{ $prod->id }}" class="text-[10px] md:text-xs text-gray-500 line-clamp-5 transition-all duration-300 m-0" title="{{ $prod->description }}">
+                                        {{ $prod->description ?? 'No description available.' }}
+                                    </p>
+                                    <button id="btn-vendor-{{ $prod->id }}" onclick="toggleDescription('vendor-{{ $prod->id }}')" class="hidden text-orange-600 hover:text-orange-800 text-[10px] md:text-xs font-bold mt-1 bg-transparent border-0 p-0 cursor-pointer">Read more</button>
+                                </div>
 
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <div class="flex items-center gap-1">
@@ -226,3 +232,39 @@
         <button onclick="window.location.reload()" class="mt-4 text-primary text-sm font-semibold hover:underline">Clear Filters</button>
     </div>
 @endif
+
+{{-- ADD THIS SCRIPT AT THE VERY BOTTOM OF YOUR BLADE FILE --}}
+<script>
+    // 1. Function to check if text is actually clamped
+    function initializeReadMoreButtons() {
+        const descriptions = document.querySelectorAll('p[id^="desc-"]');
+        
+        descriptions.forEach(desc => {
+            // If the actual height of the text is greater than the visible clamped container height
+            if (desc.scrollHeight > desc.clientHeight) {
+                const buttonId = desc.id.replace('desc-', 'btn-');
+                const btn = document.getElementById(buttonId);
+                if (btn) {
+                    btn.classList.remove('hidden'); // Show the read more button
+                }
+            }
+        });
+    }
+
+    // 2. Function to toggle the clamping on click
+    function toggleDescription(id) {
+        const desc = document.getElementById('desc-' + id);
+        const btn = document.getElementById('btn-' + id);
+        
+        if (desc.classList.contains('line-clamp-5')) {
+            desc.classList.remove('line-clamp-5');
+            btn.innerText = 'Read less';
+        } else {
+            desc.classList.add('line-clamp-5');
+            btn.innerText = 'Read more';
+        }
+    }
+
+    // 3. Run the check when the page loads
+    document.addEventListener('DOMContentLoaded', initializeReadMoreButtons);
+</script>

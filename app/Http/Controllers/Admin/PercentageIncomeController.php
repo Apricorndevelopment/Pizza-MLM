@@ -32,6 +32,7 @@ class PercentageIncomeController extends Controller
             'second_wallet'   => 'required|numeric|min:0',
             'tds_charge'  => 'required|numeric|min:0',
             'admin_charge'  => 'required|numeric|min:0',
+            'vendor_withdraw_charge'  => 'required|numeric|min:0',
         ]);
 
         $income = PercentageIncome::findOrFail($id);
@@ -45,6 +46,7 @@ class PercentageIncomeController extends Controller
             'second_wallet'   => $request->second_wallet,
             'tds_charge'  => $request->tds_charge,
             'admin_charge'  => $request->admin_charge,
+            'vendor_withdraw_charge'  => $request->vendor_withdraw_charge,
         ]);
 
         return redirect()->back()->with('success', 'Configuration updated successfully!');

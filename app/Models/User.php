@@ -24,13 +24,16 @@ class User extends Authenticatable
         'password',
         'phone',
         'address',
+        'city',
         'state',
         'is_paid',
         'status',
         'sponsor_id',
+        'parent_id',
         'role',
         'wallet1_balance',
         'wallet2_balance',
+        'vendor_wallet_balance',
         'is_vendor',
         'user_doa',
         'profile_picture',
@@ -38,6 +41,7 @@ class User extends Authenticatable
         'adhar_no',
         'pan_no',
         'adhar_photo',
+        'adhar_back_photo',
         'pan_photo',
         'nom_name',
         'nom_relation',
@@ -46,15 +50,32 @@ class User extends Authenticatable
         'ifsc_code',
         'upi_id',
         'passbook_photo',
-        'left_business',
-        'right_business',
+        'total_business',
+        'single_leg_pv',
         'capping_limit',
         'is_capping_enabled',
+        'capping_product_id',
     ];
 
     public function pointsTransactions()
     {
         return $this->hasMany(Wallet1Transaction::class);
+    }
+
+    public function autopoolTracker()
+    {
+        return $this->hasOne(UserAutopoolTracker::class, 'user_id');
+    }
+
+    // User's Auto Pool Earnings History
+    public function autopoolEarnings()
+    {
+        return $this->hasMany(AutopoolEarningsHistory::class, 'user_id');
+    }
+
+    public function cappingProduct()
+    {
+        return $this->belongsTo(ProductPackage::class, 'capping_product_id');
     }
 
 

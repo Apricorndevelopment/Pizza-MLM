@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\AutopoolEarningsHistory;
 use App\Models\CashbackIncome;
-use App\Models\Commission;
 use App\Models\BonusIncome;
 use App\Models\DirectIncome;
 use App\Models\LevelIncome;
@@ -15,12 +15,6 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Package1;
-use App\Models\ProductPackage;
-use App\Models\ProductPackageDetails;
-use App\Models\ProductPackagePurchase;
-use App\Models\PackageMonthlyDistribution;
-use App\Models\PackageTransaction;
 use App\Models\PercentageIncome;
 use App\Models\RepurchaseIncome;
 use App\Models\RewardsIncome;
@@ -29,6 +23,7 @@ use App\Models\RoyaltyRewardsIncome;
 use App\Models\User;
 use App\Models\UserCoupon;
 use App\Models\UserGallery;
+use App\Models\Vendor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -47,8 +42,9 @@ class UserController extends Controller
         $levelIncome = LevelIncome::where('user_id', $user->id)->sum('amount');
         $cashbackIncome = CashbackIncome::where('user_id', $user->id)->sum('income_amount');
         $rewardIncome = RewardsIncome::where('user_id', $user->id)->sum('reward_amount');
+        $autoPoolIncome = AutopoolEarningsHistory::where('user_id', $user->id)->sum('reward_amount');
 
-        $totalIncome = $directIncome + $bonusIncome + $levelIncome + $cashbackIncome + $rewardIncome + $repurchaseIncome;
+        $totalIncome = $directIncome + $bonusIncome + $levelIncome + $cashbackIncome + $rewardIncome + $repurchaseIncome + $autoPoolIncome;
 
         // 2. Fetch Media (Audio & Video)
         $audios = MediaLibrary::where('type', 'audio')->latest()->get();
@@ -69,6 +65,7 @@ class UserController extends Controller
             'repurchaseIncome',
             'cashbackIncome',
             'rewardIncome',
+            'autoPoolIncome',
             'totalIncome',
             'audios',
             'videos',
@@ -250,6 +247,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'city' => 'nullable|string|max:100',
             'state' => 'nullable|string|max:100',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
 
@@ -277,6 +275,7 @@ class UserController extends Controller
                 }
             ],
             'adhar_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'adhar_back_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             'pan_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
 
             'nom_name' => 'nullable|string|max:255',
@@ -332,6 +331,7 @@ class UserController extends Controller
             'pan_no.min' => 'PAN number must be exactly 10 characters',
             'profile_picture.max' => 'Profile picture must be less than 5MB',
             'adhar_photo.max' => 'Aadhaar photo must be less than 5MB',
+            'adhar_back_photo.max' => 'Aadhaar back photo must be less than 5MB',
             'pan_photo.max' => 'PAN photo must be less than 5MB',
             'passbook_photo.max' => 'Passbook photo must be less than 5MB',
         ]);
@@ -342,6 +342,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'phone' => $request->input('phone'),
             'address' => $request->input('address'),
+            'city' => $request->input('city'),
             'state' => $request->input('state'),
 
             'adhar_no' => $request->input('adhar_no'),
@@ -410,6 +411,35 @@ class UserController extends Controller
 
             // Save the relative path to the database
             $user->adhar_photo = 'aadhaar-documents/' . $filename;
+        }
+
+        // Handle Aadhaar back photo upload
+        if ($request->hasFile('adhar_back_photo')) {
+            // Delete old aadhaar back photo if exists
+            if ($user->adhar_back_photo) {
+                Storage::delete('public/' . $user->adhar_back_photo);
+            }
+
+            // Define the directory path
+            $directory = 'storage/aadhaar-documents';
+
+            // Create the directory if it doesn't exist
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Get the file and extension
+            $file = $request->file('adhar_back_photo');
+            $extension = $file->getClientOriginalExtension();
+
+            // Create a unique filename
+            $filename = uniqid() . '.' . $extension;
+
+            // Move the file to the directory
+            $file->move($directory, $filename);
+
+            // Save the relative path to the database
+            $user->adhar_back_photo = 'aadhaar-documents/' . $filename;
         }
 
         // Handle PAN photo upload
@@ -481,443 +511,6 @@ class UserController extends Controller
     }
 
 
-    //Package purchasing for the Activation
-    public function purchasePackage(Request $request)
-    {
-        $request->validate([
-            'package_id' => 'required|exists:package1,id'
-        ]);
-
-        $user = Auth::user();
-        $package = Package1::findOrFail($request->package_id);
-
-        $discountAmount = $package->discount_per ? ($package->price * $package->discount_per) / 100 : 0;
-        $totalCost = $package->price;
-
-        if ($user->wallet1_balance < $totalCost) {
-            return back()->with('error', 'Insufficient balance to purchase this package');
-        }
-
-        $couponCode = 'GEO' . $user->id . 'PQ' . $package->package_quantity;
-        // dd($user->id);
-        PackageTransaction::create([
-            'user_id' => $user->id,
-            'package1_id' => $package->id,
-            'ulid' => $user->ulid,
-            'package_name' => $package->package_name,
-            'price' => $package->price,
-            'discount_percentage' => $package->discount_per,
-            'discount_amount' => $discountAmount,
-            'quantity' => $package->package_quantity,
-            'final_price' => $totalCost,
-            'coupon_code' => $couponCode,
-            'status' => 'pending',
-            'transaction_date' => now(),
-        ]);
-
-        if ($user->status == 'inactive') {
-            DB::table('users')
-                ->where('id', $user->id)
-                ->update(['status' => 'active', 'user_doa' => now()]);
-        }
-
-        // Deduct points directly from DB
-        DB::table('users')
-            ->where('id', $user->id)
-            ->decrement('wallet1_balance', $totalCost);
-
-        Wallet1Transaction::create([
-            'user_id' => $user->id,
-            'user_ulid' => $user->ulid,
-            'points' => -$totalCost,
-            'notes' => 'Deducted for purchasing package: ' . $package->package_name,
-        ]);
-
-        return redirect()->route('user.dashboard')->with([
-            'success' => 'Package purchased successfully!',
-            'coupon_code' => $couponCode // Pass coupon code to show in success message
-        ]);
-    }
-
-
-    //User side package purchasing after Activation
-
-    public function showPurchaseForm()
-    {
-        $packages = ProductPackage::with('details')->get();
-        $breadcrumbs = [
-            ['title' => 'Package', 'url' => route('package2.purchase')],
-            ['title' => 'Buy Package', 'url' => route('package2.purchase')]
-        ];
-        return view('user.package2-purchase', compact('packages', 'breadcrumbs'));
-    }
-
-    public function processPurchase(Request $request)
-    {
-        $request->validate([
-            'package2_id' => 'required|exists:package2,id',
-            'package2_detail_id' => 'required|exists:package2_details,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
-        $user = Auth::user();
-        $package = ProductPackage::findOrFail($request->package2_id);
-        $rateDetail = ProductPackageDetails::findOrFail($request->package2_detail_id);
-
-        $finalPrice = $package->price * $request->quantity;
-
-        // Check user's balance
-        if ($user->wallet1_balance < $finalPrice) {
-            return redirect()->back()->with('error', 'Insufficient balance to purchase this package');
-        }
-
-        DB::beginTransaction();
-        try {
-            $invoiceNumber = $this->getNextInvoiceNumber();
-            $bedNumber = $this->getNextBedNumber();
-
-            // Create package purchase record
-            $purchase = ProductPackagePurchase::create([
-                'user_id' => $user->id,
-                'ulid' => $user->ulid,
-                'package2_id' => $package->id,
-                'package2_detail_id' => $rateDetail->id,
-                'package_name' => $package->package_name,
-                'quantity' => $request->quantity,
-                'rate' => $rateDetail->rate,
-                'capital' => $rateDetail->capital,
-                'time' => $rateDetail->time,
-                'profit_share' => $rateDetail->profit_share,
-                'final_price' => $finalPrice,
-                'maturity' => $package->maturity, // Store maturity from package
-                'endorsed' => 0,
-                'invoice_no' => $invoiceNumber,
-                'bed_no' => $bedNumber,
-                'purchased_at' => now(),
-            ]);
-
-            // Deduct from user's balance
-            DB::table('users')
-                ->where('id', $user->id)
-                ->decrement('wallet1_balance', $finalPrice);
-
-            // Record points transaction
-            Wallet1Transaction::create([
-                'user_id' => $user->id,
-                'user_ulid' => $user->ulid,
-                'points' => -$finalPrice,
-                'notes' => 'Purchased package: ' . $package->package_name . ' (Quantity: ' . $request->quantity . ' units)',
-                'admin_id' => null
-            ]);
-
-            // Process sponsor commissions
-            $this->processSponsorCommissions($user, $finalPrice, $package);
-
-            // For calculating the rank of the user based on the total business volume
-            $this->checkAndRewardUser($user->sponsor_id);
-
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Package purchased successfully! Total Quantity: ' . $request->quantity . ' units');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to process your request: ' . $e->getMessage());
-        }
-    }
-
-    private function getNextInvoiceNumber()
-    {
-        $datePart = now()->format('Ymd');
-        $prefix = "INV-{$datePart}-";
-        $last = ProductPackagePurchase::where('invoice_no', 'like', "{$prefix}%")
-            ->orderBy('invoice_no', 'desc')
-            ->first();
-
-        if (!$last) {
-            $nextNumber = 1;
-        } else {
-            $lastNumber = intval(substr($last->invoice_no, -5));
-            $nextNumber = $lastNumber + 1;
-        }
-        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-    }
-    private function getNextBedNumber()
-    {
-        $datePart = now()->format('Ymd');
-        $prefix = "GEOBED-{$datePart}-";
-        $last = ProductPackagePurchase::where('bed_no', 'like', "{$prefix}%")
-            ->orderBy('bed_no', 'desc')
-            ->first();
-
-        if (!$last) {
-            $nextNumber = 1;
-        } else {
-            $lastNumber = intval(substr($last->bed_no, -5));
-            $nextNumber = $lastNumber + 1;
-        }
-        return $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-    }
-
-
-    protected function processSponsorCommissions($user, $amount, $package)
-    {
-        $hasParent = false;
-
-        // First check parent_id - if exists, only parent gets 3%
-        if ($user->parent_id) {
-            $parent = User::where('ulid', $user->parent_id)->first();
-            if ($parent && $parent->status == 'active') {
-                // Check if parent is eligible (has purchases and within 3 months)
-                if ($this->isUserEligibleForCommission($parent)) {
-                    $hasParent = true;
-                    $commission = $amount * 0.03;
-                    $parent->increment('wallet1_balance', $commission);
-
-                    Commission::create([
-                        'user_id' => $parent->id,
-                        'from_ulid' => $user->ulid,
-                        'from_name' => $user->name,
-                        'purchase_amount' => $amount,
-                        'commission' => $commission,
-                        'level' => 1
-                    ]);
-                }
-            }
-        }
-
-        // Process sponsor levels only if no active parent exists
-        if (!$hasParent && $user->sponsor_id) {
-            $sponsorL1 = User::where('ulid', $user->sponsor_id)->first();
-            if ($sponsorL1 && $sponsorL1->status == 'active' && $this->isUserEligibleForCommission($sponsorL1)) {
-                $commissionL1 = $amount * 0.03;
-                $sponsorL1->increment('wallet1_balance', $commissionL1);
-                Commission::create([
-                    'user_id' => $sponsorL1->id,
-                    'from_ulid' => $user->ulid,
-                    'from_name' => $user->name,
-                    'purchase_amount' => $amount,
-                    'commission' => $commissionL1,
-                    'level' => 1
-                ]);
-            }
-        }
-
-        // Process L2 commission with additional conditions
-        if ($user->sponsor_id) {
-            $sponsorL1 = User::where('ulid', $user->sponsor_id)->first();
-            if ($sponsorL1 && $sponsorL1->sponsor_id) {
-                $sponsorL2 = User::where('ulid', $sponsorL1->sponsor_id)->first();
-                if ($sponsorL2 && $this->hasPurchasedPackage($sponsorL2)) {
-                    $downlineCount = User::where('sponsor_id', $sponsorL2->ulid)
-                        ->where('status', 'active')
-                        ->count();
-
-                    if ($downlineCount >= 2 && $sponsorL2->status == 'active' && $this->isUserEligibleForCommission($sponsorL2)) {
-                        $commissionL2 = $amount * 0.01;
-                        $sponsorL2->increment('wallet1_balance', $commissionL2);
-                        Commission::create([
-                            'user_id' => $sponsorL2->id,
-                            'from_ulid' => $user->ulid,
-                            'from_name' => $user->name,
-                            'purchase_amount' => $amount,
-                            'commission' => $commissionL2,
-                            'level' => 2
-                        ]);
-                    }
-
-                    // Process L3 commission with additional conditions
-                    if ($sponsorL2->sponsor_id) {
-                        $sponsorL3 = User::where('ulid', $sponsorL2->sponsor_id)->first();
-                        if ($sponsorL3 && $this->hasPurchasedPackage($sponsorL3)) {
-                            $downlineCountL2 = User::where('sponsor_id', $sponsorL3->ulid)
-                                ->where('status', 'active')
-                                ->count();
-
-                            if ($downlineCountL2 >= 3 && $sponsorL3->status == 'active' && $this->isUserEligibleForCommission($sponsorL3)) {
-                                $commissionL3 = $amount * 0.01;
-                                $sponsorL3->increment('wallet1_balance', $commissionL3);
-                                Commission::create([
-                                    'user_id' => $sponsorL3->id,
-                                    'from_ulid' => $user->ulid,
-                                    'from_name' => $user->name,
-                                    'purchase_amount' => $amount,
-                                    'commission' => $commissionL3,
-                                    'level' => 3
-                                ]);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    protected function hasPurchasedPackage($user)
-    {
-        return DB::table('package2_purchases')
-            ->where('user_id', $user->id)
-            ->exists();
-    }
-
-    protected function isUserEligibleForCommission($user)
-    {
-        // Check if user is within first 3 months
-        if (empty($user->user_doa)) {
-            return false;
-        }
-
-        // Check if 3 months have passed since activation
-        $threeMonthsLater = Carbon::parse($user->user_doa)->addMonths(3);
-        if (now()->gt($threeMonthsLater)) {
-            return false;
-        }
-
-        // Check if user has received less than 10,000 in total commissions
-        $totalCommissions = Commission::where('user_id', $user->id)
-            ->sum('commission');
-
-        return $totalCommissions < 10000;
-    }
-
-
-    //Calculating the rank of the user based on the total business volume
-    public function checkAndRewardUser($userUlid)
-    {
-        $directLegs = User::where('sponsor_id', $userUlid)->get();
-
-        $legsBusiness = [];
-        foreach ($directLegs as $leg) {
-            $legsBusiness[$leg->ulid] = $this->getTotalBusiness($leg->ulid);
-        }
-
-        if (empty($legsBusiness)) return;
-
-        $strongLegUlid = array_search(max($legsBusiness), $legsBusiness);
-        $strongLegBusiness = $legsBusiness[$strongLegUlid];
-        $weakerLegsBusiness = array_sum($legsBusiness) - $strongLegBusiness;
-        $matchingBusiness = $weakerLegsBusiness;
-
-        $leftBusiness = 0;
-        $rightBusiness = 0;
-
-        if ($directLegs->count() >= 2) {
-            $leftBusiness = $strongLegBusiness;
-            $rightBusiness = $weakerLegsBusiness;
-        } elseif ($directLegs->count() == 1) {
-            $leftBusiness = $legsBusiness[$directLegs[0]->ulid] ?? 0;
-        }
-
-        $user = User::where('ulid', $userUlid)->first();
-        $user->update([
-            'left_business' => $leftBusiness,
-            'right_business' => $rightBusiness,
-        ]);
-
-        // Process rewards for current user
-        $this->processUserRewards($user, $matchingBusiness, $strongLegBusiness);
-
-        // Update business and ranks for all upline parents
-        $this->updateUplineBusinessAndRanks($user);
-    }
-
-    protected function processUserRewards($user, $matchingBusiness, $strongLegBusiness)
-    {
-        $rewards = DB::table('royalty_level_rewards')
-            ->orderBy('sr_no')
-            ->get();
-
-        $givenRewards = RoyaltyRewardsIncome::where('user_id', $user->id)
-            ->orderBy('id')
-            ->get();
-
-        $totalRequiredBusiness = 0;
-        $highestAchievedRank = $user->current_rank;
-        $lastClaimedBusiness = 0;
-
-        foreach ($rewards as $reward) {
-            $requiredBusiness = $this->convertMatchingToNumber($reward->matching);
-
-            $existingReward = $givenRewards->where('rank', $reward->level)->first();
-
-            if ($existingReward) {
-                if ($existingReward->status == 1) {
-                    $lastClaimedBusiness = $requiredBusiness;
-                    $totalRequiredBusiness = $lastClaimedBusiness;
-                }
-                continue;
-            }
-
-            $totalRequiredBusiness = $lastClaimedBusiness + $requiredBusiness;
-
-            if ($matchingBusiness >= $totalRequiredBusiness && $strongLegBusiness >= $totalRequiredBusiness) {
-                RoyaltyRewardsIncome::create([
-                    'user_id'   => $user->id,
-                    'user_ulid' => $user->ulid,
-                    'points'    => $this->convertMatchingToNumber($reward->reward),
-                    'rank'      => $reward->level,
-                    'status'    => 0
-                ]);
-
-                $highestAchievedRank = $reward->level;
-                $givenRewards->push((object)[
-                    'rank' => $reward->level,
-                    'status' => 0
-                ]);
-            }
-        }
-
-        if ($user->current_rank != $highestAchievedRank) {
-            $user->update(['current_rank' => $highestAchievedRank]);
-        }
-    }
-
-    protected function updateUplineBusinessAndRanks(User $user)
-    {
-        $currentUser = $user;
-        $processedUsers = [];
-
-        // Traverse up the sponsorship tree
-        while ($currentUser->sponsor_id && !in_array($currentUser->sponsor_id, $processedUsers)) {
-            $sponsor = User::where('ulid', $currentUser->sponsor_id)->first();
-            if (!$sponsor) break;
-
-            // Get all direct legs of the sponsor
-            $directLegs = User::where('sponsor_id', $sponsor->ulid)->get();
-
-            $legsBusiness = [];
-            foreach ($directLegs as $leg) {
-                $legsBusiness[$leg->ulid] = $this->getTotalBusiness($leg->ulid);
-            }
-
-            if (!empty($legsBusiness)) {
-                $strongLegUlid = array_search(max($legsBusiness), $legsBusiness);
-                $strongLegBusiness = $legsBusiness[$strongLegUlid];
-                $weakerLegsBusiness = array_sum($legsBusiness) - $strongLegBusiness;
-                $matchingBusiness = $weakerLegsBusiness;
-
-                $leftBusiness = 0;
-                $rightBusiness = 0;
-
-                if ($directLegs->count() >= 2) {
-                    $leftBusiness = $strongLegBusiness;
-                    $rightBusiness = $weakerLegsBusiness;
-                } elseif ($directLegs->count() == 1) {
-                    $leftBusiness = $legsBusiness[$directLegs[0]->ulid] ?? 0;
-                }
-
-                $sponsor->update([
-                    'left_business' => $leftBusiness,
-                    'right_business' => $rightBusiness,
-                ]);
-
-                // Process rewards for each upline sponsor
-                $this->processUserRewards($sponsor, $matchingBusiness, $strongLegBusiness);
-            }
-
-            $processedUsers[] = $sponsor->ulid;
-            $currentUser = $sponsor;
-        }
-    }
 
 
     public function convertMatchingToNumber($value)
@@ -932,27 +525,6 @@ class UserController extends Controller
         } else {
             return (float)$value;
         }
-    }
-
-    public function getTotalBusiness($ulid)
-    {
-        $user = User::where('ulid', $ulid)->first();
-
-        if (!$user) return 0;
-
-        // Sum own purchases
-        $ownBusiness = ProductPackagePurchase::where('ulid', $ulid)->sum('final_price');
-
-        // Get direct downline
-        $downlines = User::where('sponsor_id', $ulid)->get();
-
-        $totalBusiness = $ownBusiness;
-
-        foreach ($downlines as $downline) {
-            $totalBusiness += $this->getTotalBusiness($downline->ulid);
-        }
-
-        return $totalBusiness;
     }
 
 
@@ -997,60 +569,33 @@ class UserController extends Controller
             ->take(10)
             ->get();
 
-    
+
         $withdrawalStatus = Admin::first()->is_withdrawal_open;
 
         return view('user.viewwallet', compact('wallet1', 'wallet2', 'wallet1Transactions', 'wallet2Transactions', 'withdrawals', 'percentageIncome', 'withdrawalStatus'));
     }
 
-    // public function level1Commissions(Request $request)
-    // {
-    //     // Get filter parameters from request
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
+    public function vendorsList(Request $request)
+    {
+        // Fetch only active/approved vendors
+        $query = Vendor::with('user')->where('status', 'vendor');
 
-    //     $commissions = Commission::where('user_id', Auth::id())
-    //         ->where('level', 1)
-    //         ->when($startDate, function ($query) use ($startDate) {
-    //             return $query->whereDate('created_at', '>=', $startDate);
-    //         })
-    //         ->when($endDate, function ($query) use ($endDate) {
-    //             return $query->whereDate('created_at', '<=', $endDate);
-    //         })
-    //         ->latest()
-    //         ->paginate(10); // 
-    //     $breadcrumbs = [
-    //         ['title' => 'Incentives', 'url' => route('user.commissions.level1')],
-    //         ['title' => 'Direct Commissions', 'url' => route('user.commissions.level1')]
-    //     ];
+        // Handle Search
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('vendor_name', 'LIKE', "%{$search}%")
+                    ->orWhere('company_name', 'LIKE', "%{$search}%")
+                    ->orWhere('company_city', 'LIKE', "%{$search}%");
+            });
+        }
 
-    //     return view('user.rewards.directcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
-    // }
+        $vendors = $query->latest()->paginate(12)->withQueryString();
 
-    // public function level2Commissions(Request $request)
-    // {
-    //     // Get filter parameters from request
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
+        return view('user.vendors.index', compact('vendors'));
+    }
 
-    //     $commissions = Commission::where('user_id', Auth::id())
-    //         ->whereIn('level', [2, 3])
-    //         ->when($startDate, function ($query) use ($startDate) {
-    //             return $query->whereDate('created_at', '>=', $startDate);
-    //         })
-    //         ->when($endDate, function ($query) use ($endDate) {
-    //             return $query->whereDate('created_at', '<=', $endDate);
-    //         })
-    //         ->latest()
-    //         ->paginate(10); // Changed from take(10) to paginate(10)
 
-    //     $breadcrumbs = [
-    //         ['title' => 'Incentives', 'url' => route('user.commissions.level2')],
-    //         ['title' => 'Network Cashback', 'url' => route('user.commissions.level2')]
-    //     ];
-
-    //     return view('user.rewards.networkcommission', compact('commissions', 'breadcrumbs', 'startDate', 'endDate'));
-    // }
 
     public function levelIncomeReport(Request $request)
     {
@@ -1140,78 +685,5 @@ class UserController extends Controller
         $reward->save();
 
         return redirect()->back()->with('success', 'Reward rejected.');
-    }
-
-
-    public function showUserYearlyProfits()
-    {
-        $user = Auth::user();
-
-        // Get rank-based profits
-        $rankProfits = Wallet1Transaction::where('user_id', $user->id)
-            ->where('notes', 'like', '%yearly profit as %')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($transaction) {
-                preg_match('/₹(\d+) received for (\d{4}) yearly profit as (.+) \((\d+)%\)/', $transaction->notes, $matches);
-                return [
-                    'type' => 'rank',
-                    'amount' => $transaction->points,
-                    'year' => $matches[2] ?? null,
-                    'rank' => $matches[3] ?? null,
-                    'percentage' => $matches[4] ?? null,
-                    'date' => $transaction->created_at->format('d M Y'),
-                ];
-            });
-
-        // Combine and sort by year
-        $allProfits = $rankProfits
-            ->sortByDesc('year')
-            ->groupBy('year');
-
-        // Get user's packages eligible for profit share
-        $eligiblePackages = ProductPackagePurchase::where('user_id', $user->id)
-            ->where('profit_share', 1)
-            ->get();
-
-        $breadcrumbs = [
-            ['title' => 'Incentives', 'url' => route('user.yearly.profits')],
-            ['title' => 'Royalty Income', 'url' => route('user.yearly.profits')]
-        ];
-        return view('user.rewards.yearlyProfits', compact('user', 'allProfits', 'eligiblePackages', 'breadcrumbs'));
-    }
-
-    public function showUserMonthlyProfits(Request $request)
-    {
-        $user = Auth::user();
-
-        // Get filter parameters from request
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-
-        $distributionsQuery = PackageMonthlyDistribution::with(['user', 'packagePurchase'])
-            ->where('user_id', $user->id);
-
-        // Apply date filters
-        $distributionsQuery->when($startDate, function ($query) use ($startDate) {
-            return $query->whereDate('distribution_date', '>=', $startDate);
-        });
-
-        $distributionsQuery->when($endDate, function ($query) use ($endDate) {
-            return $query->whereDate('distribution_date', '<=', $endDate);
-        });
-
-        $distributions = $distributionsQuery->orderBy('distribution_date', 'desc')
-            ->paginate(10);
-
-        // Calculate total based on filtered results
-        $totalAmount = $distributionsQuery->sum('distributed_amount');
-
-        $breadcrumbs = [
-            ['title' => 'Package', 'url' => route('user.monthly.profits')],
-            ['title' => 'Monthly Income', 'url' => route('user.monthly.profits')]
-        ];
-
-        return view('user.rewards.view-monthlyProfits', compact('distributions', 'breadcrumbs', 'totalAmount', 'startDate', 'endDate'));
     }
 }

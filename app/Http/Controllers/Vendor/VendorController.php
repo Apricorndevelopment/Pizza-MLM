@@ -241,4 +241,6 @@ class VendorController extends Controller
 
         return back()->with('success', 'Company Profile Updated Successfully!');
     }
+
+    
 }

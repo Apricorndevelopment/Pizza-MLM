@@ -2,7 +2,7 @@
 @section('title', 'Percentage Income Settings')
 
 @section('container')
-    <div class="container mx-auto py-2">
+    <div class="mx-auto py-2">
 
         {{-- Page Header --}}
         <div class="flex justify-between items-center mb-6">
@@ -63,6 +63,7 @@
                             <th class="px-1.5 py-2.5 font-semibold">Second Wallet</th>
                             <th class="px-1.5 py-2.5 font-semibold">TDS Charge</th>
                             <th class="px-1.5 py-2.5 font-semibold">Admin Charge</th>
+                            <th class="px-1.5 py-2.5 font-semibold">Vendor Withdrawal Charge</th>
                             <th class="px-1.5 py-2.5 font-semibold text-right">Actions</th>
                         </tr>
                     </thead>
@@ -78,6 +79,7 @@
                                 <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->second_wallet }}%</td>
                                 <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->tds_charge }}%</td>
                                 <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->admin_charge }}%</td>
+                                <td class="px-1.5 py-2.5 text-slate-700 font-bold">{{ $item->vendor_withdraw_charge }}%</td>
 
                                 {{-- Actions (Only Edit) --}}
                                 <td class="px-1.5 py-2.5 text-right">
@@ -174,7 +176,8 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Personal Wallet</label>
                             <div class="relative">
-                                <input type="number" step="0.1" name="personal_wallet" id="personal_wallet" required
+                                <input type="number" step="0.1" name="personal_wallet" id="personal_wallet"
+                                    required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -204,6 +207,15 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">TDS Charge</label>
                             <div class="relative">
                                 <input type="number" step="0.1" name="tds_charge" id="tds_charge" required
+                                    class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
+                                <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Vendor Withdraw Charge</label>
+                            <div class="relative">
+                                <input type="number" step="0.1" name="vendor_withdraw_charge"
+                                    id="vendor_withdraw_charge" required
                                     class="w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                                 <span class="absolute right-3 top-2 text-gray-400 font-bold">%</span>
                             </div>
@@ -241,8 +253,9 @@
             document.getElementById('cashback_income').value = data.cashback_income;
             document.getElementById('personal_wallet').value = data.personal_wallet;
             document.getElementById('second_wallet').value = data.second_wallet;
-             document.getElementById('admin_charge').value = data.admin_charge;
-             document.getElementById('tds_charge').value = data.tds_charge;
+            document.getElementById('admin_charge').value = data.admin_charge;
+            document.getElementById('tds_charge').value = data.tds_charge;
+            document.getElementById('vendor_withdraw_charge').value = data.vendor_withdraw_charge;
 
             // Show Modal
             modal.classList.remove('hidden');

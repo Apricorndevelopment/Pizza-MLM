@@ -21,13 +21,13 @@
     @endphp
 
     <div class="min-h-screen bg-slate-50 font-sans text-slate-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
 
             {{-- 1. HEADER --}}
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                        <span class="p-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm">
+                        <span class="px-3.5 py-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm">
                             <i class="fas fa-id-card-alt text-xl"></i>
                         </span>
                         Member Profile
@@ -83,7 +83,7 @@
                             </p>
 
                             <div class="space-y-4 pt-6 border-t border-slate-100">
-                                <div class="flex items-start gap-4 group/item">
+                                <div class="flex items-start gap-3 group/item">
                                     <div
                                         class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0 group-hover/item:bg-blue-100 transition-colors">
                                         <i class="fas fa-phone-alt text-sm"></i>
@@ -94,7 +94,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex items-start gap-4 group/item">
+                                <div class="flex items-start gap-3 group/item">
                                     <div
                                         class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center flex-shrink-0 group-hover/item:bg-purple-100 transition-colors">
                                         <i class="fas fa-map-marker-alt text-sm"></i>
@@ -120,8 +120,8 @@
                             <i class="fas fa-network-wired"></i> Network Details
                         </h3>
 
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
-                            <div class="flex justify-between items-center mb-2">
+                        <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-100 mb-3 space-y-2">
+                            <div class="flex justify-between items-center">
                                 <span class="text-xs font-semibold text-slate-500">Sponsor ID</span>
                                 <span
                                     class="text-sm font-bold text-blue-600 font-mono bg-blue-50 px-2 py-0.5 rounded">{{ $member->sponsor_id }}</span>
@@ -130,6 +130,11 @@
                                 <span class="text-xs font-semibold text-slate-500">Current Rank</span>
                                 <span
                                     class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded uppercase">{{ $member->current_rank ?? 'N/A' }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-semibold text-slate-500">Capping Limit</span>
+                                <span
+                                class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded uppercase">{{ $member->capping_limit ? '₹' . $member->capping_limit : 'N/A' }}</span>
                             </div>
                         </div>
 
@@ -150,10 +155,10 @@
                 <div class="space-y-6 lg:col-span-2">
 
                     {{-- 2. Financial Stats --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div
                             class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden group hover:border-blue-300 transition-colors">
-                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                                 <i class="fas fa-wallet text-6xl text-blue-600"></i>
                             </div>
                             <div class="relative z-10">
@@ -170,7 +175,7 @@
 
                         <div
                             class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden group hover:border-emerald-300 transition-colors">
-                            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                                 <i class="fas fa-coins text-6xl text-emerald-600"></i>
                             </div>
                             <div class="relative z-10">
@@ -195,7 +200,7 @@
                             {{-- Business Volume --}}
                             <div class="relative">
                                 <h4 class="text-xs font-bold text-slate-400 uppercase mb-4">Total Business</h4>
-                                <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-3">
                                     <div
                                         class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
                                         <i class="fas fa-chart-pie"></i>
@@ -212,7 +217,7 @@
                             </div>
 
                             {{-- Bank Details --}}
-                            <div class="bg-slate-50 rounded-xl p-5 border border-slate-100 relative">
+                            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 relative">
                                 <div class="absolute top-3 right-3 text-slate-300">
                                     <i class="fas fa-university text-4xl opacity-20"></i>
                                 </div>
@@ -238,6 +243,16 @@
                                         <span class="text-slate-500">UPI ID</span>
                                         <span class="font-semibold text-slate-800">{{ $member->upi_id ?? '--' }}</span>
                                     </div>
+                                    <div
+                                        class="pt-2 mt-2 border-t border-slate-200 flex justify-between items-center text-sm">
+                                        <span class="text-slate-500">Nominee Name</span>
+                                        <span class="font-semibold text-slate-800">{{ $member->nom_name ?? '--' }}</span>
+                                    </div>
+                                    <div
+                                        class="pt-2 mt-2 border-t border-slate-200 flex justify-between items-center text-sm">
+                                        <span class="text-slate-500">Nominee Relation</span>
+                                        <span class="font-semibold text-slate-800">{{ $member->nom_relation ?? '--' }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -258,42 +273,17 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             @php
                                 $docs = [
-                                    [
-                                        'title' => 'Passbook',
-                                        'file' => $member->passbook_photo,
-                                        'icon' => 'fa-file-invoice',
-                                    ],
+                                    ['title' => 'Passbook', 'file' => $member->passbook_photo, 'icon' => 'fa-file-invoice',],
                                     ['title' => 'Aadhar Card', 'file' => $member->adhar_photo, 'icon' => 'fa-id-card'],
+                                    ['title' => 'Aadhar Card (Back)', 'file' => $member->adhar_back_photo, 'icon' => 'fa-id-card'],
                                     ['title' => 'PAN Card', 'file' => $member->pan_photo, 'icon' => 'fa-id-badge'],
-                                    [
-                                        'title' => 'Nominee',
-                                        'subtitle' => $member->nom_name ?? 'N/A',
-                                        'relation' => $member->nom_relation,
-                                        'type' => 'info',
-                                        'icon' => 'fa-users',
-                                    ],
                                 ];
                             @endphp
 
                             @foreach ($docs as $doc)
-                                @if (isset($doc['type']) && $doc['type'] == 'info')
-                                    {{-- Info Card (Nominee) --}}
-                                    <div
-                                        class="rounded-xl bg-purple-50 border border-purple-100 p-4 flex flex-col items-center justify-center text-center h-32">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center mb-2">
-                                            <i class="fas {{ $doc['icon'] }} text-xs"></i>
-                                        </div>
-                                        <p class="text-xs font-bold text-purple-400 uppercase mb-1">{{ $doc['title'] }}
-                                        </p>
-                                        <p class="text-sm font-bold text-purple-900 line-clamp-1">{{ $doc['subtitle'] }}
-                                        </p>
-                                        <p class="text-[10px] text-purple-600">{{ $doc['relation'] ?? '' }}</p>
-                                    </div>
-                                @else
                                     {{-- Image Card --}}
                                     <div
                                         class="group relative rounded-xl bg-slate-50 border border-slate-200 h-32 flex flex-col items-center justify-center text-center overflow-hidden hover:shadow-md transition-all">
@@ -317,7 +307,6 @@
                                                 {{ $doc['title'] }}</p>
                                         </div>
                                     </div>
-                                @endif
                             @endforeach
                         </div>
                     </div>

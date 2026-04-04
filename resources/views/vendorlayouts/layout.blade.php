@@ -29,11 +29,13 @@
         }
 
         .sidebar-submenu {
-            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
         }
 
         .sidebar-submenu.active {
-            display: block;
+            max-height: 500px;
         }
 
         .sidebar-submenu a.active {
@@ -64,6 +66,12 @@
             border-radius: 50%;
             border: 2px solid #10b981;
             object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .profile-pic-wrapper:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
         }
 
         .active-status {
@@ -148,93 +156,129 @@
             </div>
 
             <nav class="flex-1 overflow-y-auto no-scrollbar py-4 scroll-smooth">
-                <div class="px-3 space-y-1">
+                <div class="px-2 space-y-1">
 
                     <a href="{{ route('vendor.dashboard') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-speedometer2 mr-3 text-lg"></i>
-                        <span class="font-medium">Vendor Dashboard</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-speedometer2 mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">Vendor
+                            Dashboard</span>
                     </a>
 
                     <a href="{{ route('user.dashboard') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-house-door mr-3 text-lg"></i>
-                        <span class="font-medium">User Dashboard</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-house-door mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">User
+                            Dashboard</span>
                     </a>
 
                     <a href="{{ route('vendor.products.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-box-seam mr-3 text-lg"></i>
-                        <span class="font-medium">Vendor Products</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-box-seam mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">Vendor
+                            Products</span>
                     </a>
 
                     <a href="{{ route('vendor.orders.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-bag-check mr-3 text-lg"></i>
-                        <span class="font-medium">User Orders</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-bag-check mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">User
+                            Orders</span>
                     </a>
 
                     <a href="{{ route('vendor.company.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-person-circle mr-3 text-lg"></i>
-                        <span class="font-medium">Company Profile</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-person-circle mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">Company
+                            Profile</span>
                     </a>
 
                     <a href="{{ route('user.profile') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-person-circle mr-3 text-lg"></i>
-                        <span class="font-medium">My Profile</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-person-circle mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">My
+                            Profile</span>
                     </a>
 
 
                     {{-- Order --}}
                     <div class="menu-group">
                         <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            class="menu-header hover:translate-x-1 group flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg cursor-pointer transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-700 hover:shadow-md hover:scale-[1.02]">
                             <div class="flex items-center">
-                                <i class="bi bi-cart3 mr-3 text-lg"></i>
-                                <span class="font-medium">Orders</span>
+                                <i
+                                    class="bi bi-cart3 mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                                <span
+                                    class="font-medium transition-all duration-300 group-hover:tracking-wide">Order</span>
                             </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                            <i
+                                class="bi bi-chevron-down text-xs transition-all duration-300 group-hover:text-emerald-600"></i>
                         </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                        <div class="sidebar-submenu pl-7 mt-1 space-y-1">
                             <a href="{{ route('user.shop.index') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-cart-plus mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-cart-plus mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Order Products
                             </a>
 
                             <a href="{{ route('user.orders.index') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-card-list mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-card-list mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 View Orders
+                            </a>
+
+                            <a href="{{ route('user.vendors') }}"
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-people mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
+                                Vendors List
                             </a>
                         </div>
                     </div>
 
                     <div class="menu-group">
                         <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            class="menu-header hover:translate-x-1 group flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg cursor-pointer transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-700 hover:shadow-md hover:scale-[1.02]">
                             <div class="flex items-center">
-                                <i class="bi bi-wallet2 mr-3 text-lg"></i>
-                                <span class="font-medium">My Wallet</span>
+                                <i
+                                    class="bi bi-wallet2 mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                                <span class="font-medium transition-all duration-300 group-hover:tracking-wide">My
+                                    Wallet</span>
                             </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                            <i
+                                class="bi bi-chevron-down text-xs transition-all duration-300 group-hover:text-emerald-600"></i>
                         </div>
-                        <div class="sidebar-submenu pl-8 mt-1 space-y-1">
+                        <div class="sidebar-submenu pl-7 mt-1 space-y-1">
                             <a href="{{ route('user.viewwallet') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-cash-stack mr-2"></i>
-                                Manage Wallet
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-cash-stack mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
+                                User Wallet
+                            </a>
+                            <a href="{{ route('vendor.wallet.index') }}"
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-cash-stack mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
+                                Vendor Wallet
                             </a>
                             <a href="{{ route('user.funds.create') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-plus-circle mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-plus-circle mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Add Money
                             </a>
                             <a href="{{ route('user.transferWallet1Form') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-plus-circle mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-arrow-repeat mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Transfer Money
                             </a>
                         </div>
@@ -242,27 +286,39 @@
 
                     <div class="menu-group">
                         <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            class="menu-header hover:translate-x-1 group flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg cursor-pointer transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-700 hover:shadow-md hover:scale-[1.02]">
                             <div class="flex items-center">
-                                <i class="bi bi-diagram-3 mr-3 text-lg"></i>
-                                <span class="font-medium">My Network</span>
+                                <i
+                                    class="bi bi-diagram-3 mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                                <span class="font-medium transition-all duration-300 group-hover:tracking-wide">My
+                                    Network</span>
                             </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                            <i
+                                class="bi bi-chevron-down text-xs transition-all duration-300 group-hover:text-emerald-600"></i>
                         </div>
                         <div class="sidebar-submenu pl-6 mt-1 space-y-1">
                             <a href="{{ route('user.view.userTree') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-diagram-2 mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-diagram-2 mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Network Tree
                             </a>
+                            <a href="{{ route('user.singleLegTree') }}"
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-tree mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
+                                Single Leg Explorer
+                            </a>
                             <a href="{{ route('user.network.summary') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-clipboard-data mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-clipboard-data mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Network Summary
                             </a>
                             <a href="{{ route('user.direct.team') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-people mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-people mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Direct Team
                             </a>
                         </div>
@@ -270,68 +326,89 @@
 
                     <div class="menu-group">
                         <div
-                            class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                            class="menu-header hover:translate-x-1 group flex items-center justify-between px-3 py-2.5 text-gray-700 rounded-lg cursor-pointer transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-700 hover:shadow-md hover:scale-[1.02]">
                             <div class="flex items-center">
-                                <i class="bi bi-cash-coin mr-3 text-lg"></i>
-                                <span class="font-medium">Incentives</span>
+                                <i
+                                    class="bi bi-cash-coin mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                                <span
+                                    class="font-medium transition-all duration-300 group-hover:tracking-wide">Incentives</span>
                             </div>
-                            <i class="bi bi-chevron-down text-xs transition-transform"></i>
+                            <i
+                                class="bi bi-chevron-down text-xs transition-all duration-300 group-hover:text-emerald-600"></i>
                         </div>
                         <div class="sidebar-submenu pl-6 mt-1 space-y-1">
                             <a href="{{ route('user.income.direct') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-arrow-down-right-circle mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-person-lines-fill mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Direct Income
                             </a>
                             <a href="{{ route('user.income.bonus') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-arrow-down-right-circle mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-arrow-down-right-circle mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Bonus Income
                             </a>
                             <a href="{{ route('user.income.cashback') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-gift mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-gift mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Cashback Income
                             </a>
                             <a href="{{ route('user.income.level') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-bar-chart-steps mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-bar-chart-steps mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Level Income
                             </a>
                             <a href="{{ route('user.income.reward') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-trophy mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-trophy mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Reward Income
                             </a>
+                            <a href="{{ route('user.autopool.progress') }}"
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-graph-up-arrow mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
+                                Smart Auto Pool Income
+                            </a>
                             <a href="{{ route('user.income.repurchase') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-bag-plus mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-arrow-repeat mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Repurchase Income
                             </a>
                             <a href="{{ route('user.income.vendor-income') }}"
-                                class="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                                <i class="bi bi-arrow-repeat mr-2"></i>
+                                class="group flex items-center px-2.5 py-2 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300">
+                                <i
+                                    class="bi bi-shop mr-2 transform transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"></i>
                                 Vendor Income
                             </a>
                         </div>
                     </div>
 
                     <a href="{{ route('user.complaints.index') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-headset mr-3 text-lg"></i>
-                        <span class="font-medium">Need Help?</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-headset mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">Need
+                            Help?</span>
                     </a>
 
                     <a href="{{ route('user.coupons.purchase') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-ticket-perforated mr-3 text-lg"></i>
-                        <span class="font-medium">Purchase Coupons</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-ticket-perforated mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">Purchase
+                            Coupons</span>
                     </a>
 
                     <a href="{{ route('logout') }}"
-                        class="sidebar-menu-item flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-colors">
-                        <i class="bi bi-box-arrow-right mr-3 text-lg"></i>
-                        <span class="font-medium">Logout</span>
+                        class="sidebar-menu-item hover:translate-x-1 group flex items-center px-3 py-2.5 text-gray-700 rounded-lg hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">
+                        <i
+                            class="bi bi-box-arrow-right mr-3 text-lg transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:text-emerald-600"></i>
+                        <span class="font-medium transition-all duration-300 group-hover:tracking-wide">Logout</span>
                     </a>
                 </div>
             </nav>
@@ -345,7 +422,8 @@
                         @else
                             <img src="{{ asset('images/smartsave.png') }}" alt="Profile">
                         @endif
-                        <span class="{{  Auth::user()->status == 'active' ? 'active-status' : 'inactive-status'}}"></span>
+                        <span
+                            class="{{ Auth::user()->status == 'active' ? 'active-status' : 'inactive-status' }}"></span>
                     </div>
                     <div class="ml-2">
                         <p class="font-medium text-gray-800">{{ Auth::user()->name }}</p>
@@ -377,7 +455,8 @@
                                 @else
                                     <img src="{{ asset('images/smartsave.png') }}" alt="profile" />
                                 @endif
-                                <span class="{{  Auth::user()->status == 'active' ? 'active-status' : 'inactive-status'}}"></span>
+                                <span
+                                    class="{{ Auth::user()->status == 'active' ? 'active-status' : 'inactive-status' }}"></span>
                             </div>
                             <div class="hidden md:block text-left">
                                 <p class="font-medium text-gray-800">{{ Auth::user()->name }}</p>

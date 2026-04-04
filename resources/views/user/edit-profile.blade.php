@@ -80,16 +80,16 @@
                                         </div>
 
                                         <div class="space-y-1.5">
-                                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">City /
-                                                State</label>
-                                            <input type="text" name="state" value="{{ old('state', $user->state) }}"
+                                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">
+                                                City</label>
+                                            <input type="text" name="city" value="{{ old('city', $user->city) }}"
                                                 class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
-                                            @error('state')
+                                            @error('city')
                                                 <p class="text-red-500 text-xs">{{ $message }}</p>
                                             @enderror
                                         </div>
 
-                                        <div class="md:col-span-2 space-y-1.5">
+                                        <div class="space-y-1.5">
                                             <label
                                                 class="text-xs font-bold text-slate-500 uppercase tracking-wide">Address</label>
                                             <textarea name="address" rows="3"
@@ -98,6 +98,17 @@
                                                 <p class="text-red-500 text-xs">{{ $message }}</p>
                                             @enderror
                                         </div>
+
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">
+                                                State</label>
+                                            <input type="text" name="state" value="{{ old('state', $user->state) }}"
+                                                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none">
+                                            @error('state')
+                                                <p class="text-red-500 text-xs">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -150,15 +161,28 @@
                                             <label
                                                 class="text-xs font-bold text-slate-500 uppercase tracking-wide">Document
                                                 Photo</label>
-                                            <input type="file" name="adhar_photo"
-                                                class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
-                                            @if ($user->adhar_photo)
-                                                <a href="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_photo)) }}"
-                                                    target="_blank"
-                                                    class="text-xs text-indigo-600 hover:underline flex items-center gap-1 mt-2">
-                                                    <i class="fas fa-external-link-alt"></i> Current Document
-                                                </a>
-                                            @endif
+                                                <div>
+                                                     <p class="text-slate-600 font-semibold text-sm">Front Side</p>
+                                                    <input type="file" name="adhar_photo"
+                                                    class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
+                                                    @if ($user->adhar_photo)
+                                                    <a href="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_photo)) }}"
+                                                        target="_blank"
+                                                        class="text-xs text-indigo-600 hover:underline flex items-center gap-1 mt-2">
+                                                        <i class="fas fa-external-link-alt"></i> Current Document
+                                                    </a>
+                                                    @endif
+                                                    <p class="text-slate-600 font-semibold text-sm mt-1">Back Side</p>
+                                                    <input type="file" name="adhar_back_photo"
+                                                    class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer">
+                                                    @if ($user->adhar_back_photo)
+                                                    <a href="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_back_photo)) }}"
+                                                        target="_blank"
+                                                        class="text-xs text-indigo-600 hover:underline flex items-center gap-1 mt-2">
+                                                        <i class="fas fa-external-link-alt"></i> Current Document
+                                                    </a>
+                                                    @endif
+                                                </div>
                                         </div>
                                     </div>
                                 </div>

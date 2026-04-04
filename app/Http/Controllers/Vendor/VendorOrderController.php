@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
+use App\Models\AutopoolEarningsHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,8 @@ use App\Models\CashbackIncome;
 use App\Models\PercentageReward;
 use App\Models\Vendor;
 use App\Models\VendorIncome;
+use App\Models\VendorWalletTransaction;
+use App\Services\AutoPoolService;
 use Carbon\Carbon;
 
 class VendorOrderController extends Controller
@@ -202,18 +205,24 @@ class VendorOrderController extends Controller
                 // प्रोडक्ट टेबल से प्रोडक्ट को निकालें ताकि percentage मिल सके
                 $product = Product::find($item->product_id);
 
-                // अगर डेटाबेस में percentage नल (null) है, तो डिफ़ॉल्ट 30% एडमिन का मानेंगे
+                // अगर डेटाबेस में percentage नल (null) है, तो डिफ़ॉल्ट 30% एडमिन का मानेंगे
                 $adminPercentage = ($product && $product->percentage !== null) ? $product->percentage : 30;
 
-                // वेंडर का हिस्सा = 100 - एडमिन का हिस्सा
-                $vendorPercentage = 100 - $adminPercentage;
+                // 1. इस आइटम की टोटल सेल (Price x Quantity)
+                $itemTotalSales = $item->price * $item->quantity;
 
-                // इस आइटम की टोटल सेल (Price x Quantity)
-                $itemTotal = $item->price * $item->quantity;
-                $vendorTotalSales += $itemTotal;
+                // 2. इस आइटम का टोटल प्रॉफिट 
+                // (मान कर चल रहे हैं कि $item->profit एक पीस का प्रॉफिट है, इसलिए quantity से गुणा किया है)
+                $itemTotalProfit = ($item->profit ?? 0) * $item->quantity;
 
-                // वेंडर की कमाई में इसका हिस्सा जोड़ देंगे
-                $vendorEarnings += $itemTotal * ($vendorPercentage / 100);
+                // 3. एडमिन का हिस्सा (सिर्फ प्रॉफिट का % लेगा)
+                $adminCut = $itemTotalProfit * ($adminPercentage / 100);
+
+                // 4. वेंडर की कमाई = टोटल सेल - एडमिन का हिस्सा
+                $vendorItemEarnings = $itemTotalSales - $adminCut;
+
+                $vendorTotalSales += $itemTotalSales;
+                $vendorEarnings += $vendorItemEarnings;
             }
         }
 
@@ -224,16 +233,17 @@ class VendorOrderController extends Controller
             })->first();
 
             if ($vendorUser) {
-                // वेंडर के वॉलेट में पैसे जोड़ें
-                $vendorUser->wallet1_balance += $vendorEarnings;
+                // वेंडर के VENDOR WALLET में पैसे जोड़ें 
+                $vendorUser->vendor_wallet_balance += $vendorEarnings;
                 $vendorUser->save();
 
-                Wallet1Transaction::create([
+                // Transaction VendorWalletTransaction में सेव करें
+                VendorWalletTransaction::create([
                     'user_id'   => $vendorUser->id,
                     'user_ulid' => $vendorUser->ulid,
-                    'wallet1'   => $vendorEarnings,
+                    'amount'    => $vendorEarnings,
                     'notes'     => "Payment received for Order #{$order->order_id}",
-                    'balance'   => $vendorUser->wallet1_balance,
+                    'balance'   => $vendorUser->vendor_wallet_balance,
                 ]);
             }
         }
@@ -250,7 +260,15 @@ class VendorOrderController extends Controller
             throw new \Exception("Percentage Income Settings not configured.");
         }
 
+        // ===============================================
+        // NEW: INIT AUTO POOL SERVICE
+        // ===============================================
+        $autoPoolService = new AutoPoolService();
+
         if ($totalPV > 0) {
+
+            // Vendor Product ki PV humesha Auto Pool ki Repurchase Condition me count hogi
+            $autoPoolService->processRepurchase($user, $totalPV, $order);
 
             // Logic: Check if it's the first purchase
             if ($user->is_paid == 0) {
@@ -259,7 +277,7 @@ class VendorOrderController extends Controller
 
                 // Mark user as Paid AND change Status to ACTIVE
                 $user->is_paid = 1;
-                $user->status = 'active';  // <--- YAHAN STATUS ACTIVE KIYA GAYA HAI
+                $user->status = 'active';
                 $user->user_doa = now();
             } else {
                 // Already Paid User (Repurchase Income)
@@ -484,6 +502,90 @@ class VendorOrderController extends Controller
         }
     }
 
+    // private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $vendorId)
+    // {
+    //     if ($tableType === 'level_incomes') {
+    //         $levelSettings = PercentageLevelIncome::orderBy('level', 'asc')->get();
+    //     } else {
+    //         $levelSettings = PercentageRepurchaseIncome::orderBy('level', 'asc')->get();
+    //     }
+
+    //     $currentUplineUlid = $fromUser->sponsor_id;
+
+    //     foreach ($levelSettings as $levelSetting) {
+    //         $uplineUser = User::where('ulid', $currentUplineUlid)->first();
+    //         if (!$uplineUser) break;
+
+    //         if ($uplineUser->status !== 'active' || $uplineUser->is_capping_enabled == 0) {
+    //             $currentUplineUlid = $uplineUser->sponsor_id;
+    //             continue;
+    //         }
+
+    //         // Capping Calculation
+    //         $calculatedIncome = $totalPV * ($levelSetting->percentage / 100);
+    //         $dailyLimit = $uplineUser->capping_limit;
+
+    //         $todayLevelIncome = LevelIncome::where('user_id', $uplineUser->id)
+    //             ->whereDate('created_at', Carbon::today())
+    //             ->sum('amount');
+
+    //         $todayRepurchaseIncome = RepurchaseIncome::where('user_id', $uplineUser->id)
+    //             ->whereDate('created_at', Carbon::today())
+    //             ->sum('commission');
+
+    //         $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome;
+    //         $payableAmount = 0;
+
+    //         if ($totalEarnedToday >= $dailyLimit) {
+    //             $payableAmount = 0;
+    //         } elseif (($totalEarnedToday + $calculatedIncome) > $dailyLimit) {
+    //             $payableAmount = $dailyLimit - $totalEarnedToday;
+    //         } else {
+    //             $payableAmount = $calculatedIncome;
+    //         }
+
+    //         if ($payableAmount > 0) {
+    //             $note = ($tableType == 'level_incomes')
+    //                 ? "Level {$levelSetting->level} Income from {$fromUser->ulid}"
+    //                 : "Repurchase Level {$levelSetting->level} Income from {$fromUser->ulid}";
+
+    //             $this->distributeToWallets($uplineUser, $payableAmount, $settings, $note);
+
+    //             if ($tableType == 'level_incomes') {
+    //                 LevelIncome::create([
+    //                     'order_id'         => $order->id,
+    //                     'vendor_id'        => $vendorId,
+    //                     'admin_id'         => null,
+    //                     'user_id'          => $uplineUser->id,
+    //                     'user_ulid'        => $uplineUser->ulid,
+    //                     'from_user_id'     => $fromUser->id,
+    //                     'from_user_ulid'   => $fromUser->ulid,
+    //                     'from_user_name'   => $fromUser->name,
+    //                     'purchase_amount'  => $order->total_amount,
+    //                     'purchase_pv'      => $totalPV,
+    //                     'level'            => $levelSetting->level,
+    //                     'amount'           => $payableAmount,
+    //                 ]);
+    //             } else {
+    //                 RepurchaseIncome::create([
+    //                     'order_id'        => $order->id,
+    //                     'vendor_id'       => $vendorId,
+    //                     'admin_id'        => null,
+    //                     'user_id'         => $uplineUser->id,
+    //                     'from_ulid'       => $fromUser->ulid,
+    //                     'from_name'       => $fromUser->name,
+    //                     'purchase_amount' => $order->total_amount,
+    //                     'purchase_pv'     => $totalPV,
+    //                     'commission'      => $payableAmount,
+    //                     'level'           => $levelSetting->level,
+    //                 ]);
+    //             }
+    //         }
+
+    //         $currentUplineUlid = $uplineUser->sponsor_id;
+    //     }
+    // }
+
     private function distributeLevelIncome($fromUser, $order, $totalPV, $settings, $tableType, $vendorId)
     {
         if ($tableType === 'level_incomes') {
@@ -515,7 +617,13 @@ class VendorOrderController extends Controller
                 ->whereDate('created_at', Carbon::today())
                 ->sum('commission');
 
-            $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome;
+            // --- NEW: AUTO POOL INCOME ADDED HERE FOR CAPPING ---
+            $todayAutoPoolIncome = AutopoolEarningsHistory::where('user_id', $uplineUser->id)
+                ->whereDate('created_at', Carbon::today())
+                ->sum('reward_amount');
+
+            // Teeno Incomes ko add karke check karenge
+            $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome + $todayAutoPoolIncome;
             $payableAmount = 0;
 
             if ($totalEarnedToday >= $dailyLimit) {

@@ -176,7 +176,6 @@ class WalletController extends Controller
     }
 
 
-    // WithdrawalController.php
     public function withdrawWallet1(Request $request)
     {
         $user = Auth::user();
@@ -193,29 +192,36 @@ class WalletController extends Controller
 
         $percentageIncome = PercentageIncome::first();
 
-        // Calculate charges (5% each)
+        // Calculate charges (e.g., 5% each based on your settings)
         $adminCharge = $validated['amount'] * ($percentageIncome->admin_charge / 100);
         $tdsCharge = $validated['amount'] * ($percentageIncome->tds_charge / 100);
         $creditedAmount = $validated['amount'] - $adminCharge - $tdsCharge;
 
-        // Create withdrawal request
-        MoneyWithdrawl::create([
-            'user_id' => $user->id,
-            'user_ulid' => $user->ulid,
-            'total_amount' => $validated['amount'],
-            'admin_charge' => $adminCharge,
-            'tds_charge' => $tdsCharge,
-            'credited_amount' => $creditedAmount,
-            'status' => 'pending',
-            'payment_method' => $validated['payment_method'],
-        ]);
+        // Use a DB transaction to ensure both operations succeed or fail together
+        DB::transaction(function () use ($user, $validated, $adminCharge, $tdsCharge, $creditedAmount) {
 
-        return redirect()->route('user.viewwallet')->with('success', 'Withdrawal request submitted successfully!');
+            // 1. DEDUCT MONEY IMMEDIATELY
+            $user->decrement('wallet1_balance', $validated['amount']);
+
+            // 2. Create withdrawal request
+            MoneyWithdrawl::create([
+                'user_id' => $user->id,
+                'user_ulid' => $user->ulid,
+                'total_amount' => $validated['amount'],
+                'admin_charge' => $adminCharge,
+                'tds_charge' => $tdsCharge,
+                'credited_amount' => $creditedAmount,
+                'status' => 'pending',
+                'payment_method' => $validated['payment_method'],
+            ]);
+        });
+
+        return redirect()->route('user.viewwallet')->with('success', 'Withdrawal request submitted and amount deducted successfully!');
     }
 
     public function viewUserWithdrawals()
     {
-
+        // (Assuming you are passing $withdrawals from somewhere else in your actual code)
         return view('user.viewwallet', compact('withdrawals'));
     }
 
@@ -253,12 +259,8 @@ class WalletController extends Controller
     {
         $withdrawal = MoneyWithdrawl::findOrFail($id);
 
-        // Deduct wallet1 from user
-        $user = $withdrawal->user;
-        $user->decrement('wallet1_balance', $withdrawal->total_amount);
-        $user->save();
-
-        // Update withdrawal status
+        // We DO NOT deduct money here anymore, as it was already deducted upon request creation.
+        // Just update withdrawal status
         $withdrawal->status = 'approved';
         $withdrawal->save();
 
@@ -268,13 +270,33 @@ class WalletController extends Controller
     public function rejectWithdrawlRequest($id)
     {
         $withdrawal = MoneyWithdrawl::findOrFail($id);
-        $withdrawal->status = 'rejected';
-        $withdrawal->save();
 
-        return back()->with('success', 'Withdrawal rejected');
+        // Only process rejection if it is currently pending to avoid double refunds
+        if ($withdrawal->status === 'pending') {
+            DB::transaction(function () use ($withdrawal) {
+                // 1. REFUND THE MONEY
+                $user = $withdrawal->user;
+                // 1. REFUND THE MONEY TO WALLET 1
+                $user->increment('wallet1_balance', $withdrawal->total_amount);
+
+                // 2. CREATE WALLET 1 TRANSACTION HISTORY FOR REFUND
+                Wallet1Transaction::create([
+                    'user_id'   => $user->id,
+                    'user_ulid' => $user->ulid,
+                    'wallet1'   => $withdrawal->total_amount, // Refunded amount
+                    'notes'     => "Refund for Rejected Withdrawal Request",
+                    'balance'   => $user->wallet1_balance, // Updated balance after refund
+                ]);
+                // 2. Update status
+                $withdrawal->status = 'rejected';
+                $withdrawal->save();
+            });
+
+            return back()->with('success', 'Withdrawal rejected and money refunded to user.');
+        }
+
+        return back()->with('error', 'This withdrawal request has already been processed.');
     }
-
-
 
 
     //Transfer Wallet1 to Downline User in the user panel

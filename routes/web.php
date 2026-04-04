@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AutoPoolIncomeController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ComplaintController as AdminComplaintController;
 use App\Http\Controllers\Admin\CouponController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\LoginActivityController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SingleLegPlanController;
 use App\Http\Controllers\User\ComplaintController;
 use App\Http\Controllers\User\CouponPurchaseController;
 use App\Http\Controllers\User\UserIncomeController;
@@ -31,12 +33,10 @@ use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\Vendor\VendorOrderController;
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Vendor\VendorProductController;
+use App\Http\Controllers\Vendor\VendorWalletController;
 use App\Http\Middleware\IsVendor;
 
 Route::get('/', [AuthController::class, 'home'])->name('home');
-
-Route::get('/gallery/load-more', [AuthController::class, 'loadMore'])->name('gallery.load-more');
-Route::get('/news/load-more', [AuthController::class, 'loadMoreNews'])->name('news.load-more');
 
 Route::get('/test-mail', function () {
     \Illuminate\Support\Facades\Mail::raw('This is a test email.', function ($message) {
@@ -74,13 +74,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/profile/edit', [UserController::class, 'edit'])->name('user.profile.edit');
     Route::put('/user/profile/update', [UserController::class, 'update'])->name('user.profile.update');
 
-
-    Route::get('/package2-purchase', [UserController::class, 'showPurchaseForm'])->name('package2.purchase');
-    Route::post('/package2-purchase', [UserController::class, 'processPurchase'])->name('package2.process-purchase');
-
     Route::get('/user/viewuser', [AuthController::class, 'showTreeRecursive'])->name('user.view.userTree');
     Route::get('/user/network-summary', [ContactController::class, 'networkSummary'])->name('user.network.summary');
     Route::get('/user/direct-team', [ContactController::class, 'directTeam'])->name('user.direct.team');
+    Route::get('/single-leg-tree', [SingleLegPlanController::class, 'singleLegTree'])->name('user.singleLegTree');
+    Route::get('/fetch-next-single-leg/{ulid}', [SingleLegPlanController::class, 'fetchNextSingleLegNode']);
 
 
     Route::prefix('user')->group(function () {
@@ -100,6 +98,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/income/reward', [UserIncomeController::class, 'rewardIncome'])->name('user.income.reward');
         Route::get('/income/repurchase', [UserIncomeController::class, 'repurchaseIncome'])->name('user.income.repurchase');
         Route::get('/income/vendor', [UserIncomeController::class, 'vendorIncomeReport'])->name('user.income.vendor-income');
+        Route::get('/auto-pool-progress', [UserIncomeController::class, 'autoPoolProgress'])->name('user.autopool.progress');
     });
 });
 
@@ -112,6 +111,8 @@ Route::middleware(['auth', IsVendor::class])->group(function () {
     Route::prefix('vendor')->name('vendor.')->group(function () {
         Route::resource('products', VendorProductController::class);
         Route::put('/products/{id}/stock', [VendorProductController::class, 'updateStock'])->name('product.stock.update');
+        Route::get('/wallet', [VendorWalletController::class, 'vendorWallet'])->name('wallet.index');
+        Route::post('/wallet/withdraw', [VendorWalletController::class, 'withdraw'])->name('wallet.withdraw');
     });
 
     Route::get('/orders', [VendorOrderController::class, 'index'])->name('vendor.orders.index');
@@ -166,6 +167,8 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/vendors-list', [AdminController::class, 'adminVendors'])->name('admin.vendors.list');
     Route::get('/admin/network/summary', [AdminController::class, 'networkSummary'])->name('admin.network.summary');
     Route::get('/admin/user-tree/{adminId}', [AuthController::class, 'showUserTreeFromAdmin'])->name('admin.user.tree');
+    Route::get('/admin/single-leg-tree', [SingleLegPlanController::class, 'singleLegTreeAdmin'])->name('admin.singleLegTreeAdmin');
+    Route::get('/admin/fetch-next-single-leg/{ulid}', [SingleLegPlanController::class, 'fetchNextSingleLegNodeAdmin']);
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('products', ProductController::class);
@@ -188,6 +191,10 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::post('/withdrawal/toggle', [WalletController::class, 'toggleWithdrawalStatus'])->name('admin.withdrawal.toggle');
         Route::post('/withdrawals/{id}/approve', [WalletController::class, 'approveWithdrawlRequest'])->name('admin.withdrawls.approve');
         Route::post('/withdrawals/{id}/reject', [WalletController::class, 'rejectWithdrawlRequest'])->name('admin.withdrawls.reject');
+
+        Route::get('/vendor-withdrawals', [VendorWalletController::class, 'vendorWithdrawalRequests'])->name('admin.vendor.withdrawals');
+        Route::post('/vendor-withdrawals/approve/{id}', [VendorWalletController::class, 'approveVendorWithdrawal'])->name('admin.vendor.withdraw.approve');
+        Route::post('/vendor-withdrawals/reject/{id}', [VendorWalletController::class, 'rejectVendorWithdrawal'])->name('admin.vendor.withdraw.reject');
 
         Route::get('/package', [PackageController::class, 'package'])->name('admin.package');
         Route::get('/product-package', [PackageController::class, 'productPackage'])->name('admin.product-package');
@@ -228,6 +235,15 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::delete('/percentage-level/delete/{id}', [PercentageLevelController::class, 'destroy'])
             ->name('admin.percentage.level.destroy');
 
+        Route::get('/auto-pool-categories', [AutoPoolIncomeController::class, 'autoPoolCategories'])->name('admin.autopool_categories.index');
+        Route::post('/auto-pool-categories/store', [AutoPoolIncomeController::class, 'storeAutoPoolCategory'])->name('admin.autopool_categories.store');
+        Route::put('/auto-pool-categories/update/{id}', [AutoPoolIncomeController::class, 'updateAutoPoolCategory'])->name('admin.autopool_categories.update');
+        Route::delete('/auto-pool-categories/destroy/{id}', [AutoPoolIncomeController::class, 'destroyAutoPoolCategory'])->name('admin.autopool_categories.destroy');
+
+        Route::get('/auto-pools', [AutoPoolIncomeController::class, 'manageAutoPools'])->name('admin.auto-pools.index');
+        Route::post('/auto-pools/store', [AutoPoolIncomeController::class, 'storeAutoPool'])->name('admin.auto-pools.store');
+        Route::put('/auto-pools/update/{id}', [AutoPoolIncomeController::class, 'updateAutoPool'])->name('admin.auto-pools.update');
+        Route::delete('/auto-pools/delete/{id}', [AutoPoolIncomeController::class, 'destroyAutoPool'])->name('admin.auto-pools.destroy');
         // List
         Route::get('/percentage-repurchase', [PercentageRepurchaseController::class, 'index'])
             ->name('admin.percentage.repurchase.index');
@@ -260,6 +276,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
         Route::post('/admin/toggle-shop', [AdminController::class, 'toggleShopStatus'])->name('admin.shop.toggle');
     });
+    
     Route::prefix('admin')->name('admin.')->group(function () {
 
         // Vendor Banners
@@ -325,6 +342,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/user/add-money', [FundRequestController::class, 'showAddMoneyForm'])->name('user.funds.create');
     Route::post('/user/add-money', [FundRequestController::class, 'storeFundRequest'])->name('user.funds.store');
+    Route::get('/vendors', [UserController::class, 'vendorsList'])->name('user.vendors');
 });
 
 Route::get('/check-sponsor/{id}', function ($id) {

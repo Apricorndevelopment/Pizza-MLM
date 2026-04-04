@@ -151,7 +151,8 @@
         {{-- 1. HERO BANNER (Rearranged: Welcome Title First, then Rank) --}}
         <div class="row mb-4">
             <div class="col-12">
-                <div class="company-banner p-3.5 lg:p-6 text-white d-flex align-items-center justify-content-between">
+                <div class="company-banner p-3.5 lg:p-6 text-white d-flex align-items-center justify-content-between"
+                    style="background: linear-gradient(135deg, #065f46 0%, #047857 50%, #10b981 100%);">
                     <div class="position-relative z-10">
                         {{-- Welcome Title First --}}
                         <h1 class="display-5 fw-bolder mb-3">Welcome to Smart Save24</h1>
@@ -159,7 +160,8 @@
                         {{-- Rank Badge Second --}}
                         <div class="mb-3">
                             <span
-                                class="badge bg-white/20 border border-white/30 rounded-pill px-3 py-2 text-white fs-6 fw-normal">
+                                class="badge bg-white/20 border border-white/30 rounded-pill px-3 py-2 text-white fs-6 fw-normal"
+                                style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);">
                                 <i class="fas fa-crown text-warning me-1"></i> Current Rank:
                                 <strong>{{ Auth::user()->current_rank ?? 'Member' }}</strong>
                             </span>
@@ -171,6 +173,171 @@
                     <div class="d-none d-lg-block position-relative z-10 pe-5">
                         <i class="fas fa-building fa-6x opacity-25 text-white"></i>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Helper PHP --}}
+        @php
+            function formatCurrency($number)
+            {
+                if ($number >= 10000000) {
+                    return '₹' . number_format($number / 10000000, 2) . 'Cr';
+                }
+                if ($number >= 100000) {
+                    return '₹' . number_format($number / 100000, 2) . 'L';
+                }
+                return '₹' . number_format($number, 2);
+            }
+        @endphp
+
+        {{-- 4. FINANCIAL OVERVIEW --}}
+        <div class="d-flex align-items-center mb-4">
+            <h4 class="fw-bold text-gray-800 mb-0">Financial Overview</h4>
+            <div class="ms-3 flex-grow-1 border-bottom"></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            {{-- Total Earnings --}}
+            <div class="col-md-6 col-xl-3">
+                <div class="stat-card bg-gradient-royal text-white p-4">
+                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
+                        <div>
+                            <p class="stat-label text-white-50">Total Earnings</p>
+                            <h2 class="stat-value">{{ formatCurrency($totalIncome) }}</h2>
+                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-wallet"></i></div>
+                    </div>
+                    <i class="fas fa-coins overlay-icon text-white"></i>
+                </div>
+            </div>
+
+            {{-- Wallet 1 --}}
+            <div class="col-md-6 col-xl-3">
+                <div class="stat-card bg-gradient-success text-white p-4">
+                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
+                        <div>
+                            <p class="stat-label text-white-50">Personal Wallet</p>
+                            <h2 class="stat-value">{{ formatCurrency($user->wallet1_balance) }}</h2>
+                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-money-bill-wave"></i></div>
+                    </div>
+                    <i class="fas fa-chart-line overlay-icon text-white"></i>
+                </div>
+            </div>
+
+            {{-- Wallet 2 --}}
+            <div class="col-md-6 col-xl-3">
+                <div class="stat-card bg-gradient-info text-white p-4">
+                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
+                        <div>
+                            <p class="stat-label text-white-50">Wallet 2</p>
+                            <h2 class="stat-value">{{ formatCurrency($user->wallet2_balance) }}</h2>
+                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-university"></i></div>
+                    </div>
+                    <i class="fas fa-piggy-bank overlay-icon text-white"></i>
+                </div>
+            </div>
+
+            {{-- Coupons --}}
+            <div class="col-md-6 col-xl-3">
+                <div class="stat-card bg-gradient-warning text-white p-4">
+                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
+                        <div>
+                            <p class="stat-label text-white-50">Active Coupons</p>
+                            <h2 class="stat-value">{{ number_format($totalCoupons) }}
+                                (₹{{ number_format($totalCoupons * 10) }})</h2>
+                        </div>
+                        <div class="icon-box-glass"><i class="fas fa-ticket-alt"></i></div>
+                    </div>
+                    <i class="fas fa-tags overlay-icon text-white"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- 5. INCOME BREAKDOWN --}}
+        <div class="d-flex align-items-center mb-4">
+            <h4 class="fw-bold text-gray-800 mb-0">Income Breakdown</h4>
+            <div class="ms-3 flex-grow-1 border-bottom"></div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-primary"></div>
+                    <div class="mb-3 text-primary bg-primary-subtle d-inline-block p-3 rounded-circle">
+                        <i class="fas fa-hand-holding-usd fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($directIncome) }}</h5>
+                    <p class="text-muted small mb-0 fw-bold text-uppercase">Direct Income</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-danger"></div>
+                    <div class="mb-3 text-danger bg-danger-subtle d-inline-block p-3 rounded-circle">
+                        <i class="fas fa-hand-holding-usd fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($bonusIncome) }}</h5>
+                    <p class="text-muted small mb-0 fw-bold text-uppercase">Bonus Income</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-success"></div>
+                    <div class="mb-3 text-success bg-success-subtle d-inline-block p-3 rounded-circle">
+                        <i class="fas fa-layer-group fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($levelIncome) }}</h5>
+                    <p class="text-muted small mb-0 fw-bold text-uppercase">Level Income</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-info"></div>
+                    <div class="mb-3 text-info bg-info-subtle d-inline-block p-3 rounded-circle">
+                        <i class="fas fa-shopping-cart fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($repurchaseIncome) }}</h5>
+                    <p class="text-muted small mb-0 fw-bold text-uppercase">Repurchase</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-purple-500"></div>
+                    <div class="mb-3 text-purple-500 d-inline-block p-3 rounded-circle">
+                        <i class="fas fa-layer-group fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($cashbackIncome) }}</h5>
+                    <p class="text-muted small mb-0 fw-bold text-uppercase">Cashback Income</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-warning"></div>
+                    <div class="mb-3 text-warning bg-warning-subtle d-inline-block p-3 rounded-circle">
+                        <i class="fas fa-trophy fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($rewardIncome) }}</h5>
+                    <p class="text-muted small mb-0 fw-bold text-uppercase">Rewards</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-xl-3">
+                <div
+                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-pink-500"></div>
+                    <div class="mb-3 text-pink-500 d-inline-block p-3 rounded-circle">
+                        <i class="fas fa-layer-group fa-lg"></i>
+                    </div>
+                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($autoPoolIncome) }}</h5>
+                    <p class="text-muted small mb-0 fw-bold text-uppercase">Auto Pool Earnings</p>
                 </div>
             </div>
         </div>
@@ -299,176 +466,31 @@
             </div>
         </div>
 
-        {{-- Helper PHP --}}
-        @php
-            function formatCurrency($number)
-            {
-                if ($number >= 10000000) {
-                    return '₹' . number_format($number / 10000000, 2) . 'Cr';
-                }
-                if ($number >= 100000) {
-                    return '₹' . number_format($number / 100000, 2) . 'L';
-                }
-                return '₹' . number_format($number, 2);
-            }
-        @endphp
-
-        {{-- 4. FINANCIAL OVERVIEW --}}
-        <div class="d-flex align-items-center mb-4">
-            <h4 class="fw-bold text-gray-800 mb-0">Financial Overview</h4>
-            <div class="ms-3 flex-grow-1 border-bottom"></div>
-        </div>
-
-        <div class="row g-4 mb-4">
-            {{-- Total Earnings --}}
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-card bg-gradient-royal text-white p-4">
-                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
-                        <div>
-                            <p class="stat-label text-white-50">Total Earnings</p>
-                            <h2 class="stat-value">{{ formatCurrency($totalIncome) }}</h2>
-                        </div>
-                        <div class="icon-box-glass"><i class="fas fa-wallet"></i></div>
-                    </div>
-                    <i class="fas fa-coins overlay-icon text-white"></i>
-                </div>
-            </div>
-
-            {{-- Wallet 1 --}}
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-card bg-gradient-success text-white p-4">
-                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
-                        <div>
-                            <p class="stat-label text-white-50">Personal Wallet</p>
-                            <h2 class="stat-value">{{ formatCurrency($user->wallet1_balance) }}</h2>
-                        </div>
-                        <div class="icon-box-glass"><i class="fas fa-money-bill-wave"></i></div>
-                    </div>
-                    <i class="fas fa-chart-line overlay-icon text-white"></i>
-                </div>
-            </div>
-
-            {{-- Wallet 2 --}}
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-card bg-gradient-info text-white p-4">
-                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
-                        <div>
-                            <p class="stat-label text-white-50">Wallet 2</p>
-                            <h2 class="stat-value">{{ formatCurrency($user->wallet2_balance) }}</h2>
-                        </div>
-                        <div class="icon-box-glass"><i class="fas fa-university"></i></div>
-                    </div>
-                    <i class="fas fa-piggy-bank overlay-icon text-white"></i>
-                </div>
-            </div>
-
-            {{-- Coupons --}}
-            <div class="col-md-6 col-xl-3">
-                <div class="stat-card bg-gradient-warning text-white p-4">
-                    <div class="d-flex justify-content-between align-items-start z-10 position-relative">
-                        <div>
-                            <p class="stat-label text-white-50">Active Coupons</p>
-                            <h2 class="stat-value">{{ number_format($totalCoupons) }}
-                                (₹{{ number_format($totalCoupons * 10) }})</h2>
-                        </div>
-                        <div class="icon-box-glass"><i class="fas fa-ticket-alt"></i></div>
-                    </div>
-                    <i class="fas fa-tags overlay-icon text-white"></i>
-                </div>
-            </div>
-        </div>
-
-        {{-- 5. INCOME BREAKDOWN --}}
-        <div class="d-flex align-items-center mb-4">
-            <h4 class="fw-bold text-gray-800 mb-0">Income Breakdown</h4>
-            <div class="ms-3 flex-grow-1 border-bottom"></div>
-        </div>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-4 col-xl-2">
-                <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-primary"></div>
-                    <div class="mb-3 text-primary bg-primary-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-hand-holding-usd fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($directIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Direct Income</p>
-                </div>
-            </div>
-            <div class="col-md-4 col-xl-2">
-                <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-danger"></div>
-                    <div class="mb-3 text-danger bg-danger-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-hand-holding-usd fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($bonusIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Bonus Income</p>
-                </div>
-            </div>
-            <div class="col-md-4 col-xl-2">
-                <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-success"></div>
-                    <div class="mb-3 text-success bg-success-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-layer-group fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($levelIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Level Income</p>
-                </div>
-            </div>
-            <div class="col-md-4 col-xl-2">
-                <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-purple-500"></div>
-                    <div class="mb-3 text-purple-500 d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-layer-group fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($cashbackIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Cashback Income</p>
-                </div>
-            </div>
-            <div class="col-md-4 col-xl-2">
-                <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-info"></div>
-                    <div class="mb-3 text-info bg-info-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-shopping-cart fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($repurchaseIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Repurchase</p>
-                </div>
-            </div>
-            <div class="col-md-4 col-xl-2">
-                <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-warning"></div>
-                    <div class="mb-3 text-warning bg-warning-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-trophy fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($rewardIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Rewards</p>
-                </div>
-            </div>
-        </div>
-
         {{-- 6. CHART SECTION --}}
         <div class="row">
             <div class="col-12">
-                <div class="chart-container p-3.5 sm:p-6">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                <div class="chart-container p-3.5 sm:p-6 rounded-2xl shadow-sm"
+                    style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%); border: 1px solid rgba(16, 185, 129, 0.1);">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-2">
                         <div class="mb-3 mb-md-0">
-                            <h4 class="fw-bold text-gray-800 mb-1">Business Performance</h4>
-                            <p class="text-muted mb-0">Track your team's growth trajectory over time.</p>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="w-1 h-8 rounded-full"
+                                    style="background: linear-gradient(135deg, #059669, #10b981);"></div>
+                                <h4 class="fw-bold mb-0" style="color: #064e3b;">Business Performance</h4>
+                            </div>
+                            <p class="mb-0" style="color: #6b7280; font-size: 0.875rem;">
+                                <i class="fas fa-chart-line me-1" style="color: #10b981;"></i>
+                                Track your team's growth trajectory over time
+                            </p>
                         </div>
-                        <div class="bg-light p-1 rounded-3 d-inline-flex">
+                        <div class="bg-light p-1 rounded-3 d-inline-flex shadow-sm" style="background: #f9fafb;">
                             <select id="filter-select"
-                                class="form-select border-0 bg-transparent fw-bold text-secondary shadow-none cursor-pointer">
-                                <option value="daily">Last 15 Days</option>
-                                <option value="weekly">Last 8 Weeks</option>
-                                <option value="monthly" selected>Monthly</option>
-                                <option value="yearly">Yearly</option>
+                                class="form-select border-0 bg-transparent fw-semibold shadow-none cursor-pointer px-3 py-2 rounded-2"
+                                style="color: #065f46; font-size: 0.875rem; outline: none;">
+                                <option value="daily">📊 Last 15 Days</option>
+                                <option value="weekly">📈 Last 8 Weeks</option>
+                                <option value="monthly" selected>📅 Monthly</option>
+                                <option value="yearly">🎯 Yearly</option>
                             </select>
                         </div>
                     </div>
@@ -501,21 +523,25 @@
                     datasets: [{
                         label: 'Business Volume',
                         data: [],
-                        borderColor: '#4f46e5',
+                        borderColor: '#10b981',
                         backgroundColor: (context) => {
                             const ctx = context.chart.ctx;
                             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)');
-                            gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
+                            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
+                            gradient.addColorStop(0.5, 'rgba(16, 185, 129, 0.1)');
+                            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
                             return gradient;
                         },
                         tension: 0.4,
                         fill: true,
                         pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#4f46e5',
+                        pointBorderColor: '#10b981',
                         pointBorderWidth: 2,
                         pointRadius: 5,
                         pointHoverRadius: 7,
+                        pointHoverBackgroundColor: '#10b981',
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 2,
                         borderWidth: 3
                     }]
                 },
@@ -527,14 +553,15 @@
                             display: false
                         },
                         tooltip: {
-                            backgroundColor: '#1e293b',
-                            padding: 16,
+                            backgroundColor: '#064e3b',
+                            padding: 12,
                             titleFont: {
-                                size: 14,
-                                family: "'Inter', sans-serif"
+                                size: 13,
+                                family: "'Inter', sans-serif",
+                                weight: 'bold'
                             },
                             bodyFont: {
-                                size: 16,
+                                size: 14,
                                 weight: 'bold',
                                 family: "'Inter', sans-serif"
                             },
@@ -542,7 +569,7 @@
                             displayColors: false,
                             callbacks: {
                                 label: function(context) {
-                                    return 'Volume: ' + formatChartValue(context.raw);
+                                    return '💰 Volume: ' + formatChartValue(context.raw);
                                 }
                             }
                         }
@@ -551,20 +578,34 @@
                         y: {
                             beginAtZero: true,
                             grid: {
-                                borderDash: [4, 4],
-                                color: '#e2e8f0',
-                                drawBorder: false
+                                borderDash: [5, 5],
+                                color: '#e5e7eb',
+                                drawBorder: false,
+                                lineWidth: 1
                             },
                             ticks: {
                                 font: {
-                                    size: 12,
+                                    size: 11,
                                     family: "'Inter', sans-serif"
                                 },
-                                color: '#64748b',
+                                color: '#6b7280',
                                 callback: function(value) {
                                     return formatChartValue(value);
                                 },
                                 padding: 10
+                            },
+                            title: {
+                                display: true,
+                                text: 'Business Volume →',
+                                color: '#059669',
+                                font: {
+                                    size: 11,
+                                    weight: 'bold',
+                                    family: "'Inter', sans-serif"
+                                },
+                                padding: {
+                                    bottom: 10
+                                }
                             }
                         },
                         x: {
@@ -574,11 +615,13 @@
                             },
                             ticks: {
                                 font: {
-                                    size: 12,
+                                    size: 11,
                                     family: "'Inter', sans-serif"
                                 },
-                                color: '#64748b',
-                                padding: 10
+                                color: '#6b7280',
+                                padding: 8,
+                                maxRotation: 45,
+                                minRotation: 45
                             }
                         }
                     },
@@ -586,6 +629,11 @@
                         mode: 'index',
                         intersect: false
                     },
+                    elements: {
+                        line: {
+                            borderJoin: 'round'
+                        }
+                    }
                 }
             });
 

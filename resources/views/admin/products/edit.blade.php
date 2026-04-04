@@ -298,7 +298,7 @@
                                     <label for="pv" class="block text-sm font-medium text-gray-700">
                                         <span class="text-purple-600 font-semibold">PV (Point Value)</span>
                                     </label>
-                                  
+
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500">
                                             <i class="bi bi-star"></i>
@@ -308,7 +308,7 @@
                                                   @error('pv') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
                                             value="{{ old('pv', $product->pv ?? 0) }}" required>
                                     </div>
-                                      <div> {{-- Fixed height to prevent layout jump --}}
+                                    <div> {{-- Fixed height to prevent layout jump --}}
                                         <span class="text-xs font-bold text-red-600" id="recomendedPv"></span>
                                     </div>
                                     <p class="text-xs text-gray-500">Required for commission calculation</p>
@@ -333,7 +333,9 @@
                                                   @error('percentage') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
                                             value="{{ old('percentage', $product->percentage ?? 0) }}" required>
                                     </div>
-                                    <p class="text-xs text-gray-500">Required for percentage to the admin</p>
+                                     <div> {{-- Fixed height to prevent layout jump --}}
+                                        <span class="text-xs font-bold text-red-600" id="adminCommission"></span>
+                                    </div>
                                     @error('percentage')
                                         <p class="text-sm text-red-600 mt-1 flex items-center">
                                             <i class="bi bi-exclamation-circle mr-1"></i>
@@ -354,7 +356,8 @@
                                         <input type="number" name="max_coupon_usage" id="max_coupon_usage"
                                             class="w-full pl-10 pr-4 py-2.5 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 
                                                   @error('max_coupon_usage') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
-                                            value="{{ old('max_coupon_usage', $product->max_coupon_usage ?? 0) }}" required>
+                                            value="{{ old('max_coupon_usage', $product->max_coupon_usage ?? 0) }}"
+                                            required>
                                     </div>
                                     @error('max_coupon_usage')
                                         <p class="text-sm text-red-600 mt-1 flex items-center">
@@ -421,26 +424,60 @@
         </div>
     </div>
 
-    <script>
+   <script>
+        // Elements
         const recomendedPv = document.getElementById('recomendedPv');
         const profit = document.getElementById('profit');
+        const percentage = document.getElementById('percentage');
+        const adminCommission = document.getElementById('adminCommission');
 
-        if (profit) { // Safety check to ensure element exists
-            const recommendedPvValue = (profit.value * 30) / 100;
-            // FIX: Changed Math.rounded to Math.round
-            recomendedPv.textContent = `Recommended PV: ${Math.round(recommendedPvValue)}`;
-            profit.addEventListener('input', function() {
-                console.log("running");
-                if (this.value) {
-                    const recommendedPvValue = (this.value * 30) / 100;
-                    // FIX: Changed Math.rounded to Math.round
+        // Function to calculate and update Recommended PV
+        function updateRecommendedPv() {
+            if (profit && recomendedPv) {
+                const profitValue = parseFloat(profit.value) || 0;
+                if (profitValue > 0) {
+                    const recommendedPvValue = (profitValue * 30) / 100;
                     recomendedPv.textContent = `Recommended PV: ${Math.round(recommendedPvValue)}`;
                 } else {
                     recomendedPv.textContent = '';
                 }
+            }
+        }
+
+        // Function to calculate and update Admin Commission
+        function updateAdminCommission() {
+            if (profit && percentage && adminCommission) {
+                const profitValue = parseFloat(profit.value) || 0;
+                const percentageValue = parseFloat(percentage.value) || 0;
+
+                if (profitValue > 0 && percentageValue >= 0) {
+                    const commission = (profitValue * percentageValue) / 100;
+                    adminCommission.textContent = `Admin Commission: ₹${commission.toFixed(2)}`;
+                } else {
+                    adminCommission.textContent = '';
+                }
+            }
+        }
+
+        // Initialize values on page load (for Edit page pre-filled values)
+        updateRecommendedPv();
+        updateAdminCommission();
+
+        // Event Listeners for 'input' changes
+        if (profit) {
+            profit.addEventListener('input', function() {
+                updateRecommendedPv();
+                updateAdminCommission();
             });
         }
 
+        if (percentage) {
+            percentage.addEventListener('input', function() {
+                updateAdminCommission();
+            });
+        }
+
+        // Alert Dismissal Logic
         function dismissAlert(alertId) {
             const element = document.getElementById(alertId);
             if (element) {
@@ -449,7 +486,7 @@
             }
         }
 
-        // Auto dismiss after 5 seconds
+        // Auto dismiss alerts after 5 seconds
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('[id^="alert-"]');
             alerts.forEach(alert => {

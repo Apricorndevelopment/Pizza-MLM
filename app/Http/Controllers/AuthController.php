@@ -47,44 +47,6 @@ class AuthController extends Controller
         return view('Auth.register');
     }
 
-    public function loadMore(Request $request)
-    {
-        $page                = (int) $request->get('page', 1); // First page = after first 3
-        $perPage             = 6;
-        $initialDisplayCount = 3;
-
-        // Skip initial 3, then apply pagination
-        $skip = $initialDisplayCount + (($page - 1) * $perPage);
-
-        $photos      = Gallery::skip($skip)->take($perPage)->get();
-        $totalPhotos = Gallery::count();
-
-        $hasMore = $totalPhotos > $skip + $photos->count();
-
-        if ($request->ajax()) {
-            $html = '';
-            foreach ($photos as $photo) {
-                // Updated HTML to match the initial gallery section
-                $html .= '<div class="col gallery-item">';
-                $html .= '<a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" data-photo-url="' . asset('storage/photos/' . basename($photo->photo)) . '" data-photo-title="' . e($photo->title) . '">';
-                $html .= '<div class="card h-100 shadow-sm border-0">';
-                $html .= '<img src="' . asset('storage/photos/' . basename($photo->photo)) . '" alt="' . e($photo->title) . '" class="card-img-top img-fluid">';
-                $html .= '<div class="card-body text-center">';
-                $html .= '<h5 class="card-title">' . e($photo->title) . '</h5>';
-                $html .= '</div></div></a></div>';
-            }
-
-            return response()->json([
-                'html'    => $html,
-                'hasMore' => $hasMore,
-                'loaded'  => $photos->count(),
-                'total'   => $totalPhotos,
-            ]);
-        }
-
-        return abort(404);
-    }
-
     public function register(Request $request)
     {
         $request->validate([
@@ -112,14 +74,25 @@ class AuthController extends Controller
                 $customUlid = 'SS' . rand(1000000, 9999999);
             }
 
+            // ==========================================
+            // NEW: Single Leg Logic (Find Last User)
+            // ==========================================
+            // सिस्टम के सबसे आखिरी यूज़र को खोजें ताकि उसे Single Leg का Parent बनाया जा सके
+            $lastUser = User::orderBy('id', 'desc')->first();
+            
+            // अगर कोई आखिरी यूज़र मिलता है, तो उसका ULID parent_id बनेगा, 
+            // नहीं तो (सिस्टम का पहला यूज़र होने पर) sponsor_id ही parent_id बन जाएगा।
+            $parentId = $lastUser ? $lastUser->ulid : $request->sponsor_id;
+            // ==========================================
+
             // Create User
             $plainPassword = $request->password;
             $user = User::create([
                 'name'            => $request->full_name,
                 'email'           => $request->email,
                 'phone'           => $request->phone,
-                'sponsor_id'      => $request->sponsor_id,
-                'parent_id'       => $request->parent_id,
+                'sponsor_id'      => $request->sponsor_id, // For One-to-Many Tree
+                'parent_id'       => $parentId,            // For Single Leg Tree
                 'ulid'            => $customUlid,
                 'password'        => Hash::make($plainPassword),
                 'role'            => 'user',

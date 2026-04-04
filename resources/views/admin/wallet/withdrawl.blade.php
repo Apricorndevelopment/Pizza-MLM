@@ -2,14 +2,14 @@
 @section('title', 'Wallet Management')
 @section('container')
 
-    <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-slate-50 font-sans text-slate-600">
+        <div class="max-w-7xl mx-auto">
 
             {{-- Page Header & Toggle --}}
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                        <span class="p-2 bg-indigo-100 rounded-lg text-indigo-600 shadow-sm">
+                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                        <span class="px-3 py-2 bg-indigo-100 rounded-lg text-indigo-600 shadow-sm">
                             <i class="fas fa-wallet text-xl"></i>
                         </span>
                         Wallet Management
@@ -18,7 +18,7 @@
                 </div>
 
                 {{-- GLOBAL WITHDRAWAL TOGGLE --}}
-                <div class="bg-white px-5 py-2.5 rounded-full shadow-sm border border-slate-200 flex items-center gap-4">
+                <div class="bg-white px-3 py-2.5 rounded-full shadow-sm border border-slate-200 flex items-center gap-4">
                     <span id="withdrawalLabel"
                         class="text-sm font-bold {{ Auth::guard('admin')->user()->is_withdrawal_open ? 'text-emerald-600' : 'text-slate-500' }} flex items-center gap-2">
                         <span
@@ -37,7 +37,7 @@
             </div>
             {{-- Pending Withdrawals Section --}}
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                <div class="px-3.5 py-3 border-b border-slate-100 flex justify-between items-center">
                     <h2 class="font-bold  flex items-center gap-2">
                         <i class="fas fa-clock" class="text-[#94A3B8]"></i> Pending Requests
                     </h2>
@@ -50,18 +50,19 @@
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500">
                             <tr>
-                                <th class="px-6 py-4">User</th>
-                                <th class="px-6 py-4">Amount</th>
-                                <th class="px-6 py-4">Method</th>
-                                <th class="px-6 py-4">Details</th>
-                                <th class="px-6 py-4">Request Date</th>
-                                <th class="px-6 py-4 text-right">Actions</th>
+                                <th class="px-3.5 py-3">User</th>
+                                <th class="px-3.5 py-3">Amount</th>
+                                <th class="px-3.5 py-3">Charge</th>
+                                <th class="px-3.5 py-3">Amount After Charge</th>
+                                <th class="px-3.5 py-3">Details</th>
+                                <th class="px-3.5 py-3">Request Date</th>
+                                <th class="px-3.5 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse ($withdrawals as $withdrawal)
                                 <tr class="hover:bg-slate-50/50 transition-colors">
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <div class="flex flex-col">
                                             <span
                                                 class="font-bold text-slate-800 text-sm">{{ $withdrawal->user->name }}</span>
@@ -69,24 +70,32 @@
                                                 class="text-xs font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded w-fit mt-1">{{ $withdrawal->user_ulid }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <span
-                                            class="font-black text-slate-800 text-base">₹{{ number_format($withdrawal->total_amount, 2) }}</span>
+                                            class="text-slate-800 text-sm font-semibold">₹{{ number_format($withdrawal->total_amount, 2) }}</span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <span
-                                            class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wide
-                                            {{ $withdrawal->payment_method === 'bank' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-purple-50 text-purple-600 border border-purple-100' }}">
-                                            {{ $withdrawal->payment_method }}
+                                            class="inline-flex items-center text-xs font-semibold tracking-wide">
+                                            Admin Charge: {{ $withdrawal->admin_charge }}
+                                        </span>
+                                        <span
+                                            class="inline-flex items-center text-xs font-semibold tracking-wide">
+                                            TDS Charge: {{ $withdrawal->tds_charge }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-xs text-slate-500">
+                                    <td class="px-3.5 py-3">
+                                        <span
+                                            class="font-black text-slate-800 text-base">₹{{ number_format($withdrawal->credited_amount, 2) }}</span>
+                                    </td>
+                                    <td class="px-3.5 py-3 text-xs text-slate-500">
                                         @if ($withdrawal->payment_method === 'bank')
                                             <div class="space-y-0.5">
                                                 <p><span class="font-semibold text-slate-700">Bank:</span>
                                                     {{ $withdrawal->user->bank_name }}</p>
                                                 <p><span class="font-semibold text-slate-700">A/C:</span> <span
-                                                        class="font-mono">{{ $withdrawal->user->account_no }}</span></p>
+                                                        class="font-mono">{{ $withdrawal->user->account_no }}</span>
+                                                </p>
                                                 <p><span class="font-semibold text-slate-700">IFSC:</span> <span
                                                         class="font-mono">{{ $withdrawal->user->ifsc_code }}</span></p>
                                             </div>
@@ -95,7 +104,7 @@
                                                 {{ $withdrawal->user->upi_id }}</p>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <div class="flex flex-col">
                                             <span
                                                 class="text-sm font-semibold text-slate-700">{{ $withdrawal->created_at->format('d M, Y') }}</span>
@@ -103,7 +112,7 @@
                                                 class="text-xs text-slate-400">{{ $withdrawal->created_at->diffForHumans() }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-right">
+                                    <td class="px-3.5 py-3 text-right">
                                         <div class="flex items-center justify-end gap-2">
                                             <form action="{{ route('admin.withdrawls.approve', $withdrawal->id) }}"
                                                 method="POST" class="inline">
@@ -145,7 +154,7 @@
 
             {{-- All History Section --}}
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div class="px-3.5 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                     <h2 class="font-bold text-slate-800 flex items-center gap-2">
                         <i class="fas fa-history text-slate-400"></i> Withdrawal History
                     </h2>
@@ -159,33 +168,43 @@
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500">
                             <tr>
-                                <th class="px-6 py-4">User</th>
-                                <th class="px-6 py-4">Amount</th>
-                                <th class="px-6 py-4">Method</th>
-                                <th class="px-6 py-4">Status</th>
-                                <th class="px-6 py-4">Details</th>
-                                <th class="px-6 py-4">Request Date</th>
+                                <th class="px-3.5 py-3">User</th>
+                                <th class="px-3.5 py-3">Amount</th>
+                                <th class="px-3.5 py-3">Charges</th>
+                                <th class="px-3.5 py-3">Credited Amount</th>
+                                <th class="px-3.5 py-3">Status</th>
+                                <th class="px-3.5 py-3">Details</th>
+                                <th class="px-3.5 py-3">Request Date</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse ($allWithdrawls as $withdrawal)
                                 <tr class="hover:bg-slate-50/50 transition-colors">
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <div class="flex flex-col">
                                             <span
                                                 class="font-bold text-slate-800 text-sm">{{ $withdrawal->user->name }}</span>
                                             <span class="text-xs text-slate-400">#{{ $withdrawal->user_ulid }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <span
-                                            class="font-bold text-slate-700">₹{{ number_format($withdrawal->total_amount, 2) }}</span>
+                                            class="font-semibold text-slate-700">₹{{ number_format($withdrawal->total_amount, 2) }}</span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <span
-                                            class="text-xs font-semibold text-slate-600 uppercase">{{ $withdrawal->payment_method }}</span>
+                                            class="inline-flex items-center text-xs font-semibold tracking-wide">
+                                            Admin Charge: {{ $withdrawal->admin_charge }}
+                                        </span>
+                                        <span
+                                            class="inline-flex items-center text-xs font-semibold tracking-wide">
+                                            TDS Charge: {{ $withdrawal->tds_charge }}
+                                        </span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
+                                        <span class="font-black text-base text-slate-700"> {{ $withdrawal->credited_amount }}  </span>
+                                    </td>
+                                    <td class="px-3.5 py-3">
                                         @if ($withdrawal->status === 'approved')
                                             <span
                                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
@@ -204,7 +223,7 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-xs text-slate-500">
+                                    <td class="px-3.5 py-3 text-xs text-slate-500">
                                         @if ($withdrawal->payment_method === 'bank')
                                             <span
                                                 class="font-mono text-slate-600">{{ $withdrawal->user->account_no }}</span>
@@ -213,7 +232,7 @@
                                             {{ $withdrawal->user->upi_id }}
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-xs text-slate-500">
+                                    <td class="px-3.5 py-3 text-xs text-slate-500">
                                         {{ $withdrawal->created_at->format('d M, Y') }}
                                         <span
                                             class="text-slate-400 block text-[10px]">{{ $withdrawal->created_at->format('h:i A') }}</span>
@@ -232,7 +251,7 @@
 
                 {{-- Pagination --}}
                 @if ($allWithdrawls->hasPages())
-                    <div class="px-6 py-4 border-t border-slate-100 bg-white">
+                    <div class="px-3.5 py-3 border-t border-slate-100 bg-white">
                         {{ $allWithdrawls->links('pagination::tailwind') }}
                     </div>
                 @endif

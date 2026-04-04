@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AutopoolEarningsHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,7 @@ use App\Models\LevelIncome;
 use App\Models\RepurchaseIncome;
 use App\Models\CashbackIncome;
 use App\Models\PercentageReward;
+use App\Services\AutoPoolService;
 use Carbon\Carbon;
 
 class AdminOrderController extends Controller
@@ -149,9 +151,55 @@ class AdminOrderController extends Controller
     // MODULAR FUNCTIONS
     // =========================================================================
 
+    // private function processOrderAcceptance($order, $user, $adminId)
+    // {
+    //     $this->reduceProductStock($order);
+
+    //     // --- CHECK FOR PACKAGE PRODUCT (CAPPING SETTINGS) ---
+    //     foreach ($order->items as $item) {
+    //         $product = ProductPackage::find($item->product_id);
+
+    //         // Agar product package hai, to Capping Limit aur Enable true kar do
+    //         if ($product && $product->is_package_product == 1) {
+    //             $user->capping_limit = $product->capping;
+    //             $user->is_capping_enabled = 1;
+    //         }
+    //     }
+
+    //     // --- INCOME DISTRIBUTION LOGIC ---
+    //     $totalPV = $this->calculateTotalPV($order);
+    //     $settings = PercentageIncome::first();
+
+    //     if (!$settings) throw new \Exception("Income Settings not configured.");
+
+    //     if ($totalPV > 0) {
+
+    //         // Logic: Check if it's the first purchase
+    //         if ($user->is_paid == 0) {
+    //             // First Time Purchase (Direct/Bonus Income)
+    //             $this->handleFirstPurchase($user, $order, $totalPV, $settings, $adminId);
+
+    //             // Mark user as Paid AND change Status to ACTIVE
+    //             $user->is_paid = 1;
+    //             $user->status = 'active'; // <--- YAHAN STATUS ACTIVE KIYA GAYA HAI
+    //             $user->user_doa = now(); // Date of Activation/Payment
+    //         } else {
+    //             // Already Paid User (Repurchase Income)
+    //             $this->handleUserRepurchase($user, $order, $totalPV, $settings, $adminId);
+    //         }
+
+    //         // User ka status, is_paid aur capping update save karein
+    //         $user->save();
+
+    //         $this->processUplineGrowth($user, $totalPV, $settings);
+    //     }
+    // }
     private function processOrderAcceptance($order, $user, $adminId)
     {
         $this->reduceProductStock($order);
+
+        // ट्रैक करें कि क्या ऑर्डर से पहले यूजर का Capping Enabled था या नहीं
+        $wasCappingEnabled = $user->is_capping_enabled;
 
         // --- CHECK FOR PACKAGE PRODUCT (CAPPING SETTINGS) ---
         foreach ($order->items as $item) {
@@ -162,6 +210,11 @@ class AdminOrderController extends Controller
                 $user->capping_limit = $product->capping;
                 $user->is_capping_enabled = 1;
             }
+
+            // ===============================================
+            // NEW: STORE CAPPING PRODUCT ID
+            // ===============================================
+            $user->capping_product_id = $product->id;
         }
 
         // --- INCOME DISTRIBUTION LOGIC ---
@@ -170,26 +223,44 @@ class AdminOrderController extends Controller
 
         if (!$settings) throw new \Exception("Income Settings not configured.");
 
+        // ===============================================
+        // NEW: INIT AUTO POOL SERVICE
+        // ===============================================
+        $autoPoolService = new \App\Services\AutoPoolService();
+
         if ($totalPV > 0) {
 
-            // Logic: Check if it's the first purchase
+            // ===============================================
+            // 1. AUTO POOL LOGIC (Independent of is_paid)
+            // ===============================================
+            if ($wasCappingEnabled == 0 && $user->is_capping_enabled == 1) {
+                $autoPoolService->processFirstPurchase($user, $totalPV, $adminId, $order); // Pass $order here
+            } else {
+                $autoPoolService->processRepurchase($user, $totalPV, $order); // Pass $order here
+            }
+
+            // ===============================================
+            // 2. REGULAR MLM LOGIC (Dependent on is_paid)
+            // ===============================================
             if ($user->is_paid == 0) {
-                // First Time Purchase (Direct/Bonus Income)
                 $this->handleFirstPurchase($user, $order, $totalPV, $settings, $adminId);
 
-                // Mark user as Paid AND change Status to ACTIVE
                 $user->is_paid = 1;
-                $user->status = 'active'; // <--- YAHAN STATUS ACTIVE KIYA GAYA HAI
-                $user->user_doa = now(); // Date of Activation/Payment
+                $user->status = 'active';
+                $user->user_doa = now();
             } else {
-                // Already Paid User (Repurchase Income)
                 $this->handleUserRepurchase($user, $order, $totalPV, $settings, $adminId);
             }
 
-            // User ka status, is_paid aur capping update save karein
             $user->save();
-
             $this->processUplineGrowth($user, $totalPV, $settings);
+        } else {
+            if ($wasCappingEnabled == 0 && $user->is_capping_enabled == 1) {
+                $autoPoolService->processFirstPurchase($user, 0, $adminId, $order);
+                $user->save();
+            } elseif ($user->is_capping_enabled == 1) {
+                $autoPoolService->processRepurchase($user, 0, $order);
+            }
         }
     }
 
@@ -444,7 +515,13 @@ class AdminOrderController extends Controller
                 ->whereDate('created_at', Carbon::today())
                 ->sum('commission');
 
-            $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome;
+            // --- NEW: AUTO POOL INCOME ADDED HERE FOR CAPPING ---
+            $todayAutoPoolIncome = AutopoolEarningsHistory::where('user_id', $uplineUser->id)
+                ->whereDate('created_at', Carbon::today())
+                ->sum('reward_amount');
+
+            // Teeno Incomes ko add karke check karenge
+            $totalEarnedToday = $todayLevelIncome + $todayRepurchaseIncome + $todayAutoPoolIncome;
             $payableAmount = 0;
 
             if ($totalEarnedToday >= $dailyLimit) {

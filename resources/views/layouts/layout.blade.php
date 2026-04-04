@@ -241,7 +241,11 @@
                         <div class="sidebar-submenu pl-10 mt-1 space-y-1">
                             <a href="{{ route('admin.user.tree', $adminId) }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
-                                User Tree
+                                Multi User Tree
+                            </a>
+                            <a href="{{ route('admin.singleLegTreeAdmin', $adminId) }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Single Leg Tree
                             </a>
                             <a href="{{ route('admin.network.summary') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
@@ -270,7 +274,11 @@
                             </a>
                             <a href="{{ route('admin.withdrawls.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
-                                Withdrawal Requests
+                                User Withdrawals
+                            </a>
+                            <a href="{{ route('admin.vendor.withdrawals') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                Vendor Withdrawals
                             </a>
                             <a href="{{ route('admin.incomes.all') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
@@ -287,7 +295,8 @@
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-600 rounded-lg cursor-pointer group">
                             <div class="flex items-center gap-3">
-                                <i class="bi bi-box2-heart-fill text-lg group-hover:scale-110 transition-transform"></i>
+                                <i
+                                    class="bi bi-box2-heart-fill text-lg group-hover:scale-110 transition-transform"></i>
                                 <span class="font-medium">Packages</span>
                             </div>
                             <i class="bi bi-chevron-down text-xs transition-transform duration-200"></i>
@@ -336,6 +345,14 @@
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Rewards Settings
                             </a>
+                            <a href="{{ route('admin.autopool_categories.index') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                AutoPools Categories
+                            </a>
+                            <a href="{{ route('admin.auto-pools.index') }}"
+                                class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
+                                AutoPools Settings
+                            </a>
                         </div>
                     </div>
 
@@ -343,13 +360,14 @@
                         <div
                             class="menu-header flex items-center justify-between px-3 py-2.5 text-gray-600 rounded-lg cursor-pointer group">
                             <div class="flex items-center gap-3">
-                                <i class="bi bi-collection-play-fill text-lg group-hover:scale-110 transition-transform"></i>
+                                <i
+                                    class="bi bi-collection-play-fill text-lg group-hover:scale-110 transition-transform"></i>
                                 <span class="font-medium">Home Settings</span>
                             </div>
                             <i class="bi bi-chevron-down text-xs transition-transform duration-200"></i>
                         </div>
                         <div class="sidebar-submenu pl-10 mt-1 space-y-1">
-                             <a href="{{ route('admin.slider.index') }}"
+                            <a href="{{ route('admin.slider.index') }}"
                                 class="block px-3 py-2 text-sm text-gray-500 rounded-md hover:text-blue-600 hover:bg-blue-50">
                                 Top Achievers
                             </a>
@@ -391,7 +409,7 @@
                         <span class="font-medium">Payment Methods</span>
                     </a>
 
-                      <a href="{{ route('admin.complaints.index') }}"
+                    <a href="{{ route('admin.complaints.index') }}"
                         class="sidebar-menu-item flex items-center gap-3 px-3 py-2.5 text-gray-600 rounded-lg group">
                         <i class="bi bi-headset text-lg group-hover:scale-110 transition-transform"></i>
                         <span class="font-medium">Complaints</span>
@@ -605,6 +623,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
 
+    @stack('scripts')
 </body>
 
 </html>

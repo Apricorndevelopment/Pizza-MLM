@@ -20,6 +20,7 @@ class PercentageIncome extends Model
         'second_wallet',
         'tds_charge',
         'admin_charge',
+        'vendor_withdraw_charge',
     ];
 
     // Timestamps are true by default in Eloquent, 

@@ -39,7 +39,7 @@
 
                         <div class="px-4 p-4">
 
-                            <div class="relative flex justify-between items-end -mt-10 mb-4">
+                            <div class="relative flex justify-between items-end -mt-12 mb-4">
                                 <div class="relative">
                                     @if ($user->profile_picture)
                                         <img src="{{ asset('storage/profile-pictures/' . basename($user->profile_picture)) }}"
@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="mb-1">
                                     <a href="{{ route('user.profile.edit') }}"
-                                        class="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline">
+                                        class="text-sm font-bold text-indigo-600 hover:text-indigo-800 hover:underline">
                                         Edit Profile
                                     </a>
                                 </div>
@@ -82,11 +82,11 @@
                             <div class="grid grid-cols-2 gap-0 border-t border-slate-100 py-3 ">
                                 <div class="text-center border-r border-slate-100 pr-2">
                                     <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Wallet 1</p>
-                                    <p class="text-sm font-bold text-slate-700">₹{{ $user->wallet1_balance ?? 0 }}</p>
+                                    <p class="text-sm font-bold text-emerald-700">₹{{ $user->wallet1_balance ?? 0 }}</p>
                                 </div>
                                 <div class="text-center pl-2">
                                     <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Wallet 2</p>
-                                    <p class="text-sm font-bold text-emerald-600">₹{{ $user->wallet2_balance ?? 0 }}</p>
+                                    <p class="text-sm font-bold text-blue-600">₹{{ $user->wallet2_balance ?? 0 }}</p>
                                 </div>
                             </div>
 
@@ -207,17 +207,20 @@
                                             </div>
                                             <div>
                                                 <div class="flex items-center justify-between">
-                                                    <h4 class="text-blue-800 font-bold text-xs sm:text-sm uppercase tracking-wider">
+                                                    <h4
+                                                        class="text-blue-800 font-bold text-xs sm:text-sm uppercase tracking-wider">
                                                         Daily Capping Limit</h4>
                                                     <div class="flex items-baseline gap-1">
-                                                        <span class="text-xl sm:text-2xl font-bold text-blue-900">
+                                                        <span class="text-xl font-bold text-blue-900">
                                                             ₹{{ number_format($user->capping_limit ?? 0, 2) }}
                                                         </span>
                                                         <span class="text-xs text-blue-500 font-medium">/ day</span>
                                                     </div>
                                                 </div>
-                                                <p class="text-blue-600 text-[9px] sm:text-[11px] mt-2 leading-relaxed max-w-md">
-                                                    Your daily earning limit from Level or Repurchase incomes is
+                                                <p
+                                                    class="text-blue-600 text-[9px] sm:text-[11px] mt-2 leading-relaxed max-w-md">
+                                                    Your daily earning limit from Level, Repurchase & Smart Auto Pool
+                                                    Incomes is
                                                     <strong>₹{{ number_format($user->capping_limit ?? 0, 0) }}</strong>.
                                                     Purchase the more bigger admin package to increase the capping limit.
                                                 </p>
@@ -225,11 +228,24 @@
                                         </div>
                                     </div>
 
+                                    <div
+                                        class="bg-purple-50 border border-purple-200 rounded-xl p-2 flex items-start gap-2 sm:gap-3">
+                                        <div
+                                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 text-purple-600">
+                                            <i class="fas fa-check-circle text-sm sm:text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-purple-800 font-bold text-sm">Admin Capping Package</h4>
+                                            <p class="text-purple-600 text-xs mt-1">
+                                                {{ $user->cappingProduct->product_name ?? 'N/A' }}
+                                                (₹{{ $user->cappingProduct->dp ?? 'N/A' }}) </p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Personal
                                     Details
                                 </h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6">
                                     <div class="border-b border-slate-50 pb-2">
                                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Full
                                             Name</label>
@@ -253,11 +269,18 @@
                                         <span
                                             class="block text-sm font-medium text-slate-800">{{ $user->parent_id ?? 'N/A' }}</span>
                                     </div>
-                                    <div class="md:col-span-2 border-b border-slate-50 pb-2">
+                                    <div class="border-b border-slate-50 pb-2">
                                         <label
                                             class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Address</label>
                                         <span class="block text-sm font-medium text-slate-800">
-                                            {{ $user->address ?? 'Not provided' }}{{ $user->state ? ', ' . $user->state : '' }}
+                                            {{ $user->address ?? 'Not provided' }}
+                                        </span>
+                                    </div>
+                                    <div class="border-b border-slate-50 pb-2">
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">City &
+                                            State</label>
+                                        <span class="block text-sm font-medium text-slate-800">
+                                            {{ $user->city ?? 'N/A' }}{{ $user->state ? ', ' . $user->state : '' }}
                                         </span>
                                     </div>
                                 </div>
@@ -280,6 +303,17 @@
                                                 @if ($user->adhar_photo)
                                                     <img src="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_photo)) }}"
                                                         class="w-full h-full object-cover" alt="Aadhaar">
+                                                @else
+                                                    <span
+                                                        class="text-xs text-slate-400 flex flex-col items-center gap-1"><i
+                                                            class="fas fa-image text-xl"></i> No Upload</span>
+                                                @endif
+                                            </div>
+                                            <div
+                                                class="h-40 w-full mt-2 bg-white rounded-lg overflow-hidden border border-slate-200 flex items-center justify-center">
+                                                @if ($user->adhar_back_photo)
+                                                    <img src="{{ asset('storage/aadhaar-documents/' . basename($user->adhar_back_photo)) }}"
+                                                        class="w-full h-full object-cover" alt="Aadhaar Back">
                                                 @else
                                                     <span
                                                         class="text-xs text-slate-400 flex flex-col items-center gap-1"><i

@@ -53,6 +53,8 @@ class FundRequestController extends Controller
                 'sender_upi_id' => 'required|string',
                 'payment_method' => 'required|string',
                 'receipt_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120'
+            ],[
+                'transaction_id.unique' => 'The transaction ID has already been used in another request. Please double-check and try again.'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // This will log the exact error message (e.g., "The transaction id has already been taken.")

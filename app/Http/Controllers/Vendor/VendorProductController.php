@@ -56,6 +56,7 @@ class VendorProductController extends Controller
         $product->description = $request->description;
         $product->status = 'pending'; // Default Pending
         $product->isVeg =  $request->isVeg;
+        $product->product_cost = $request->dp - $request->profit;
 
         // Image Upload Logic (Provided by you)
         if ($request->hasFile('product_image')) {
@@ -106,6 +107,7 @@ class VendorProductController extends Controller
         $product->dp = $request->dp;
         $product->description = $request->description;
         $product->isVeg =  $request->isVeg;
+        $product->product_cost = $request->dp - $request->profit;
 
         // Agar edit kiya to wapas pending kar sakte hain logic ke hisaab se
         $product->status = 'pending';

@@ -50,7 +50,7 @@
                 <div class="md:flex">
                     {{-- Left Column: Image --}}
                     <div
-                        class="md:w-1/3 bg-gray-50 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-200">
+                        class="md:w-1/3 bg-gray-50 p-8 flex flex-col border-b md:border-b-0 md:border-r border-gray-200">
                         <div
                             class="relative w-full aspect-square rounded-xl overflow-hidden shadow-lg border border-gray-100 bg-white">
                             <img src="{{ asset($product->product_image) }}"
@@ -80,7 +80,7 @@
                     </div>
 
                     {{-- Right Column: Details --}}
-                    <div class="md:w-2/3 p-8">
+                    <div class="md:w-2/3 p-6">
                         <div class="mb-6">
                             <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $product->product_name }}</h1>
                             <div class="flex items-center space-x-4">
@@ -90,22 +90,30 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
                                 <span class="block text-xs font-medium text-gray-500 uppercase tracking-wider">GST</span>
                                 <span class="block text-lg font-semibold text-gray-900">{{ $product->gst }}%</span>
                             </div>
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
                                 <span class="block text-xs font-medium text-gray-500 uppercase tracking-wider">DP</span>
                                 <span class="block text-lg font-semibold text-gray-900">₹{{ $product->dp }}</span>
                             </div>
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
                                 <span class="block text-xs font-medium text-gray-500 uppercase tracking-wider">PV</span>
                                 <span class="block text-lg font-semibold text-gray-900">{{ $product->pv ?? '-' }}</span>
                             </div>
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <span class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Product Cost</span>
+                                <span class="block text-lg font-semibold text-gray-900">₹{{ $product->product_cost ? number_format($product->product_cost, 2) : 'Not Set' }}</span>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                <span class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Profit</span>
+                                <span class="block text-lg font-semibold text-gray-900">₹{{ $product->profit ?? 'Not Set' }}</span>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
                                 <span
-                                    class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Coupons</span>
+                                    class="block text-xs font-medium text-gray-500 uppercase tracking-wider">Coupons Usage</span>
                                 <span
                                     class="block text-lg font-semibold text-gray-900">{{ $product->max_coupon_usage ?? 0 }}</span>
                             </div>
@@ -115,7 +123,7 @@
                             <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 border-b pb-2">Product
                                 Description</h3>
                             <div
-                                class="prose prose-sm max-w-none text-gray-600 bg-gray-50/50 p-4 rounded-lg border border-gray-100 leading-relaxed">
+                                class="prose prose-sm max-w-none text-gray-600 bg-gray-50/50 p-3 rounded-lg border border-gray-100 leading-relaxed">
                                 {{ $product->description ?? 'No detailed description available for this product.' }}
                             </div>
                         </div>

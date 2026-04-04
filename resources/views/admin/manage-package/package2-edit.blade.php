@@ -2,7 +2,7 @@
 @section('title', 'Edit Product')
 @section('container')
 
-    <div class="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-gray-50">
         <div class="max-w-5xl mx-auto">
 
             {{-- Breadcrumb / Header --}}
@@ -175,7 +175,7 @@
                     <hr class="border-gray-100 my-8">
 
                     {{-- Section 2: Pricing --}}
-                    <div class="bg-blue-50/50 rounded-xl p-6 border border-blue-100">
+                    <div class="bg-blue-50/50 rounded-xl p-3.5 border border-blue-100">
                         <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
                             <span
                                 class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">
@@ -184,7 +184,8 @@
                             Pricing Configuration
                         </h3>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {{-- Changed to lg:grid-cols-5 to match the new 5 column layout --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                             <div class="group">
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">MRP <span
                                         class="text-red-500">*</span></label>
@@ -215,7 +216,7 @@
                                 <div class="relative">
                                     <span
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" step="0.01" name="dp"
+                                    <input type="number" step="0.01" name="dp" id="dp"
                                         value="{{ old('dp', $product->dp) }}"
                                         class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-gray-700"
                                         required>
@@ -227,10 +228,8 @@
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Profit
                                     <span class="text-red-500">*</span>
                                 </label>
-
                                 {{-- Placeholder for Recommended PV --}}
                                 <label class="block text-xs mb-1 text-blue-600 font-bold" id="recomend"></label>
-
                                 <div class="relative">
                                     <span
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
@@ -240,6 +239,21 @@
                                         required>
                                 </div>
                             </div>
+
+                            {{-- NEW: Product Cost --}}
+                            <div class="group">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Product Cost
+                                    <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                                    <input type="number" step="0.01" name="product_cost" id="product_cost"
+                                        value="{{ old('product_cost', $product->product_cost) }}"
+                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed outline-none transition-all shadow-sm font-semibold"
+                                        readonly required>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1">Auto-calc: DP - Profit</p>
+                            </div>
+
                         </div>
                     </div>
 
@@ -318,60 +332,80 @@
             const fileStatus = document.getElementById('file-status');
             const removeBtn = document.getElementById('remove-btn');
 
-            dropZone.addEventListener('click', () => fileInput.click());
+            if(dropZone && fileInput) {
+                dropZone.addEventListener('click', () => fileInput.click());
 
-            fileInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    const file = this.files[0];
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        fileStatus.textContent = "New Image Selected";
-                        fileStatus.classList.add('text-green-600');
-                        dropZone.classList.add('hidden');
-                        previewArea.classList.remove('hidden');
+                fileInput.addEventListener('change', function(e) {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            fileStatus.textContent = "New Image Selected";
+                            fileStatus.classList.add('text-green-600');
+                            dropZone.classList.add('hidden');
+                            previewArea.classList.remove('hidden');
+                        }
+                        reader.readAsDataURL(file);
                     }
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            removeBtn.addEventListener('click', function() {
-                fileInput.click(); // Open file browser again
-            });
-
-            ['dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    if (eventName === 'dragover') dropZone.classList.add('border-blue-500',
-                        'bg-blue-50');
-                    else dropZone.classList.remove('border-blue-500', 'bg-blue-50');
                 });
-            });
 
-            dropZone.addEventListener('drop', (e) => {
-                if (e.dataTransfer.files.length) {
-                    fileInput.files = e.dataTransfer.files;
-                    fileInput.dispatchEvent(new Event('change'));
-                }
-            });
+                removeBtn.addEventListener('click', function() {
+                    fileInput.click(); // Open file browser again
+                });
+
+                ['dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        if (eventName === 'dragover') dropZone.classList.add('border-blue-500', 'bg-blue-50');
+                        else dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+                    });
+                });
+
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+                    if (e.dataTransfer.files.length) {
+                        fileInput.files = e.dataTransfer.files;
+                        fileInput.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
 
             // ==========================================
-            // 2. PROFIT -> RECOMMENDED PV LOGIC
+            // 2. PRICING LOGIC (Product Cost & Recommended PV)
             // ==========================================
             const profitInput = document.getElementById('profit');
+            const dpInput = document.getElementById('dp');
+            const productCostInput = document.getElementById('product_cost');
             const recomendLabel = document.getElementById('recomend');
 
-            const calculatePv = () => {
-                if (profitInput.value && profitInput.value > 0) {
-                    const recommended = (parseFloat(profitInput.value) * 30) / 100;
+            function calculatePricing() {
+                const profitValue = parseFloat(profitInput.value) || 0;
+                const dpValue = parseFloat(dpInput.value) || 0;
+
+                // A. Update Recommended PV
+                if (profitValue > 0) {
+                    const recommended = (profitValue * 30) / 100;
                     recomendLabel.textContent = `Recommended PV: ${Math.round(recommended)}`;
                 } else {
                     recomendLabel.textContent = '';
                 }
-            };
 
-            profitInput.addEventListener('input', calculatePv);
-            calculatePv(); // Run on load
+                // B. Update Product Cost (DP - Profit)
+                if (productCostInput) {
+                    let cost = dpValue - profitValue;
+                    if (cost < 0) cost = 0; // Prevent negative cost
+                    productCostInput.value = cost.toFixed(2);
+                }
+            }
+
+            // Event Listeners for input changes
+            if (profitInput) profitInput.addEventListener('input', calculatePricing);
+            if (dpInput) dpInput.addEventListener('input', calculatePricing);
+
+            // Run calculation on page load (to show cost based on existing database values)
+            calculatePricing(); 
 
             // ==========================================
             // 3. CAPPING TOGGLE LOGIC (Fixed for Backend Sync)
@@ -381,25 +415,27 @@
             const cappingSection = document.getElementById('capping-section');
             const cappingInput = document.getElementById('capping-input');
 
-            // Force initial state consistency
-            if(uiToggleCapping.checked) {
-                hiddenStatusInput.value = '1';
-                cappingSection.classList.remove('hidden');
-            } else {
-                hiddenStatusInput.value = '0';
-                cappingSection.classList.add('hidden');
-            }
-
-            uiToggleCapping.addEventListener('change', function() {
-                if (this.checked) {
-                    cappingSection.classList.remove('hidden');
+            if(uiToggleCapping) {
+                // Force initial state consistency
+                if(uiToggleCapping.checked) {
                     hiddenStatusInput.value = '1';
+                    cappingSection.classList.remove('hidden');
                 } else {
-                    cappingSection.classList.add('hidden');
-                    cappingInput.value = '0'; // Clear/reset value when disabled
                     hiddenStatusInput.value = '0';
+                    cappingSection.classList.add('hidden');
                 }
-            });
+
+                uiToggleCapping.addEventListener('change', function() {
+                    if (this.checked) {
+                        cappingSection.classList.remove('hidden');
+                        hiddenStatusInput.value = '1';
+                    } else {
+                        cappingSection.classList.add('hidden');
+                        cappingInput.value = '0'; // Clear/reset value when disabled
+                        hiddenStatusInput.value = '0';
+                    }
+                });
+            }
         });
     </script>
 @endsection

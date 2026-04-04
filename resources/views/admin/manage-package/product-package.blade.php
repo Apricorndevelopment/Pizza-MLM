@@ -2,7 +2,7 @@
 @section('title', 'Package Management')
 @section('container')
 
-    <div class="min-h-screen bg-gray-50 px-2 lg:px-3">
+    <div class="min-h-screen bg-gray-50">
         <div class="max-w-8xl mx-auto">
 
             @if(session('success'))
@@ -82,29 +82,29 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"
-                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Product</th>
                                     <th scope="col"
-                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         MRP</th>
                                     <th scope="col"
-                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         DP</th>
                                     <th scope="col"
-                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         PV</th>
                                     <th scope="col"
-                                        class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Profit</th>
+                                        class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Product Cost/Profit</th>
                                     <th scope="col"
-                                        class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($product_package as $package)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-3 py-3 whitespace-nowrap">
+                                        <td class="px-2 py-3 whitespace-nowrap">
                                             <div class="flex items-center">
                                                 <div class="h-20 w-20 flex-shrink-0">
                                                     @if ($package->product_image)
@@ -148,28 +148,30 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-500">₹{{ $package->mrp }}
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-500">₹{{ $package->mrp }}
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-500">₹{{ $package->dp }}
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-500">₹{{ $package->dp }}
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-500">{{ $package->pv }}
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-500">{{ $package->pv }}
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $package->profit }}</td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                        <td class="px-2 py-3 whitespace-nowrap text-sm text-gray-500">
+                                            <div>₹{{ $package->product_cost }}</div>
+                                            <div class="text-green-500">₹{{ $package->profit }}</div>
+                                        </td>
+                                        <td class="px-2 py-3 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end space-x-2">
                                                 <a href="{{ route('admin.package2.edit', $package->id) }}"
-                                                    class="text-cyan-600 hover:text-cyan-900 bg-cyan-50 hover:bg-cyan-100 px-3 py-1 rounded-md transition-colors">Edit</a>
+                                                    class="text-cyan-600 hover:text-cyan-900 bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded-md transition-colors">Edit</a>
                                                 <form action="{{ route('admin.package2.destroy', $package->id) }}"
                                                     method="POST" class="inline">
                                                     @csrf @method('DELETE')
                                                     <button type="submit"
-                                                        class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors"
+                                                        class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-md transition-colors"
                                                         onclick="return confirm('Are you sure you want to delete this package?')">Delete</button>
                                                 </form>
                                                 <button
                                                     onclick="openStockModal('{{ $package->id }}', '{{ $package->manage_stock }}', '{{ $package->stock_quantity }}')"
-                                                    class="px-3 py-1 rounded-full text-xs font-bold border transition-colors
+                                                    class="px-2 py-1 rounded-full text-xs font-bold border transition-colors
         {{ $package->is_in_stock ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-red-50 text-red-600 border-red-200' }}">
                                                     @if (!$package->manage_stock)
                                                         Manage Stock

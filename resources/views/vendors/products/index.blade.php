@@ -63,29 +63,32 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col"
-                                    class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Image</th>
                                 <th scope="col"
-                                    class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Product Name</th>
                                 <th scope="col"
-                                    class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     DP</th>
                                 <th scope="col"
-                                    class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    MRP</th>
+                                    class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Product Cost</th>
                                 <th scope="col"
-                                    class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Profit</th>
+                                <th scope="col"
+                                    class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Status</th>
                                 <th scope="col"
-                                    class="p-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($products as $product)
                                 <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 whitespace-nowrap">
+                                    <td class="px-2 py-3 whitespace-nowrap">
                                         <div class="flex-shrink-0 h-12 w-12">
                                             @if ($product->product_image)
                                                 <img class="h-12 w-12 rounded-lg object-cover shadow-sm border border-gray-100"
@@ -98,16 +101,19 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="p-3 whitespace-nowrap">
+                                    <td class="px-2 py-3 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">{{ $product->product_name }}</div>
                                     </td>
-                                    <td class="p-3 whitespace-nowrap">
+                                    <td class="px-2 py-3 whitespace-nowrap">
                                         <div class="text-sm text-gray-900 font-semibold">₹{{ $product->dp }}</div>
                                     </td>
-                                    <td class="p-3 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900 font-semibold">₹{{ $product->mrp }}</div>
+                                    <td class="px-2 py-3 whitespace-nowrap text-center">
+                                        <div class="text-sm text-gray-900 font-semibold">₹{{ $product->product_cost }}</div>
                                     </td>
-                                    <td class="p-3 whitespace-nowrap">
+                                    <td class="px-2 py-3 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900 font-semibold">₹{{ $product->profit }}</div>
+                                    </td>
+                                    <td class="px-2 py-3 whitespace-nowrap">
                                         @if ($product->status == 'approved')
                                             <span
                                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
@@ -125,7 +131,7 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="p-3 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    <td class="px-2 py-3 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                         <a href="{{ route('vendor.products.show', $product->id) }}"
                                             class="text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors">View</a>
                                         <a href="{{ route('vendor.products.edit', $product->id) }}"

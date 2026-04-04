@@ -12,7 +12,7 @@ class ProductPackage extends Model
     protected $fillable = [
         'product_name', 'product_image', 'description', 'max_coupon_usage', 
         'mrp', 'gst', 'dp', 'pv', 'profit', 'isVeg', 'is_package_product', 
-        'capping', 'manage_stock', 'stock_quantity'
+        'capping', 'manage_stock', 'stock_quantity','product_cost',
     ];
 
     // Check if product is in stock

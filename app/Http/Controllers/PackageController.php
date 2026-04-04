@@ -71,6 +71,7 @@ class PackageController extends Controller
                 'is_package_product' => 'required|in:0,1',
                 'capping' => 'nullable|required_if:is_package_product,1|numeric|min:0',
                 'profit'             => 'required|numeric|min:0',
+                'product_cost'       => 'required|numeric|min:0',
 
                 // FIX: Use 'in:0,1' instead of 'boolean' to accept the string "1" from your dump
                 'isVeg'              => 'required|in:veg,non-veg',
@@ -97,6 +98,7 @@ class PackageController extends Controller
                 'dp'                 => $validated['dp'],
                 'pv'                 => $validated['pv'],
                 'profit'             => $validated['profit'],
+                'product_cost'       => $validated['product_cost'],
                 'max_coupon_usage'   => $validated['max_coupon_usage'],
 
                 // Cast to integer to match tinyint(1) database column
@@ -175,6 +177,7 @@ class PackageController extends Controller
             'pv' => 'required|numeric|min:0',
             'max_coupon_usage' => 'required|integer|min:0',
             'profit' => 'required|numeric|min:0',
+            'product_cost' => 'required|numeric|min:0',
             'isVeg' => 'required|string|in:veg,non-veg',
             'is_package_product' => 'required|in:0,1',
             'capping' => 'nullable|required_if:is_package_product,1|numeric|min:0',
@@ -207,6 +210,7 @@ class PackageController extends Controller
             'dp' => $request->dp,
             'pv' => $request->pv,
             'profit' => $request->profit,
+            'product_cost' => $request->product_cost,
             'max_coupon_usage' => $request->max_coupon_usage,
             'isVeg' => $request->isVeg,
             // Cast to integer to match tinyint(1) database column

@@ -2,7 +2,7 @@
 @section('title', 'Create Product')
 @section('container')
 
-    <div class="min-h-screen pb-4 bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen pb-4 bg-gray-50">
         <div class="max-w-5xl mx-auto">
 
             {{-- Header --}}
@@ -56,7 +56,8 @@
 
                     {{-- TRUE HIDDEN FIELD FOR CONTROLLER --}}
                     {{-- This is what the controller's 'is_package_product' => 'required|in:0,1' rule looks for --}}
-                    <input type="hidden" name="is_package_product" id="is_package_product_hidden" value="{{ old('is_package_product', '0') }}">
+                    <input type="hidden" name="is_package_product" id="is_package_product_hidden"
+                        value="{{ old('is_package_product', '0') }}">
 
                     {{-- Section 1: Basic Info & Image --}}
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
@@ -74,7 +75,8 @@
                             </div>
 
                             <div>
-                                <label for="maxCoupon" class="block text-sm font-semibold text-gray-700 mb-2">Max Coupons Allowed <span class="text-red-500">*</span></label>
+                                <label for="maxCoupon" class="block text-sm font-semibold text-gray-700 mb-2">Max Coupons
+                                    Allowed <span class="text-red-500">*</span></label>
                                 <div>
                                     <input type="number"
                                         class="w-full pl-4 pr-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
@@ -84,7 +86,8 @@
                                         <div class="text-sm text-red-500 mt-1">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <small class="text-gray-500 mt-1 block">No. of coupons applicable per unit (1 Coupon = ₹10 Off)</small>
+                                <small class="text-gray-500 mt-1 block">No. of coupons applicable per unit (1 Coupon = ₹10
+                                    Off)</small>
                             </div>
 
                             <div>
@@ -97,12 +100,15 @@
 
                         {{-- Right Column: Image Upload --}}
                         <div class="lg:col-span-5">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Product Image <span
+                                    class="text-red-500">*</span></label>
                             <div class="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 p-6 flex flex-col items-center justify-center text-center hover:bg-blue-50 hover:border-blue-400 transition-all cursor-pointer group h-[250px]"
                                 id="drop-zone">
-                                <input type="file" id="product_image" name="product_image" class="hidden" accept="image/*" required>
+                                <input type="file" id="product_image" name="product_image" class="hidden"
+                                    accept="image/*" required>
 
-                                <div class="bg-white p-4 rounded-full shadow-sm mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <div
+                                    class="bg-white p-4 rounded-full shadow-sm mb-4 group-hover:scale-110 transition-transform duration-300">
                                     <i class="fas fa-cloud-upload-alt text-3xl text-blue-500"></i>
                                 </div>
                                 <h4 class="text-gray-900 font-medium mb-1">Click to upload</h4>
@@ -114,16 +120,20 @@
                             <div id="preview-area"
                                 class="hidden mt-4 bg-white rounded-xl border border-gray-200 shadow-sm p-3 relative group">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-100">
-                                        <img id="preview-img" src="#" alt="Preview" class="w-full h-full object-cover">
+                                    <div
+                                        class="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-100">
+                                        <img id="preview-img" src="#" alt="Preview"
+                                            class="w-full h-full object-cover">
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p id="file-name" class="text-sm font-medium text-gray-900 truncate"></p>
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 mt-1">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 mt-1">
                                             Ready to upload
                                         </span>
                                     </div>
-                                    <button type="button" id="remove-btn" class="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50">
+                                    <button type="button" id="remove-btn"
+                                        class="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
@@ -135,72 +145,105 @@
                         </div>
                     </div>
 
-                    <div class="space-y-2 mb-8">
-                        <label for="isVeg" class="block text-sm font-medium text-gray-700">
-                            Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
-                        </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                        <select name="isVeg" id="isVeg"
-                            class="form-select w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm">
-                            <option value="veg" {{ old('isVeg') == 'veg' ? 'selected' : '' }}>Veg</option>
-                            <option value="non-veg" {{ old('isVeg') == 'non-veg' ? 'selected' : '' }}>Non Veg</option>
-                        </select>
+                        <div>
+                            <label for="isVeg" class="block text-xs font-bold text-gray-700 mb-2">
+                                Is the Product Veg or Non Veg? <span class="text-red-500">*</span>
+                            </label>
 
-                        @error('isVeg')
-                            <p class="text-sm text-red-600 mt-1 flex items-center">
-                                <i class="bi bi-exclamation-circle mr-1"></i> {{ $message }}
-                            </p>
-                        @enderror
+                            <select name="isVeg" id="isVeg"
+                                class="form-select w-full py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm">
+                                <option value="veg" {{ old('isVeg') == 'veg' ? 'selected' : '' }}>Veg</option>
+                                <option value="non-veg" {{ old('isVeg') == 'non-veg' ? 'selected' : '' }}>Non Veg</option>
+                            </select>
+
+                            @error('isVeg')
+                                <p class="text-sm text-red-600 mt-1 flex items-center">
+                                    <i class="bi bi-exclamation-circle mr-1"></i> {{ $message }}
+                                </p>
+                            @enderror
+                            <p class="text-[10px] text-gray-500 mt-1">Product is Veg or Non Veg</p>
+                        </div>
+
                     </div>
 
-                    <hr class="border-gray-100 my-8">
+                    <hr class="border-gray-100 my-6">
 
                     {{-- Section 2: Pricing --}}
-                    <div class="bg-blue-50/50 rounded-xl p-6 border border-blue-100">
+                    <div class="bg-blue-50/50 rounded-xl p-3.5 border border-blue-100">
                         <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center">
-                            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">
+                            <span
+                                class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">
                                 <i class="fas fa-tag"></i>
                             </span>
                             Pricing Configuration
                         </h3>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                             <div class="group">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">MRP <span class="text-red-500">*</span></label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">MRP
+                                    <span class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" step="0.01" name="mrp" value="{{ old('mrp') }}"
-                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-gray-700" required>
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                                    <input type="number" step="0.01" name="mrp" id="mrp" value="{{ old('mrp') }}"
+                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-gray-700"
+                                        required>
                                 </div>
                             </div>
 
                             <div class="group">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">GST %</label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">GST
+                                    %</label>
                                 <div class="relative">
-                                    <input type="number" step="0.01" name="gst" value="{{ old('gst', 0) }}"
+                                    <input type="number" step="0.01" name="gst" id="gst" value="{{ old('gst', 0) }}"
                                         class="w-full pl-4 pr-8 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-gray-700">
-                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">%</span>
+                                    <span
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">%</span>
                                 </div>
                             </div>
 
                             <div class="group">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">DP <span class="text-red-500">*</span></label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">DP <span
+                                        class="text-red-500">*</span></label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" step="0.01" name="dp" value="{{ old('dp') }}"
-                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-gray-700" required>
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                                    {{-- FIX: ADDED id="dp" HERE --}}
+                                    <input type="number" step="0.01" name="dp" id="dp" value="{{ old('dp') }}"
+                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-gray-700"
+                                        required>
                                 </div>
                             </div>
 
                             <div class="group">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Profit <span class="text-red-500">*</span></label>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Profit
+                                    <span class="text-red-500">*</span></label>
                                 <label class="block text-xs mb-1 text-red-500" id="recomend"></label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
-                                    <input type="number" step="0.1" name="profit" id="profit" value="{{ old('profit') }}"
-                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-green-600" required>
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                                    <input type="number" step="0.1" name="profit" id="profit"
+                                        value="{{ old('profit') }}"
+                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm font-semibold text-green-600"
+                                        required>
                                 </div>
                             </div>
+
+                            <div class="group">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Product Cost
+                                    <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">₹</span>
+                                    <input type="number" step="0.01" name="product_cost" id="product_cost"
+                                        value="{{ old('product_cost') }}"
+                                        class="w-full pl-8 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed outline-none transition-all shadow-sm font-semibold"
+                                        readonly required>
+                                </div>
+                                <p class="text-[10px] text-gray-500 mt-1">Auto-calc: DP - Profit</p>
+                            </div>
+
                         </div>
                     </div>
 
@@ -215,7 +258,8 @@
                             <div class="relative">
                                 <input type="number" name="pv" id="pv" value="{{ old('pv') }}"
                                     placeholder="Enter total Points Value (e.g. 50)"
-                                    class="w-full pl-4 pr-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm" required>
+                                    class="w-full pl-4 pr-4 py-3 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm"
+                                    required>
                             </div>
                             <p class="text-xs text-gray-500 mt-1">Enter the direct point value for this product.</p>
                         </div>
@@ -224,14 +268,18 @@
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             {{-- Checkbox Toggle (Only for UI interaction, real value goes to hidden field above) --}}
                             <div class="flex items-center mb-3">
-                                <input type="checkbox" id="ui-toggle-capping" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer" {{ old('is_package_product') == '1' ? 'checked' : '' }}>
-                                <label for="ui-toggle-capping" class="ml-2 text-sm font-bold text-gray-700 cursor-pointer select-none">
+                                <input type="checkbox" id="ui-toggle-capping"
+                                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                                    {{ old('is_package_product') == '1' ? 'checked' : '' }}>
+                                <label for="ui-toggle-capping"
+                                    class="ml-2 text-sm font-bold text-gray-700 cursor-pointer select-none">
                                     Set as Package Product (Enable Capping Limit)?
                                 </label>
                             </div>
 
                             {{-- Hidden Input Container for Capping Limit --}}
-                            <div id="capping-section" class="transition-all duration-300 {{ old('is_package_product') == '1' ? 'block' : 'hidden' }}">
+                            <div id="capping-section"
+                                class="transition-all duration-300 {{ old('is_package_product') == '1' ? 'block' : 'hidden' }}">
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                                         <i class="fas fa-chart-line"></i>
@@ -262,7 +310,7 @@
         </div>
     </div>
 
-    <script>
+  <script>
         document.addEventListener('DOMContentLoaded', function() {
             // File Upload Logic
             const fileInput = document.getElementById('product_image');
@@ -272,19 +320,43 @@
             const fileNameDisplay = document.getElementById('file-name');
             const removeBtn = document.getElementById('remove-btn');
             
-            // Profit / PV Logic
+            // Pricing Elements
             const profit = document.getElementById('profit');
+            const dp = document.getElementById('dp');
+            const productCost = document.getElementById('product_cost');
             const recomend = document.getElementById('recomend');
 
-            profit.addEventListener('input', function() {
-                if (this.value) {
-                    const recommended = (this.value * 30) / 100;
+            // Function to update Product Cost and Recommended PV
+            function calculatePricing() {
+                const profitValue = parseFloat(profit.value) || 0;
+                const dpValue = parseFloat(dp.value) || 0;
+
+                // 1. Update Recommended PV
+                if (profitValue > 0) {
+                    const recommended = (profitValue * 30) / 100;
                     recomend.textContent = `Recommended PV: ${Math.round(recommended)}`;
                 } else {
                     recomend.textContent = '';
                 }
-            });
 
+                // 2. Update Product Cost (DP - Profit)
+                let cost = dpValue - profitValue;
+                if (cost < 0) cost = 0; // Prevent negative cost
+                
+                if (productCost) {
+                    productCost.value = cost.toFixed(2);
+                }
+            }
+
+            // Event Listeners for DP and Profit
+            if (profit) profit.addEventListener('input', calculatePricing);
+            if (dp) dp.addEventListener('input', calculatePricing);
+
+            // Initialize values if there is old input data
+            calculatePricing();
+
+
+            // --- File Upload Listeners ---
             dropZone.addEventListener('click', () => fileInput.click());
 
             fileInput.addEventListener('change', function(e) {
@@ -319,7 +391,6 @@
                         fileNameDisplay.textContent = file.name;
                         dropZone.classList.add('hidden');
                         previewArea.classList.remove('hidden');
-                        // Remove required attribute from input once file is set
                         fileInput.removeAttribute('required');
                     }
                     reader.readAsDataURL(file);
@@ -334,23 +405,25 @@
             });
 
             // ==========================================
-            // CAPPING TOGGLE LOGIC (Fixed for Backend Sync)
+            // CAPPING TOGGLE LOGIC
             // ==========================================
             const uiToggleCapping = document.getElementById('ui-toggle-capping');
             const hiddenStatusInput = document.getElementById('is_package_product_hidden');
             const cappingSection = document.getElementById('capping-section');
             const cappingInput = document.getElementById('capping-input');
 
-            uiToggleCapping.addEventListener('change', function() {
-                if (this.checked) {
-                    cappingSection.classList.remove('hidden');
-                    hiddenStatusInput.value = '1';
-                } else {
-                    cappingSection.classList.add('hidden');
-                    cappingInput.value = '0'; // Clear/reset value when disabled
-                    hiddenStatusInput.value = '0';
-                }
-            });
+            if(uiToggleCapping) {
+                uiToggleCapping.addEventListener('change', function() {
+                    if (this.checked) {
+                        cappingSection.classList.remove('hidden');
+                        hiddenStatusInput.value = '1';
+                    } else {
+                        cappingSection.classList.add('hidden');
+                        cappingInput.value = '0';
+                        hiddenStatusInput.value = '0';
+                    }
+                });
+            }
         });
     </script>
 @endsection

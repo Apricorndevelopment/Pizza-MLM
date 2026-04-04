@@ -3,7 +3,7 @@
 @section('container')
 
 <div class="min-h-screen bg-gray-50">
-    <div class="px-4 sm:px-6 lg:px-8">
+    <div>
         <!-- Header -->
         <div class="mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -77,6 +77,9 @@
                                 Price / PV
                             </th>
                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                Product Cost/ Profit
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                 Status
                             </th>
                             <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -104,7 +107,7 @@
                                 </td>
                                 
                                 <!-- Name & Details -->
-                                <td class="p-3">
+                                <td class="px-2 py-3">
                                     <div>
                                         <div class="text-sm font-medium text-gray-900">
                                             {{ $product->product_name }}
@@ -119,7 +122,7 @@
                                 </td>
                                 
                                 <!-- Vendor -->
-                                <td class="p-3">
+                                <td class="px-2 py-3">
                                     <div class="text-sm text-gray-900">
                                         @if ($product->vendor)
                                             <div class="flex items-center">
@@ -138,7 +141,7 @@
                                 </td>
                                 
                                 <!-- Price / PV -->
-                                <td class="p-3">
+                                <td class="px-2 py-3">
                                     <div class="text-sm">
                                         <div class="font-medium text-gray-900">
                                             ₹{{ number_format($product->dp, 2) }}
@@ -149,9 +152,20 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td class="px-2 py-3">
+                                    <div class="text-sm">
+                                        <div class="font-medium text-gray-900">
+                                            Cost: ₹{{ number_format($product->product_cost, 2) }}
+                                        </div>
+                                        <div class="text-xs text-green-600 font-medium mt-1">
+                                            <i class="bi bi-coin mr-1"></i>
+                                            Profit: ₹{{ $product->profit ? number_format($product->profit, 2) : 'Not Set' }}
+                                        </div>
+                                    </div>
+                                </td>
                                 
                                 <!-- Status -->
-                                <td class="p-3 whitespace-nowrap">
+                                <td class="px-2 py-3 whitespace-nowrap">
                                     @if ($product->status == 'pending')
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                             <i class="bi bi-clock-history mr-1.5"></i> Pending
@@ -168,7 +182,7 @@
                                 </td>
                                 
                                 <!-- Actions -->
-                                <td class="p-3 whitespace-nowrap">
+                                <td class="px-2 py-3 whitespace-nowrap">
                                     <a href="{{ route('admin.products.edit', $product->id) }}" 
                                        class="inline-flex items-center px-3 py-1.5 border border-blue-300 text-sm font-medium rounded-lg 
                                               text-blue-700 bg-blue-50 hover:bg-blue-100 hover:border-blue-400 

@@ -155,7 +155,7 @@
                         </div>
 
                         <!-- Price Grid - UPDATED WITH GST AND DP -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             <!-- MRP -->
                             <div class="space-y-2">
                                 <label for="mrp" class="block text-sm font-medium text-gray-700">
@@ -194,7 +194,8 @@
                                     </p>
                                 @enderror
                             </div>
-                            <div class="space-y-2">
+
+                             <div class="space-y-2">
                                 <label for="profit" class="block text-sm font-medium text-gray-700">
                                     Profit <span class="text-red-500">*</span>
                                 </label>
@@ -216,6 +217,28 @@
                                     </p>
                                 @enderror
                             </div>
+
+                            <div class="space-y-2">
+                                <label for="product_cost" class="block text-sm font-medium text-gray-700">
+                                    Product Cost <span class="text-red-500">*</span>
+                                </label>
+
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₹</span>
+                                    {{-- NOTE: Using readonly so it gets submitted to the controller --}}
+                                    <input type="number" step="0.01" name="product_cost" id="product_cost"
+                                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed focus:outline-none"
+                                        value="{{ old('product_cost', $product->product_cost ?? '') }}" readonly required>
+                                </div>
+                                <p class="text-[10px] text-gray-500 font-bold">Auto-calculated (DP - Profit)</p>
+
+                                @error('product_cost')
+                                    <p class="text-sm text-red-600 mt-1 flex items-center">
+                                        <i class="bi bi-exclamation-circle mr-1"></i>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>                           
 
                             <!-- GST - ADDED THIS FIELD -->
                             <div class="space-y-2">
@@ -333,7 +356,7 @@
                                                   @error('percentage') border-red-500 ring-1 ring-red-500 @enderror transition duration-200"
                                             value="{{ old('percentage', $product->percentage ?? 0) }}" required>
                                     </div>
-                                     <div> {{-- Fixed height to prevent layout jump --}}
+                                    <div> {{-- Fixed height to prevent layout jump --}}
                                         <span class="text-xs font-bold text-red-600" id="adminCommission"></span>
                                     </div>
                                     @error('percentage')
@@ -424,10 +447,12 @@
         </div>
     </div>
 
-   <script>
+    <script>
         // Elements
         const recomendedPv = document.getElementById('recomendedPv');
         const profit = document.getElementById('profit');
+        const dp = document.getElementById('dp'); // New: DP Element
+        const productCost = document.getElementById('product_cost'); // New: Product Cost Element
         const percentage = document.getElementById('percentage');
         const adminCommission = document.getElementById('adminCommission');
 
@@ -459,15 +484,38 @@
             }
         }
 
+        // NEW: Function to calculate Product Cost (DP - Profit)
+        function updateProductCost() {
+            if (dp && profit && productCost) {
+                const dpValue = parseFloat(dp.value) || 0;
+                const profitValue = parseFloat(profit.value) || 0;
+
+                // Calculate cost and prevent it from going negative
+                let cost = dpValue - profitValue;
+                if (cost < 0) cost = 0;
+
+                productCost.value = cost.toFixed(2);
+            }
+        }
+
         // Initialize values on page load (for Edit page pre-filled values)
         updateRecommendedPv();
         updateAdminCommission();
+        updateProductCost(); // Initialize cost
 
         // Event Listeners for 'input' changes
         if (profit) {
             profit.addEventListener('input', function() {
                 updateRecommendedPv();
                 updateAdminCommission();
+                updateProductCost(); // Update cost when profit changes
+            });
+        }
+
+        // NEW: Event listener for DP
+        if (dp) {
+            dp.addEventListener('input', function() {
+                updateProductCost(); // Update cost when DP changes
             });
         }
 

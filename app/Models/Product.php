@@ -13,6 +13,7 @@ class Product extends Model
         'product_image',
         'description',
         'profit',
+        'product_cost',
         'mrp',
         'gst',
         'dp',

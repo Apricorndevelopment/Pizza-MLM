@@ -262,84 +262,85 @@
             <div class="ms-3 flex-grow-1 border-bottom"></div>
         </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-sm-6 col-md-4 col-xl-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+
+            <div
+                class="relative overflow-hidden bg-blue-50 border border-blue-100 shadow-sm rounded-2xl p-6 text-center group hover:border-blue-400 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-blue-500"></div>
                 <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-primary"></div>
-                    <div class="mb-3 text-primary bg-primary-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-hand-holding-usd fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($directIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Direct Income</p>
+                    class="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white rounded-full text-blue-600 shadow-inner border border-blue-100 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-hand-holding-usd text-xl"></i>
                 </div>
+                <h5 class="text-xl font-extrabold text-slate-800 mb-1">{{ formatCurrency($directIncome) }}</h5>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">Direct Income</p>
             </div>
-            <div class="col-sm-6 col-md-4 col-xl-3">
+
+            <div
+                class="relative overflow-hidden bg-red-50 border border-red-100 shadow-sm rounded-2xl p-6 text-center group hover:border-red-400 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-red-500"></div>
                 <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden group hover:border-primary transition">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-danger"></div>
-                    <div class="mb-3 text-danger bg-danger-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-hand-holding-usd fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($bonusIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Bonus Income</p>
+                    class="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white rounded-full text-red-600 shadow-inner border border-red-100 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-hand-holding-usd text-xl"></i>
                 </div>
+                <h5 class="text-xl font-extrabold text-slate-800 mb-1">{{ formatCurrency($bonusIncome) }}</h5>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">Bonus Income</p>
             </div>
-            <div class="col-sm-6 col-md-4 col-xl-3">
+
+            <div
+                class="relative overflow-hidden bg-emerald-50 border border-emerald-100 shadow-sm rounded-2xl p-6 text-center group hover:border-emerald-400 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-emerald-500"></div>
                 <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-success"></div>
-                    <div class="mb-3 text-success bg-success-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-layer-group fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($levelIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Level Income</p>
+                    class="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white rounded-full text-emerald-600 shadow-inner border border-emerald-100 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-layer-group text-xl"></i>
                 </div>
+                <h5 class="text-xl font-extrabold text-slate-800 mb-1">{{ formatCurrency($levelIncome) }}</h5>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">Level Income</p>
             </div>
-            <div class="col-sm-6 col-md-4 col-xl-3">
+
+            <div
+                class="relative overflow-hidden bg-cyan-50 border border-cyan-100 shadow-sm rounded-2xl p-6 text-center group hover:border-cyan-400 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-cyan-500"></div>
                 <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-info"></div>
-                    <div class="mb-3 text-info bg-info-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-shopping-cart fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($repurchaseIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Repurchase</p>
+                    class="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white rounded-full text-cyan-600 shadow-inner border border-cyan-100 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-shopping-cart text-xl"></i>
                 </div>
+                <h5 class="text-xl font-extrabold text-slate-800 mb-1">{{ formatCurrency($repurchaseIncome) }}</h5>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">Repurchase Income</p>
             </div>
-            <div class="col-sm-6 col-md-4 col-xl-3">
+
+            <div
+                class="relative overflow-hidden bg-purple-50 border border-purple-100 shadow-sm rounded-2xl p-6 text-center group hover:border-purple-400 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-purple-500"></div>
                 <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-purple-500"></div>
-                    <div class="mb-3 text-purple-500 d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-layer-group fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($cashbackIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Cashback Income</p>
+                    class="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white rounded-full text-purple-600 shadow-inner border border-purple-100 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-layer-group text-xl"></i>
                 </div>
+                <h5 class="text-xl font-extrabold text-slate-800 mb-1">{{ formatCurrency($cashbackIncome) }}</h5>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">Cashback Income</p>
             </div>
-            <div class="col-sm-6 col-md-4 col-xl-3">
+
+            <div
+                class="relative overflow-hidden bg-amber-50 border border-amber-100 shadow-sm rounded-2xl p-6 text-center group hover:border-amber-400 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-amber-500"></div>
                 <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-warning"></div>
-                    <div class="mb-3 text-warning bg-warning-subtle d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-trophy fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($rewardIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Rewards</p>
+                    class="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white rounded-full text-amber-600 shadow-inner border border-amber-100 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-trophy text-xl"></i>
                 </div>
+                <h5 class="text-xl font-extrabold text-slate-800 mb-1">{{ formatCurrency($rewardIncome) }}</h5>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">Rewards</p>
             </div>
-            <div class="col-sm-6 col-md-4 col-xl-3">
+
+            <div
+                class="relative overflow-hidden bg-pink-50 border border-pink-100 shadow-sm rounded-2xl p-6 text-center group hover:border-pink-400 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 inset-x-0 h-1.5 bg-pink-500"></div>
                 <div
-                    class="card border-0 shadow-sm rounded-4 h-100 text-center py-4 px-2 position-relative overflow-hidden">
-                    <div class="position-absolute top-0 start-0 w-100 h-1 bg-pink-500"></div>
-                    <div class="mb-3 text-pink-500 d-inline-block p-3 rounded-circle">
-                        <i class="fas fa-layer-group fa-lg"></i>
-                    </div>
-                    <h5 class="fw-bold text-gray-800 mb-1">{{ formatCurrency($autoPoolIncome) }}</h5>
-                    <p class="text-muted small mb-0 fw-bold text-uppercase">Auto Pool Earnings</p>
+                    class="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white rounded-full text-pink-600 shadow-inner border border-pink-100 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-layer-group text-xl"></i>
                 </div>
+                <h5 class="text-xl font-extrabold text-slate-800 mb-1">{{ formatCurrency($autoPoolIncome) }}</h5>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">Auto Pool Earnings</p>
             </div>
+
         </div>
 
         {{-- 2. NEW: USER GALLERY CAROUSEL --}}

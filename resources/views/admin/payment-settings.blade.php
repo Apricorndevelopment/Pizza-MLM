@@ -2,11 +2,11 @@
 @section('title', 'Payment Settings')
 
 @section('container')
-    <div class="min-h-screen bg-slate-50 py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-slate-50">
+        <div class="max-w-3xl mx-auto">
 
             {{-- Header Section --}}
-            <div class="mb-6">
+            <div class="mb-3">
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Payment Settings</h1>
                 <p class="mt-1 text-sm text-slate-500">Configure your payment receiving details.</p>
             </div>
@@ -57,10 +57,65 @@
                 <form method="POST" action="{{ route('admin.payment.update') }}" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="p-6 space-y-6">
+                    <div class="p-6 space-y-8">
+
+                        {{-- Bank Details Section --}}
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                                <i class="fas fa-university text-indigo-500 mr-2"></i> Bank Account Details
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {{-- Bank Name --}}
+                                <div class="sm:col-span-2">
+                                    <label for="bank_name" class="block text-sm font-medium text-slate-700 mb-1">Bank Name</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-building text-slate-400 text-xs"></i>
+                                        </div>
+                                        <input type="text" name="bank_name" id="bank_name"
+                                            value="{{ old('bank_name', $admin->bank_name) }}"
+                                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-9 sm:text-sm border-slate-300 rounded-md py-2"
+                                            placeholder="e.g. State Bank of India">
+                                    </div>
+                                </div>
+
+                                {{-- Account Number --}}
+                                <div>
+                                    <label for="account_no" class="block text-sm font-medium text-slate-700 mb-1">Account Number</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-hashtag text-slate-400 text-xs"></i>
+                                        </div>
+                                        <input type="text" name="account_no" id="account_no"
+                                            value="{{ old('account_no', $admin->account_no) }}"
+                                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-9 sm:text-sm border-slate-300 rounded-md py-2"
+                                            placeholder="e.g. 31234567890">
+                                    </div>
+                                </div>
+
+                                {{-- IFSC Code --}}
+                                <div>
+                                    <label for="ifsc_code" class="block text-sm font-medium text-slate-700 mb-1">IFSC Code</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-code-branch text-slate-400 text-xs"></i>
+                                        </div>
+                                        <input type="text" name="ifsc_code" id="ifsc_code"
+                                            value="{{ old('ifsc_code', $admin->ifsc_code) }}"
+                                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-9 sm:text-sm border-slate-300 rounded-md py-2 uppercase"
+                                            placeholder="e.g. SBIN0001234">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-slate-100">
 
                         {{-- UPI ID Section --}}
                         <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                                <i class="fas fa-mobile-alt text-indigo-500 mr-2"></i> UPI Details
+                            </h3>
                             <label for="upi_id" class="block text-sm font-medium text-slate-700 mb-1">UPI ID (VPA)</label>
                             <div class="relative rounded-md shadow-sm max-w-lg">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -69,7 +124,7 @@
                                 <input type="text" name="upi_id" id="upi_id"
                                     value="{{ old('upi_id', $admin->upi_id) }}"
                                     class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-9 sm:text-sm border-slate-300 rounded-md py-2"
-                                    placeholder="username@bank" required>
+                                    placeholder="username@bank">
                             </div>
                             <p class="mt-2 text-xs text-slate-500">The UPI ID where users will send money.</p>
 
@@ -114,9 +169,9 @@
                                     <div
                                         class="bg-slate-50 rounded-lg border border-slate-200 p-2  flex flex-col items-center justify-center">
                                         <span class="text-[10px] uppercase font-bold text-slate-400 mb-1">Current</span>
-                                        <div class="h-[16/9] w-40">
+                                        <div class="h-[16/9] w-40 flex items-center justify-center">
                                             @if ($admin->upi_qr)
-                                                <img src="{{ asset('storage/' . $admin->upi_qr) }}" class="h-full w-full">
+                                                <img src="{{ asset('storage/' . $admin->upi_qr) }}" class="h-full w-full object-contain">
                                             @else
                                                 <span class="text-xs text-slate-400">None</span>
                                             @endif

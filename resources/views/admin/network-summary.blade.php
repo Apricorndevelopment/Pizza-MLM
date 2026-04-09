@@ -3,8 +3,8 @@
 @section('title', 'Network Summary - Admin')
 
 @section('container')
-    <div class="min-h-screen bg-slate-50 py-8 font-sans text-slate-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-slate-50 font-sans text-slate-600">
+        <div class="max-w-7xl mx-auto">
 
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div>
@@ -46,7 +46,7 @@
                 </div>
 
                 <div id="filterBody" class="hidden">
-                    <div class="p-6 bg-slate-50/50">
+                    <div class="p-3 bg-slate-50/50">
                         <form method="GET" action="{{ route('admin.network.summary') }}">
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
 
@@ -121,23 +121,23 @@
                         <thead>
                             <tr
                                 class="bg-slate-50 border-b border-slate-100 text-xs uppercase font-bold text-slate-500 tracking-wider">
-                                <th class="px-6 py-4 text-center w-16">#</th>
-                                <th class="px-6 py-4">User Profile</th>
-                                <th class="px-6 py-4 text-center">Sponsor</th>
-                                <th class="px-6 py-4 text-center">Dates</th>
-                                <th class="px-6 py-4 text-center">Level</th>
-                                <th class="px-6 py-4 text-center">Designation</th>
+                                <th class="px-3.5 py-3 text-center w-16">#</th>
+                                <th class="px-3.5 py-3">User Profile</th>
+                                <th class="px-3.5 py-3 text-center">Sponsor</th>
+                                <th class="px-3.5 py-3 text-center">Dates</th>
+                                <th class="px-3.5 py-3 text-center">Level</th>
+                                <th class="px-3.5 py-3 text-center">Designation</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @php $index = ($paginatedUsers->currentPage() - 1) * $paginatedUsers->perPage() + 1; @endphp
                             @forelse($paginatedUsers as $user)
                                 <tr class="group hover:bg-blue-50/50 transition-colors duration-200">
-                                    <td class="px-6 py-4 text-center text-slate-400 font-mono text-sm font-bold">
+                                    <td class="px-3.5 py-3 text-center text-slate-400 font-mono text-sm font-bold">
                                         {{ $index++ }}
                                     </td>
 
-                                    <td class="px-6 py-4">
+                                    <td class="px-3.5 py-3">
                                         <div class="flex items-center gap-3">
                                             <div
                                                 class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
@@ -162,26 +162,26 @@
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-3.5 py-3 text-center">
                                         <span class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-mono font-bold">
                                             {{ $user->sponsor_id }}
                                         </span>
                                     </td>
 
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-3.5 py-3 text-center">
                                         <div class="flex flex-col">
                                             <span class="text-xs font-bold text-slate-600">Reg: {{ $user->created_at->format('d M Y') }}</span>
                                             <span class="text-[10px] text-slate-400">Act: {{ $user->user_doa ?? 'N/A' }}</span>
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-3.5 py-3 text-center">
                                         <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 font-bold text-xs border border-blue-100">
                                             {{ $user->level }}
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-3.5 py-3 text-center">
                                         @if ($user->current_rank)
                                             <span class="inline-flex px-3 py-1 rounded-full bg-slate-800 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
                                                 {{ $user->current_rank }}
@@ -210,7 +210,7 @@
 
                 @if ($paginatedUsers->hasPages())
                     <div class="px-6 py-3 bg-white border-t border-slate-100">
-                        {{ $paginatedUsers->appends(request()->query())->links('pagination::tailwind') }}
+                        {{ $paginatedUsers->appends(request()->query())->links('pagination::bootstrap-5') }}
                     </div>
                 @endif
             </div>

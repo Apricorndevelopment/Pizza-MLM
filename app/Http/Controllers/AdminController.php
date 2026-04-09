@@ -864,14 +864,20 @@ class AdminController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
-        // Validation
+        // Validation - Added Bank details & made them nullable so admin can fill what they want
         $request->validate([
-            'upi_id' => 'required|max:255', // Treating as string generally, though your DB is int(50) currently
-            'upi_qr' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120'
+            'upi_id'     => 'nullable|string|max:255', 
+            'upi_qr'     => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'bank_name'  => 'nullable|string|max:255',
+            'account_no' => 'nullable|string|max:255',
+            'ifsc_code'  => 'nullable|string|max:255',
         ]);
 
-        // Update UPI ID
-        $admin->upi_id = $request->upi_id;
+        // Update Payment Details
+        $admin->upi_id     = $request->upi_id;
+        $admin->bank_name  = $request->bank_name;
+        $admin->account_no = $request->account_no;
+        $admin->ifsc_code  = $request->ifsc_code;
 
         // Handle QR Code Upload
         if ($request->hasFile('upi_qr')) {

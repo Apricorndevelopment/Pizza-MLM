@@ -115,8 +115,12 @@
                                                     ₹{{ number_format($withdrawal->credited_amount, 2) }}
                                                 </td>
                                                 <td class="px-3.5 py-3 text-sm font-semibold flex flex-col">
-                                                   <span> Admin Charge - {{ number_format($withdrawal->admin_charge/$withdrawal->total_amount*100, 2) }}% </span>
-                                                   <span> TDS Charge - {{ number_format($withdrawal->tds_charge/$withdrawal->total_amount*100, 2) }}% </span>
+                                                    <span> Admin Charge -
+                                                        {{ number_format(($withdrawal->admin_charge / $withdrawal->total_amount) * 100, 2) }}%
+                                                    </span>
+                                                    <span> TDS Charge -
+                                                        {{ number_format(($withdrawal->tds_charge / $withdrawal->total_amount) * 100, 2) }}%
+                                                    </span>
                                                 </td>
                                                 <td class="px-3.5 py-3">
                                                     <span
@@ -343,21 +347,32 @@
             </div>
         </div>
 
+        {{-- ========================================== --}}
+        {{-- 4. WITHDRAWAL MODAL (DARK THEME) --}}
+        {{-- ========================================== --}}
         <div id="withdrawModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
             aria-modal="true">
-            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+            <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity"
                 onclick="toggleModal('withdrawModal')"></div>
 
             <div class="fixed inset-0 z-10 overflow-y-auto">
                 <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-
+                    {{-- Card: Dark gradient matching the vendor wallet modal --}}
                     <div
-                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-100">
+                        class="relative transform overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-700/50">
 
-                        <div class="bg-white px-3 pb-4 pt-3 sm:p-5 sm:pb-3">
-                            <div class="flex justify-between items-center mb-3">
-                                <h3 class="text-xl font-bold text-slate-800" id="modal-title">Withdraw Funds</h3>
-                                <button type="button" class="text-slate-400 hover:text-slate-600 transition"
+                        {{-- Decorative Icon --}}
+                        <i
+                            class="fas fa-money-bill-wave absolute -right-6 -bottom-6 text-8xl text-white opacity-10 rotate-[-15deg]"></i>
+
+                        <div class="relative z-10 px-6 pb-3 pt-4 sm:p-6">
+                            {{-- Header --}}
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2" id="modal-title">
+                                    <i class="fas fa-hand-holding-usd text-emerald-400"></i> Withdraw Funds
+                                </h3>
+                                <button type="button"
+                                    class="text-slate-400 hover:text-slate-200 transition-all hover:rotate-90 duration-200"
                                     onclick="toggleModal('withdrawModal')">
                                     <i class="fas fa-times text-xl"></i>
                                 </button>
@@ -366,75 +381,95 @@
                             <form id="withdrawForm" action="{{ route('user.withdraw.wallet1') }}" method="POST">
                                 @csrf
 
-                                <div class="bg-[#ECFDF5] border border-emerald-100 rounded-xl p-4 text-center mb-4">
-                                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Available
-                                        Balance</span>
-                                    <div class="text-3xl font-extrabold text-emerald-800 mt-1">
-                                        ₹{{ number_format($wallet1) }}</div>
+                                {{-- Balance Card --}}
+                                <div
+                                    class="bg-slate-700/30 backdrop-blur-sm border border-slate-600/50 rounded-xl p-3 text-center mb-4 shadow-inner">
+                                    <span
+                                        class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-center gap-1">
+                                        <i class="fas fa-wallet text-emerald-400 text-xs"></i> Available Balance
+                                    </span>
+                                    <div class="text-3xl font-extrabold text-white mt-1 tracking-tight">
+                                        ₹{{ number_format($wallet1, 2) }}</div>
+                                    <p class="text-[10px] text-slate-400 mt-1">Ready for withdrawal</p>
                                 </div>
 
+                                {{-- Amount Input --}}
                                 <div class="mb-3">
                                     <label for="withdrawAmount"
-                                        class="block text-xs font-bold text-slate-500 uppercase mb-2">Enter Amount</label>
-                                    <div class="relative rounded-md shadow-sm">
-                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <span class="text-slate-500 sm:text-sm font-bold">₹</span>
+                                        class="block text-xs font-bold text-slate-300 uppercase mb-2 tracking-wider">Enter
+                                        Amount</label>
+                                    <div class="relative rounded-xl shadow-sm">
+                                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                                            <span class="text-slate-400 sm:text-sm font-bold">₹</span>
                                         </div>
                                         <input type="number" name="amount" id="withdrawAmount"
-                                            class="block w-full rounded-xl border-slate-300 pl-8 py-3 text-slate-900 placeholder-slate-300 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-bold"
+                                            class="block w-full rounded-xl bg-slate-700/50 border border-slate-600 pl-8 py-3 text-white placeholder-slate-400 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-medium outline-none transition"
                                             placeholder="Min 500" required>
                                     </div>
                                 </div>
 
                                 @php $user = Auth::user(); @endphp
 
+                                {{-- Payment Method --}}
                                 <div class="mb-3">
                                     <label for="paymentMethod"
-                                        class="block text-xs font-bold text-slate-500 uppercase mb-2">Receiving
+                                        class="block text-xs font-bold text-slate-300 uppercase mb-2 tracking-wider">Receiving
                                         Account</label>
                                     <select id="paymentMethod" name="payment_method" required
-                                        class="block w-full rounded-xl border-slate-300 py-3 text-slate-700 text-sm focus:border-emerald-500 focus:ring-emerald-500">
-                                        <option value="">Select Method</option>
+                                        class="block w-full rounded-xl bg-slate-700/50 border border-slate-600 py-3 px-3 text-white text-sm focus:border-emerald-500 focus:ring-emerald-500 outline-none transition cursor-pointer">
+                                        <option value="" class="bg-slate-800 text-slate-300">Select Method</option>
                                         @if ($user->account_no && $user->ifsc_code)
-                                            <option value="bank">Bank Transfer (Ending in
-                                                {{ substr($user->account_no, -4) }})</option>
+                                            <option value="bank" class="bg-slate-800 text-white">🏦 Bank Transfer
+                                                (••••{{ substr($user->account_no, -4) }})</option>
                                         @endif
                                         @if ($user->upi_id)
-                                            <option value="upi">UPI Transfer ({{ $user->upi_id }})</option>
+                                            <option value="upi" class="bg-slate-800 text-white">📱 UPI Transfer
+                                                ({{ $user->upi_id }})</option>
                                         @endif
                                     </select>
 
                                     @if (!$user->account_no && !$user->upi_id)
                                         <div
-                                            class="mt-2 flex items-center p-3 text-sm text-red-700 bg-red-50 rounded-lg border border-red-100">
-                                            <i class="fas fa-exclamation-triangle mr-2"></i>
-                                            <span>Please update payment details in your profile first.</span>
+                                            class="mt-3 flex items-center p-3 text-sm text-amber-200 bg-amber-500/10 rounded-lg border border-amber-500/30 backdrop-blur-sm">
+                                            <i class="fas fa-exclamation-triangle mr-2 text-amber-300"></i>
+                                            <span class="text-xs">Please update payment details in your profile
+                                                first.</span>
                                         </div>
                                     @endif
                                 </div>
 
-                                <div class="bg-slate-50 rounded-xl p-3 mb-2 border border-slate-100">
-                                    <ul class="space-y-2 text-xs text-slate-500 font-medium">
-                                        <li class="flex items-center"><i
-                                                class="fas fa-info-circle w-5 text-emerald-500"></i> Min. Withdrawal: ₹500
-                                        </li>
-                                        <li class="flex items-center"><i
-                                                class="fas fa-percentage w-5 text-emerald-500"></i> {{ $percentageIncome->admin_charge }} % Admin Charge</li>
-                                        <li class="flex items-center"><i
-                                                class="fas fa-file-invoice-dollar w-5 text-emerald-500"></i> {{ $percentageIncome->tds_charge }}% TDS
-                                            Deduction</li>
-                                    </ul>
+                                {{-- Info Cards (Charge & Minimum) --}}
+                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                    <div class="bg-slate-700/30 rounded-xl p-2.5 text-center border border-slate-600/50">
+                                        <div
+                                            class="flex items-center justify-center gap-1 text-emerald-400 text-xs font-bold mb-1">
+                                            <i class="fas fa-percentage text-[10px]"></i> <span>Admin Charge</span>
+                                        </div>
+                                        <p class="text-white font-bold text-sm">
+                                            {{ $percentageIncome->admin_charge ?? 0 }}%</p>
+                                    </div>
+                                    <div class="bg-slate-700/30 rounded-xl p-2.5 text-center border border-slate-600/50">
+                                        <div
+                                            class="flex items-center justify-center gap-1 text-amber-400 text-xs font-bold mb-1">
+                                            <i class="fas fa-file-invoice-dollar text-[10px]"></i> <span>TDS
+                                                Deduction</span>
+                                        </div>
+                                        <p class="text-white font-bold text-sm">{{ $percentageIncome->tds_charge ?? 0 }}%
+                                        </p>
+                                    </div>
                                 </div>
 
+                                {{-- Action Buttons --}}
                                 <div class="mt-6 flex gap-3">
                                     <button type="button"
-                                        class="flex-1 py-3 px-4 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition"
-                                        onclick="toggleModal('withdrawModal')">Cancel</button>
+                                        class="flex-1 py-3 px-4 bg-slate-700/70 border border-slate-600 rounded-xl text-sm font-bold text-slate-200 shadow-sm hover:bg-slate-700 transition-all duration-200"
+                                        onclick="toggleModal('withdrawModal')">
+                                        Cancel
+                                    </button>
                                     <button type="submit" id="submitWithdraw"
-                                        class="flex-1 py-3 px-4 bg-emerald-600 border border-transparent rounded-xl text-sm font-bold text-white shadow-sm hover:bg-emerald-700 transition"
-                                        onclick="return confirm('Are you sure you want to withdraw wallet1?')"
-                                        @if (!$user->account_no && !$user->upi_id) disabled @endif>
-                                        Confirm Withdrawal
+                                        class="flex-1 py-3 px-4 bg-emerald-500 hover:bg-emerald-600 border border-transparent rounded-xl text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+                                        @if (!$user->account_no && !$user->upi_id) disabled disabled-override @endif>
+                                        <i class="fas fa-check-circle"></i> Confirm Withdrawal
                                     </button>
                                 </div>
                             </form>
@@ -500,55 +535,55 @@
 
         // Original Validation Logic (Preserved)
         document.addEventListener('DOMContentLoaded', function() {
-            const withdrawForm = document.getElementById('withdrawForm');
             const withdrawAmount = document.getElementById('withdrawAmount');
             const submitBtn = document.getElementById('submitWithdraw');
-            const wallet1Balance = {{ $wallet1 }};
+            const walletBalance = {{ $wallet1 }}; // Dynamic User Wallet Balance
 
-            withdrawAmount.addEventListener('input', function() {
-                const amount = parseFloat(this.value);
-                // We use 'parentNode.parentNode' because HTML structure is: 
-                // <div> -> <div class="relative"> -> <input>
-                // We want to append error to the outer <div>
-                const targetContainer = this.parentNode.parentNode;
+            if (withdrawAmount) {
+                withdrawAmount.addEventListener('input', function() {
+                    const amount = parseFloat(this.value);
+                    const targetContainer = this.parentNode.parentNode;
+                    let errorElement = document.getElementById('amountError');
 
-                // Check if error already exists
-                let errorElement = document.getElementById('amountError');
+                    if (isNaN(amount) || amount < 500 || amount > walletBalance) {
+                        if (!errorElement) {
+                            const div = document.createElement('div');
+                            div.id = 'amountError';
+                            div.className =
+                                'mt-2 text-sm text-red-500 font-bold flex items-center animate-fade-in';
+                            div.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (amount <
+                                500 ?
+                                'Minimum withdrawal amount is 500' :
+                                'Amount exceeds your available balance');
+                            targetContainer.appendChild(div);
+                        } else {
+                            errorElement.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (
+                                amount < 500 ?
+                                'Minimum withdrawal amount is 500' :
+                                'Amount exceeds your available balance');
+                        }
 
-                if (isNaN(amount) || amount < 500 || amount > wallet1Balance) {
-                    if (!errorElement) {
-                        const div = document.createElement('div');
-                        div.id = 'amountError';
-                        // Tailwind error classes
-                        div.className = 'mt-2 text-sm text-red-600 font-bold flex items-center';
-                        div.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (amount < 500 ?
-                            'Minimum withdrawal amount is 500' :
-                            'Amount exceeds your available balance');
-
-                        targetContainer.appendChild(div);
+                        this.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                        this.classList.remove('border-slate-600', 'focus:border-emerald-500',
+                            'focus:ring-emerald-500');
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
                     } else {
-                        // Update text if element exists
-                        errorElement.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ` + (
-                            amount < 500 ?
-                            'Minimum withdrawal amount is 500' :
-                            'Amount exceeds your available balance');
+                        if (errorElement) errorElement.remove();
+
+                        this.classList.remove('border-red-500', 'focus:border-red-500',
+                            'focus:ring-red-500');
+                        this.classList.add('border-slate-600', 'focus:border-emerald-500',
+                            'focus:ring-emerald-500');
+
+                        // Allow submit only if bank/upi is set
+                        if (!submitBtn.hasAttribute('disabled-override')) {
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
                     }
-
-                    this.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
-                    this.classList.remove('border-slate-300', 'focus:border-emerald-500',
-                        'focus:ring-emerald-500');
-                    submitBtn.disabled = true;
-                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                } else {
-                    if (errorElement) errorElement.remove();
-
-                    this.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
-                    this.classList.add('border-slate-300', 'focus:border-emerald-500',
-                        'focus:ring-emerald-500');
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            });
+                });
+            }
         });
     </script>
 

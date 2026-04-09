@@ -125,6 +125,11 @@ class VendorController extends Controller
         // D. Total Revenue (All time)
         $totalSales = (clone $salesBaseQuery)->sum('order_items.subtotal');
 
+        $totalPayout = DB::table('vendor_wallet_transactions')
+            ->where('user_id', $userId)
+            ->where('notes', 'LIKE', 'Payment received for Order #%')
+            ->sum('amount');
+
         // --- ORDER COUNTS ---
 
         // E. Currently Placed/Pending Orders
@@ -170,6 +175,7 @@ class VendorController extends Controller
             'yesterdaySales',
             'monthlySales',
             'totalSales',
+            'totalPayout',
             'placedOrdersCount',
             'activeProducts',
             'lowStockProducts',
@@ -241,6 +247,4 @@ class VendorController extends Controller
 
         return back()->with('success', 'Company Profile Updated Successfully!');
     }
-
-    
 }

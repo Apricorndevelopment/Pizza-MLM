@@ -130,6 +130,32 @@
                             </tr>
                         @endforelse
                     </tbody>
+                    
+                    {{-- ========================================== --}}
+                    {{-- NEW: PAGE WISE TOTAL FOOTER --}}
+                    {{-- ========================================== --}}
+                    @if($vendors->count() > 0)
+                    <tfoot class="bg-slate-800 border-t-2 border-slate-200 shadow-inner">
+                        <tr>
+                            <td colspan="2" class="px-4 py-4 text-right font-black text-slate-100 uppercase tracking-wider text-xs">
+                                Page Total:
+                            </td>
+                            <td class="px-2 py-4 text-sm font-black text-slate-800">
+                                ₹{{ number_format($vendors->sum('total_revenue'), 2) }}
+                            </td>
+                            <td class="px-2 py-4 text-sm font-black text-orange-500">
+                                - ₹{{ number_format($vendors->sum('vendor_payout'), 2) }}
+                            </td>
+                            <td class="px-2 py-4 text-sm font-black text-red-500">
+                                - ₹{{ number_format($vendors->sum('total_distributed_incomes'), 2) }}
+                            </td>
+                            <td class="px-2 py-4 text-base font-black text-emerald-400">
+                                ₹{{ number_format($vendors->sum('net_profit'), 2) }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                    @endif
+
                 </table>
             </div>
 

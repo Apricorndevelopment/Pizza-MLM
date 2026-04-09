@@ -203,6 +203,14 @@ class WalletController extends Controller
             // 1. DEDUCT MONEY IMMEDIATELY
             $user->decrement('wallet1_balance', $validated['amount']);
 
+            Wallet1Transaction::create([
+                'user_id' => $user->id,
+                'user_ulid' => $user->ulid,
+                'wallet1' => -$validated['amount'],
+                'notes' => 'Withdrawal Request Initiated',
+                'balance' => $user->wallet1_balance - $validated['amount'], // Updated balance after deduction
+            ]);
+
             // 2. Create withdrawal request
             MoneyWithdrawl::create([
                 'user_id' => $user->id,
@@ -216,7 +224,7 @@ class WalletController extends Controller
             ]);
         });
 
-        return redirect()->route('user.viewwallet')->with('success', 'Withdrawal request submitted and amount deducted successfully!');
+        return redirect()->route('user.viewwallet')->with('success', 'Withdrawal request submitted successfully!');
     }
 
     public function viewUserWithdrawals()

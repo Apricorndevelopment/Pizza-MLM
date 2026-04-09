@@ -32,56 +32,68 @@
             </div>
 
             {{-- 1. SALES STATISTICS GRID --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
                 
                 {{-- Today's Sales --}}
-                <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-3">
-                        <div class="px-3 py-2.5 bg-indigo-50 rounded-xl text-indigo-600">
+                <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2">
+                        <div class="px-3.5 py-2 bg-indigo-50 rounded-xl text-indigo-600">
                             <i class="fas fa-calendar-day text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Today's Sales</p>
+                            <p class="text-slate-500 text-xs font-bold tracking-wider">Today's Sales</p>
                             <h3 class="text-xl font-bold text-slate-900">₹{{ number_format($todaySales, 2) }}</h3>
                         </div>
                     </div>
                 </div>
 
                 {{-- Yesterday's Sales --}}
-                <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-3">
-                        <div class="px-3 py-2.5 bg-purple-50 rounded-xl text-purple-600">
+                <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2">
+                        <div class="px-3.5 py-2 bg-purple-50 rounded-xl text-purple-600">
                             <i class="fas fa-history text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Yesterday</p>
+                            <p class="text-slate-500 text-xs font-bold tracking-wider">Yesterday's Sales</p>
                             <h3 class="text-xl font-bold text-slate-900">₹{{ number_format($yesterdaySales, 2) }}</h3>
                         </div>
                     </div>
                 </div>
 
                 {{-- Monthly Sales --}}
-                <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-3">
-                        <div class="px-3 py-2.5 bg-emerald-50 rounded-xl text-emerald-600">
+                <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2">
+                        <div class="px-3.5 py-2 bg-emerald-50 rounded-xl text-emerald-600">
                             <i class="fas fa-calendar-alt text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">This Month</p>
+                            <p class="text-slate-500 text-xs font-bold tracking-wider">This Month</p>
                             <h3 class="text-xl font-bold text-slate-900">₹{{ number_format($monthlySales, 2) }}</h3>
                         </div>
                     </div>
                 </div>
 
                 {{-- Total Revenue --}}
-                <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex items-center gap-3">
-                        <div class="px-3 py-2.5 bg-teal-50 rounded-xl text-teal-600">
+                <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2">
+                        <div class="px-3.5 py-2 bg-teal-50 rounded-xl text-teal-600">
                             <i class="fas fa-wallet text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Total Revenue</p>
+                            <p class="text-slate-500 text-xs font-bold tracking-wider">Total Sales</p>
                             <h3 class="text-xl font-bold text-slate-900">₹{{ number_format($totalSales, 2) }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-2">
+                        <div class="px-3.5 py-2 bg-teal-50 rounded-xl text-teal-600">
+                            <i class="fas fa-wallet text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs font-bold tracking-wider">Total Payout</p>
+                            <h3 class="text-xl font-bold text-slate-900">₹{{ number_format($totalPayout, 2) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -97,7 +109,7 @@
                             <div class="p-2 bg-white/20 rounded-lg">
                                 <i class="fas fa-bell text-2xl"></i>
                             </div>
-                            <span class="text-xs font-bold bg-white/20 px-2 py-1 rounded-lg">Action Needed</span>
+                            <span class="text-xs font-bold bg-white/20 px-3.5 py-2 rounded-lg">Action Needed</span>
                         </div>
                         <h2 class="text-4xl font-bold mb-1">{{ $placedOrdersCount }}</h2>
                         <p class="text-white/90 font-medium">New Placed Orders</p>

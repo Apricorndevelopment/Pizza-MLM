@@ -97,7 +97,7 @@
                                     <div class="flex justify-between items-end mb-3 relative z-10">
                                         <div>
                                             <p class="text-sm font-bold text-emerald-700 uppercase tracking-wider mb-1">Target Rank: {{ $tracker->currentPool->rank_name }}</p>
-                                            <h5 class="text-3xl font-black text-slate-800">Reward: ₹{{ number_format($tracker->currentPool->income, 0) }}</h5>
+                                            <h5 class="text-2xl font-black text-slate-800">Smart Auto Pool Income: ₹{{ number_format($tracker->currentPool->income, 0) }}</h5>
                                         </div>
                                         <div class="text-right bg-white px-3 py-2 rounded-xl shadow-sm border border-emerald-100">
                                             <span class="text-lg font-black text-emerald-600">{{ $currSlPv }} <span class="text-sm text-slate-500 font-bold">/ {{ $reqSlPv }} PV</span></span>
@@ -110,7 +110,7 @@
                                     </div>
                                     
                                     <div class="flex justify-between items-center relative z-10 mt-2">
-                                        <span class="text-xs sm:text-sm font-bold text-emerald-800 bg-white/60 px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm">
+                                        <span class="text-lg font-bold text-emerald-800 bg-white/60 px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm">
                                             <i class="fas fa-coins text-amber-500 mr-1"></i> ₹{{ number_format($accumulatedAmount, 2) }} Accumulated
                                         </span>
                                         <p class="text-sm text-emerald-700 font-bold">{{ number_format($slPercent, 1) }}% Completed</p>

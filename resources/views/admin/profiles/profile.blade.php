@@ -3,6 +3,28 @@
 @section('container')
 
     <div class="min-h-screen bg-slate-50 pb-10 pt-3 sm:px-6 lg:px-8 font-sans">
+        <div id="alerts-container">
+            @if (session('success'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex justify-between items-center mb-4 text-sm"
+                    id="alert-success">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i> <span>{{ session('success') }}</span>
+                    </div>
+                    <button onclick="document.getElementById('alert-success').remove()" class="hover:text-emerald-900"><i
+                            class="fas fa-times"></i></button>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex justify-between items-center mb-4 text-sm"
+                    id="alert-error">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle"></i> <span>{{ session('error') }}</span>
+                    </div>
+                    <button onclick="document.getElementById('alert-error').remove()" class="hover:text-red-900"><i
+                            class="fas fa-times"></i></button>
+                </div>
+            @endif
+        </div>
         <div class="max-w-5xl mx-auto">
 
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">

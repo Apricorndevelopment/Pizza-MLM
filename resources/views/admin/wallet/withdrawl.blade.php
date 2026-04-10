@@ -37,13 +37,23 @@
             </div>
             {{-- Pending Withdrawals Section --}}
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
-                <div class="px-3.5 py-3 border-b border-slate-100 flex justify-between items-center">
-                    <h2 class="font-bold  flex items-center gap-2">
-                        <i class="fas fa-clock" class="text-[#94A3B8]"></i> Pending Requests
+               {{-- UPDATED HEADER WITH TOTAL AMOUNT --}}
+                <div class="px-4 py-3.5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50/30">
+                    <h2 class="font-bold flex items-center gap-2 text-slate-800">
+                        <i class="fas fa-clock text-amber-500"></i> Pending Requests
                     </h2>
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border border-amber-200">
-                        Action Required
-                    </span>
+                    
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                        {{-- NEW: Total Pending Amount Badge --}}
+                        <span class="px-3 py-1 rounded-lg bg-white border border-slate-200 text-slate-600 text-xs font-bold shadow-sm flex items-center gap-1.5">
+                            <i class="fas fa-coins text-amber-400"></i> Total Amount: 
+                            <span class="text-amber-600 text-sm">₹{{ number_format($withdrawals->sum('total_amount'), 2) }}</span>
+                        </span>
+
+                        <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200 shadow-sm">
+                            Action Required
+                        </span>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
